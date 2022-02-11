@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name = "XmMathPlus::uint2">
+		<DisplayString>[{x}, {y}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::uint3">
+		<DisplayString>[{x}, {y}, {z}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::uint4">
+		<DisplayString>[{x}, {y}, {z}, {w}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::Real2">
+		<DisplayString>[{x}, {y}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::Real3">
+		<DisplayString>[{x}, {y}, {z}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::Real4">
+		<DisplayString>[{x}, {y}, {z}, {w}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::V2">
+		<DisplayString>[{x}, {y}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::V3">
+		<DisplayString>[{x}, {y}, {z}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::V4">
+		<DisplayString>[{x}, {y}, {z}, {w}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::M4">
+		<Expand>
+			<ArrayItems>
+				<Size>4</Size>
+				<ValuePointer>m</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	<Type Name = "XmMathPlus::Q">
+		<DisplayString>Quaternion = [{x}, {y}, {z}, {w}]</DisplayString>
+	</Type>
+	<Type Name = "XmMathPlus::Color">
+		<DisplayString>Color = [{r}, {g}, {b}, {a}]</DisplayString>
+	</Type>
+</AutoVisualizer>

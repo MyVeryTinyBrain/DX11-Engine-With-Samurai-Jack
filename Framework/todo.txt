@@ -1,0 +1,47 @@
+InputBase::m_lock
+
+hint 파일을 구현합니다.
+
+그리지 않고 깊이/스텐실 버퍼에만 작성하는 방법 찾기.
+
+dll Path 를 통해 로드함으로써 클라이언트에 dll을 복사하지 않도록 변경하기.
+Reference 폴더에 ExtractDLL.bat 을 만들어 DLL 파일만 추출하도록 만들기.
+
+멀티패스 모두 실행
+
+D3D11_INPUT_ELEMENT_DESC
+InputSlot
+InstanceDataStepRate
+AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT
+
+unicode / multibyte 전환 해보기.
+
+컬링
+
+maxdeltatime
+
+Vector Int, Vector UInt 구현
+V4I, V4UI
+
+IRenderRequest 구현.
+
+- 이름 변경
+ICamera -> IRenderCuller	: 컬링 함수(IRenderable* ptr) 을 가지는 인터페이스
+Material -> IMaterial	: 쉐이더 및 쉐이더 변수를 가지는 인터페이스
+IVIBuffer -> IRenderable	: 정점, 인덱스 버퍼로 그릴수 있는 인터페이스
+
+- 반투명 정렬 필요
+
+- 컬링을 위해 IRenderable::GetBounds(), 혹은 IRenderable::GetRadius() 필요.
+
+- IRenderRequest -> RenderRequest로 통일하기?
+
+- CompareByBounds
+반투명 정렬을 위함
+
+- 월드행렬 또는 월드정보 필요
+
+- ICamera
+
+인스턴스 큐를 따로 구현하거나 렌더큐에 추가 구현
+이에 따라서 렌더요청도 새로 구현해야 함

@@ -1,0 +1,1338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="include\TransformUpdateArguments.h">
+      <Filter>Object\SceneObject\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Transform.h">
+      <Filter>Object\SceneObject\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TransformData.h">
+      <Filter>Object\SceneObject\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RefData.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Object.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ObjectBase.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ref.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ref.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneObject.h">
+      <Filter>Object\SceneObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject.h">
+      <Filter>Object\SceneObject\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component.h">
+      <Filter>Object\SceneObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scene.h">
+      <Filter>Object\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject.hpp">
+      <Filter>Object\SceneObject\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EnginePCH.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EngineType.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EngineFunction.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EngineMacro.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine.h" />
+    <ClInclude Include="include\EngineWorld.h">
+      <Filter>EngineWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EngineWorldBase.h">
+      <Filter>EngineWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EngineWorldDesc.h">
+      <Filter>EngineWorld</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Key.h">
+      <Filter>EngineWorld\System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Input.h">
+      <Filter>EngineWorld\System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CentralTimeElement.h">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TimeElement.h">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="include\System.h">
+      <Filter>EngineWorld\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneManagement.h">
+      <Filter>EngineWorld\System\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tstring.h">
+      <Filter>Default\tstring</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObjectManagement.h">
+      <Filter>Object\Scene\GameObjectManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsSystem.h">
+      <Filter>EngineWorld\System\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceRef.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceRef.hpp">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceObject.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceRefData.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GraphicSystem.h">
+      <Filter>EngineWorld\System\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceManagement.h">
+      <Filter>EngineWorld\System\ResourceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IComponent.h">
+      <Filter>Object\SceneObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IScene.h">
+      <Filter>Object\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IGameObject.h">
+      <Filter>Object\SceneObject\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IResourceManagement.h">
+      <Filter>EngineWorld\System\ResourceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IInput.h">
+      <Filter>EngineWorld\System\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISystem.h">
+      <Filter>EngineWorld\System</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Times.h">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ICentralTimeElement.h">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISceneManagement.h">
+      <Filter>EngineWorld\System\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IGraphicSystem.h">
+      <Filter>EngineWorld\System\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceFactory.h">
+      <Filter>EngineWorld\System\ResourceManagement\ResourceFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Texture.h">
+      <Filter>Object\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderQueue.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Texture2D.h">
+      <Filter>Object\Resource\Texture\Texture2D</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Shader.h">
+      <Filter>Object\Resource\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderGroup.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CompiledShaderDesc.h">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SementicDesc.h">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PassDesc.h">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TechniqueDesc.h">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VIBuffer.h">
+      <Filter>EngineWorld\System\Graphic\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VITypes.h">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VITypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FPSChecker.h">
+      <Filter>Object\SceneObject\Component\FPSChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Material.h">
+      <Filter>Object\Resource\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera.h">
+      <Filter>Object\SceneObject\Component\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Mesh.h">
+      <Filter>Object\Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IMaterial.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IMaterial</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IMesh.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VI.h">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Material.hpp">
+      <Filter>Object\Resource\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceFactory.hpp">
+      <Filter>EngineWorld\System\ResourceManagement\ResourceFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CBufferTypes.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CBufferManager.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferManager</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Renderer.h">
+      <Filter>Object\SceneObject\Component\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IRendererCullOp.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ICamera.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\ICamera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CameraManager.h">
+      <Filter>EngineWorld\System\Graphic\CameraManager</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ICameraManager.h">
+      <Filter>EngineWorld\System\Graphic\CameraManager</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PrimitiveVI.h">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MeshRenderer.h">
+      <Filter>Object\SceneObject\Component\Renderer\MeshRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubIndicesDesc.h">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VITypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BuiltInResources.h">
+      <Filter>EngineWorld\System\ResourceManagement\Built-In-Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IBuiltInResources.h">
+      <Filter>EngineWorld\System\ResourceManagement\Built-In-Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IResourceFactory.h">
+      <Filter>EngineWorld\System\ResourceManagement\ResourceFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ImGuiSystem.h">
+      <Filter>EngineWorld\System\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IImGuiSystem.h">
+      <Filter>EngineWorld\System\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubResourceRef.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IResourceObject.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubResourceObject.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubResourceRef.hpp">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISubResourceObject.h">
+      <Filter>Object\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui_internal.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imconfig.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\imgui-1.85\imstb_truetype.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\imgui-1.85\imstb_rectpack.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\imgui-1.85\imstb_textedit.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui_impl_win32.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui_impl_dx11.h">
+      <Filter>Default\imgui_source</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SkinnedMeshRenderer.h">
+      <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IRendererBoneOp.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeTransform.h">
+      <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer\NodeTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Animator.h">
+      <Filter>Object\SceneObject\Component\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorTypes.h">
+      <Filter>Object\SceneObject\Component\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialGizmoTranslation.h">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialGizmoRotationNoHighlight.h">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialGizmoRotationHighlight.h">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialGizmoRotationLine.h">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InstanceBufferManager.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\InstanceDataBufferManager</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderQueueStandard.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderQueueTransparent.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderQueueBase.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderRequestInput.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderQueueInstance.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorBlendNode.h">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorBlendNodeElement.h">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorNode.h">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorLayer.h">
+      <Filter>Object\SceneObject\Component\Animator\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorSingleNode.h">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationClip.h">
+      <Filter>Object\Resource\Mesh\AnimationClip</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Animation.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimationSet.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AssimpData.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Channel.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\KeyframeDesc.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ModelMaterialDesc.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Node.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeSet.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NodeDesc.h">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InstanceRenderer.h">
+      <Filter>Object\SceneObject\Component\Renderer\InstanceRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorProperty.h">
+      <Filter>Object\SceneObject\Component\Animator\Layer\Property</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatorTransition.h">
+      <Filter>Object\SceneObject\Component\Animator\Layer\Transition</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IPhysicsSystem.h">
+      <Filter>EngineWorld\System\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsLayerManager.h">
+      <Filter>EngineWorld\System\Physics\LayerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsFilterShaderCallback.h">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsSimulationEventCallback.h">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsSimulationCallbackType.h">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Collider.h">
+      <Filter>Object\SceneObject\Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Rigidbody.h">
+      <Filter>Object\SceneObject\Component\Rigidbody</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FunctionConvert.h">
+      <Filter>Default\Delegate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Function.hpp">
+      <Filter>Default\Delegate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Function.h">
+      <Filter>Default\Delegate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Delegate.hpp">
+      <Filter>Default\Delegate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Delegate.h">
+      <Filter>Default\Delegate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BoxCollider.h">
+      <Filter>Object\SceneObject\Component\Collider\BoxCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ICollider.h">
+      <Filter>Object\SceneObject\Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IRigidbody.h">
+      <Filter>Object\SceneObject\Component\Rigidbody</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CapsuleCollider.h">
+      <Filter>Object\SceneObject\Component\Collider\CapsuleCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SphereCollider.h">
+      <Filter>Object\SceneObject\Component\Collider\SphereCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsQuery.h">
+      <Filter>EngineWorld\System\Physics\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialColorLine.h">
+      <Filter>Object\Resource\Material\Built-in Material</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GizmoScaling.h">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gizmo.h">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GizmoBase.h">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GizmoRotation.h">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GizmoTranslation.h">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IAnimatorLayer.h">
+      <Filter>Object\SceneObject\Component\Animator\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RigidbodyInterpolateBase.h">
+      <Filter>Object\SceneObject\Component\Rigidbody\Interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RigidbodyExtrapolate.h">
+      <Filter>Object\SceneObject\Component\Rigidbody\Interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RigidbodyInterpolate.h">
+      <Filter>Object\SceneObject\Component\Rigidbody\Interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IAnimatorNode.h">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConvexCollider.h">
+      <Filter>Object\SceneObject\Component\Collider\ConvexCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderTexture2D.h">
+      <Filter>Object\Resource\Texture\RenderTexture2D</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderTarget.h">
+      <Filter>EngineWorld\System\Graphic\RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DepthStencil.h">
+      <Filter>EngineWorld\System\Graphic\RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DeferredScreenRender.h">
+      <Filter>EngineWorld\System\Graphic\DeferredRender</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ILight.h">
+      <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DeferredRenderTarget.h">
+      <Filter>EngineWorld\System\Graphic\DeferredRender</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Light.h">
+      <Filter>Object\SceneObject\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LightManager.h">
+      <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ILightManager.h">
+      <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DirectionalLight.h">
+      <Filter>Object\SceneObject\Component\Light\Directional</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PointLight.h">
+      <Filter>Object\SceneObject\Component\Light\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpotLight.h">
+      <Filter>Object\SceneObject\Component\Light\Spot</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ComponentManagement.h">
+      <Filter>Object\Scene\GameObjectManagement\ComponentManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IRendererBoundsOp.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IPhysicsObject.h">
+      <Filter>EngineWorld\System\Physics\PhysicsObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MaterialStandard.h">
+      <Filter>Object\Resource\Material\Built-in Material</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderQueueLight.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ITexture.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\ITexture</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Transform.cpp">
+      <Filter>Object\SceneObject\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformData.cpp">
+      <Filter>Object\SceneObject\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Object.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObjectBase.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RefData.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformUpdateArguments.cpp">
+      <Filter>Object\SceneObject\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneObject.cpp">
+      <Filter>Object\SceneObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>Object\SceneObject\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component.cpp">
+      <Filter>Object\SceneObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Object\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EnginePCH.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineWorld.cpp">
+      <Filter>EngineWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineWorldBase.cpp">
+      <Filter>EngineWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineWorldDesc.cpp">
+      <Filter>EngineWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Key.cpp">
+      <Filter>EngineWorld\System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input.cpp">
+      <Filter>EngineWorld\System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CentralTimeElement.cpp">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TimeElement.cpp">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System.cpp">
+      <Filter>EngineWorld\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneManagement.cpp">
+      <Filter>EngineWorld\System\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineType.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineFunction.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tstring.cpp">
+      <Filter>Default\tstring</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObjectManagement.cpp">
+      <Filter>Object\Scene\GameObjectManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsSystem.cpp">
+      <Filter>EngineWorld\System\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphicSystem.cpp">
+      <Filter>EngineWorld\System\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceObject.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceRefData.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceManagement.cpp">
+      <Filter>EngineWorld\System\ResourceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IComponent.cpp">
+      <Filter>Object\SceneObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IScene.cpp">
+      <Filter>Object\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IGameObject.cpp">
+      <Filter>Object\SceneObject\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IResourceManagement.cpp">
+      <Filter>EngineWorld\System\ResourceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IInput.cpp">
+      <Filter>EngineWorld\System\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISystem.cpp">
+      <Filter>EngineWorld\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Times.cpp">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ICentralTimeElement.cpp">
+      <Filter>EngineWorld\System\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISceneManagement.cpp">
+      <Filter>EngineWorld\System\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IGraphicSystem.cpp">
+      <Filter>EngineWorld\System\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceFactory.cpp">
+      <Filter>EngineWorld\System\ResourceManagement\ResourceFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Object\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderQueue.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture2D.cpp">
+      <Filter>Object\Resource\Texture\Texture2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Object\Resource\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderGroup.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CompiledShaderDesc.cpp">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SementicDesc.cpp">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PassDesc.cpp">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TechniqueDesc.cpp">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VIBuffer.cpp">
+      <Filter>EngineWorld\System\Graphic\VIBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VITypes.cpp">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VITypes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FPSChecker.cpp">
+      <Filter>Object\SceneObject\Component\FPSChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>Object\Resource\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>Object\SceneObject\Component\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mesh.cpp">
+      <Filter>Object\Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IMaterial.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IMesh.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VI.cpp">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CBufferTypes.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CBufferManager.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IRendererCullOp.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ICamera.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\ICamera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraManager.cpp">
+      <Filter>EngineWorld\System\Graphic\CameraManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ICameraManager.cpp">
+      <Filter>EngineWorld\System\Graphic\CameraManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PrimitiveVI.cpp">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshRenderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\MeshRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SubIndicesDesc.cpp">
+      <Filter>EngineWorld\System\Graphic\VIBuffer\VITypes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BuiltInResources.cpp">
+      <Filter>EngineWorld\System\ResourceManagement\Built-In-Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IBuiltInResources.cpp">
+      <Filter>EngineWorld\System\ResourceManagement\Built-In-Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IResourceFactory.cpp">
+      <Filter>EngineWorld\System\ResourceManagement\ResourceFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGuiSystem.cpp">
+      <Filter>EngineWorld\System\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IImGuiSystem.cpp">
+      <Filter>EngineWorld\System\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IResourceObject.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SubResourceObject.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISubResourceObject.cpp">
+      <Filter>Object\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui_demo.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui_draw.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui_tables.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui_widgets.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui_impl_dx11.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui_impl_win32.cpp">
+      <Filter>Default\imgui_source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SkinnedMeshRenderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IRendererBoneOp.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NodeTransform.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer\NodeTransform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animator.cpp">
+      <Filter>Object\SceneObject\Component\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialGizmoTranslation.cpp">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialGizmoRotationHighlight.cpp">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialGizmoRotationNoHighlight.cpp">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialGizmoRotationLine.cpp">
+      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InstanceBufferManager.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\InstanceDataBufferManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderQueueTransparent.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderQueueStandard.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderQueueBase.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderRequestInput.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderQueueInstance.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorBlendNode.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorBlendNodeElement.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorNode.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorLayer.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorSingleNode.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationClip.cpp">
+      <Filter>Object\Resource\Mesh\AnimationClip</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimationSet.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssimpData.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Channel.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KeyframeDesc.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelMaterialDesc.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Node.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NodeDesc.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NodeSet.cpp">
+      <Filter>Object\Resource\Mesh\Assimp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InstanceRenderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\InstanceRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorProperty.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Layer\Property</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorTransition.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Layer\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IPhysicsSystem.cpp">
+      <Filter>EngineWorld\System\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsLayerManager.cpp">
+      <Filter>EngineWorld\System\Physics\LayerManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsFilterShaderCallback.cpp">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsSimulationEventCallback.cpp">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsSimulationCallbackType.cpp">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collider.cpp">
+      <Filter>Object\SceneObject\Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rigidbody.cpp">
+      <Filter>Object\SceneObject\Component\Rigidbody</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BoxCollider.cpp">
+      <Filter>Object\SceneObject\Component\Collider\BoxCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ICollider.cpp">
+      <Filter>Object\SceneObject\Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IRigidbody.cpp">
+      <Filter>Object\SceneObject\Component\Rigidbody</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CapsuleCollider.cpp">
+      <Filter>Object\SceneObject\Component\Collider\CapsuleCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SphereCollider.cpp">
+      <Filter>Object\SceneObject\Component\Collider\SphereCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsQuery.cpp">
+      <Filter>EngineWorld\System\Physics\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialColorLine.cpp">
+      <Filter>Object\Resource\Material\Built-in Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GizmoTranslation.cpp">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gizmo.cpp">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GizmoBase.cpp">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GizmoRotation.cpp">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GizmoScaling.cpp">
+      <Filter>Object\SceneObject\Component\Gizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IAnimatorLayer.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RigidbodyExtrapolate.cpp">
+      <Filter>Object\SceneObject\Component\Rigidbody\Interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RigidbodyInterpolate.cpp">
+      <Filter>Object\SceneObject\Component\Rigidbody\Interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RigidbodyInterpolateBase.cpp">
+      <Filter>Object\SceneObject\Component\Rigidbody\Interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IAnimatorNode.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ConvexCollider.cpp">
+      <Filter>Object\SceneObject\Component\Collider\ConvexCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderTexture2D.cpp">
+      <Filter>Object\Resource\Texture\RenderTexture2D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderTarget.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DepthStencil.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DeferredScreenRender.cpp">
+      <Filter>EngineWorld\System\Graphic\DeferredRender</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ILight.cpp">
+      <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DeferredRenderTarget.cpp">
+      <Filter>EngineWorld\System\Graphic\DeferredRender</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light.cpp">
+      <Filter>Object\SceneObject\Component\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LightManager.cpp">
+      <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ILightManager.cpp">
+      <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DirectionalLight.cpp">
+      <Filter>Object\SceneObject\Component\Light\Directional</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PointLight.cpp">
+      <Filter>Object\SceneObject\Component\Light\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpotLight.cpp">
+      <Filter>Object\SceneObject\Component\Light\Spot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComponentManagement.cpp">
+      <Filter>Object\Scene\GameObjectManagement\ComponentManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IRendererBoundsOp.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IPhysicsObject.cpp">
+      <Filter>EngineWorld\System\Physics\PhysicsObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialStandard.cpp">
+      <Filter>Object\Resource\Material\Built-in Material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderQueueLight.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ITexture.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\ITexture</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Object">
+      <UniqueIdentifier>{25563976-fc5b-4544-a018-e11f4ced3804}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default">
+      <UniqueIdentifier>{badbf1ea-9c82-4650-9a8e-d79ccd78b848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld">
+      <UniqueIdentifier>{0545f849-a686-495b-9e8e-bb6c5a509cf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\tstring">
+      <UniqueIdentifier>{5ab46317-d6cf-46a0-b19a-5a96e347548b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System">
+      <UniqueIdentifier>{a6bca66e-bb97-4e6a-94db-e222eb393ec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Input">
+      <UniqueIdentifier>{e5f37247-ed22-48f0-9a8c-3057a7841868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Time">
+      <UniqueIdentifier>{24c5c925-2381-46a6-b52f-6130215ccd2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Physics">
+      <UniqueIdentifier>{946f18bb-d322-4462-9cec-113bfeb27eea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\SceneManagement">
+      <UniqueIdentifier>{356d2180-8580-4048-9c6b-24902bfee9c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic">
+      <UniqueIdentifier>{01d900a3-e3c3-40d3-aff4-0ffb09c43e8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\ResourceManagement">
+      <UniqueIdentifier>{f1c9e172-7e2c-446a-9cf9-cd5b8c76219b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\ResourceManagement\ResourceFactory">
+      <UniqueIdentifier>{c04d377c-f0c9-4236-b0a4-27b37b46b2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue">
+      <UniqueIdentifier>{92ef7eb9-f4ee-4437-9fdb-c722dc73d424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject">
+      <UniqueIdentifier>{6868e40e-3928-4c32-ae9a-45bda4349784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\GameObject">
+      <UniqueIdentifier>{d0755d04-b159-4e47-8e67-4571740f4401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component">
+      <UniqueIdentifier>{effd17ba-828b-4c0d-ad15-55dfc7eca596}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource">
+      <UniqueIdentifier>{ffd0ddfa-b9e0-469a-bcb6-bd47d95c0580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Texture">
+      <UniqueIdentifier>{fa98467d-22f3-4166-bd5a-b43cd5a1dad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Texture\Texture2D">
+      <UniqueIdentifier>{aae088f2-c115-46fc-9a98-fc3b9ecce6cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Shader">
+      <UniqueIdentifier>{52e36ea2-5380-429b-92be-45a8ef91856c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Shader\CompiledShaderDesc">
+      <UniqueIdentifier>{938cb3c5-fc82-425e-8940-505cb45f5f77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Transform">
+      <UniqueIdentifier>{61e151b8-7960-412c-82a1-b5df0ff88490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Camera">
+      <UniqueIdentifier>{115f4fae-425b-4edc-8876-7e886c8e7c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\FPSChecker">
+      <UniqueIdentifier>{7edb4fa7-6ec7-425e-b475-793724861cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Material">
+      <UniqueIdentifier>{d4257a0c-f2d9-4412-84b3-ec8227c56247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer">
+      <UniqueIdentifier>{af8af73d-8672-4ede-9e27-35444d7a5caa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\VIBuffer">
+      <UniqueIdentifier>{9bfacb3f-2cb5-4ab2-957c-0128a66ff445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\VIBuffer\VITypes">
+      <UniqueIdentifier>{a5fe23cc-fc6f-46a2-8c1f-acc9628f6099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Mesh">
+      <UniqueIdentifier>{81b6f9b8-b73c-4f08-819d-8a13a4c0ca44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\IMaterial">
+      <UniqueIdentifier>{ef5f14c0-97ee-483f-9f05-c0bbb9bdcb08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\IMesh">
+      <UniqueIdentifier>{c01276bc-2a4d-472e-b181-41bd90936927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\ICamera">
+      <UniqueIdentifier>{1b7a4eff-d8bf-487a-a7e9-8b7d5ba4430a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\VIBuffer\VI">
+      <UniqueIdentifier>{885b7864-1d19-42ef-bc2e-ca4415322831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Material\Built-in Material">
+      <UniqueIdentifier>{1d3a8d6a-cce4-4093-8c49-e659480ca2b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Shader\Built-in Shader">
+      <UniqueIdentifier>{13a1f043-a69a-4e3d-8754-c642abeca2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\CBufferTypes">
+      <UniqueIdentifier>{42490d28-5231-4786-b3c2-6131cb539057}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\CBufferManager">
+      <UniqueIdentifier>{dc77a1e3-1eb6-4275-9ac7-3756dd0d6f0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\RenderRequest">
+      <UniqueIdentifier>{0c57d64f-9510-498e-ad69-a9799245b310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\MeshRenderer">
+      <UniqueIdentifier>{0a7e4c6c-af05-4fc7-a237-a13c2cc46464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\ScreenRenderer">
+      <UniqueIdentifier>{2b1d13ba-cebe-4e55-a0e2-406e38e5ffb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\SpriteRenderer">
+      <UniqueIdentifier>{e1699a2c-e9b2-47b2-b2f1-4f8df20d447f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\TrailRenderer">
+      <UniqueIdentifier>{c4473133-c261-4c74-8ab8-790d18ef47e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\LineRenderer">
+      <UniqueIdentifier>{15958ad5-3620-41b3-a313-f2fa04d21dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\PolygonTrailRenderer">
+      <UniqueIdentifier>{e8cba8cc-fad4-44aa-bd83-f5c4de7097b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\CameraManager">
+      <UniqueIdentifier>{b48fa428-f702-4f63-90ff-5a744c20fc24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\SkinnedMeshRenderer">
+      <UniqueIdentifier>{9ab7b733-f3ac-4cf8-8c37-9a93b111e9a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Scene">
+      <UniqueIdentifier>{ebae0715-cb63-42af-876a-cb0c219075fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Scene\GameObjectManagement">
+      <UniqueIdentifier>{3c8092c8-e8cb-4c24-97e1-435aa285012e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\ResourceManagement\Built-In-Resources">
+      <UniqueIdentifier>{ac17be37-317b-4ee9-b658-c1b6874acd6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\ImGui">
+      <UniqueIdentifier>{d64410ec-ea6b-42c0-8ced-39b6ccbb4ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\imgui_source">
+      <UniqueIdentifier>{f1308811-9992-4180-b829-e4d8163f1ad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\SkinnedMeshRenderer\NodeTransform">
+      <UniqueIdentifier>{9fba5c4d-c12b-425f-a85e-d703e85aa14b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Animator">
+      <UniqueIdentifier>{5475c37f-b0bd-4d64-9094-fdab2b56ea1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Material\Built-in Material\Gizmo">
+      <UniqueIdentifier>{70da52c4-e71f-4f71-923f-e4c23e88b923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Gizmo">
+      <UniqueIdentifier>{de854411-8be0-46f2-8339-421d329fbefb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\InstanceDataBufferManager">
+      <UniqueIdentifier>{aa0a7eb5-3270-4ce0-9f60-eb821d87a306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\RenderQueues">
+      <UniqueIdentifier>{8b701c45-fd4c-4b4b-bc4c-ceefae6e7234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\IRendererOp">
+      <UniqueIdentifier>{60ba174f-3bfd-472d-86cc-bc93eb0d17db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Animator\Node">
+      <UniqueIdentifier>{e57c53b4-70eb-4ec8-8176-4e1b8ca5cd0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Animator\Layer">
+      <UniqueIdentifier>{74886e70-d564-4df1-a857-499e24eb1be4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Mesh\AnimationClip">
+      <UniqueIdentifier>{b99ecb77-e5b1-430d-9a9c-b17a7e0431ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Mesh\Assimp">
+      <UniqueIdentifier>{a059355a-2980-432d-a3fc-6d6ae07e8f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\InstanceRenderer">
+      <UniqueIdentifier>{84f4e220-0ddd-49b6-badc-6c278b152b56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Animator\Layer\Property">
+      <UniqueIdentifier>{0b20cead-6a1d-45ea-8eb9-76525e779218}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Animator\Layer\Transition">
+      <UniqueIdentifier>{07d89530-156e-48f6-bad8-eae8096feae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Physics\LayerManager">
+      <UniqueIdentifier>{e98db6cd-d4a6-44d0-9076-3674e5e2684d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Physics\Callback">
+      <UniqueIdentifier>{a76ed5a3-a97e-4e49-b15a-59261f505463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Collider">
+      <UniqueIdentifier>{50eb1a45-12ef-4081-988c-f2e756ff771e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Rigidbody">
+      <UniqueIdentifier>{7b8ddafb-9d5d-40eb-b184-50ab82358176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\Delegate">
+      <UniqueIdentifier>{6ccff683-630a-428a-bc77-60de713b92ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Collider\BoxCollider">
+      <UniqueIdentifier>{ea4f0bb2-0a34-4146-80a0-0f9f1b12aa8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Collider\SphereCollider">
+      <UniqueIdentifier>{3814bdb1-c449-4b01-91ff-fca72d957b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Collider\CapsuleCollider">
+      <UniqueIdentifier>{195bdc93-d8b3-4e73-a146-8de75c4e78ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Physics\Query">
+      <UniqueIdentifier>{7758ec64-f7d9-499d-b91f-8a465e87d09c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Rigidbody\Interpolate">
+      <UniqueIdentifier>{2e152673-780c-47b6-8b52-5da7963734f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Collider\MeshCollider">
+      <UniqueIdentifier>{e735489d-2179-46f7-8507-134fc2206600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Collider\ConvexCollider">
+      <UniqueIdentifier>{69305c5b-8ccb-454d-9333-a5cb48e9cf36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Texture\RenderTexture2D">
+      <UniqueIdentifier>{09e6922c-a138-44f0-987d-f44ea427100c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Shader\Built-in Header">
+      <UniqueIdentifier>{916146e8-27bd-4159-ad0d-229187482b57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderTarget">
+      <UniqueIdentifier>{1e878b13-d975-4620-b829-3eb2d41bbb2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\DeferredRender">
+      <UniqueIdentifier>{819cd383-239c-4972-a8fd-de7273290123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Light">
+      <UniqueIdentifier>{296385e1-ff64-4aaf-85e5-6586a27ca46e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\DeferredRender\Light">
+      <UniqueIdentifier>{0ea64795-d125-444b-94e6-e0bfa514b368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Shader\Built-in Shader\Deferred Pipeline">
+      <UniqueIdentifier>{ccff59ce-0461-4554-97f2-7ba87f8df2d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Shader\Built-in Shader\Deferred">
+      <UniqueIdentifier>{3e5a8942-0ae1-466d-8b1a-d716cb5d163d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Light\Directional">
+      <UniqueIdentifier>{6fd04625-f3c7-406b-bfd3-5cd0045d3653}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Light\Point">
+      <UniqueIdentifier>{82fb2d10-4361-47e7-bc81-86e68a4be776}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Light\Spot">
+      <UniqueIdentifier>{f88da2a7-b4a2-48b6-8d8f-64721442a562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Scene\GameObjectManagement\ComponentManagement">
+      <UniqueIdentifier>{b57d72c4-0e78-450b-918c-f6f5259df471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Physics\PhysicsObject">
+      <UniqueIdentifier>{87ab62ce-2826-4ec1-8f8b-a84b75b1c290}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Graphic\RenderQueue\ITexture">
+      <UniqueIdentifier>{e9d3bced-529a-46ab-bbdd-e3933d1857f9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shader\Test.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\GizmoRotationNoHighlight.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\GizmoTranslation.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\GizmoRotationHighlight.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\GizmoRotationLine.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\ColorLine.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Macros.hlsl">
+      <Filter>Object\Resource\Shader\Built-in Header</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Engine.hlsl">
+      <Filter>Object\Resource\Shader\Built-in Header</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Functions.hlsl">
+      <Filter>Object\Resource\Shader\Built-in Header</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\DeferredScreen.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Standard.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\DeferredLighting.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\DeferredLightBlending.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\DeferredLightDepthWrite.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\StandardInstancing.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="include\Engine.natvis" />
+  </ItemGroup>
+</Project>

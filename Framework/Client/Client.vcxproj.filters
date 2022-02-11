@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>Default\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Default\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Default\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Default\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>TestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="TPSCamera.h">
+      <Filter>TPSCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="FreeCamera.h">
+      <Filter>FreeCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerTestScene.h">
+      <Filter>PlayerTestScene</Filter>
+    </ClInclude>
+    <ClInclude Include="JackAnimator.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>Default\Misc</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>Default\Misc</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Default">
+      <UniqueIdentifier>{052abdf1-bbb8-4168-9942-22a035e53d81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\Misc">
+      <UniqueIdentifier>{281f1099-81bf-4bd8-a72f-cfe715ac6b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{b8a2916b-8833-414a-aa4c-9dd98c048686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestScene">
+      <UniqueIdentifier>{4cfd2815-3778-468a-8117-3f746f1c41fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PlayerTestScene">
+      <UniqueIdentifier>{b81ebdf1-752c-4988-938a-75448d276ec5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TPSCamera">
+      <UniqueIdentifier>{597985f6-ecc8-483a-9816-13bced82fca1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FreeCamera">
+      <UniqueIdentifier>{a2e17b78-4613-4562-a6f7-5751dd450c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{64cf4265-82ae-46db-8a64-32bb2330264a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>Default\Misc</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Default\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>TestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="TPSCamera.cpp">
+      <Filter>TPSCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="FreeCamera.cpp">
+      <Filter>FreeCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerTestScene.cpp">
+      <Filter>PlayerTestScene</Filter>
+    </ClCompile>
+    <ClCompile Include="JackAnimator.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shader\SkinnedOutline.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

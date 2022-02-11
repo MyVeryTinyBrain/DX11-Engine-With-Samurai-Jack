@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\V2.cpp">
+      <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\V3.cpp">
+      <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\V4.cpp">
+      <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Noise.cpp">
+      <Filter>Noise</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Real.cpp">
+      <Filter>Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Color.cpp">
+      <Filter>Color</Filter>
+    </ClCompile>
+    <ClCompile Include="src\M4.cpp">
+      <Filter>Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Q.cpp">
+      <Filter>Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ex.cpp">
+      <Filter>Extension</Filter>
+    </ClCompile>
+    <ClCompile Include="src\XmMathPlusPCH.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Plane.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ray.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SphericalYaw.cpp">
+      <Filter>SphericalYaw</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Triangle.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bounds.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ex2.cpp">
+      <Filter>Extension</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sphere.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frustum.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrientedBounds.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BoundingHolder.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\XmMathPlus.h" />
+    <ClInclude Include="include\V2.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\V3.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\V4.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Noise.h">
+      <Filter>Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Real.h">
+      <Filter>Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Type.h">
+      <Filter>Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Color.h">
+      <Filter>Color</Filter>
+    </ClInclude>
+    <ClInclude Include="include\M4.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Q.h">
+      <Filter>Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="include\XmMathPlusMacro.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ex.h">
+      <Filter>Extension</Filter>
+    </ClInclude>
+    <ClInclude Include="include\XmMathPlusPCH.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ray.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Plane.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SphericalYaw.h">
+      <Filter>SphericalYaw</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Triangle.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bounds.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="include\Ex2.h">
+      <Filter>Extension</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ex2.hpp">
+      <Filter>Extension</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sphere.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Frustum.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrientedBounds.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BoundingHolder.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Vector">
+      <UniqueIdentifier>{7250baa9-feba-4bf1-a635-4eecc84e7ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Noise">
+      <UniqueIdentifier>{26a11a4e-2201-4fe9-a433-c0cb4c462ae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Primitive">
+      <UniqueIdentifier>{4f13790e-97da-4979-bf2c-61895dbee557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Color">
+      <UniqueIdentifier>{ed5a7b29-f505-4aff-9779-ec22725371a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matrix">
+      <UniqueIdentifier>{42aa6e16-f064-41c3-bac2-5be8274fcc5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quaternion">
+      <UniqueIdentifier>{30cc8dab-b70c-47e0-ba32-168a0c725d6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default">
+      <UniqueIdentifier>{97b60640-f39a-4fcc-b777-40a02906fb81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension">
+      <UniqueIdentifier>{e4e6b4b5-e76a-4922-ad0a-15f51e50ca56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{5aae9941-9729-467e-b3b7-bbf3b064ceb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SphericalYaw">
+      <UniqueIdentifier>{8f568eba-7afd-413f-9440-985ca34d067f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint">
+      <Filter>Default</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="include\XmMathPlus.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="XmMathPlus.rc" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,156 @@
+#pragma once
+
+ENGINE_BEGIN
+
+typedef unsigned int Index;
+
+struct TriangleIndex
+{
+	Index _0;
+	Index _1;
+	Index _2;
+};
+
+struct ENGINE_API Vertex
+{
+	XM_CONSTEXPR inline static D3D11_INPUT_CLASSIFICATION InputSlotClass() { return D3D11_INPUT_PER_VERTEX_DATA; }
+	XM_CONSTEXPR inline static uint InputSlot() { return 0u; }
+	XM_CONSTEXPR inline static uint InstanceDataStepRate() { return 0u; }
+
+	V3 position;			// float3			POSITION
+	XM_CONSTEXPR inline static uint32_t			PositionPosition() { return 0; }
+	XM_CONSTEXPR inline static uint32_t			PositionSize() { return sizeof(V3); }
+	XM_CONSTEXPR inline static const char*		PositionName() { return "POSITION"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		PositionFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
+
+	V3 uv;					// float3			TEXCOORD
+	XM_CONSTEXPR inline static uint32_t			UVPosition() { return PositionPosition() + PositionSize(); }
+	XM_CONSTEXPR inline static uint32_t			UVSize() { return sizeof(V3); }
+	XM_CONSTEXPR inline static const char*		UVName() { return "TEXCOORD"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		UVFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
+
+	V3 normal;				// float3			NORMAL	
+	XM_CONSTEXPR inline static uint32_t			NormalPosition() { return UVPosition() + UVSize(); }
+	XM_CONSTEXPR inline static uint32_t			NormalSize() { return sizeof(V3); }
+	XM_CONSTEXPR inline static const char*		NormalName() { return "NORMAL"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		NormalFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
+
+	V3 tangent;				// float3			TANGENT	
+	XM_CONSTEXPR inline static uint32_t			TangentPosition() { return NormalPosition() + NormalSize(); }
+	XM_CONSTEXPR inline static uint32_t			TangentSize() { return sizeof(V3); }
+	XM_CONSTEXPR inline static const char*		TangentName() { return "TANGENT"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		TangentFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
+
+	V3 biNormal;			// float3			BINORMAL
+	XM_CONSTEXPR inline static uint32_t			BiNormalPosition() { return TangentPosition() + TangentSize(); }
+	XM_CONSTEXPR inline static uint32_t			BiNormalSize() { return sizeof(V3); }
+	XM_CONSTEXPR inline static const char*		BiNormalName() { return "BINORMAL"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		BiNormalFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
+
+	Color color;			// float4			COLOR	
+	XM_CONSTEXPR inline static uint32_t			ColorPosition() { return BiNormalPosition() + BiNormalSize(); }
+	XM_CONSTEXPR inline static uint32_t			ColorSize() { return sizeof(Color); }
+	XM_CONSTEXPR inline static const char*		ColorName() { return "COLOR"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		ColorFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	uint4 blendIndices;		// uint4			BLENDINDICES
+	XM_CONSTEXPR inline static uint32_t			BlendIndicesPosition() { return ColorPosition() + ColorSize(); }
+	XM_CONSTEXPR inline static uint32_t			BlendIndicesSize() { return sizeof(uint4); }
+	XM_CONSTEXPR inline static const char*		BlendIndicesName() { return "BLENDINDICES"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		BlendIndicesFormat() { return DXGI_FORMAT_R32G32B32A32_UINT; }
+
+	V4 blendWeight;			// float4			BLENDWEIGHT
+	XM_CONSTEXPR inline static uint32_t			BlendWeightPosition() { return BlendIndicesPosition() + BlendIndicesSize(); }
+	XM_CONSTEXPR inline static uint32_t			BlendWeightSize() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		BlendWeightName() { return "BLENDWEIGHT"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		BlendWeightFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+};
+
+struct ENGINE_API InstanceData
+{
+	XM_CONSTEXPR inline static D3D11_INPUT_CLASSIFICATION InputSlotClass() { return D3D11_INPUT_PER_INSTANCE_DATA; }
+	XM_CONSTEXPR inline static uint InputSlot() { return 1u; }
+	XM_CONSTEXPR inline static uint InstanceDataStepRate() { return 1u; }
+
+	V4 right;				// float4			INSTANCE_RIGHT
+	XM_CONSTEXPR inline static uint32_t			RightPosition() { return 0; }
+	XM_CONSTEXPR inline static uint32_t			RightSize() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		RightName() { return "INSTANCE_RIGHT"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		RightFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	V4 up;					// float4			INSTANCE_UP
+	XM_CONSTEXPR inline static uint32_t			UpPosition() { return RightPosition() + RightSize(); }
+	XM_CONSTEXPR inline static uint32_t			UpSize() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		UpName() { return "INSTANCE_UP"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		UpFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	V4 forward;				// float4			INSTANCE_FORWARD
+	XM_CONSTEXPR inline static uint32_t			ForwardPosition() { return UpPosition() + UpSize(); }
+	XM_CONSTEXPR inline static uint32_t			ForwardSize() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		ForwardName() { return "INSTANCE_FORWARD"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		ForwardFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	V4 position;			// float4			INSTANCE_POSITION
+	XM_CONSTEXPR inline static uint32_t			PositionPosition() { return ForwardPosition() + ForwardSize(); }
+	XM_CONSTEXPR inline static uint32_t			PositionSize() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		PositionName() { return "INSTANCE_POSITION"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		PositionFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+};
+
+enum class PrimitiveTopology
+{
+	Triangles = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+	Lines = D3D_PRIMITIVE_TOPOLOGY_LINELIST,
+	LineStrip = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP,
+	Points = D3D_PRIMITIVE_TOPOLOGY_POINTLIST,
+};
+
+struct ENGINE_API IndicesStream
+{
+	uint Count = 0;
+	Index* Indices = nullptr;
+
+	inline IndicesStream() {}
+
+	inline explicit IndicesStream(Index* indices, uint count)
+	{
+		this->Indices = indices;
+		this->Count = count;
+	}
+
+	inline IndicesStream& operator = (const IndicesStream& rhs)
+	{
+		SafeDeleteArray(this->Indices);
+		this->Indices = new Index[rhs.Count];
+		memcpy(this->Indices, rhs.Indices, sizeof(Index) * rhs.Count);
+		this->Count = rhs.Count;
+		return *this;
+	}
+
+	inline IndicesStream& operator = (IndicesStream&& rhs) noexcept
+	{
+		SafeDeleteArray(this->Indices);
+		this->Indices = rhs.Indices;
+		this->Count = rhs.Count;
+		rhs.Indices = nullptr;
+		return *this;
+	}
+
+	inline IndicesStream(const IndicesStream& rhs)
+	{
+		*this = rhs;
+	}
+
+	inline IndicesStream(IndicesStream&& rhs) noexcept
+	{
+		*this = rhs;
+	}
+
+	inline ~IndicesStream()
+	{
+		SafeDeleteArray(Indices);
+	}
+};
+
+ENGINE_END
+

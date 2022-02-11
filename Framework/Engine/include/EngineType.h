@@ -1,0 +1,5 @@
+#pragma once
+
+ENGINE_BEGIN
+
+ENGINE_END

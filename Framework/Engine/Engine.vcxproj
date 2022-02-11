@@ -1,0 +1,594 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\imgui-1.85\imstb_rectpack.h" />
+    <ClInclude Include="..\..\..\imgui-1.85\imstb_textedit.h" />
+    <ClInclude Include="..\..\..\imgui-1.85\imstb_truetype.h" />
+    <ClInclude Include="include\Animation.h" />
+    <ClInclude Include="include\AnimationClip.h" />
+    <ClInclude Include="include\AnimationSet.h" />
+    <ClInclude Include="include\Animator.h" />
+    <ClInclude Include="include\AnimatorBlendNode.h" />
+    <ClInclude Include="include\AnimatorBlendNodeElement.h" />
+    <ClInclude Include="include\AnimatorLayer.h" />
+    <ClInclude Include="include\AnimatorNode.h" />
+    <ClInclude Include="include\AnimatorProperty.h" />
+    <ClInclude Include="include\AnimatorSingleNode.h" />
+    <ClInclude Include="include\AnimatorTransition.h" />
+    <ClInclude Include="include\AnimatorTypes.h" />
+    <ClInclude Include="include\BoxCollider.h" />
+    <ClInclude Include="include\CapsuleCollider.h" />
+    <ClInclude Include="include\Collider.h" />
+    <ClInclude Include="include\ComponentManagement.h" />
+    <ClInclude Include="include\ConvexCollider.h" />
+    <ClInclude Include="include\DeferredRenderTarget.h" />
+    <ClInclude Include="include\DepthStencil.h" />
+    <ClInclude Include="include\DirectionalLight.h" />
+    <ClInclude Include="include\ILight.h" />
+    <ClInclude Include="include\ILightManager.h" />
+    <ClInclude Include="include\IPhysicsObject.h" />
+    <ClInclude Include="include\IRendererBoundsOp.h" />
+    <ClInclude Include="include\ITexture.h" />
+    <ClInclude Include="include\Light.h" />
+    <ClInclude Include="include\LightManager.h" />
+    <ClInclude Include="include\MaterialStandard.h" />
+    <ClInclude Include="include\PointLight.h" />
+    <ClInclude Include="include\RenderTarget.h" />
+    <ClInclude Include="include\Delegate.h" />
+    <ClInclude Include="include\Delegate.hpp" />
+    <ClInclude Include="include\Function.h" />
+    <ClInclude Include="include\Function.hpp" />
+    <ClInclude Include="include\FunctionConvert.h" />
+    <ClInclude Include="include\Gizmo.h" />
+    <ClInclude Include="include\GizmoBase.h" />
+    <ClInclude Include="include\GizmoRotation.h" />
+    <ClInclude Include="include\GizmoScaling.h" />
+    <ClInclude Include="include\GizmoTranslation.h" />
+    <ClInclude Include="include\IAnimatorLayer.h" />
+    <ClInclude Include="include\IAnimatorNode.h" />
+    <ClInclude Include="include\ICollider.h" />
+    <ClInclude Include="include\InstanceBufferManager.h" />
+    <ClInclude Include="include\IPhysicsSystem.h" />
+    <ClInclude Include="include\IRendererBoneOp.h" />
+    <ClInclude Include="include\IRigidbody.h" />
+    <ClInclude Include="include\MaterialColorLine.h" />
+    <ClInclude Include="include\PhysicsFilterShaderCallback.h" />
+    <ClInclude Include="include\PhysicsLayerManager.h" />
+    <ClInclude Include="include\MaterialGizmoRotationHighlight.h" />
+    <ClInclude Include="include\MaterialGizmoRotationLine.h" />
+    <ClInclude Include="include\MaterialGizmoRotationNoHighlight.h" />
+    <ClInclude Include="include\MaterialGizmoTranslation.h" />
+    <ClInclude Include="include\NodeDesc.h" />
+    <ClInclude Include="include\Node.h" />
+    <ClInclude Include="include\NodeSet.h" />
+    <ClInclude Include="include\Channel.h" />
+    <ClInclude Include="include\imconfig.h" />
+    <ClInclude Include="include\imgui.h" />
+    <ClInclude Include="include\imgui_impl_dx11.h" />
+    <ClInclude Include="include\imgui_impl_win32.h" />
+    <ClInclude Include="include\imgui_internal.h" />
+    <ClInclude Include="include\IObject.h" />
+    <ClInclude Include="include\IResourceObject.h" />
+    <ClInclude Include="include\ISubResourceObject.h" />
+    <ClInclude Include="include\KeyframeDesc.h" />
+    <ClInclude Include="include\ModelMaterialDesc.h" />
+    <ClInclude Include="include\BuiltInResources.h" />
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\CameraManager.h" />
+    <ClInclude Include="include\CBufferManager.h" />
+    <ClInclude Include="include\CBufferTypes.h" />
+    <ClInclude Include="include\CentralTimeElement.h" />
+    <ClInclude Include="include\CompiledShaderDesc.h" />
+    <ClInclude Include="include\Component.h" />
+    <ClInclude Include="include\Engine.h" />
+    <ClInclude Include="include\EngineMacro.h" />
+    <ClInclude Include="include\EngineFunction.h" />
+    <ClInclude Include="include\EngineType.h" />
+    <ClInclude Include="include\EngineWorld.h" />
+    <ClInclude Include="include\EngineWorldDesc.h" />
+    <ClInclude Include="include\FPSChecker.h" />
+    <ClInclude Include="include\GameObject.h" />
+    <ClInclude Include="include\GameObject.hpp" />
+    <ClInclude Include="include\EngineWorldBase.h" />
+    <ClInclude Include="include\GameObjectManagement.h" />
+    <ClInclude Include="include\GraphicSystem.h" />
+    <ClInclude Include="include\IBuiltInResources.h" />
+    <ClInclude Include="include\ICamera.h" />
+    <ClInclude Include="include\ICameraManager.h" />
+    <ClInclude Include="include\IImGuiSystem.h" />
+    <ClInclude Include="include\IMaterial.h" />
+    <ClInclude Include="include\IMesh.h" />
+    <ClInclude Include="include\ICentralTimeElement.h" />
+    <ClInclude Include="include\IComponent.h" />
+    <ClInclude Include="include\IGameObject.h" />
+    <ClInclude Include="include\IGraphicSystem.h" />
+    <ClInclude Include="include\IInput.h" />
+    <ClInclude Include="include\ImGuiSystem.h" />
+    <ClInclude Include="include\Input.h" />
+    <ClInclude Include="include\IRendererCullOp.h" />
+    <ClInclude Include="include\IResourceFactory.h" />
+    <ClInclude Include="include\Material.hpp" />
+    <ClInclude Include="include\AssimpData.h" />
+    <ClInclude Include="include\MeshRenderer.h" />
+    <ClInclude Include="include\NodeTransform.h" />
+    <ClInclude Include="include\InstanceRenderer.h" />
+    <ClInclude Include="include\PhysicsQuery.h" />
+    <ClInclude Include="include\PhysicsSimulationCallbackType.h" />
+    <ClInclude Include="include\PhysicsSimulationEventCallback.h" />
+    <ClInclude Include="include\PrimitiveVI.h" />
+    <ClInclude Include="include\DeferredScreenRender.h" />
+    <ClInclude Include="include\Renderer.h" />
+    <ClInclude Include="include\RenderQueueInstance.h" />
+    <ClInclude Include="include\RenderQueueTransparent.h" />
+    <ClInclude Include="include\RenderQueueBase.h" />
+    <ClInclude Include="include\RenderQueueStandard.h" />
+    <ClInclude Include="include\IResourceManagement.h" />
+    <ClInclude Include="include\IScene.h" />
+    <ClInclude Include="include\ISceneManagement.h" />
+    <ClInclude Include="include\ISystem.h" />
+    <ClInclude Include="include\Key.h" />
+    <ClInclude Include="include\Material.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\Object.h" />
+    <ClInclude Include="include\ObjectBase.h" />
+    <ClInclude Include="include\EnginePCH.h" />
+    <ClInclude Include="include\PassDesc.h" />
+    <ClInclude Include="include\PhysicsSystem.h" />
+    <ClInclude Include="include\Ref.h" />
+    <ClInclude Include="include\Ref.hpp" />
+    <ClInclude Include="include\RefData.h" />
+    <ClInclude Include="include\RenderGroup.h" />
+    <ClInclude Include="include\RenderQueue.h" />
+    <ClInclude Include="include\RenderRequestInput.h" />
+    <ClInclude Include="include\RenderTexture2D.h" />
+    <ClInclude Include="include\ResourceFactory.h" />
+    <ClInclude Include="include\ResourceFactory.hpp" />
+    <ClInclude Include="include\ResourceManagement.h" />
+    <ClInclude Include="include\ResourceObject.h" />
+    <ClInclude Include="include\ResourceRef.h" />
+    <ClInclude Include="include\ResourceRef.hpp" />
+    <ClInclude Include="include\ResourceRefData.h" />
+    <ClInclude Include="include\Rigidbody.h" />
+    <ClInclude Include="include\RigidbodyExtrapolate.h" />
+    <ClInclude Include="include\RigidbodyInterpolate.h" />
+    <ClInclude Include="include\RigidbodyInterpolateBase.h" />
+    <ClInclude Include="include\Scene.h" />
+    <ClInclude Include="include\SceneManagement.h" />
+    <ClInclude Include="include\SceneObject.h" />
+    <ClInclude Include="include\SementicDesc.h" />
+    <ClInclude Include="include\Shader.h" />
+    <ClInclude Include="include\RenderQueueLight.h" />
+    <ClInclude Include="include\SkinnedMeshRenderer.h" />
+    <ClInclude Include="include\SphereCollider.h" />
+    <ClInclude Include="include\SpotLight.h" />
+    <ClInclude Include="include\SubIndicesDesc.h" />
+    <ClInclude Include="include\SubResourceObject.h" />
+    <ClInclude Include="include\SubResourceRef.h" />
+    <ClInclude Include="include\SubResourceRef.hpp" />
+    <ClInclude Include="include\System.h" />
+    <ClInclude Include="include\TechniqueDesc.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\Texture2D.h" />
+    <ClInclude Include="include\Times.h" />
+    <ClInclude Include="include\TimeElement.h" />
+    <ClInclude Include="include\Transform.h" />
+    <ClInclude Include="include\TransformData.h" />
+    <ClInclude Include="include\TransformUpdateArguments.h" />
+    <ClInclude Include="include\tstring.h" />
+    <ClInclude Include="include\VI.h" />
+    <ClInclude Include="include\VIBuffer.h" />
+    <ClInclude Include="include\VITypes.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\AnimationClip.cpp" />
+    <ClCompile Include="src\AnimationSet.cpp" />
+    <ClCompile Include="src\Animator.cpp" />
+    <ClCompile Include="src\AnimatorBlendNode.cpp" />
+    <ClCompile Include="src\AnimatorBlendNodeElement.cpp" />
+    <ClCompile Include="src\AnimatorLayer.cpp" />
+    <ClCompile Include="src\AnimatorNode.cpp" />
+    <ClCompile Include="src\AnimatorProperty.cpp" />
+    <ClCompile Include="src\AnimatorSingleNode.cpp" />
+    <ClCompile Include="src\AnimatorTransition.cpp" />
+    <ClCompile Include="src\BoxCollider.cpp" />
+    <ClCompile Include="src\CapsuleCollider.cpp" />
+    <ClCompile Include="src\Collider.cpp" />
+    <ClCompile Include="src\ComponentManagement.cpp" />
+    <ClCompile Include="src\ConvexCollider.cpp" />
+    <ClCompile Include="src\DeferredRenderTarget.cpp" />
+    <ClCompile Include="src\DepthStencil.cpp" />
+    <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\ILight.cpp" />
+    <ClCompile Include="src\ILightManager.cpp" />
+    <ClCompile Include="src\IPhysicsObject.cpp" />
+    <ClCompile Include="src\IRendererBoundsOp.cpp" />
+    <ClCompile Include="src\ITexture.cpp" />
+    <ClCompile Include="src\Light.cpp" />
+    <ClCompile Include="src\LightManager.cpp" />
+    <ClCompile Include="src\MaterialStandard.cpp" />
+    <ClCompile Include="src\PointLight.cpp" />
+    <ClCompile Include="src\RenderTarget.cpp" />
+    <ClCompile Include="src\Gizmo.cpp" />
+    <ClCompile Include="src\GizmoBase.cpp" />
+    <ClCompile Include="src\GizmoRotation.cpp" />
+    <ClCompile Include="src\GizmoScaling.cpp" />
+    <ClCompile Include="src\GizmoTranslation.cpp" />
+    <ClCompile Include="src\IAnimatorLayer.cpp" />
+    <ClCompile Include="src\IAnimatorNode.cpp" />
+    <ClCompile Include="src\ICollider.cpp" />
+    <ClCompile Include="src\InstanceBufferManager.cpp" />
+    <ClCompile Include="src\IPhysicsSystem.cpp" />
+    <ClCompile Include="src\IRendererBoneOp.cpp" />
+    <ClCompile Include="src\IRigidbody.cpp" />
+    <ClCompile Include="src\MaterialColorLine.cpp" />
+    <ClCompile Include="src\PhysicsFilterShaderCallback.cpp" />
+    <ClCompile Include="src\PhysicsLayerManager.cpp" />
+    <ClCompile Include="src\MaterialGizmoRotationHighlight.cpp" />
+    <ClCompile Include="src\MaterialGizmoRotationLine.cpp" />
+    <ClCompile Include="src\MaterialGizmoRotationNoHighlight.cpp" />
+    <ClCompile Include="src\MaterialGizmoTranslation.cpp" />
+    <ClCompile Include="src\NodeDesc.cpp" />
+    <ClCompile Include="src\Node.cpp" />
+    <ClCompile Include="src\NodeSet.cpp" />
+    <ClCompile Include="src\Channel.cpp" />
+    <ClCompile Include="src\imgui.cpp" />
+    <ClCompile Include="src\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui_impl_dx11.cpp" />
+    <ClCompile Include="src\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\imgui_tables.cpp" />
+    <ClCompile Include="src\imgui_widgets.cpp" />
+    <ClCompile Include="src\IObject.cpp" />
+    <ClCompile Include="src\IResourceObject.cpp" />
+    <ClCompile Include="src\ISubResourceObject.cpp" />
+    <ClCompile Include="src\KeyframeDesc.cpp" />
+    <ClCompile Include="src\ModelMaterialDesc.cpp" />
+    <ClCompile Include="src\BuiltInResources.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\CameraManager.cpp" />
+    <ClCompile Include="src\CBufferManager.cpp" />
+    <ClCompile Include="src\CBufferTypes.cpp" />
+    <ClCompile Include="src\CentralTimeElement.cpp" />
+    <ClCompile Include="src\CompiledShaderDesc.cpp" />
+    <ClCompile Include="src\Component.cpp" />
+    <ClCompile Include="src\EngineFunction.cpp" />
+    <ClCompile Include="src\EngineType.cpp" />
+    <ClCompile Include="src\EngineWorld.cpp" />
+    <ClCompile Include="src\EngineWorldDesc.cpp" />
+    <ClCompile Include="src\FPSChecker.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\EngineWorldBase.cpp" />
+    <ClCompile Include="src\GameObjectManagement.cpp" />
+    <ClCompile Include="src\GraphicSystem.cpp" />
+    <ClCompile Include="src\IBuiltInResources.cpp" />
+    <ClCompile Include="src\ICamera.cpp" />
+    <ClCompile Include="src\ICameraManager.cpp" />
+    <ClCompile Include="src\IImGuiSystem.cpp" />
+    <ClCompile Include="src\IMaterial.cpp" />
+    <ClCompile Include="src\IMesh.cpp" />
+    <ClCompile Include="src\ICentralTimeElement.cpp" />
+    <ClCompile Include="src\IComponent.cpp" />
+    <ClCompile Include="src\IGameObject.cpp" />
+    <ClCompile Include="src\IGraphicSystem.cpp" />
+    <ClCompile Include="src\IInput.cpp" />
+    <ClCompile Include="src\ImGuiSystem.cpp" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\IRendererCullOp.cpp" />
+    <ClCompile Include="src\IResourceFactory.cpp" />
+    <ClCompile Include="src\AssimpData.cpp" />
+    <ClCompile Include="src\MeshRenderer.cpp" />
+    <ClCompile Include="src\NodeTransform.cpp" />
+    <ClCompile Include="src\InstanceRenderer.cpp" />
+    <ClCompile Include="src\PhysicsQuery.cpp" />
+    <ClCompile Include="src\PhysicsSimulationCallbackType.cpp" />
+    <ClCompile Include="src\PhysicsSimulationEventCallback.cpp" />
+    <ClCompile Include="src\PrimitiveVI.cpp" />
+    <ClCompile Include="src\DeferredScreenRender.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\RenderQueueInstance.cpp" />
+    <ClCompile Include="src\RenderQueueTransparent.cpp" />
+    <ClCompile Include="src\RenderQueueBase.cpp" />
+    <ClCompile Include="src\RenderQueueStandard.cpp" />
+    <ClCompile Include="src\IResourceManagement.cpp" />
+    <ClCompile Include="src\IScene.cpp" />
+    <ClCompile Include="src\ISceneManagement.cpp" />
+    <ClCompile Include="src\ISystem.cpp" />
+    <ClCompile Include="src\Key.cpp" />
+    <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Object.cpp" />
+    <ClCompile Include="src\ObjectBase.cpp" />
+    <ClCompile Include="src\EnginePCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\PassDesc.cpp" />
+    <ClCompile Include="src\PhysicsSystem.cpp" />
+    <ClCompile Include="src\RefData.cpp" />
+    <ClCompile Include="src\RenderGroup.cpp" />
+    <ClCompile Include="src\RenderQueue.cpp" />
+    <ClCompile Include="src\RenderRequestInput.cpp" />
+    <ClCompile Include="src\RenderTexture2D.cpp" />
+    <ClCompile Include="src\ResourceFactory.cpp" />
+    <ClCompile Include="src\ResourceManagement.cpp" />
+    <ClCompile Include="src\ResourceObject.cpp" />
+    <ClCompile Include="src\ResourceRefData.cpp" />
+    <ClCompile Include="src\Rigidbody.cpp" />
+    <ClCompile Include="src\RigidbodyExtrapolate.cpp" />
+    <ClCompile Include="src\RigidbodyInterpolate.cpp" />
+    <ClCompile Include="src\RigidbodyInterpolateBase.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\SceneManagement.cpp" />
+    <ClCompile Include="src\SceneObject.cpp" />
+    <ClCompile Include="src\SementicDesc.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\RenderQueueLight.cpp" />
+    <ClCompile Include="src\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="src\SphereCollider.cpp" />
+    <ClCompile Include="src\SpotLight.cpp" />
+    <ClCompile Include="src\SubIndicesDesc.cpp" />
+    <ClCompile Include="src\SubResourceObject.cpp" />
+    <ClCompile Include="src\System.cpp" />
+    <ClCompile Include="src\TechniqueDesc.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Texture2D.cpp" />
+    <ClCompile Include="src\Times.cpp" />
+    <ClCompile Include="src\TimeElement.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
+    <ClCompile Include="src\TransformData.cpp" />
+    <ClCompile Include="src\TransformUpdateArguments.cpp" />
+    <ClCompile Include="src\tstring.cpp" />
+    <ClCompile Include="src\VI.cpp" />
+    <ClCompile Include="src\VIBuffer.cpp" />
+    <ClCompile Include="src\VITypes.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shader\ColorLine.fx" />
+    <FxCompile Include="..\Shader\DeferredLightBlending.fx" />
+    <FxCompile Include="..\Shader\DeferredLighting.fx" />
+    <FxCompile Include="..\Shader\DeferredLightDepthWrite.fx" />
+    <FxCompile Include="..\Shader\Engine.hlsl" />
+    <FxCompile Include="..\Shader\Functions.hlsl" />
+    <FxCompile Include="..\Shader\GizmoRotationHighlight.fx" />
+    <FxCompile Include="..\Shader\GizmoRotationLine.fx" />
+    <FxCompile Include="..\Shader\GizmoRotationNoHighlight.fx" />
+    <FxCompile Include="..\Shader\GizmoTranslation.fx" />
+    <FxCompile Include="..\Shader\Macros.hlsl" />
+    <FxCompile Include="..\Shader\DeferredScreen.fx" />
+    <FxCompile Include="..\Shader\Standard.fx" />
+    <FxCompile Include="..\Shader\StandardInstancing.fx" />
+    <FxCompile Include="..\Shader\Test.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="include\Engine.natvis" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{051f5570-6c82-453d-9371-09942474641f}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="EngineDebug86.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="EngineRelease86.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="EngineDebug64.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="EngineRelease64.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\bin\DebugX86\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\bin\ReleaseX86\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\bin\DebugX64\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\bin\ReleaseX64\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\Engine\include\
+xcopy /y .\bin\DebugX86\*.lib			..\Reference\Engine\lib\DebugX86\
+xcopy /y .\bin\DebugX86\*.dll			..\Reference\DLL\DebugX86\</Command>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\Engine\include\
+xcopy /y .\bin\ReleaseX86\*.lib			..\Reference\Engine\lib\ReleaseX86\
+xcopy /y .\bin\ReleaseX86\*.dll			..\Reference\DLL\ReleaseX86\</Command>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\Engine\include\
+xcopy /y .\bin\DebugX64\*.lib			..\Reference\Engine\lib\DebugX64\
+xcopy /y .\bin\DebugX64\*.dll			..\Reference\DLL\DebugX64\</Command>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\Engine\include\
+xcopy /y .\bin\ReleaseX64\*.lib			..\Reference\Engine\lib\ReleaseX64\
+xcopy /y .\bin\ReleaseX64\*.dll			..\Reference\DLL\ReleaseX64\</Command>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

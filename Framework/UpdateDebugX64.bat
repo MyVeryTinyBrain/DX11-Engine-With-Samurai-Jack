@@ -1,0 +1,1 @@
+xcopy /y .\Reference\DLL\DebugX64\*.dll	.\ClientDebugX64\

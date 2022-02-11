@@ -1,0 +1,1 @@
+xcopy /y .\Reference\DLL\ReleaseX64\*.dll	.\ClientReleaseX64\

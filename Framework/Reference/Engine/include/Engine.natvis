@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Engine::Ref&lt;*&gt;">
+    <Expand>
+        <Item Name="[ptr]">m_refData->m_obj</Item>
+		<Item Name="[reference data]">m_refData</Item>
+    </Expand>
+	</Type>
+	<Type Name="Engine::ResourceRef&lt;*&gt;">
+    <Expand>
+        <Item Name="[ptr]">m_refData->m_obj</Item>
+		<Item Name="[reference data]">m_refData</Item>
+    </Expand>
+	</Type>
+	<Type Name="Engine::SubResourceRef&lt;*&gt;">
+    <Expand>
+        <Item Name="[ptr]">m_refData->m_obj</Item>
+		<Item Name="[reference data]">m_refData</Item>
+		<Item Name="[based ptr]">m_basedResourceRefData->m_obj</Item>
+		<Item Name="[based reference data]">m_basedResourceRefData</Item>
+    </Expand>
+	</Type>
+</AutoVisualizer>

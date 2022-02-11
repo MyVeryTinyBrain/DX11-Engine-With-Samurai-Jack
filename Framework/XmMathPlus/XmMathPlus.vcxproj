@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\BoundingHolder.cpp" />
+    <ClCompile Include="src\Bounds.cpp" />
+    <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Ex2.cpp" />
+    <ClCompile Include="src\Frustum.cpp" />
+    <ClCompile Include="src\M4.cpp" />
+    <ClCompile Include="src\Ex.cpp" />
+    <ClCompile Include="src\OrientedBounds.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
+    <ClCompile Include="src\Ray.cpp" />
+    <ClCompile Include="src\Sphere.cpp" />
+    <ClCompile Include="src\SphericalYaw.cpp" />
+    <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\XmMathPlusPCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Noise.cpp" />
+    <ClCompile Include="src\Q.cpp" />
+    <ClCompile Include="src\Real.cpp" />
+    <ClCompile Include="src\V2.cpp" />
+    <ClCompile Include="src\V3.cpp" />
+    <ClCompile Include="src\V4.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\BoundingHolder.h" />
+    <ClInclude Include="include\Bounds.h" />
+    <ClInclude Include="include\Color.h" />
+    <ClInclude Include="include\Ex2.h" />
+    <ClInclude Include="include\Ex2.hpp" />
+    <ClInclude Include="include\Frustum.h" />
+    <ClInclude Include="include\M4.h" />
+    <ClInclude Include="include\Ex.h" />
+    <ClInclude Include="include\OrientedBounds.h" />
+    <ClInclude Include="include\Sphere.h" />
+    <ClInclude Include="include\SphericalYaw.h" />
+    <ClInclude Include="include\Triangle.h" />
+    <ClInclude Include="include\XmMathPlus.h" />
+    <ClInclude Include="include\Plane.h" />
+    <ClInclude Include="include\Ray.h" />
+    <ClInclude Include="include\XmMathPlusMacro.h" />
+    <ClInclude Include="include\XmMathPlusPCH.h" />
+    <ClInclude Include="include\Noise.h" />
+    <ClInclude Include="include\Q.h" />
+    <ClInclude Include="include\Real.h" />
+    <ClInclude Include="include\Type.h" />
+    <ClInclude Include="include\V2.h" />
+    <ClInclude Include="include\V3.h" />
+    <ClInclude Include="include\V4.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="include\XmMathPlus.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="XmMathPlus.rc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{5dffcc86-6e53-4fa8-b73b-ae03641d8813}</ProjectGuid>
+    <RootNamespace>MathPlus</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\bin\DebugX86\</OutDir>
+    <IncludePath>.\include\;.\header\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\bin\ReleaseX86\</OutDir>
+    <IncludePath>.\include\;.\header\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\bin\DebugX64\</OutDir>
+    <IncludePath>.\include\;.\header\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\bin\ReleaseX64\</OutDir>
+    <IncludePath>.\include\;.\header\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;MATHPLUS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);MATHPLUS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>XmMathPlusPCH.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\XmMathPlus\include\
+xcopy /y .\bin\DebugX86\*.lib			..\Reference\XmMathPlus\lib\DebugX86\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MATHPLUS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);MATHPLUS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>XmMathPlusPCH.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\XmMathPlus\include\
+xcopy /y .\bin\ReleaseX86\*.lib			..\Reference\XmMathPlus\lib\ReleaseX86\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;MATHPLUS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);MATHPLUS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>XmMathPlusPCH.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\XmMathPlus\include\
+xcopy /y .\bin\DebugX64\*.lib			..\Reference\XmMathPlus\lib\DebugX64\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;MATHPLUS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);MATHPLUS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>XmMathPlusPCH.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>xcopy /y .\include\*.*			..\Reference\XmMathPlus\include\
+xcopy /y .\bin\ReleaseX64\*.lib			..\Reference\XmMathPlus\lib\ReleaseX64\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
