@@ -146,6 +146,13 @@ BlendState BlendState1
 	BlendOp = Add;
 };
 
+BlendState BlendState2
+{
+	BlendEnable[0] = true;
+	SrcBlend = Src_Alpha;
+	DestBlend = Inv_Src_Alpha;
+	BlendOp = Add;
+};
 
 technique11 Technique0
 {
@@ -161,7 +168,7 @@ technique11 Technique0
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState1, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState2, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_Blend();
 	}

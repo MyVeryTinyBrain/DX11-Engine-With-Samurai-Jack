@@ -33,6 +33,7 @@ struct PS_OUT
 	float4 worldPosition : SV_TARGET2;
 	float4 depthLightOcclusionShadow : SV_TARGET3;
 	float4 specularPower : SV_TARGET4;
+	float4 emissive : SV_TARGET5;
 };
 
 texture2D		_NormalMapTexture;
@@ -111,6 +112,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.uv).rgb;
 	float specularPower = _SpecularPower;
 	output.specularPower = float4(specularMask, specularPower);
+
+	output.emissive = float4(0, 0, 0, 0);
 
 	return output;
 }

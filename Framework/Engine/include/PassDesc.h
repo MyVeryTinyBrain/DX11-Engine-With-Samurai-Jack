@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderGroup.h"
+#include "RenderTypes.h"
 
 ENGINE_BEGIN
 
@@ -13,7 +13,7 @@ protected:
 		const string& name, const vector<string>& sementics, 
 		RenderGroup renderGroup, int renderGroupOrder,
 		bool instancingFlag, 
-		bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha);
+		bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha, TransparentLightMode transparentLightMode);
 
 public:
 
@@ -35,7 +35,9 @@ public:
 
 	bool IsShadowCutoffEnable() const;
 
-	float GetShadowCutoffAlphaValue() const;
+	float GetShadowCutoffAlpha() const;
+
+	TransparentLightMode GetTransparentLightMode() const;
 
 private:
 
@@ -43,17 +45,19 @@ private:
 
 	static ID3D11InputLayout* CreateInputLayout(Com<ID3D11Device> device, ID3DX11EffectPass* pass, string& out_name, vector<string>& out_sementics);
 
-	static bool GetRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGroup);
+	static bool ExtractRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGroup);
 
-	static bool GetRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroupOrder);
+	static bool ExtractRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroupOrder);
 
-	static bool GetInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag);
+	static bool ExtractInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag);
 
-	static bool GetDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag);
+	static bool ExtractDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag);
 
-	static bool GetShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag);
+	static bool ExtractShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag);
 
-	static bool GetShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCutoffAlpha);
+	static bool ExtractShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCutoffAlpha);
+
+	static bool ExtractTransparentLightMode(ID3DX11EffectPass* pass, TransparentLightMode* out_value);
 
 public:
 
@@ -78,6 +82,8 @@ private:
 	bool					m_isDrawingShadow = true; // bool DrawShadow
 	bool					m_isShadowCutoffEnable = false; // bool ShadowCutoffEnable
 	float					m_shadowCutoffAlpha = 0.0f; // float ShadowCutoffAlpha
+
+	TransparentLightMode	m_transparentLightMode = TransparentLightMode::None; // string TransparentLight
 };
 
 ENGINE_END

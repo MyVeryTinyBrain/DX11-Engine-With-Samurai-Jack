@@ -155,7 +155,7 @@
     <ClInclude Include="include\Ref.h" />
     <ClInclude Include="include\Ref.hpp" />
     <ClInclude Include="include\RefData.h" />
-    <ClInclude Include="include\RenderGroup.h" />
+    <ClInclude Include="include\RenderTypes.h" />
     <ClInclude Include="include\RenderQueue.h" />
     <ClInclude Include="include\RenderRequestInput.h" />
     <ClInclude Include="include\RenderTexture2D.h" />
@@ -326,7 +326,7 @@
     <ClCompile Include="src\PassDesc.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RefData.cpp" />
-    <ClCompile Include="src\RenderGroup.cpp" />
+    <ClCompile Include="src\RenderTypes.cpp" />
     <ClCompile Include="src\RenderQueue.cpp" />
     <ClCompile Include="src\RenderRequestInput.cpp" />
     <ClCompile Include="src\RenderTexture2D.cpp" />

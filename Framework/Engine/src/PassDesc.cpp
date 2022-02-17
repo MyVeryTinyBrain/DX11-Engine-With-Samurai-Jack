@@ -7,7 +7,7 @@ PassDesc::PassDesc(
 	const string& name, const vector<string>& sementics, 
 	RenderGroup renderGroup, int renderGroupOrder,
 	bool instancingFlag, 
-	bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha)
+	bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha, TransparentLightMode transparentLightMode)
 {
 	m_pass = pass;
 	m_inputLayout = inputLayout;
@@ -19,6 +19,7 @@ PassDesc::PassDesc(
 	m_isDrawingShadow = drawShadowFlag;
 	m_isShadowCutoffEnable = shadowCutoffEnable;
 	m_shadowCutoffAlpha = shadowCutoffAlpha;
+	m_transparentLightMode = transparentLightMode;
 }
 
 PassDesc::~PassDesc()
@@ -63,9 +64,14 @@ bool PassDesc::IsShadowCutoffEnable() const
 	return m_isShadowCutoffEnable;
 }
 
-float PassDesc::GetShadowCutoffAlphaValue() const
+float PassDesc::GetShadowCutoffAlpha() const
 {
 	return m_shadowCutoffAlpha;
+}
+
+TransparentLightMode PassDesc::GetTransparentLightMode() const
+{
+	return m_transparentLightMode;
 }
 
 bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_DESC** out_arrElements, size_t* out_count)
@@ -262,7 +268,7 @@ ID3D11InputLayout* PassDesc::CreateInputLayout(Com<ID3D11Device> device, ID3DX11
 	return inputLayout;
 }
 
-bool PassDesc::GetRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGroup)
+bool PassDesc::ExtractRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGroup)
 {
 	if (!pass || !out_renderGroup)
 		return false;
@@ -337,7 +343,7 @@ bool PassDesc::GetRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGr
 	return true;
 }
 
-bool PassDesc::GetRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroupOrder)
+bool PassDesc::ExtractRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroupOrder)
 {
 	if (!pass || !out_renderGroupOrder)
 		return false;
@@ -387,7 +393,7 @@ bool PassDesc::GetRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroup
 	return true;
 }
 
-bool PassDesc::GetInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag)
+bool PassDesc::ExtractInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag)
 {
 	if (!pass || !out_flag)
 		return false;
@@ -437,7 +443,7 @@ bool PassDesc::GetInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag)
 	return true;
 }
 
-bool PassDesc::GetDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag)
+bool PassDesc::ExtractDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag)
 {
 	if (!pass || !out_flag)
 		return false;
@@ -485,7 +491,7 @@ bool PassDesc::GetDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag)
 	return true;
 }
 
-bool PassDesc::GetShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag)
+bool PassDesc::ExtractShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag)
 {
 	if (!pass || !out_flag)
 		return false;
@@ -533,7 +539,7 @@ bool PassDesc::GetShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag
 	return true;
 }
 
-bool PassDesc::GetShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCutoffAlpha)
+bool PassDesc::ExtractShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCutoffAlpha)
 {
 	if (!pass || !out_shadowCutoffAlpha)
 		return false;
@@ -581,33 +587,104 @@ bool PassDesc::GetShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCu
 	return true;
 }
 
+bool PassDesc::ExtractTransparentLightMode(ID3DX11EffectPass* pass, TransparentLightMode* out_value)
+{
+	if (!pass || !out_value)
+		return false;
+
+	*out_value = TransparentLightMode::None;
+
+	D3DX11_PASS_DESC passDesc = {};
+	if (FAILED(pass->GetDesc(&passDesc)))
+		return false;
+
+	ID3DX11EffectStringVariable* hTransparentLightMode = nullptr;
+
+	// find annotation <string rendergroup>
+	for (uint32_t i = 0; i < passDesc.Annotations; ++i)
+	{
+		ID3DX11EffectVariable* annotation = pass->GetAnnotationByIndex(i);
+
+		if (!annotation->IsValid())
+			continue;
+
+		D3DX11_EFFECT_VARIABLE_DESC annotationDesc = {};
+		if (FAILED(annotation->GetDesc(&annotationDesc)))
+			continue;
+
+		string name = annotationDesc.Name;
+		std::transform(name.begin(), name.end(), name.begin(), std::tolower);
+		if (name == "transparentlightmode" && annotation->AsString()->IsValid())
+		{
+			hTransparentLightMode = annotation->AsString();
+			break;
+		}
+
+		SafeRelease(annotation);
+	}
+
+	if (!hTransparentLightMode)
+		return true;
+
+	LPCSTR lpcstrRenderGroup;
+	if (FAILED(hTransparentLightMode->GetString(&lpcstrRenderGroup)))
+		return false;
+
+	string strRenderGroup = lpcstrRenderGroup;
+	std::transform(strRenderGroup.begin(), strRenderGroup.end(), strRenderGroup.begin(), std::tolower);
+	if (strRenderGroup == "none")
+	{
+		*out_value = TransparentLightMode::None;
+	}
+	else if (strRenderGroup == "use")
+	{
+		*out_value = TransparentLightMode::Use;
+	}
+	else if (strRenderGroup == "useandapplygbuffer")
+	{
+		*out_value = TransparentLightMode::UseAndApplyGBuffer;
+	}
+	else
+	{
+		return false;
+	}
+
+	SafeRelease(hTransparentLightMode);
+
+	return true;
+}
+
 PassDesc* PassDesc::CreatePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass)
 {
 	if (!device || !pass)
 		return nullptr;
 
 	RenderGroup renderGroup = RenderGroup::Standard;
-	if (!GetRenderGroup(pass, &renderGroup))
+	if (!ExtractRenderGroup(pass, &renderGroup))
 		return nullptr;
 
 	int renderGroupOrder = 0;
-	if (!GetRenderGroupOrder(pass, &renderGroupOrder))
+	if (!ExtractRenderGroupOrder(pass, &renderGroupOrder))
 		return nullptr;
 
 	bool instancingFlag = false;
-	if (!GetInstancingFlag(pass, &instancingFlag))
+	if (!ExtractInstancingFlag(pass, &instancingFlag))
 		return nullptr;
 
 	bool drawShadow = renderGroup == RenderGroup::Standard ? true : false;
-	if (!GetDrawShadowFlag(pass, &drawShadow))
+	if (!ExtractDrawShadowFlag(pass, &drawShadow))
 		return nullptr;
 
 	bool shadowCutoffEnable = false;
-	if (!GetShadowCutoffEnableFlag(pass, &shadowCutoffEnable))
+	if (!ExtractShadowCutoffEnableFlag(pass, &shadowCutoffEnable))
 		return nullptr;
 
 	float shadowCutoffAlpha = renderGroup == RenderGroup::Standard ? 0.0f : 1.0f;
-	if (!GetShadowCutoffAlpha(pass, &shadowCutoffAlpha))
+	if (!ExtractShadowCutoffAlpha(pass, &shadowCutoffAlpha))
+		return nullptr;
+
+	TransparentLightMode transparentLightMode = TransparentLightMode::None;
+	if (!ExtractTransparentLightMode(pass, &transparentLightMode))
 		return nullptr;
 
 	string name;
@@ -616,5 +693,5 @@ PassDesc* PassDesc::CreatePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* 
 	if (!inputLayout)
 		return nullptr;
 
-	return new PassDesc(pass, inputLayout, name, sementics, renderGroup, renderGroupOrder, instancingFlag, drawShadow, shadowCutoffEnable, shadowCutoffAlpha);
+	return new PassDesc(pass, inputLayout, name, sementics, renderGroup, renderGroupOrder, instancingFlag, drawShadow, shadowCutoffEnable, shadowCutoffAlpha, transparentLightMode);
 }

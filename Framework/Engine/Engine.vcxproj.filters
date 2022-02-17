@@ -152,7 +152,7 @@
     <ClInclude Include="include\Shader.h">
       <Filter>Object\Resource\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="include\RenderGroup.h">
+    <ClInclude Include="include\RenderTypes.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
     </ClInclude>
     <ClInclude Include="include\CompiledShaderDesc.h">
@@ -664,7 +664,7 @@
     <ClCompile Include="src\Shader.cpp">
       <Filter>Object\Resource\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderGroup.cpp">
+    <ClCompile Include="src\RenderTypes.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
     </ClCompile>
     <ClCompile Include="src\CompiledShaderDesc.cpp">

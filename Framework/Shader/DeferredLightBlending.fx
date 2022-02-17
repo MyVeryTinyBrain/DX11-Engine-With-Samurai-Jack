@@ -12,7 +12,6 @@ struct PS_IN
 	float2 uv : TEXCOORD;
 };
 
-float3			_Ambient;
 texture2D		_Diffuse;
 texture2D		_DepthLightOcclusionShadow;
 texture2D		_Light;
@@ -44,11 +43,12 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	float4 unpackedLight = _Light.Sample(textureSampler, In.uv);
 	float4 unpackedSpecular = _Specular.Sample(textureSampler, In.uv);
 
-	float4 ambient = float4(_Ambient, 1.0f) * unpackedOcclusion;
-	float4 lightedColor = unpackedDiffuse * (unpackedLight + ambient) + unpackedSpecular;
-	float4 unlighttedColor = unpackedDiffuse;
+	float3 lightedColor = saturate(unpackedDiffuse.rgb * unpackedLight.rgb + unpackedSpecular.rgb);
+	float3 unlighttedColor = saturate(unpackedDiffuse.rgb);
 
-	return lerp(unlighttedColor, lightedColor, unpackedLightMask);
+	color.rgb = lerp(unlighttedColor, lightedColor, unpackedLightMask);
+	color.a = unpackedDiffuse.a;
+	return color;
 }
 
 RasterizerState RasterizerState0

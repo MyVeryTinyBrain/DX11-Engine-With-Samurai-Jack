@@ -13,6 +13,7 @@
 	- 픽셀 쉐이더 출력
 		프레임워크에서 제공하는 기능은 대부분 디퍼드 렌더링입니다.
 		픽셀 쉐이더의 출력은 DeferredRenderTarget.h 파일에서 확인할수 있습니다.
+		또한 특정 렌더 타겟에 출력하지 않으려면 단순히 출력 구조체에서 해당 렌더 타겟을 제외하면 됩니다.
 
 	- 패스 옵션 설정
 		패스에 설정 가능한 옵션은 PassDesc.h 파일에서 확인할수 있습니다.
@@ -48,6 +49,13 @@
 		패스 선언에서 float ShadowCutoffAlpha를 설정할수 있습니다.
 		Standard 렌더 큐일때 1.0, 그 이외의 경우에는 0이 기본값입니다.
 		이 값보다 작은 투명도를 가지는 픽셀은 그림자를 투영하지 않습니다.
+
+	- Transparent 및 Overlay 렌더 그룹에서 조명 및 그림자 적용
+		패스 선언에서 string TransparentLightMode를 설정할수 있습니다.
+		"None", "Use", "UseAndApplyGBuffer" 를 사용할수 있습니다.
+		"None": 조명 및 그림자를 적용하지 않습니다.
+		"Use": 조명 및 그림자를 적용합니다.
+		"UseAndApplyGBuffer": 조명 및 그림자를 적용하고, G버퍼의 내용을 적용합니다.
 
 */
 

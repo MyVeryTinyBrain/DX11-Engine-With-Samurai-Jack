@@ -3,7 +3,7 @@
 #include "RenderQueueBase.h"
 
 ENGINE_BEGIN
-
+class RenderQueueLight;
 class ENGINE_API RenderQueueStandard : public RenderQueueBase
 {
 private:
@@ -22,7 +22,7 @@ private:
 
 public:
 
-	RenderQueueStandard() = default;
+	RenderQueueStandard(RenderQueueLight* renderQueueLight) : RenderQueueBase(), m_light(renderQueueLight) {};
 
 	virtual ~RenderQueueStandard();
 
@@ -52,7 +52,9 @@ private:
 
 private:
 
-	Map_RenderRequestsByOrder					m_requests;
+	RenderQueueLight*				m_light = nullptr;
+
+	Map_RenderRequestsByOrder		m_requests;
 };
 
 ENGINE_END

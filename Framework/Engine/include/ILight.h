@@ -3,6 +3,7 @@
 ENGINE_BEGIN
 
 class ICamera;
+class DepthStencil;
 
 enum class LightType : unsigned int
 {
@@ -25,6 +26,7 @@ struct LightDesc
 	V4			Position;
 	V4			Direction;
 	Color		Diffuse;
+	Color		Ambient;
 	M4			ViewMatrix[6];
 	M4			ProjectionMatrix[6];
 };
@@ -45,6 +47,8 @@ public:
 
 	virtual const Color& GetDiffuse() const = 0;
 
+	virtual const Color& GetAmbient() const = 0;
+
 	virtual float GetShadowWhiteness() const = 0;
 	
 public:
@@ -58,6 +62,14 @@ public:
 	virtual LightDesc GetLightDesc(ICamera* camera) const = 0;
 
 	virtual bool ContainsInCamera(ICamera* camera) const = 0;
+
+public:
+
+	virtual uint GetDepthSize() const = 0;
+
+	virtual void GetDepthes(DepthStencil** out_depthes) const = 0;
+
+	virtual void ClearDepthes() = 0;
 
 };
 

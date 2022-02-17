@@ -2,7 +2,7 @@
 
 #include "ResourceObject.h"
 #include "IMaterial.h"
-#include "RenderGroup.h"
+#include "RenderTypes.h"
 
 ENGINE_BEGIN
 class Shader;
@@ -58,6 +58,8 @@ public:
 	HRESULT GetShadowCutoffEnableFlagOfAppliedTechnique(uint passIndex, bool& out_shadowCutoffEnableFlag) const;
 
 	HRESULT GetShadowCutoffAlphaOfAppliedTechnique(uint passIndex, float& out_shadowCutoffAlpha) const;
+
+	HRESULT GetTransparentLightModeOfAppliedTechqniue(uint passIndex, TransparentLightMode& out_transparentLightMode) const;
 
 	bool IsValid() const;
 

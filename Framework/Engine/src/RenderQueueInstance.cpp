@@ -1,8 +1,14 @@
 #include "EnginePCH.h"
 #include "RenderQueueInstance.h"
 
-RenderQueueInstance::RenderQueueInstance(bool transparentQueue) :
+#include "RenderQueueLight.h"
+#include "DeferredRenderTarget.h"
+#include "DeferredScreenRender.h"
+#include "RenderTarget.h"
+
+RenderQueueInstance::RenderQueueInstance(RenderQueueLight* renderQueueLight, bool transparentQueue) :
 	RenderQueueBase(),
+	m_light(renderQueueLight),
 	m_transparentQueue(transparentQueue)
 {
 }
@@ -98,7 +104,9 @@ void RenderQueueInstance::Render(ICamera* camera)
 						{
 							const RenderRequest& request = requests[i];
 
-							// Culling
+							if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
+								continue;
+
 							if (!CullOp(camera, request.op.cullOp))
 								continue;
 
@@ -121,6 +129,14 @@ void RenderQueueInstance::Render(ICamera* camera)
 					material->GetEffectDesc(effect);
 					m_CBufferManager->BeginApply(effect);
 					{
+						switch (front.sub.transparentLightMode)
+						{
+							case TransparentLightMode::Use:
+							case TransparentLightMode::UseAndApplyGBuffer:
+								BeginForwardLightRender(camera);
+								break;
+						}
+
 						ApplyCameraBuffer(camera);
 						ApplyMaterial(deviceContext, material, front.essential.techniqueIndex, front.essential.passIndex, &prevMaterial);
 						ApplyMesh(deviceContext, m_instanceBufferManager->GetBuffer(), mesh, &prevMesh);
@@ -128,6 +144,14 @@ void RenderQueueInstance::Render(ICamera* camera)
 						ApplyBoneMatricesUsage(); // It always set to false(0)
 						if (FAILED(mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount))))
 							continue;
+
+						switch (front.sub.transparentLightMode)
+						{
+							case TransparentLightMode::Use:
+							case TransparentLightMode::UseAndApplyGBuffer:
+								EndForwardLightRender(camera);
+								break;
+						}
 					}
 					m_CBufferManager->EndApply();
 				}
@@ -208,4 +232,23 @@ void RenderQueueInstance::ApplyWorldMatrix(const M4& worldMatrix)
 void RenderQueueInstance::ApplyBoneMatricesUsage()
 {
 	m_CBufferManager->ApplyBoneMatricesUsageBuffer(false);
+}
+
+void RenderQueueInstance::BeginForwardLightRender(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	drt->SetForwardLightRenderTargets(m_graphicSystem);
+
+	drt->ClearForwards(m_graphicSystem->deviceContext);
+}
+
+void RenderQueueInstance::EndForwardLightRender(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+
+	m_light->RenderForward(camera);
+
+	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->forwardLightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::Blend);
+
+	drt->SetForwardRenderTargets(m_graphicSystem);
 }

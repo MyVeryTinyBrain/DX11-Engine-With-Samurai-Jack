@@ -44,16 +44,20 @@ HRESULT RenderQueue::Initialize()
 {
 	HRESULT hr = S_OK;
 
-	m_priority = new RenderQueueStandard();
-	m_priorityInstance = new RenderQueueInstance();
-	m_standard = new RenderQueueStandard();
-	m_standardInstance = new RenderQueueInstance();
-	m_alphaTest = new RenderQueueStandard();
-	m_alphaTestInstance = new RenderQueueInstance();
-	m_transparent = new RenderQueueTransparent();
-	m_transparentInstance = new RenderQueueInstance(true);
-	m_overlay = new RenderQueueTransparent();
-	m_overlayInstance = new RenderQueueInstance(true);
+	m_light = new RenderQueueLight();
+	if (FAILED(hr = m_light->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
+		return hr;
+
+	m_priority = new RenderQueueStandard(m_light);
+	m_priorityInstance = new RenderQueueInstance(m_light, false);
+	m_standard = new RenderQueueStandard(m_light);
+	m_standardInstance = new RenderQueueInstance(m_light, false);
+	m_alphaTest = new RenderQueueStandard(m_light);
+	m_alphaTestInstance = new RenderQueueInstance(m_light, false);
+	m_transparent = new RenderQueueTransparent(m_light);
+	m_transparentInstance = new RenderQueueInstance(m_light, true);
+	m_overlay = new RenderQueueTransparent(m_light);
+	m_overlayInstance = new RenderQueueInstance(m_light, true);
 
 	if (FAILED(hr = m_priority->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
 		return hr;
@@ -74,10 +78,6 @@ HRESULT RenderQueue::Initialize()
 	if (FAILED(hr = m_overlay->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
 		return hr;
 	if (FAILED(hr = m_overlayInstance->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
-		return hr;
-
-	m_light = new RenderQueueLight();
-	if (FAILED(hr = m_light->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
 		return hr;
 
 	return S_OK;
@@ -131,25 +131,31 @@ void RenderQueue::Render(ICamera* camera)
 	if (!camera->IsWorking())
 		return;
 
-	m_priority->Render(camera);
-	m_priorityInstance->Render(camera);
-
-	DeferredRender(camera);
-
-	m_transparent->Render(camera);
-	m_transparentInstance->Render(camera);
-	m_overlay->Render(camera);
-	m_overlayInstance->Render(camera);
-
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	drt->Clear(m_graphicSystem->deviceContext);
+
+	m_light->RenderDepthes(camera);
+
+	Render_Deferred(camera);
+	Render_Forward(camera);
+
+	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->result->srv, m_graphicSystem->backBufferRenderTargetView);
+
+	m_graphicSystem->RollbackRenderTarget();
+
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->diffuse->srv, 0, 0, 200, 200, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->normal->srv, 200, 0, 200, 200, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->worldPosition->srv, 400, 0, 200, 200, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depthLightOcclusionShadow->srv, 600, 0, 200, 200, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specularPower->srv, 800, 0, 200, 200, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 1000, 0, 200, 200, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 0, 200, 200, 200, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 200, 200, 200, 200, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 400, 200, 200, 200, DeferredScreenRender::Blend::None);
+
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->forwardLight->srv, 000, 400, 200, 200, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->forwardSpecular->srv, 200, 400, 200, 200, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->forwardLightBlend->srv, 400, 400, 200, 200, DeferredScreenRender::Blend::None);
 }
 
 void RenderQueue::Clear()
@@ -168,29 +174,13 @@ void RenderQueue::Clear()
 	m_light->Clear();
 }
 
-void RenderQueue::DeferredRender(ICamera* camera)
+void RenderQueue::Render_Deferred(ICamera* camera)
 {
-	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-
-	Color clearColor = Color::black();
-	clearColor.a = 0;
-
-	uint2 prevViewport = iGraphicSystem->GetViewport();
-
-	// ...
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->Clear(m_graphicSystem->deviceContext, clearColor);
-	ID3D11RenderTargetView* arrRTV[8] = {};
+	drt->SetDeferredRenderTargets(m_graphicSystem);
 
-	ZeroMemory(arrRTV, sizeof(arrRTV));
-	arrRTV[0] = drt->diffuse->rtv.Get();
-	arrRTV[1] = drt->normal->rtv.Get();
-	arrRTV[2] = drt->worldPosition->rtv.Get();
-	arrRTV[3] = drt->depthLightOcclusionShadow->rtv.Get();
-	arrRTV[4] = drt->specularPower->rtv.Get();
-	m_graphicSystem->SetRenderTargets(5, arrRTV);
-
-	// Draw Standard and AlphaTest
+	m_priority->Render(camera);
+	m_priorityInstance->Render(camera);
 	m_standard->Render(camera);
 	m_standardInstance->Render(camera);
 	m_alphaTest->Render(camera);
@@ -198,11 +188,16 @@ void RenderQueue::DeferredRender(ICamera* camera)
 
 	m_light->Render(camera);
 
-	// Draw to main render target
-	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->lightBlend->srv, m_graphicSystem->backBufferRenderTargetView, DeferredScreenRender::Blend::AlphaTest);
+	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->lightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::AlphaTest);
+}
 
-	// Rollback to main render target
-	m_graphicSystem->RollbackRenderTarget();
+void RenderQueue::Render_Forward(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	drt->SetForwardRenderTargets(m_graphicSystem);
 
-	// ...
+	m_transparent->Render(camera);
+	m_transparentInstance->Render(camera);
+	m_overlay->Render(camera);
+	m_overlayInstance->Render(camera);
 }

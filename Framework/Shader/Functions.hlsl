@@ -206,3 +206,15 @@ float ToLinearDepth(float Near, float Far, float Depth)
 {
     return 2.0f * Near / (Far + Near - Depth * (Far - Near));
 }
+
+float Brightness(float3 colorRGB)
+{
+    float a = max(colorRGB.r, colorRGB.g);
+    float b = max(a, colorRGB.b);
+    return b;
+}
+
+float Brightness(float4 colorRGBA)
+{
+    return Brightness(colorRGBA.rgb) * colorRGBA.a;
+}

@@ -47,6 +47,8 @@ void SkinnedMeshRenderer::Render()
 			bool shadowCutoffEnableFlag;
 			float shadowCutoffAlpha;
 
+			TransparentLightMode transparentLightMode;
+
 			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
 				continue;
 			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
@@ -58,7 +60,10 @@ void SkinnedMeshRenderer::Render()
 			if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha)))
 				continue;
 
-			RenderRequest input;
+			if (FAILED(currentMaterial->GetTransparentLightModeOfAppliedTechqniue(j, transparentLightMode)))
+				continue;
+
+			RenderRequest input = {};
 			input.essential.worldMatrix = localToWorldMatrix;
 			input.essential.renderGroup = renderGroup;
 			input.essential.renderGroupOrder = renderGroupOrder;
@@ -70,19 +75,13 @@ void SkinnedMeshRenderer::Render()
 			input.essential.subMeshIndex = i;
 			input.essential.instance = false;
 
+			input.sub.transparentLightMode = transparentLightMode;
+
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;
 			shadow.cutoffEnable = shadowCutoffEnableFlag;
 			shadow.cutoffAlpha = shadowCutoffAlpha;
 			shadow.cutoffTexture = currentMaterial->diffuseTexture;
-			switch (renderGroup)
-			{
-				case Engine::RenderGroup::Priority:
-				case Engine::RenderGroup::Transparent:
-				case Engine::RenderGroup::Overlay:
-					shadow.draw = false;
-					break;
-			}
 			input.shadow = shadow;
 
 			input.op.boneOp = this;

@@ -222,7 +222,29 @@ HRESULT Material::GetShadowCutoffAlphaOfAppliedTechnique(uint passIndex, float& 
 	if (!passDesc)
 		return E_FAIL;
 
-	out_shadowCutoffAlpha = passDesc->GetShadowCutoffAlphaValue();
+	out_shadowCutoffAlpha = passDesc->GetShadowCutoffAlpha();
+
+	return S_OK;
+}
+
+HRESULT Material::GetTransparentLightModeOfAppliedTechqniue(uint passIndex, TransparentLightMode& out_transparentLightMode) const
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	CompiledShaderDesc* shaderDesc = m_shader->GetShaderDesc();
+	if (!shaderDesc)
+		return E_FAIL;
+
+	TechniqueDesc* techniqueDesc = shaderDesc->GetTechniqueDesc(m_techniqueIndex);
+	if (!techniqueDesc)
+		return E_FAIL;
+
+	PassDesc* passDesc = techniqueDesc->GetPassDesc(passIndex);
+	if (!passDesc)
+		return E_FAIL;
+
+	out_transparentLightMode = passDesc->GetTransparentLightMode();
 
 	return S_OK;
 }

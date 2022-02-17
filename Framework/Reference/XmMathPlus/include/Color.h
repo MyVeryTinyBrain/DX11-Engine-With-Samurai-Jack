@@ -76,6 +76,8 @@ namespace XmMathPlus
 
 		// Static Variables	============================================================================
 
+		inline static Color clear() { return Color(0, 0, 0, 0); }
+
 		inline static Color black() { return Color(0, 0, 0, 1); }
 
 		inline static Color white() { return Color(1, 1, 1, 1); }

@@ -6,8 +6,7 @@
 void DirectionalLight::Awake()
 {
 	Light::Awake();
-
-	m_drawShadow = true;
+	SetDrawShadowMode(true);
 }
 
 V3 DirectionalLight::CalculateViewPosition(ICamera* camera, float camNearPercent, float camFarPercent) const
@@ -112,14 +111,15 @@ LightDesc DirectionalLight::GetLightDesc(ICamera* camera) const
 	LightDesc desc = {};
 
 	desc.Type = LightType::Directional;
-	desc.DrawShadow = m_drawShadow;
-	desc.ShadowWhiteness = m_shadowWhiteness;
-	desc.Intensity = m_intensity;
+	desc.DrawShadow = drawShadow;
+	desc.ShadowWhiteness = shadowWhiteness;
+	desc.Intensity = intensity;
 	desc.Position = {};
 	desc.Direction = transform->forward;
 	desc.Range = 0;
 	desc.Angle = 0;
-	desc.Diffuse = m_diffuse;
+	desc.Diffuse = diffuse;
+	desc.Ambient = ambient;
 	desc.Near = m_near;
 	desc.Far = m_far;
 	desc.ViewMatrix[0] = DirectX::XMMatrixLookAtLH(viewPositions[0], viewPositions[0] + transform->forward, transform->up);;

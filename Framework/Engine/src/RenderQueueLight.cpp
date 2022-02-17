@@ -10,11 +10,6 @@
 
 RenderQueueLight::~RenderQueueLight()
 {
-    for (uint i = 0; i < 6; ++i)
-    {
-        SafeDelete(m_lightDepth[i]);
-    }
-
     SafeDelete(m_normalizedQuad);
 
     SafeDelete(m_shaderLightDepthWrite);
@@ -32,8 +27,6 @@ HRESULT RenderQueueLight::Initialize(GraphicSystem* graphicSystem, CBufferManage
     if (FAILED(hr = SetupQuad()))
         return hr;
     if (FAILED(hr = SetupShaders()))
-        return hr;
-    if (FAILED(hr = SetupDepthes()))
         return hr;
 
     return S_OK;
@@ -73,6 +66,29 @@ bool RenderQueueLight::AddInput(const RenderRequest& input)
     return true;
 }
 
+void RenderQueueLight::RenderDepthes(ICamera* camera)
+{
+    LightManager* lightManager = m_graphicSystem->lightManager;
+
+    for (uint nLightType = 0; nLightType < (uint)LightType::Max; ++nLightType)
+    {
+        LightType lightType = (LightType)nLightType;
+        uint lightCount = lightManager->GetLightCount(lightType);
+
+        for (uint i = 0; i < lightCount; ++i)
+        {
+            ILight* light = lightManager->GetLight(lightType, i);
+
+            if (!IsValidLight(camera, light))
+                continue;
+
+            LightDesc lightDesc = light->GetLightDesc(camera);
+
+            Render_DepthOfLight(camera, light, lightDesc);
+        }
+    }
+}
+
 void RenderQueueLight::Render(ICamera* camera)
 {
     LightManager* lightManager = m_graphicSystem->lightManager;
@@ -91,16 +107,20 @@ void RenderQueueLight::Render(ICamera* camera)
             
             LightDesc lightDesc = light->GetLightDesc(camera);
 
-            Render_DepthOfLight(camera, light, lightDesc);
-            Render_LightAccumulate(camera, light, lightDesc);
+            Render_LightAccumulate(camera, light, lightDesc, false);
         }
     }
 
-    Render_LightBlend(camera);
+    Render_LightBlend(camera, false);
 }
 
-void RenderQueueLight::RenderOnce(ICamera* camera, const RenderRequest& request)
+void RenderQueueLight::RenderForward(ICamera* camera)
 {
+    DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+    drt->forwardLight->Clear(m_graphicSystem->deviceContext, Color::clear());
+    drt->forwardSpecular->Clear(m_graphicSystem->deviceContext, Color::clear());
+    drt->forwardLightBlend->Clear(m_graphicSystem->deviceContext, Color::clear());
+
     LightManager* lightManager = m_graphicSystem->lightManager;
 
     for (uint nLightType = 0; nLightType < (uint)LightType::Max; ++nLightType)
@@ -116,8 +136,12 @@ void RenderQueueLight::RenderOnce(ICamera* camera, const RenderRequest& request)
                 continue;
 
             LightDesc lightDesc = light->GetLightDesc(camera);
+
+            Render_LightAccumulate(camera, light, lightDesc, true);
         }
     }
+
+    Render_LightBlend(camera, true);
 }
 
 void RenderQueueLight::Clear()
@@ -135,9 +159,12 @@ void RenderQueueLight::Clear()
         m_skinnedCutoffRequests.clear();
 }
 
-bool RenderQueueLight::IsValidShadowRequest(const RenderRequest& request, const BoundingHolder& boundingHolder) const
+bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest& request, const BoundingHolder& boundingHolder) const
 {
     if (!request.shadow.draw)
+        return false;
+
+    if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
         return false;
 
     if (request.op.boundsOp && !boundingHolder.Intersects(request.op.boundsOp->GetBounds()))
@@ -180,21 +207,23 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
 
     BoundingHolder lightBounds[6];
     uint projectionCount = light->GetProjectionCount();
+    uint depthSize = light->GetDepthSize();
+    DepthStencil* lightDepthes[6] = {};
     light->GetBoundingHolders(camera, lightBounds);
+    light->GetDepthes(lightDepthes);
 
-    iGraphicSystem->SetViewport(m_lightDepthMapWidth, m_lightDepthMapHeight);
+    iGraphicSystem->SetViewport(depthSize, depthSize);
     {
-        for (uint i = 0; i < 6; ++i)
-            m_lightDepth[i]->Clear(m_graphicSystem->deviceContext);
+        light->ClearDepthes();
 
         for (uint i = 0; i < projectionCount; ++i)
         {
-            m_graphicSystem->SetRenderTargetsWithDepthStencil(0, nullptr, m_lightDepth[i]->dsv.Get());
+            m_graphicSystem->SetRenderTargetsWithDepthStencil(0, nullptr, lightDepthes[i]->dsv.Get());
 
-            Render_DepthOfLight_Instance_NonCutoff(lightDesc, lightBounds, i);
-            Render_DepthOfLight_Instance_Cutoff(lightDesc, lightBounds, i);
-            Render_DepthOfLight_Skinned_NonCutoff(lightDesc, lightBounds, i);
-            Render_DepthOfLight_Skinned_Cutoff(lightDesc, lightBounds, i);
+            Render_DepthOfLight_Instance_NonCutoff(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_Instance_Cutoff(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_Skinned_NonCutoff(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_Skinned_Cutoff(camera, lightDesc, lightBounds, i);
         }
     }
     iGraphicSystem->RollbackViewport();
@@ -202,15 +231,15 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
     m_graphicSystem->RollbackRenderTarget();
 }
 
-void RenderQueueLight::Render_DepthOfLight_Instance_NonCutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+void RenderQueueLight::Render_DepthOfLight_Instance_NonCutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
 {
     m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
     m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
 
-    Render_DepthOfLight_Instance(lightDesc, boundings, projectionIndex, false, m_instanceRequets);
+    Render_DepthOfLight_Instance(camera, lightDesc, boundings, projectionIndex, false, m_instanceRequets);
 }
 
-void RenderQueueLight::Render_DepthOfLight_Instance_Cutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+void RenderQueueLight::Render_DepthOfLight_Instance_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
 {
     m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
     m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
@@ -218,11 +247,11 @@ void RenderQueueLight::Render_DepthOfLight_Instance_Cutoff(const LightDesc& ligh
     for (auto& pairByCutoffAlpha : m_instanceCutoffRequets)
     {
         const InstanceRequets& requests = pairByCutoffAlpha.second;
-        Render_DepthOfLight_Instance(lightDesc, boundings, projectionIndex, true, requests);
+        Render_DepthOfLight_Instance(camera, lightDesc, boundings, projectionIndex, true, requests);
     }
 }
 
-void RenderQueueLight::Render_DepthOfLight_Instance(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff, const InstanceRequets& requests)
+void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff, const InstanceRequets& requests)
 {
     uint i = projectionIndex;
 
@@ -237,7 +266,7 @@ void RenderQueueLight::Render_DepthOfLight_Instance(const LightDesc& lightDesc, 
         {
             for (auto& request : requests)
             {
-                if (!IsValidShadowRequest(request, boundings[i]))
+                if (!IsValidShadowRequest(camera, request, boundings[i]))
                     continue;
 
                 InstanceData data;
@@ -273,23 +302,23 @@ void RenderQueueLight::Render_DepthOfLight_Instance(const LightDesc& lightDesc, 
     }
 }
 
-void RenderQueueLight::Render_DepthOfLight_Skinned_NonCutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+void RenderQueueLight::Render_DepthOfLight_Skinned_NonCutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
 {
     m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
     m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
 
-    Render_DepthOfLight_Skinned(lightDesc, boundings, projectionIndex, false);
+    Render_DepthOfLight_Skinned(camera, lightDesc, boundings, projectionIndex, false);
 }
 
-void RenderQueueLight::Render_DepthOfLight_Skinned_Cutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+void RenderQueueLight::Render_DepthOfLight_Skinned_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
 {
     m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
     m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
 
-    Render_DepthOfLight_Skinned(lightDesc, boundings, projectionIndex, true);
+    Render_DepthOfLight_Skinned(camera, lightDesc, boundings, projectionIndex, true);
 }
 
-void RenderQueueLight::Render_DepthOfLight_Skinned(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff)
+void RenderQueueLight::Render_DepthOfLight_Skinned(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff)
 {
     uint i = projectionIndex;
 
@@ -300,7 +329,7 @@ void RenderQueueLight::Render_DepthOfLight_Skinned(const LightDesc& lightDesc, B
 
     for (auto& request : requests)
     {
-        if (!IsValidShadowRequest(request, boundings[i]))
+        if (!IsValidShadowRequest(camera, request, boundings[i]))
             continue;
 
         m_CBufferManager->BeginApply(m_shaderLightDepthWrite->GetEffect());
@@ -321,38 +350,53 @@ void RenderQueueLight::Render_DepthOfLight_Skinned(const LightDesc& lightDesc, B
     }
 }
 
-void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc)
+void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc, bool forward)
 {
     uint passIndex = (uint)lightDesc.Type;
 
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
-    RenderTarget* normal = drt->normal;
-    RenderTarget* worldPosition = drt->worldPosition;
-    RenderTarget* depthLightOcclusionShadow = drt->depthLightOcclusionShadow;
-    RenderTarget* specularPower = drt->specularPower;
+    RenderTarget* normal = nullptr;
+    RenderTarget* worldPosition = nullptr;
+    RenderTarget* depthLightOcclusionShadow = nullptr;
+    RenderTarget* specularPower = nullptr;
+    DepthStencil* lightDepthes[6] = {};
+    if (forward == false)
+    {
+        normal = drt->normal;
+        worldPosition = drt->worldPosition;
+        depthLightOcclusionShadow = drt->depthLightOcclusionShadow;
+        specularPower = drt->specularPower;
+        light->GetDepthes(lightDepthes);
+    }
+    else
+    {
+        normal = drt->forwardNormal;
+        worldPosition = drt->forwardWorldPosition;
+        depthLightOcclusionShadow = drt->forwardDepthLightOcclusionShadow;
+        specularPower = drt->forwardSpecularPower;
+        light->GetDepthes(lightDepthes);
+    }
 
     // Outputs
-    RenderTarget* lightRenderTarget = drt->light;
-    RenderTarget* specularRenderTarget = drt->specular;
+    if (forward == false)
+    {
+        drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem);
+    }
+    else
+    {
+        drt->SetForwardLightAccumulateRenderTargets(m_graphicSystem);
+    }
 
-    ID3D11RenderTargetView* arrRTV[8] = {};
-    arrRTV[0] = lightRenderTarget->rtv.Get();
-    arrRTV[1] = specularRenderTarget->rtv.Get();
-    m_graphicSystem->SetRenderTargetsWithDepthStencil(2, arrRTV, nullptr);
     {
         m_CBufferManager->BeginApply(m_shaderLighting->GetEffect());
         {
             m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
         
             ID3D11ShaderResourceView* depthMapArray[6] = {};
-            depthMapArray[0] = m_lightDepth[0]->srv.Get();
-            depthMapArray[1] = m_lightDepth[1]->srv.Get();
-            depthMapArray[2] = m_lightDepth[2]->srv.Get();
-            depthMapArray[3] = m_lightDepth[3]->srv.Get();
-            depthMapArray[4] = m_lightDepth[4]->srv.Get();
-            depthMapArray[5] = m_lightDepth[5]->srv.Get();
+            for (uint i = 0; i < light->GetProjectionCount(); ++i)
+                depthMapArray[i] = lightDepthes[i]->srv.Get();
             m_shaderLighting->SetTextureArray("_LightDepthMap", depthMapArray, light->GetProjectionCount());
 
             lightDesc.ViewMatrix[0].Transpose();
@@ -385,24 +429,41 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     m_graphicSystem->RollbackRenderTarget();
 }
 
-void RenderQueueLight::Render_LightBlend(ICamera* camera)
+void RenderQueueLight::Render_LightBlend(ICamera* camera, bool forward)
 {
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
-    RenderTarget* diffuse = drt->diffuse;
-    RenderTarget* depthLightOcclusionShadow = drt->depthLightOcclusionShadow;
-    RenderTarget* light = drt->light;
-    RenderTarget* specular = drt->specular;
+    RenderTarget* diffuse = nullptr;
+    RenderTarget* depthLightOcclusionShadow = nullptr;
+    RenderTarget* light = nullptr;
+    RenderTarget* specular = nullptr;
+    if (forward == false)
+    {
+        diffuse = drt->diffuse;
+        depthLightOcclusionShadow = drt->depthLightOcclusionShadow;
+        light = drt->light;
+        specular = drt->specular;
+    }
+    else
+    {
+        diffuse = drt->forwardDiffuse;
+        depthLightOcclusionShadow = drt->forwardDepthLightOcclusionShadow;
+        light = drt->forwardLight;
+        specular = drt->forwardSpecular;
+    }
 
     // Outputs
-    RenderTarget* lightBlend = drt->lightBlend;
-
-    ID3D11RenderTargetView* arrRTV[8] = {};
-    arrRTV[0] = lightBlend->rtv.Get();
-    m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+    if (forward == false)
     {
-        m_shaderLightBlending->SetColor("_Ambient", m_graphicSystem->lightManager->ambient);
+        drt->SetDeferredLightBlendRenderTargets(m_graphicSystem);
+    }
+    else
+    {
+        drt->SetForwardLightBlendRenderTargets(m_graphicSystem);
+    }
+
+    {
         m_shaderLightBlending->SetTexture("_Diffuse", diffuse->srv);
         m_shaderLightBlending->SetTexture("_DepthLightOcclusionShadow", depthLightOcclusionShadow->srv);
         m_shaderLightBlending->SetTexture("_Light", light->srv);
@@ -445,24 +506,6 @@ HRESULT RenderQueueLight::SetupShaders()
     m_shaderLightBlending = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightBlending.fx"));
     if (!m_shaderLightBlending)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLightBlending.fx");
-
-    return S_OK;
-}
-
-HRESULT RenderQueueLight::SetupDepthes()
-{
-    HRESULT hr = S_OK;
-    for (uint i = 0; i < 6; ++i)
-    {
-        hr = DepthStencil::Create(
-            m_graphicSystem->device, 
-            m_lightDepthMapWidth, m_lightDepthMapHeight, 
-            false, DepthStencil::Type::SRV_DEPTH, 
-            &m_lightDepth[i]);
-
-        if (FAILED(hr))
-            return hr;
-    }
 
     return S_OK;
 }

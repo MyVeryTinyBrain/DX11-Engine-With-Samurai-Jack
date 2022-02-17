@@ -62,6 +62,9 @@ void RenderQueueStandard::Render(ICamera* camera)
 
 					for (auto& request : requests)
 					{
+						if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
+							continue;
+
 						if (!CullOp(camera, request.op.cullOp))
 							continue;
 

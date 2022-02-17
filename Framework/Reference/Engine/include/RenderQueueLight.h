@@ -34,37 +34,40 @@ public:
 
 	virtual bool AddInput(const RenderRequest& input) override;
 
+	// 그림자를 그리는 조명의 시점에서 모델들을 렌더링합니다.
+	// 결과를 깊이 버퍼에만 작성합니다.
+	void RenderDepthes(ICamera* camera);
+
 	virtual void Render(ICamera* camera) override;
 
-	virtual void RenderOnce(ICamera* camera, const RenderRequest& request);
+	virtual void RenderForward(ICamera* camera);
 
 	virtual void Clear() override;
 
 private:
 
 	bool IsValidLight(ICamera* camera, ILight* light) const;
-	bool IsValidShadowRequest(const RenderRequest& request, const BoundingHolder& boundingHolder) const;
+	bool IsValidShadowRequest(ICamera* camera, const RenderRequest& request, const BoundingHolder& boundingHolder) const;
 	void ApplyCBufferForLight(const RenderRequest& request, const LightDesc& lightDesc, uint projectionIndex);
 
 private:
 
 	void Render_DepthOfLight(ICamera* camera, ILight* light, const LightDesc& lightDesc);
-	void Render_DepthOfLight_Instance_NonCutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
-	void Render_DepthOfLight_Instance_Cutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
-	void Render_DepthOfLight_Instance(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff, const InstanceRequets& requests);
-	void Render_DepthOfLight_Skinned_NonCutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
-	void Render_DepthOfLight_Skinned_Cutoff(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
-	void Render_DepthOfLight_Skinned(const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff);
+	void Render_DepthOfLight_Instance_NonCutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
+	void Render_DepthOfLight_Instance_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
+	void Render_DepthOfLight_Instance(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff, const InstanceRequets& requests);
+	void Render_DepthOfLight_Skinned_NonCutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
+	void Render_DepthOfLight_Skinned_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
+	void Render_DepthOfLight_Skinned(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff);
 
-	void Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc);
+	void Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc, bool forward);
 
-	void Render_LightBlend(ICamera* camera);
+	void Render_LightBlend(ICamera* camera, bool forward);
 
 private:
 
 	HRESULT SetupQuad();
 	HRESULT SetupShaders();
-	HRESULT SetupDepthes();
 
 private:
 
@@ -73,10 +76,6 @@ private:
 	CompiledShaderDesc*							m_shaderLightDepthWrite = nullptr;
 	CompiledShaderDesc*							m_shaderLighting = nullptr;
 	CompiledShaderDesc*							m_shaderLightBlending = nullptr;
-
-	uint										m_lightDepthMapWidth = 2048;
-	uint										m_lightDepthMapHeight = 2048;
-	DepthStencil*								m_lightDepth[6] = {};
 
 private:
 

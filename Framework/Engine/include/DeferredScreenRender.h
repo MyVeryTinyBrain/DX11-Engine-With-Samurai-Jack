@@ -36,23 +36,6 @@ public:
 		uint2 originalViewport, uint2 outViewport, uint blur, 
 		Com<ID3D11ShaderResourceView> in, Com<ID3D11RenderTargetView> out);
 
-	void DeferredStepLightDepthWrite(
-		uint2 originalViewport, 
-		ILight* in_light, ICamera* in_camera, 
-		const unordered_map<IMesh*, vector<RenderRequest>>& shadowRenderInstanceRequests, const vector<RenderRequest>& shadowRenderSkinnedRequests,
-		DepthStencil* const* out_lightDepthes);
-
-	void DeferredStepLighting(
-		ILight* in_light, ICamera* in_camera, 
-		const RenderTarget* in_normal, const RenderTarget* in_worldPositions, const RenderTarget* in_depthLightOcclusionShadow, const RenderTarget* in_specularPower,
-		DepthStencil* const* in_lightDepthes,
-		RenderTarget* out_light, RenderTarget* out_specular);
-
-	void DeferredStepLightBlending(
-		const Color& ambient, 
-		const RenderTarget* in_diffuse, const RenderTarget* in_depthLightOcclusionShadow, const RenderTarget* in_light, const RenderTarget* in_specular,
-		const RenderTarget* out);
-
 private:
 
 	HRESULT SetupQuads();
@@ -68,9 +51,6 @@ private:
 	VIBuffer*										m_quad = nullptr;				// Dynamic Vertices
 
 	CompiledShaderDesc*								m_shaderScreen = nullptr;
-	CompiledShaderDesc*								m_shaderLightDepthWrite = nullptr;
-	CompiledShaderDesc*								m_shaderLighting = nullptr;
-	CompiledShaderDesc*								m_shaderLightBlending = nullptr;
 
 };
 

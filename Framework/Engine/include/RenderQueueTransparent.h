@@ -3,7 +3,7 @@
 #include "RenderQueueBase.h"
 
 ENGINE_BEGIN
-
+class RenderQueueLight;
 class ENGINE_API RenderQueueTransparent : public RenderQueueBase
 {
 private:
@@ -16,7 +16,7 @@ private:
 
 public:
 
-	RenderQueueTransparent() = default;
+	RenderQueueTransparent(RenderQueueLight* renderQueueLight) : RenderQueueBase(), m_light(renderQueueLight) {};
 
 	virtual ~RenderQueueTransparent();
 
@@ -46,7 +46,14 @@ private:
 
 private:
 
-	Map_SortableRenderRequestsByOrder					m_requests;
+	void BeginForwardLightRender(ICamera* camera);
+	void EndForwardLightRender(ICamera* camera);
+
+private:
+
+	RenderQueueLight*						m_light = nullptr;
+
+	Map_SortableRenderRequestsByOrder		m_requests;
 };
 
 ENGINE_END

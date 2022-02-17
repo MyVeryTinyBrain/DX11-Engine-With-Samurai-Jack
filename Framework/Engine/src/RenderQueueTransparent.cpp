@@ -1,6 +1,11 @@
 #include "EnginePCH.h"
 #include "RenderQueueTransparent.h"
 
+#include "RenderQueueLight.h"
+#include "DeferredRenderTarget.h"
+#include "DeferredScreenRender.h"
+#include "RenderTarget.h"
+
 RenderQueueTransparent::~RenderQueueTransparent()
 {
 	Clear();
@@ -50,9 +55,19 @@ void RenderQueueTransparent::Render(ICamera* camera)
 			material->GetEffectDesc(effect);
 			m_CBufferManager->BeginApply(effect);
 			{
-				// Culling
+				if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
+					continue;
+
 				if (!CullOp(camera, request.op.cullOp))
 					continue;
+
+				switch (request.sub.transparentLightMode)
+				{
+					case TransparentLightMode::Use:
+					case TransparentLightMode::UseAndApplyGBuffer:
+						BeginForwardLightRender(camera);
+						break;
+				}
 
 				ApplyCameraBuffer(camera);
 				ApplyMaterial(deviceContext, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
@@ -61,6 +76,14 @@ void RenderQueueTransparent::Render(ICamera* camera)
 				ApplyWorldMatrix(request.essential.worldMatrix);
 				if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex)))
 					continue;
+
+				switch (request.sub.transparentLightMode)
+				{
+					case TransparentLightMode::Use:
+					case TransparentLightMode::UseAndApplyGBuffer:
+						EndForwardLightRender(camera);
+						break;
+				}
 			}
 			m_CBufferManager->EndApply();
 		}
@@ -142,4 +165,23 @@ void RenderQueueTransparent::ApplyBoneMatrices(IRendererBoneOp* boneOp, uint sub
 void RenderQueueTransparent::ApplyWorldMatrix(const M4& worldMatrix)
 {
 	m_CBufferManager->ApplyWorldMatrixBuffer(worldMatrix);
+}
+
+void RenderQueueTransparent::BeginForwardLightRender(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	drt->SetForwardLightRenderTargets(m_graphicSystem);
+
+	drt->ClearForwards(m_graphicSystem->deviceContext);
+}
+
+void RenderQueueTransparent::EndForwardLightRender(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+
+	m_light->RenderForward(camera);
+
+	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->forwardLightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::Blend);
+
+	drt->SetForwardRenderTargets(m_graphicSystem);
 }

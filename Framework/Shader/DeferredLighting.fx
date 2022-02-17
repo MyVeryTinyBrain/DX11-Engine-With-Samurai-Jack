@@ -41,6 +41,7 @@ struct LightDesc
 	float4	Position;
 	float4	Direction;
 	float4	Diffuse;
+	float4	Ambient;
 	matrix	ViewMatrix[6];
 	matrix	ProjectionMatrix[6];
 };
@@ -347,11 +348,13 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	float lightIntensity = ComputeLightIntensity(_LightDesc.Direction.xyz, unpackedNormal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity);
 
+	float ambientBrightness = Brightness(_LightDesc.Ambient);
+
 	float shadow = 1.0f;
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeCascadeShadow(unpackedWorldPosition, lightIntensity);
+		shadow = ComputeCascadeShadow(unpackedWorldPosition, lightIntensity + ambientBrightness);
 		shadow = lerp(1.0f, shadow, ShadowMask);
 	}
 
@@ -359,9 +362,9 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 
 	float3 viewToPixel = unpackedWorldPosition.xyz - _ViewPosition.xyz;
 	float3 specularIntensity = ComputeSpecular(viewToPixel, unpackedNormal, unpackedSpecularPower);
-	specularIntensity = saturate(specularIntensity * lightIntensity);
+	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity, 1.0f);
+	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb, 1.0f);
 	output.specular = float4(_LightDesc.Diffuse.rgb * unpackedSpecularMask * specularIntensity, 1.0f);
 
 	return output;
@@ -391,11 +394,13 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	float lightIntensity = ComputeLightIntensity(lightToPixel, unpackedNormal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity * distAtten);
 
+	float ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * distAtten);
+
 	float shadow = 1.0f;
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeCubemapShadow(lightToPixel, unpackedWorldPosition, lightIntensity);
+		shadow = ComputeCubemapShadow(lightToPixel, unpackedWorldPosition, lightIntensity + ambientBrightness);
 		shadow = lerp(1.0f, shadow, ShadowMask);
 	}
 
@@ -403,9 +408,9 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 
 	float3 viewToPixel = unpackedWorldPosition.xyz - _ViewPosition.xyz;
 	float3 specularIntensity = ComputeSpecular(viewToPixel, unpackedNormal, unpackedSpecularPower);
-	specularIntensity = saturate(specularIntensity * lightIntensity);
+	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity, 1.0f);
+	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * distAtten, 1.0f);
 	output.specular = float4(_LightDesc.Diffuse.rgb * unpackedSpecularMask * specularIntensity, 1.0f);
 
 	return output;
@@ -439,11 +444,13 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	float lightIntensity = ComputeLightIntensity(lightToPixel, unpackedNormal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity * distAtten * angleAtten);
 
+	float ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * distAtten * angleAtten);
+
 	float shadow = 1.0f;
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow(unpackedWorldPosition, lightIntensity);
+		shadow = ComputeShadow(unpackedWorldPosition, lightIntensity + ambientBrightness);
 		shadow = lerp(1.0f, shadow, ShadowMask);
 	}
 
@@ -451,9 +458,9 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 
 	float3 viewToPixel = unpackedWorldPosition.xyz - _ViewPosition.xyz;
 	float3 specularIntensity = ComputeSpecular(viewToPixel, unpackedNormal, unpackedSpecularPower);
-	specularIntensity = saturate(specularIntensity * lightIntensity);
+	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity, 1.0f);
+	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * distAtten * angleAtten, 1.0f);
 	output.specular = float4(_LightDesc.Diffuse.rgb * unpackedSpecularMask * specularIntensity, 1.0f);
 
 	return output;

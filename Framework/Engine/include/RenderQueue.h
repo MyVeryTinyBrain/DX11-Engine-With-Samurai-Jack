@@ -32,7 +32,8 @@ public:
 
 private:
 
-	void DeferredRender(ICamera* camera);
+	void Render_Deferred(ICamera* camera);
+	void Render_Forward(ICamera* camera);
 
 private:
 
@@ -40,6 +41,8 @@ private:
 	CBufferManager*								m_CBufferManager = nullptr;
 
 	InstanceBufferManager*						m_instanceBufferManager = nullptr;
+
+	RenderQueueLight*							m_light = nullptr;
 
 	RenderQueueStandard*						m_priority = nullptr;
 	RenderQueueInstance*						m_priorityInstance = nullptr;
@@ -55,8 +58,6 @@ private:
 
 	RenderQueueTransparent*						m_overlay = nullptr;
 	RenderQueueInstance*						m_overlayInstance = nullptr;
-
-	RenderQueueLight*							m_light = nullptr;
 };
 
 ENGINE_END

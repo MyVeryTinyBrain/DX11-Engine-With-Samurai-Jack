@@ -19,14 +19,15 @@ LightDesc SpotLight::GetLightDesc(ICamera* camera) const
     LightDesc desc = {};
 
     desc.Type = LightType::Spot;
-    desc.DrawShadow = m_drawShadow;
-    desc.ShadowWhiteness = m_shadowWhiteness;
-    desc.Intensity = m_intensity;
+    desc.DrawShadow = drawShadow;
+    desc.ShadowWhiteness = shadowWhiteness;
+    desc.Intensity = intensity;
     desc.Position = transform->position;
     desc.Direction = transform->forward;
     desc.Range = m_range;
     desc.Angle = m_angle;
-    desc.Diffuse = m_diffuse;
+    desc.Diffuse = diffuse;
+    desc.Ambient = ambient;
     desc.Near = m_near;
     desc.Far = Far;
     desc.ViewMatrix[0] = DirectX::XMMatrixLookAtLH(desc.Position, desc.Position + desc.Direction, transform->up);
