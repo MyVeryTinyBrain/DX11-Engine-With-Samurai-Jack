@@ -46,8 +46,9 @@
 		설정하지 않을 경우에는 Standard: true, Other: false로 설정됩니다.
 
 	- 투명도가 있는 텍스쳐를 가지는 모델이 투영하는 그림자 설정
-		패스 선언에서 float ShadowCutoffAlpha를 설정할수 있습니다.
-		Standard 렌더 큐일때 1.0, 그 이외의 경우에는 0이 기본값입니다.
+		패스 선언에서 bool ShadowCutoffEnable 그리고 float ShadowCutoffAlpha를 설정할수 있습니다.
+		ShadowCutoffEnable: 활성화되면 ShadowCutoffAlpha 보다 작은 DiffuseTexture의 알파에 대해서 알파테스트를 진행합니다.
+		ShadowCutoffAlpha: Standard 렌더 큐일때 1.0, 그 이외의 경우에는 0이 기본값입니다.
 		이 값보다 작은 투명도를 가지는 픽셀은 그림자를 투영하지 않습니다.
 
 	- Transparent 및 Overlay 렌더 그룹에서 조명 및 그림자 적용

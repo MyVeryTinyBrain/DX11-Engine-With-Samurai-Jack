@@ -13,13 +13,7 @@ Scene* PlayerTestScene::Clone()
 void PlayerTestScene::OnLoad()
 {
 	system->resourceManagement->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
-	system->resourceManagement->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/TransparentRGB.png"));
 	system->resourceManagement->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Normal.png"));
-
-	ResourceRef<Shader> shaderTransparnet = system->resourceManagement->factory->CreateManagedShaderFromFile(TEXT("../Shader/Transparent.fx"));
-	ResourceRef<MaterialTransparent> materialTransparent = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialTransparent>();
-	materialTransparent->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/TransparentRGB.png"));
-	materialTransparent->normalMap = system->resourceManagement->Find(TEXT("../Resource/Dev/Normal.png"));
 
 	/*
 	{
@@ -217,7 +211,6 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
-			meshRenderer->material = materialTransparent;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();

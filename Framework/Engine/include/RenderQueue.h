@@ -34,6 +34,8 @@ private:
 
 	void Render_Deferred(ICamera* camera);
 	void Render_Forward(ICamera* camera);
+	void Render_Emissive(ICamera* camera);
+	void Render_Result(ICamera* camera);
 
 private:
 

@@ -78,6 +78,15 @@ PS_IN VS_MAIN(VS_IN In)
 	return output;
 }
 
+float ComputeFresnel(float3 viewToPixel, float3 normal)
+{
+	viewToPixel = -normalize(viewToPixel);
+	float f0 = 0.04f;
+	float cosTheta = dot(viewToPixel, normal);
+	float fresnel = f0 + (1.0f - f0) * pow(1.0f - cosTheta, 5.0f);
+	return saturate(fresnel);
+}
+
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;

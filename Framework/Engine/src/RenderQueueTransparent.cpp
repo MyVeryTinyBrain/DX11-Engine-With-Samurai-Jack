@@ -43,7 +43,7 @@ void RenderQueueTransparent::Render(ICamera* camera)
 			{
 				float lhsDist = V3::Distance(lhs.essential.worldMatrix.GetTranslation(), camera->GetPosition());
 				float rhsDist = V3::Distance(rhs.essential.worldMatrix.GetTranslation(), camera->GetPosition());
-				return lhsDist < rhsDist;
+				return lhsDist > rhsDist;
 			});
 
 		for (auto& request : requests)
@@ -82,6 +82,10 @@ void RenderQueueTransparent::Render(ICamera* camera)
 					case TransparentLightMode::Use:
 					case TransparentLightMode::UseAndApplyGBuffer:
 						EndForwardLightRender(camera);
+						
+						// Forward Light Render 과정에 의해서 설정된 쉐이더와 정점/인덱스 버퍼가 변경되었기 때문에 초기화합니다.
+						prevMaterial = nullptr;
+						prevMesh = nullptr;
 						break;
 				}
 			}

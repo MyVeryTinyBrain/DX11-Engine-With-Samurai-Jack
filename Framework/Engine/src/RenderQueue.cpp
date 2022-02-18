@@ -138,24 +138,21 @@ void RenderQueue::Render(ICamera* camera)
 
 	Render_Deferred(camera);
 	Render_Forward(camera);
-
-	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->result->srv, m_graphicSystem->backBufferRenderTargetView);
+	Render_Emissive(camera);
+	Render_Result(camera);
 
 	m_graphicSystem->RollbackRenderTarget();
 
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->diffuse->srv, 0, 0, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->normal->srv, 200, 0, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->worldPosition->srv, 400, 0, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depthLightOcclusionShadow->srv, 600, 0, 200, 200, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specularPower->srv, 800, 0, 200, 200, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 1000, 0, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 0, 200, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 200, 200, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 400, 200, 200, 200, DeferredScreenRender::Blend::None);
-
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->forwardLight->srv, 000, 400, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->forwardSpecular->srv, 200, 400, 200, 200, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->forwardLightBlend->srv, 400, 400, 200, 200, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->diffuse->srv, 0, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->normal->srv, 100, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->worldPosition->srv, 200, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depthLightOcclusionShadow->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specularPower->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 000, 100, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->result->srv, 000, 200, 100, 100, DeferredScreenRender::Blend::None);
 }
 
 void RenderQueue::Clear()
@@ -200,4 +197,18 @@ void RenderQueue::Render_Forward(ICamera* camera)
 	m_transparentInstance->Render(camera);
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);
+}
+
+void RenderQueue::Render_Emissive(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	
+	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->emissive->srv, drt->result->rtv, DeferredScreenRender::Blend::Blend);
+}
+
+void RenderQueue::Render_Result(ICamera* camera)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+
+	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->result->srv, m_graphicSystem->backBufferRenderTargetView);
 }

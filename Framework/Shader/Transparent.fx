@@ -129,7 +129,9 @@ BlendState BlendState0
 
 technique11 Technique0
 {
-	pass Pass0 < string RenderGroup = "Transparent"; int RenderGroupOrder = 0; string TransparentLightMode = "Use"; bool DrawShadow = true; >
+	pass Pass0 < 
+		string RenderGroup = "Transparent"; int RenderGroupOrder = 0; 
+		string TransparentLightMode = "Use"; bool DrawShadow = true;  >
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
