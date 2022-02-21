@@ -218,3 +218,22 @@ float Brightness(float4 colorRGBA)
 {
     return Brightness(colorRGBA.rgb) * colorRGBA.a;
 }
+
+float Random(float2 uv)
+{
+    float2 noise = (frac(sin(dot(uv, float2(12.9898f, 78.233f) * 2.0f)) * 43758.5453f));
+    return frac(abs(noise.x + noise.y) * 0.5);
+}
+
+float3 RandomVector(float2 uv)
+{
+    float x0 = frac(sin(dot(uv, float2(15.8989f, 76.132f) * 1.0f)) * 46336.23745f);
+    float y0 = frac(sin(dot(uv, float2(11.9899f, 62.223f) * 2.0f)) * 34748.34744f);
+    float z0 = frac(sin(dot(uv, float2(13.3238f, 63.122f) * 3.0f)) * 59998.47362f);
+
+    float x1 = (x0 + y0) * 0.5;
+    float y1 = (y0 + z0) * 0.5;
+    float z1 = (z0 + x0) * 0.5;
+
+    return normalize(float3(x1, y1, z1));
+}

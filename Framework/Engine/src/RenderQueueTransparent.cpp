@@ -64,7 +64,6 @@ void RenderQueueTransparent::Render(ICamera* camera)
 				switch (request.sub.transparentLightMode)
 				{
 					case TransparentLightMode::Use:
-					case TransparentLightMode::UseAndApplyGBuffer:
 						BeginForwardLightRender(camera);
 						break;
 				}
@@ -80,7 +79,6 @@ void RenderQueueTransparent::Render(ICamera* camera)
 				switch (request.sub.transparentLightMode)
 				{
 					case TransparentLightMode::Use:
-					case TransparentLightMode::UseAndApplyGBuffer:
 						EndForwardLightRender(camera);
 						
 						// Forward Light Render 과정에 의해서 설정된 쉐이더와 정점/인덱스 버퍼가 변경되었기 때문에 초기화합니다.

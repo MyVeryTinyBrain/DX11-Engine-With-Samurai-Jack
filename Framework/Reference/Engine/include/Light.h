@@ -30,11 +30,14 @@ public:
 	virtual inline float GetShadowWhiteness() const override { return m_shadowWhiteness; }
 	inline void SetShadowWhiteness(float value) { m_shadowWhiteness = value; }
 
+	virtual inline uint GetDepthSize() const override { return m_depthSize; }
+
 	_declspec(property(get = GetIntensity, put = SetIntensity)) float intensity;
 	_declspec(property(get = GetDiffuse, put = SetDiffuse)) const Color& diffuse;
 	_declspec(property(get = GetAmbient, put = SetAmbient)) const Color& ambient;
 	_declspec(property(get = IsDrawShadow, put = SetDrawShadowMode)) bool drawShadow;
 	_declspec(property(get = GetShadowWhiteness, put = SetShadowWhiteness)) float shadowWhiteness;
+	_declspec(property(get = GetDepthSize)) uint depthSize;
 
 protected:
 
@@ -42,7 +45,6 @@ protected:
 
 private:
 
-	virtual inline uint GetDepthSize() const override { return m_depthSize; }
 	virtual inline void GetDepthes(DepthStencil** out_depthes) const override { memcpy(out_depthes, m_depthes, sizeof(m_depthes)); }
 	virtual void ClearDepthes() override;
 	void DeleteDepthes();

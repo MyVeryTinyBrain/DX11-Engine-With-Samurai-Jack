@@ -32,6 +32,7 @@ struct LightDesc
 {
 	bool	DrawShadow;
 	uint	Type;
+	uint	DepthSize;
 	float	ShadowWhiteness;
 	float	Intensity;
 	float	Range; // (0~Infinite)
@@ -190,13 +191,12 @@ ShadowDesc ComputeShadowCommonPCF3X3(uint i, float4 worldPosition, float lightIn
 	depthValueByCamera = depthValueByCamera - bias;
 
 	const uint numSamples = 3;
-	const float size = 2048.0f;
-	const float delta = 1.0f / size;
+	const float delta = 1.0f / _LightDesc.DepthSize;
 	const float2 adjust[8] = 
 	{
-		float2(-delta, +delta), float2(0, +delta), float2(+delta, +delta),
-		float2(-delta, 0), float2(+delta, 0),
-		float2(-delta, -delta), float2(0, -delta), float2(+delta, -delta),
+		float2(-delta, +delta),	float2(0, +delta),	float2(+delta, +delta),
+		float2(-delta, 0),							float2(+delta, 0),
+		float2(-delta, -delta), float2(0, -delta),	float2(+delta, -delta),
 	};
 	uint numInShadowMap = 1;
 	
@@ -339,6 +339,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	float4 unpackedWorldPosition = float4(UnpackWorldPosition(packedWorldPosition), 1.0f);
 
 	float4 unpackedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv);
+	float OcclusionMask = unpackedDepthLightOcclusionShadow.z;
 	float ShadowMask = unpackedDepthLightOcclusionShadow.w;
 
 	float4 packedSpecularPower = _SpecularPower.Sample(textureSampler, In.uv);
@@ -348,7 +349,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	float lightIntensity = ComputeLightIntensity(_LightDesc.Direction.xyz, unpackedNormal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity);
 
-	float ambientBrightness = Brightness(_LightDesc.Ambient);
+	float ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity);
 
 	float shadow = 1.0f;
 	[branch]
@@ -364,7 +365,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	float3 specularIntensity = ComputeSpecular(viewToPixel, unpackedNormal, unpackedSpecularPower);
 	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb, 1.0f);
+	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * OcclusionMask, 1.0f);
 	output.specular = float4(_LightDesc.Diffuse.rgb * unpackedSpecularMask * specularIntensity, 1.0f);
 
 	return output;
@@ -381,6 +382,7 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	float4 unpackedWorldPosition = float4(UnpackWorldPosition(packedWorldPosition), 1.0f);
 
 	float4 unpackedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv);
+	float OcclusionMask = unpackedDepthLightOcclusionShadow.z;
 	float ShadowMask = unpackedDepthLightOcclusionShadow.w;
 
 	float4 packedSpecularPower = _SpecularPower.Sample(textureSampler, In.uv);
@@ -410,7 +412,7 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	float3 specularIntensity = ComputeSpecular(viewToPixel, unpackedNormal, unpackedSpecularPower);
 	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * distAtten, 1.0f);
+	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * distAtten * OcclusionMask, 1.0f);
 	output.specular = float4(_LightDesc.Diffuse.rgb * unpackedSpecularMask * specularIntensity, 1.0f);
 
 	return output;
@@ -427,6 +429,7 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	float4 unpackedWorldPosition = float4(UnpackWorldPosition(packedWorldPosition), 1.0f);
 
 	float4 unpackedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv);
+	float OcclusionMask = unpackedDepthLightOcclusionShadow.z;
 	float ShadowMask = unpackedDepthLightOcclusionShadow.w;
 
 	float4 packedSpecularPower = _SpecularPower.Sample(textureSampler, In.uv);
@@ -460,7 +463,7 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	float3 specularIntensity = ComputeSpecular(viewToPixel, unpackedNormal, unpackedSpecularPower);
 	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * distAtten * angleAtten, 1.0f);
+	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * distAtten * angleAtten * OcclusionMask, 1.0f);
 	output.specular = float4(_LightDesc.Diffuse.rgb * unpackedSpecularMask * specularIntensity, 1.0f);
 
 	return output;

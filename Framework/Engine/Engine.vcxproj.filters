@@ -530,6 +530,12 @@
     <ClInclude Include="include\ITexture.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue\ITexture</Filter>
     </ClInclude>
+    <ClInclude Include="include\PostProcessing.h">
+      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PostProcessingTypes.h">
+      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1009,6 +1015,12 @@
     <ClCompile Include="src\ITexture.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue\ITexture</Filter>
     </ClCompile>
+    <ClCompile Include="src\PostProcessing.cpp">
+      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostProcessingTypes.cpp">
+      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1284,6 +1296,9 @@
     <Filter Include="EngineWorld\System\Graphic\RenderQueue\ITexture">
       <UniqueIdentifier>{e9d3bced-529a-46ab-bbdd-e3933d1857f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EngineWorld\System\Graphic\PostProcessing">
+      <UniqueIdentifier>{cae0b7cc-4420-4042-b49e-8e850089e379}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Test.fx">
@@ -1330,6 +1345,9 @@
     </FxCompile>
     <FxCompile Include="..\Shader\StandardInstancing.fx">
       <Filter>Object\Resource\Shader\Built-in Shader\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\PostProcessing.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

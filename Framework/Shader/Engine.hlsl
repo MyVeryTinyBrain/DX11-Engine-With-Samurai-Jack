@@ -53,10 +53,9 @@
 
 	- Transparent 및 Overlay 렌더 그룹에서 조명 및 그림자 적용
 		패스 선언에서 string TransparentLightMode를 설정할수 있습니다.
-		"None", "Use", "UseAndApplyGBuffer" 를 사용할수 있습니다.
+		"None", "Use" 를 사용할수 있습니다.
 		"None": 조명 및 그림자를 적용하지 않습니다.
 		"Use": 조명 및 그림자를 적용합니다.
-		"UseAndApplyGBuffer": 조명 및 그림자를 적용하고, G버퍼의 내용을 적용합니다.
 
 */
 

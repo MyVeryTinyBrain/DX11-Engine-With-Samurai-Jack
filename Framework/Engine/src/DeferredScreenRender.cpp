@@ -99,7 +99,6 @@ void DeferredScreenRender::DeferredDrawTexture(Com<ID3D11ShaderResourceView> in,
 	// Set render target view array
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = out.Get();
-	//m_graphicSystem->SetRenderTargets(1, arrRTV);
 	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
 
 	// Select pass index

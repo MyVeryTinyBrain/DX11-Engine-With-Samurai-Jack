@@ -12,6 +12,7 @@ class CBufferManager;
 class InstanceBufferManager;
 
 class RenderQueueLight;
+class PostProcessing;
 class ENGINE_API RenderQueue
 {
 public:
@@ -45,6 +46,7 @@ private:
 	InstanceBufferManager*						m_instanceBufferManager = nullptr;
 
 	RenderQueueLight*							m_light = nullptr;
+	PostProcessing*								m_postProcessing = nullptr;
 
 	RenderQueueStandard*						m_priority = nullptr;
 	RenderQueueInstance*						m_priorityInstance = nullptr;

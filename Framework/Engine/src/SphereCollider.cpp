@@ -2,7 +2,7 @@
 #include "SphereCollider.h"
 #include "Transform.h"
 
-#ifdef _DEBUG
+// Debug Render
 #include "System.h"
 #include "ResourceManagement.h"
 #include "BuiltInResources.h"
@@ -14,7 +14,6 @@
 #include "MaterialColorLine.h"
 #include "GraphicSystem.h"
 #include "RenderQueue.h"
-#endif
 #include "ICamera.h"
 
 PxGeometryHolder SphereCollider::CreatePxGeometry(bool& out_invalid) const
@@ -35,15 +34,12 @@ void SphereCollider::Awake()
 {
 	Collider::Awake();
 
-#ifdef _DEBUG
 	m_dbgMesh = system->resourceManagement->builtInResources->sphereMesh;
 	m_dbgMaterial = system->resourceManagement->builtInResources->greenColorLineMaterial;
-#endif
 }
 
-void SphereCollider::Render()
+void SphereCollider::DebugRender()
 {
-#ifdef _DEBUG
 	if (!isValid)
 		return;
 
@@ -84,7 +80,6 @@ void SphereCollider::Render()
 	input.essential.instance = instancingFlag;
 
 	system->graphicSystem->renderQueue->Add(input);
-#endif
 }
 
 bool SphereCollider::CullTest(ICamera* camera) const

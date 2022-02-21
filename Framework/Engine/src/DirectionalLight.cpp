@@ -112,6 +112,7 @@ LightDesc DirectionalLight::GetLightDesc(ICamera* camera) const
 
 	desc.Type = LightType::Directional;
 	desc.DrawShadow = drawShadow;
+	desc.DepthSize = depthSize;
 	desc.ShadowWhiteness = shadowWhiteness;
 	desc.Intensity = intensity;
 	desc.Position = {};

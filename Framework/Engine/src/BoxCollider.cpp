@@ -2,7 +2,7 @@
 #include "BoxCollider.h"
 #include "Transform.h"
 
-#ifdef _DEBUG
+// Debug Render
 #include "System.h"
 #include "ResourceManagement.h"
 #include "BuiltInResources.h"
@@ -14,7 +14,6 @@
 #include "MaterialColorLine.h"
 #include "GraphicSystem.h"
 #include "RenderQueue.h"
-#endif
 #include "ICamera.h"
 
 PxGeometryHolder BoxCollider::CreatePxGeometry(bool& out_invalid) const
@@ -35,15 +34,12 @@ void BoxCollider::Awake()
 {
 	Collider::Awake();
 
-#ifdef _DEBUG
 	m_dbgMesh = system->resourceManagement->builtInResources->boxMesh;
 	m_dbgMaterial = system->resourceManagement->builtInResources->greenColorLineMaterial;
-#endif
 }
 
-void BoxCollider::Render()
+void BoxCollider::DebugRender()
 {
-#ifdef _DEBUG
 	if (!isValid)
 		return;
 
@@ -86,7 +82,6 @@ void BoxCollider::Render()
 	input.op.cullOp = this;
 
 	system->graphicSystem->renderQueue->Add(input);
-#endif
 }
 
 bool BoxCollider::CullTest(ICamera* camera) const

@@ -21,16 +21,14 @@ public:
 protected:
 
 	virtual void Awake() override;
-
 	virtual void BeforePhysicsSimulation() override;
-
 	virtual void AfterPhysicsSimulation() override {}
-
 	virtual void OnEnable() override;
-
 	virtual void OnDisable() override;
-
 	virtual void OnDestroyed() override;
+
+	virtual void Render() final override { if (m_debugRender)DebugRender(); }
+	virtual void DebugRender() = 0;
 
 protected:
 
@@ -39,23 +37,18 @@ protected:
 public:	
 
 	inline bool IsTrigger() const { return m_isTrigger; }
-
 	void SetTrigger(bool value);
 
 	inline float GetFriction() const { return m_material->getDynamicFriction(); }
-
 	void SetFriction(float value);
 
 	inline float GetRestitution() const { return m_material->getRestitution(); }
-
 	inline void SetRestitution(float value) { m_material->setRestitution(value); }
 
 	inline Collider::CombineMode GetFrictionCombineMode() const { return (Collider::CombineMode)m_material->getFrictionCombineMode(); }
-
 	inline void SetFrictionCombineMode(Collider::CombineMode value) { m_material->setFrictionCombineMode((PxCombineMode::Enum)value); }
 
 	inline Collider::CombineMode GetRestituitionCombineMode() const { return (Collider::CombineMode)m_material->getRestitutionCombineMode(); }
-
 	inline void SetRestituitionCombineMode(Collider::CombineMode value) { m_material->setRestitutionCombineMode((PxCombineMode::Enum)value); }
 
 	_declspec(property(get = IsTrigger, put = SetTrigger)) bool isTrigger;
@@ -67,22 +60,23 @@ public:
 public:
 
 	inline uint32 GetIgnoreLayerBits() const { return m_ignoreLayerBits; }
-
 	void SetIngoreLayerBits(uint32 value);
 
 	bool IsIgnoreLayerIndex(uint8 layerIndex) const;
-
 	void SetIgnoreLayerIndex(uint layerIndex, bool ignore);
 
 	inline uint8 GetLayerIndex() const { return m_layerIndex; }
-
 	void SetLayerIndex(uint8 layerIndex);
 
 	inline bool IsValid() const { return m_valid; }
 
+	inline bool IsDebugRenderMode() const { return m_debugRender; }
+	void SetDebugRenderMode(bool value);
+
 	_declspec(property(get = GetIgnoreLayerBits, put = SetIngoreLayerBits)) uint32 ignoreLayerBits;
 	_declspec(property(get = GetLayerIndex, put = SetLayerIndex)) uint8 layerIndex;
 	_declspec(property(get = IsValid)) bool isValid;
+	_declspec(property(get = IsDebugRenderMode, put = SetDebugRenderMode)) bool debugRender;
 
 public:
 
@@ -102,18 +96,16 @@ protected:
 
 	virtual PxGeometryHolder CreatePxGeometry(bool& out_invalid) const = 0;
 
+	virtual void OnDebugRenderModeChanged(bool value) {}
+
 	virtual void ResetShape();
 
 private:
 
 	void FindRigidbodyAndAttach();
-
 	void ApplyFlags();
-
 	void ApplyPose(bool unconditionally);
-
 	void ApplyScale(bool unconditionally);
-
 	void ApplyLayer();
 		
 private:
@@ -137,12 +129,12 @@ private:
 	uint8			m_layerIndex = 0;
 
 	V3				m_beforeLocalPosition;
-
 	Q				m_beforeLocalRotation;
-
 	V3				m_beforeWorldScale;
 
 	bool			m_valid = false;
+
+	bool			m_debugRender = false;
 
 protected:
 

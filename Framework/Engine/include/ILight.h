@@ -17,6 +17,7 @@ struct LightDesc
 {
 	bool		DrawShadow;
 	LightType	Type;
+	uint		DepthSize;
 	float		ShadowWhiteness;
 	float		Intensity;
 	float		Range; // (0~Infinite)

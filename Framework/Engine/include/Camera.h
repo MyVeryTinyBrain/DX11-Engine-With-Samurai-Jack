@@ -115,7 +115,7 @@ private:
 
 	float								m_aspect = 1.0f;
 	float								m_near = 0.1f;
-	float								m_far = 1000.0f;
+	float								m_far = 250.0f;
 	float								m_fov = 60.0f * Deg2Rad;
 	float								m_orthographicSize = 1.0f;
 

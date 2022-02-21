@@ -24,7 +24,7 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardWorldPosition);
 	m_forwardRenderTargets.push_back(m_forwardWorldPosition);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_depthLightOcclusionShadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_depthLightOcclusionShadow);
 	m_renderTargets.push_back(m_depthLightOcclusionShadow);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardDepthLightOcclusionShadow);
 	m_forwardRenderTargets.push_back(m_forwardDepthLightOcclusionShadow);

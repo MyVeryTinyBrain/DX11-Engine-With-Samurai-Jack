@@ -17,6 +17,7 @@
 #include "ILight.h"
 
 #include "RenderQueueLight.h"
+#include "PostProcessing.h"
 
 RenderQueue::RenderQueue(GraphicSystem* graphicSystem, CBufferManager* cBufferManager, InstanceBufferManager* instanceBufferManager) :
 	m_graphicSystem(graphicSystem),
@@ -28,6 +29,7 @@ RenderQueue::RenderQueue(GraphicSystem* graphicSystem, CBufferManager* cBufferMa
 RenderQueue::~RenderQueue()
 {
 	SafeDelete(m_light);
+	SafeDelete(m_postProcessing);
 	SafeDelete(m_priority);
 	SafeDelete(m_priorityInstance);
 	SafeDelete(m_standard);
@@ -46,6 +48,10 @@ HRESULT RenderQueue::Initialize()
 
 	m_light = new RenderQueueLight();
 	if (FAILED(hr = m_light->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
+		return hr;
+
+	m_postProcessing = new PostProcessing(m_graphicSystem, m_CBufferManager, m_instanceBufferManager);
+	if (FAILED(hr = m_postProcessing->Initialize()))
 		return hr;
 
 	m_priority = new RenderQueueStandard(m_light);
@@ -186,6 +192,8 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 	m_light->Render(camera);
 
 	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->lightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::AlphaTest);
+	
+	m_postProcessing->PostProcess(camera, PostProcessing::Step::DEFERRED);
 }
 
 void RenderQueue::Render_Forward(ICamera* camera)

@@ -20,6 +20,7 @@ LightDesc SpotLight::GetLightDesc(ICamera* camera) const
 
     desc.Type = LightType::Spot;
     desc.DrawShadow = drawShadow;
+    desc.DepthSize = depthSize;
     desc.ShadowWhiteness = shadowWhiteness;
     desc.Intensity = intensity;
     desc.Position = transform->position;
@@ -31,7 +32,7 @@ LightDesc SpotLight::GetLightDesc(ICamera* camera) const
     desc.Near = m_near;
     desc.Far = Far;
     desc.ViewMatrix[0] = DirectX::XMMatrixLookAtLH(desc.Position, desc.Position + desc.Direction, transform->up);
-    desc.ProjectionMatrix[0] = DirectX::XMMatrixPerspectiveFovLH(Clamp(m_angle + 45.0f, 0.0f, 180.0f) * Deg2Rad, 1.0f, m_near, Far);
+    desc.ProjectionMatrix[0] = DirectX::XMMatrixPerspectiveFovLH(Clamp(m_angle * 2.0f, 0.0f, 180.0f) * Deg2Rad, 1.0f, m_near, Far);
 
     return desc;
 }

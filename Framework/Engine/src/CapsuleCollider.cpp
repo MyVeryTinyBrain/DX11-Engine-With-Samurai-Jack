@@ -7,7 +7,7 @@
 #define CAPSULE_SLICE			(CAPSULE_INIT_SLICE % 2 == 0 ? CAPSULE_INIT_SLICE + 1 : CAPSULE_INIT_SLICE)
 #define CAPSULE_STEP			(CAPSULE_INIT_STEP * 2)
 
-#ifdef _DEBUG
+// Debug Render
 #include "System.h"
 #include "ResourceManagement.h"
 #include "BuiltInResources.h"
@@ -21,7 +21,6 @@
 #include "RenderQueue.h"
 #include "PrimitiveVI.h"
 #include "ResourceFactory.h"
-#endif
 #include "ICamera.h"
 
 PxGeometryHolder CapsuleCollider::CreatePxGeometry(bool& out_invalid) const
@@ -44,7 +43,144 @@ void CapsuleCollider::ResetShape()
 {
 	Collider::ResetShape();
 
-#ifdef _DEBUG
+	if (debugRender)
+	{
+		ResetDebugShape();
+	}
+}
+
+void CapsuleCollider::Awake()
+{
+	// PhysX의 캡슐은 기본적으로 누워 있습니다.
+	// z축에서 90도 회전하면 서 있는 캡슐이 됩니다.
+	// 여기서는 서 있는 캡슐을 기본으로 사용하겠습니다.
+	m_defaultRotation = Q::Euler(0, 0, 90);
+
+	Collider::Awake();
+
+	if (debugRender)
+	{
+		CreateDebugShape();
+	}
+}
+
+void CapsuleCollider::DebugRender()
+{
+	if (!isValid)
+		return;
+
+	V3 absScale = V3::Abs(transform->lossyScale);
+	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
+	V3 scale = V3(biggestElementOfXZ, absScale.y, biggestElementOfXZ);
+	M4 localToWorldMatrix = M4::SRT(scale, transform->rotation, transform->position);
+
+	if (!m_dbgMesh || !m_dbgMesh->isValid)
+		return;
+
+	if (!m_dbgMaterial || !m_dbgMaterial->isValid)
+		return;
+
+	size_t passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
+	if (passCount == 0)
+		return;
+
+	RenderGroup renderGroup;
+	int renderGroupOrder;
+	bool instancingFlag;
+
+	if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroup)))
+		return;
+	if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroupOrder)))
+		return;
+	if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(m_dbgMaterial->techniqueIndex, instancingFlag)))
+		return;
+
+	RenderRequest input;
+	input.essential.worldMatrix = localToWorldMatrix;
+	input.essential.renderGroup = renderGroup;
+	input.essential.renderGroupOrder = renderGroupOrder;
+	input.essential.layerIndex = 0;
+	input.essential.material = m_dbgMaterial;
+	input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
+	input.essential.passIndex = 0;
+	input.essential.mesh = m_dbgMesh;
+	input.essential.subMeshIndex = 0;
+	input.essential.instance = instancingFlag;
+
+	system->graphicSystem->renderQueue->Add(input);
+}
+
+bool CapsuleCollider::CullTest(ICamera* camera) const
+{
+	return camera->Intersects(GetBounds());
+}
+
+void CapsuleCollider::OnDebugRenderModeChanged(bool value)
+{
+	if (value == true)
+	{
+		if (!m_dbgMesh)
+			CreateDebugShape();
+
+		ResetDebugShape();
+	}
+}
+
+Bounds CapsuleCollider::GetBounds() const
+{
+	PxCapsuleGeometry capsule = GetPxGeometry().capsule();
+	V3 extents = V3(capsule.radius, capsule.halfHeight, capsule.radius);
+
+	Bounds bounds(transform->position, extents);
+	bounds.Transform(M4::Rotate(transform->rotation));
+
+	return bounds;
+}
+
+void CapsuleCollider::SetRadius(float value)
+{
+	value = Abs(value);
+
+	if (m_radius == value)
+		return;
+
+	m_radius = value;
+
+	ResetShape();
+}
+
+void CapsuleCollider::SetHalfHeight(float value)
+{
+	value = Abs(value);
+
+	if (m_halfHeight == value)
+		return;
+
+	m_halfHeight = value;
+
+	ResetShape();
+}
+
+void CapsuleCollider::CreateDebugShape()
+{
+	V3 absScale = V3::Abs(transform->lossyScale);
+	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
+
+	VI* vi = PrimitiveVI::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_INIT_SLICE, CAPSULE_INIT_STEP);
+	VIBuffer* viBuffer = nullptr;
+	VIBuffer::CreateVIBufferNocopy(
+		system->graphicSystem->device,
+		system->graphicSystem->deviceContext,
+		&vi,
+		D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
+		D3D11_USAGE_IMMUTABLE, 0, 0,
+		&viBuffer);
+	m_dbgMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_dbgMaterial = system->resourceManagement->builtInResources->greenColorLineMaterial;
+}
+
+void CapsuleCollider::ResetDebugShape()
+{
 	if (m_dbgMesh)
 	{
 		VIBuffer* viBuffer = m_dbgMesh->viBuffer;
@@ -112,120 +248,4 @@ void CapsuleCollider::ResetShape()
 
 		viBuffer->UpdateVertexBuffer();
 	}
-#endif
-}
-
-void CapsuleCollider::Awake()
-{
-	// PhysX의 캡슐은 기본적으로 누워 있습니다.
-	// z축에서 90도 회전하면 서 있는 캡슐이 됩니다.
-	// 여기서는 서 있는 캡슐을 기본으로 사용하겠습니다.
-	m_defaultRotation = Q::Euler(0, 0, 90);
-
-	Collider::Awake();
-
-#ifdef _DEBUG
-	V3 absScale = V3::Abs(transform->lossyScale);
-	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
-
-	VI* vi = PrimitiveVI::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_INIT_SLICE, CAPSULE_INIT_STEP);
-	VIBuffer* viBuffer = nullptr;
-	VIBuffer::CreateVIBufferNocopy(
-		system->graphicSystem->device,
-		system->graphicSystem->deviceContext,
-		&vi,
-		D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
-		D3D11_USAGE_IMMUTABLE, 0, 0,
-		&viBuffer);
-	m_dbgMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
-	m_dbgMaterial = system->resourceManagement->builtInResources->greenColorLineMaterial;
-#endif
-}
-
-void CapsuleCollider::Render()
-{
-#ifdef _DEBUG
-	if (!isValid)
-		return;
-
-	V3 absScale = V3::Abs(transform->lossyScale);
-	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
-	V3 scale = V3(biggestElementOfXZ, absScale.y, biggestElementOfXZ);
-	M4 localToWorldMatrix = M4::SRT(scale, transform->rotation, transform->position);
-
-	if (!m_dbgMesh || !m_dbgMesh->isValid)
-		return;
-
-	if (!m_dbgMaterial || !m_dbgMaterial->isValid)
-		return;
-
-	size_t passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
-	if (passCount == 0)
-		return;
-
-	RenderGroup renderGroup;
-	int renderGroupOrder;
-	bool instancingFlag;
-
-	if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroup)))
-		return;
-	if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroupOrder)))
-		return;
-	if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(m_dbgMaterial->techniqueIndex, instancingFlag)))
-		return;
-
-	RenderRequest input;
-	input.essential.worldMatrix = localToWorldMatrix;
-	input.essential.renderGroup = renderGroup;
-	input.essential.renderGroupOrder = renderGroupOrder;
-	input.essential.layerIndex = 0;
-	input.essential.material = m_dbgMaterial;
-	input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
-	input.essential.passIndex = 0;
-	input.essential.mesh = m_dbgMesh;
-	input.essential.subMeshIndex = 0;
-	input.essential.instance = instancingFlag;
-
-	system->graphicSystem->renderQueue->Add(input);
-#endif
-}
-
-bool CapsuleCollider::CullTest(ICamera* camera) const
-{
-	return camera->Intersects(GetBounds());
-}
-
-Bounds CapsuleCollider::GetBounds() const
-{
-	PxCapsuleGeometry capsule = GetPxGeometry().capsule();
-	V3 extents = V3(capsule.radius, capsule.halfHeight, capsule.radius);
-
-	Bounds bounds(transform->position, extents);
-	bounds.Transform(M4::Rotate(transform->rotation));
-
-	return bounds;
-}
-
-void CapsuleCollider::SetRadius(float value)
-{
-	value = Abs(value);
-
-	if (m_radius == value)
-		return;
-
-	m_radius = value;
-
-	ResetShape();
-}
-
-void CapsuleCollider::SetHalfHeight(float value)
-{
-	value = Abs(value);
-
-	if (m_halfHeight == value)
-		return;
-
-	m_halfHeight = value;
-
-	ResetShape();
 }

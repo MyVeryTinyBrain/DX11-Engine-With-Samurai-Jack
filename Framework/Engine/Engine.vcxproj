@@ -51,6 +51,8 @@
     <ClInclude Include="include\LightManager.h" />
     <ClInclude Include="include\MaterialStandard.h" />
     <ClInclude Include="include\PointLight.h" />
+    <ClInclude Include="include\PostProcessing.h" />
+    <ClInclude Include="include\PostProcessingTypes.h" />
     <ClInclude Include="include\RenderTarget.h" />
     <ClInclude Include="include\Delegate.h" />
     <ClInclude Include="include\Delegate.hpp" />
@@ -226,6 +228,8 @@
     <ClCompile Include="src\LightManager.cpp" />
     <ClCompile Include="src\MaterialStandard.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
+    <ClCompile Include="src\PostProcessing.cpp" />
+    <ClCompile Include="src\PostProcessingTypes.cpp" />
     <ClCompile Include="src\RenderTarget.cpp" />
     <ClCompile Include="src\Gizmo.cpp" />
     <ClCompile Include="src\GizmoBase.cpp" />
@@ -376,6 +380,7 @@
     <FxCompile Include="..\Shader\GizmoTranslation.fx" />
     <FxCompile Include="..\Shader\Macros.hlsl" />
     <FxCompile Include="..\Shader\DeferredScreen.fx" />
+    <FxCompile Include="..\Shader\PostProcessing.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />
     <FxCompile Include="..\Shader\Test.fx">

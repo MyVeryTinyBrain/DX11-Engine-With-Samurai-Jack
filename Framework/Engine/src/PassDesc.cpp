@@ -640,10 +640,6 @@ bool PassDesc::ExtractTransparentLightMode(ID3DX11EffectPass* pass, TransparentL
 	{
 		*out_value = TransparentLightMode::Use;
 	}
-	else if (strRenderGroup == "useandapplygbuffer")
-	{
-		*out_value = TransparentLightMode::UseAndApplyGBuffer;
-	}
 	else
 	{
 		return false;

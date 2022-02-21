@@ -131,6 +131,16 @@ void Collider::SetLayerIndex(uint8 layerIndex)
 	ApplyLayer();
 }
 
+void Collider::SetDebugRenderMode(bool value)
+{
+	if (m_debugRender == value)
+		return;
+
+	OnDebugRenderModeChanged(value);
+
+	m_debugRender = value;
+}
+
 Rigidbody* Collider::GetRigidbody() const
 {
 	PxActor* actor = m_shape->getActor();

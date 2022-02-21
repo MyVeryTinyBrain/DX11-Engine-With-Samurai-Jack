@@ -15,9 +15,11 @@ class ENGINE_API CapsuleCollider final : public Collider, public IRendererCullOp
 
 	virtual void Awake() override;
 
-	virtual void Render() override;
+	virtual void DebugRender() override;
 
 	virtual bool CullTest(ICamera* camera) const override;
+
+	virtual void OnDebugRenderModeChanged(bool value) override;
 
 public:
 
@@ -33,6 +35,11 @@ public:
 
 	_declspec(property(get = GetRadius, put = SetRadius)) float radius;
 	_declspec(property(get = GetHalfHeight, put = SetHalfHeight)) float halfHeight;
+
+private:
+
+	void CreateDebugShape();
+	void ResetDebugShape();
 
 private:
 

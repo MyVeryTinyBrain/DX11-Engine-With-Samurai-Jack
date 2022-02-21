@@ -14,7 +14,7 @@ class ENGINE_API SphereCollider final : public Collider, public IRendererCullOp
 
 	virtual void Awake() override;
 	
-	virtual void Render() override;
+	virtual void DebugRender() override;
 
 	virtual bool CullTest(ICamera* camera) const override;
 
