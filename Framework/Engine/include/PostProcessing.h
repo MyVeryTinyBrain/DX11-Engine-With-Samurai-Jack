@@ -16,8 +16,13 @@ class ENGINE_API PostProcessing
 	{
 		SSAO_WirteOcclusion,
 		SSAO_ApplyOcclusion,
+		LinearDOF_WritePass0,
+		LinearDOF_WritePass1,
+		LinearDOF_Apply,
 		HorizontalBlur,
 		VerticalBlur,
+		HorizontalInvDepthBlur,
+		VerticalInvDepthBlur,
 		HorizontalDepthBlur,
 		VerticalDepthBlur,
 	};
@@ -26,7 +31,8 @@ public:
 
 	enum class Step 
 	{
-		DEFERRED,
+		Deferred,
+		After,
 	};
 
 public:
@@ -43,9 +49,16 @@ public:
 
 private:
 
+	void PostProcess_Deferred(ICamera* camera);
+	void PostProcess_After(ICamera* camera);
+
+private:
+
 	void GetTehcniqueAndPass(Type type, uint& out_technique, uint& out_pass) const;
 	void Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
 	void Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
+	void Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc& dofDesc);
+	void Render_LinearDOF_Apply(ICamera* camera, const LinearDOFDesc& dofDesc);
 	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
 
 private:

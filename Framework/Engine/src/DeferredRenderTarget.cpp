@@ -116,7 +116,10 @@ void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> deviceContext)
 
 	for (auto& renderTarget : m_renderTargets)
 	{
-		deviceContext->ClearRenderTargetView(renderTarget->rtv.Get(), (FLOAT*)&clearColor);
+		if (renderTarget == m_depthLightOcclusionShadow)
+			renderTarget->Clear(deviceContext, Color::white());
+		else
+			renderTarget->Clear(deviceContext, clearColor);
 	}
 }
 
@@ -129,7 +132,10 @@ void DeferredRenderTarget::ClearForwards(Com<ID3D11DeviceContext> deviceContext)
 
 	for (auto& forwardRenderTarget : m_forwardRenderTargets)
 	{
-		deviceContext->ClearRenderTargetView(forwardRenderTarget->rtv.Get(), (FLOAT*)&clearColor);
+		if (forwardRenderTarget == m_depthLightOcclusionShadow)
+			forwardRenderTarget->Clear(deviceContext, Color::white());
+		else
+			forwardRenderTarget->Clear(deviceContext, clearColor);
 	}
 }
 

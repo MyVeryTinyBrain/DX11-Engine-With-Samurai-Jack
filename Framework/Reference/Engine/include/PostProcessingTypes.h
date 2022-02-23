@@ -14,11 +14,28 @@ struct SSAODesc
 	float	BlurPixelDistance; // [0~inf]
 };
 
+struct LinearDOFDesc
+{
+	bool	Enable;
+	uint	BlurNumSamples; // [0~16]
+	float	MinZ; // [0~inf]
+	float	RangeZ; // [0~inf]
+	float	Power; // [0~inf]
+	float	BlurPixelDistance; // [0~inf]
+};
+
+enum class BlurType
+{
+	Default,
+	InvDepth,
+	Depth,
+};
+
 struct BlurDesc
 {
-	bool	DepthBlur;
-	uint	NumSamples; // [0~16]
-	float	PixelDistance; // [0~inf]
+	BlurType	Type;
+	uint		NumSamples; // [0~16]
+	float		PixelDistance; // [0~inf]
 };
 
 ENGINE_END

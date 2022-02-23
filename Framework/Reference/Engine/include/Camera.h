@@ -104,10 +104,14 @@ public:
 
 public:
 
-	virtual const SSAODesc& GetSSAODesc() const override;
+	inline virtual const SSAODesc& GetSSAODesc() const override { return m_ssaoDesc; }
 	inline void SetSSAODesc(const SSAODesc& value) { m_ssaoDesc = value; }
 
+	inline virtual const LinearDOFDesc& GetLinearDOFDesc() const override { return m_linearDofDesc; }
+	inline void SetLinearDOFDesc(const LinearDOFDesc& value) { m_linearDofDesc = value; }
+
 	_declspec(property(get = GetSSAODesc, put = SetSSAODesc)) const SSAODesc& ssaoDesc;
+	_declspec(property(get = GetLinearDOFDesc, put = SetLinearDOFDesc)) const LinearDOFDesc& linearDofDesc;
 
 private:
 
@@ -140,6 +144,7 @@ private:
 	class DeferredRenderTarget*			m_deferredRenderTarget = nullptr;
 
 	SSAODesc							m_ssaoDesc = {};
+	LinearDOFDesc						m_linearDofDesc = {};
 };
 
 ENGINE_END

@@ -237,3 +237,26 @@ float3 RandomVector(float2 xy)
 
     return normalize(float3(x1, y1, z1));
 }
+
+// Screen -> NDC
+float4 ToNDC(float2 uv, float depth)
+{
+    float4 NDC;
+    NDC.xy = uv * 2.0f - 1.0f;
+    NDC.y *= -1;
+    NDC.z = depth;
+    NDC.w = 1.0f;
+    return NDC;
+}
+
+// Screen -> View
+float3 ToViewSpace(float2 uv, float depth, float4x4 inverseProjectionMatrix)
+{
+    float4 NDC;
+    NDC.xy = uv * 2.0f - 1.0f;
+    NDC.y *= -1;
+    NDC.z = depth;
+    NDC.w = 1.0f;
+    float4 view = mul(NDC, inverseProjectionMatrix);
+    return view.xyz / view.w;
+}

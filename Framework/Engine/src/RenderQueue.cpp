@@ -159,6 +159,7 @@ void RenderQueue::Render(ICamera* camera)
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssao->srv, 000, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->result->srv, 000, 300, 100, 100, DeferredScreenRender::Blend::None);
 }
 
@@ -194,7 +195,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 
 	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->lightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::AlphaTest);
 	
-	m_postProcessing->PostProcess(camera, PostProcessing::Step::DEFERRED);
+	m_postProcessing->PostProcess(camera, PostProcessing::Step::Deferred);
 }
 
 void RenderQueue::Render_Forward(ICamera* camera)
@@ -204,6 +205,9 @@ void RenderQueue::Render_Forward(ICamera* camera)
 
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
+
+	m_postProcessing->PostProcess(camera, PostProcessing::Step::After);
+
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);
 }

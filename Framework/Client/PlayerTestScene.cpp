@@ -334,6 +334,36 @@ void PlayerTestScene::OnUpdate()
 
 		camera->ssaoDesc = ssaoDesc;
 	}
+	if (ImGui::CollapsingHeader("DOF"))
+	{
+		LinearDOFDesc linearDofDesc = camera->linearDofDesc;
+
+		bool enable = linearDofDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		linearDofDesc.Enable = enable;
+
+		int blurNumSamples = (int)linearDofDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		linearDofDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float minZ = linearDofDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+		linearDofDesc.MinZ = minZ;
+
+		float rangeZ = linearDofDesc.RangeZ;
+		ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+		linearDofDesc.RangeZ = rangeZ;
+
+		float power = linearDofDesc.Power;
+		ImGui::SliderFloat("Power", &power, 0.0f, 100.0f);
+		linearDofDesc.Power = power;
+
+		float blurPixelDistance = linearDofDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		linearDofDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->linearDofDesc = linearDofDesc;
+	}
 	ImGui::End();
 
 	ImGui::Begin("Lights");

@@ -48,6 +48,7 @@ public:
 	virtual class DeferredRenderTarget* GetDeferredRenderTarget() const = 0;
 
 	virtual const SSAODesc& GetSSAODesc() const = 0;
+	virtual const LinearDOFDesc& GetLinearDOFDesc() const = 0;
 };
 
 ENGINE_END
