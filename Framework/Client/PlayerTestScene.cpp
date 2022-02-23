@@ -272,13 +272,55 @@ void PlayerTestScene::OnUpdate()
 	{
 		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 
-		tstring resolutionTxt = tstring_format(TEXT("resolution: %f x %f"), system->graphicSystem->GetWidth(), system->graphicSystem->GetHeight());
+		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphicSystem->GetWidth()), int(system->graphicSystem->GetHeight()));
 		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::End();
 	}
+
+	Camera* camera = (Camera*)system->graphicSystem->cameraManager->mainCamera;
+	ImGui::Begin("Camera");
+	if(ImGui::CollapsingHeader("SSAO"))
+	{
+		SSAODesc ssaoDesc = camera->ssaoDesc;
+
+		bool enable = ssaoDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		ssaoDesc.Enable = enable;
+
+		int numSamples = (int)ssaoDesc.NumSamples;
+		ImGui::SliderInt("NumSamples", &numSamples, 0, 16);
+		ssaoDesc.NumSamples = (uint)numSamples;
+
+		float transparency = ssaoDesc.Transparency;
+		ImGui::SliderFloat("Transparency", &transparency, 0.0f, 1.0f);
+		ssaoDesc.Transparency = transparency;
+
+		float minZ = ssaoDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 0.1f);
+		ssaoDesc.MinZ = minZ;
+
+		float radius = ssaoDesc.Radius;
+		ImGui::SliderFloat("Radius", &radius, 0.0f, 1.0f);
+		ssaoDesc.Radius = radius;
+
+		float power = ssaoDesc.Power;
+		ImGui::SliderFloat("Power", &power, 0.0f, 10.0f);
+		ssaoDesc.Power = power;
+
+		int blurNumSamples = (int)ssaoDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		ssaoDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float blurPixelDistance = ssaoDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		ssaoDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->ssaoDesc = ssaoDesc;
+	}
+	ImGui::End();
 
 	ImGui::Begin("Lights");
 	if (ImGui::CollapsingHeader("Directional Light"))
@@ -385,44 +427,6 @@ void PlayerTestScene::OnUpdate()
 		light->ambient = ambient;
 	}
 	ImGui::End();
-
-	//{
-	//    GameObject* goSphere = FindGameObject(TEXT("Sphere"));
-
-	//    ImGui::Begin("Sphere");
-
-	//    float pos[3] = { goSphere->transform->position.x, goSphere->transform->position.y, goSphere->transform->position.z };
-	//    ImGui::SliderFloat3("Position", pos, -25, +25);
-	//    goSphere->transform->position = V3(pos[0], pos[1], pos[2]);
-
-	//    ImGui::End();
-	//}
-
-	//{
-	//    ImGui::Begin("Texture Size");
-
-	//    ResourceRef<RenderTexture2D> texture = system->resourceManagement->Find(TEXT("RenderTexture"));
-	//    int w = int(texture->width);
-	//    int h = int(texture->height);
-	//    ImGui::DragInt("Width", &w, 1, 1, 1920);
-	//    ImGui::DragInt("Height", &h, 1, 1, 1920);
-	//    texture->Resize(uint(w), uint(h));
-
-	//    ImGui::End();
-	//}
-
-	//{
-	//    ImGui::Begin("Texture");
-
-	//    ImVec2 vMin = ImGui::GetWindowContentRegionMin();
-	//    ImVec2 vMax = ImGui::GetWindowContentRegionMax();
-	//    ImVec2 size = ImVec2(vMax.x - vMin.x, vMax.y - vMin.y);
-
-	//    ResourceRef<RenderTexture2D> texture = system->resourceManagement->Find(TEXT("RenderTexture"));
-	//    ImGui::Image((void*)texture->shaderResourceView.Get(), size);
-
-	//    ImGui::End();
-	//}
 }
 
 void PlayerTestScene::OnLateUpdate()

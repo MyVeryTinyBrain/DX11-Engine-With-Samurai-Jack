@@ -102,6 +102,13 @@ public:
 	virtual bool Contains(const V3& point) const override;
 	virtual bool Intersects(const BoundingHolder& boundingHolder) const override;
 
+public:
+
+	virtual const SSAODesc& GetSSAODesc() const override;
+	inline void SetSSAODesc(const SSAODesc& value) { m_ssaoDesc = value; }
+
+	_declspec(property(get = GetSSAODesc, put = SetSSAODesc)) const SSAODesc& ssaoDesc;
+
 private:
 
 	void ResetProjectionMatrix();
@@ -131,6 +138,8 @@ private:
 	class DepthStencil*					m_depthStencil = nullptr;
 
 	class DeferredRenderTarget*			m_deferredRenderTarget = nullptr;
+
+	SSAODesc							m_ssaoDesc = {};
 };
 
 ENGINE_END

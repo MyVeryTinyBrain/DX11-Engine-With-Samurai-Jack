@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PostProcessingTypes.h"
+
 ENGINE_BEGIN
 
 class ENGINE_API ICamera abstract
@@ -42,10 +44,10 @@ public:
 	virtual bool IsWorking() const = 0;
 
 	virtual class RenderTarget* GetRenderTarget() const = 0;
-
 	virtual class DepthStencil* GetDepthStencil() const = 0;
-
 	virtual class DeferredRenderTarget* GetDeferredRenderTarget() const = 0;
+
+	virtual const SSAODesc& GetSSAODesc() const = 0;
 };
 
 ENGINE_END

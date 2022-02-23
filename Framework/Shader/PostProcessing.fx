@@ -14,16 +14,40 @@ struct PS_IN
 
 struct SSAODesc
 {
+	bool	Enable;
+	uint	NumSamples;
+	uint	BlurNumSamples;
+	float	Transparency;
 	float	MinZ;
 	float	Radius;
+	float	Power;
+	float	BlurPixelDistance;
+};
+
+struct DOFDesc
+{
+	bool	Enable;
+	float	MinZ;
+	float	Power;
+	float	BlurPixelDistance;
+};
+
+struct BlurDesc
+{
+	bool	DepthBlur;
+	uint	NumSamples;
+	float	PixelDistance;
 };
 
 SSAODesc		_SSAODesc;
+DOFDesc			_DOFDesc;
+BlurDesc		_BlurDesc;
 float4			_TextureSize;
 texture2D		_Diffuse;
 texture2D		_Normal;
 texture2D		_WorldPosition;
 texture2D		_DepthLightOcclusionShadow;
+texture2D		_Sample; // For Temp Texture
 SamplerState	textureSampler
 {
 	AddressU = Clamp;
@@ -39,6 +63,8 @@ PS_IN VS_MAIN(VS_IN In)
 
 	return output;
 }
+
+// SSAO =======================================================================================================
 
 float SSAO(float2 uv)
 {
@@ -73,18 +99,27 @@ float SSAO(float2 uv)
 	float4 packedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, uv);
 	float occlusionMask = packedDepthLightOcclusionShadow.z;
 
-	float3 rvec = RandomVector(uv);
+	//float2 randomSeed = float2(worldPosition.x + worldPosition.y + worldPosition.z, worldPosition.x + worldPosition.y - worldPosition.z) * 10000.0f;
+	//randomSeed.x = int(randomSeed.x) / 10000.0f;
+	//randomSeed.y = int(randomSeed.y) / 10000.0f;
+
+	float3 randomSeed = 0;
+	randomSeed.x = dot(worldPosition.xy, worldPosition.yz) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
+	randomSeed.y = dot(worldPosition.yz, worldPosition.zx) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
+	randomSeed.z = dot(worldPosition.zx, worldPosition.xy) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
+
+	float3 rvec = RandomVector(randomSeed.xy);
 	float3 tangent = normalize(rvec - normal * dot(rvec, normal));
 	float3 bitangent = cross(normal, tangent);
 	float3x3 tbn = float3x3(tangent, bitangent, normal);
 
 	float occlusion = 0.0f;
-	[unroll]
-	for (int i = 0; i < NUM_KERNEL; ++i)
+	[unroll(NUM_KERNEL)]
+	for (uint i = 0; i < _SSAODesc.NumSamples; ++i)
 	{
 		float3 dir = mul(kernels[i], tbn);
 		dir = mul(float4(dir, 0.0f), _ViewMatrix).xyz;
-		float3 viewSamplePos = viewPosition + dir * _SSAODesc.Radius * Random(uv);
+		float3 viewSamplePos = viewPosition + dir * _SSAODesc.Radius * Random(randomSeed.xy);
 
 		float4 offset = float4(viewSamplePos, 1.0f);
 		offset = mul(offset, _ProjectionMatrix);
@@ -101,25 +136,140 @@ float SSAO(float2 uv)
 		float3 sampleViewPosition = mul(float4(sampleWorldPosition, 1.0f), _ViewMatrix).xyz;
 		float sampleDepth = sampleViewPosition.z;
 
-		float rangeCheck = abs(viewPosition.z - sampleDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
+		//float rangeCheck = abs(viewPosition.z - sampleDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
+		float rangeCheck = smoothstep(0.0, 1.0, _SSAODesc.Radius / abs(viewPosition.z - sampleDepth));
 
 		// Error guard
 		[flatten]
 		if (samplePackedWorldPosition.a == 0)
 			continue;
 
-		occlusion += (sampleDepth <= viewSamplePos.z - 0.03f ? 1.0 : 0.0) * rangeCheck;
+		occlusion += (sampleDepth <= viewSamplePos.z - _SSAODesc.MinZ ? 1.0 : 0.0) * rangeCheck;
 	}
 
-	return 1.0f - (occlusion / NUM_KERNEL) * occlusionMask;
+	occlusion = 1.0f - (occlusion / _SSAODesc.NumSamples);
+	return pow(occlusion, _SSAODesc.Power) * occlusionMask;
 }
 
-float4 PS_MAIN_SSAO(PS_IN In) : SV_TARGET
+float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 {
 	float occlusion = SSAO(In.uv);
 	return float4(occlusion, occlusion, occlusion, 1.0f);
-	//return float4(0, 0, 0, occlusion);
 }
+
+float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
+{
+	float4 diffuse = _Diffuse.Sample(textureSampler, In.uv);
+	float4 occlusion = 1.0f - _Sample.Sample(textureSampler, In.uv);
+	return float4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency));
+}
+
+// DOF ======================================================================================================
+
+float4 PS_MAIN_DOF_Write(PS_IN In) : SV_TARGET
+{
+	return float4(0,0,0,1);
+}
+
+float4 PS_MAIN_DOF_Apply(PS_IN In) : SV_TARGET
+{
+	return float4(0,0,0,1);
+}
+
+float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
+{
+	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
+	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	int size = _BlurDesc.NumSamples;
+	int numSamples = size * 2 + 1;
+
+	[unroll(32 + 1)]
+	for (int i = -size; i <= size; ++i)
+	{
+		float adjustX = _BlurDesc.PixelDistance * i;
+		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
+
+		float4 color = _Sample.Sample(textureSampler, sampleUV);
+		accumulation += color;
+	}
+
+	float4 color = accumulation / numSamples;
+	return color;
+}
+
+// Blur ======================================================================================================
+
+float4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
+{
+	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
+	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	int size = _BlurDesc.NumSamples;
+	int numSamples = size * 2 + 1;
+
+	float depth = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv).r;
+
+	[unroll(32 + 1)]
+	for (int i = -size; i <= size; ++i)
+	{
+		float adjustY = _BlurDesc.PixelDistance * i;
+		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
+
+		float4 color = _Sample.Sample(textureSampler, sampleUV);
+		accumulation += color;
+	}
+
+	float4 color = accumulation / numSamples;
+	return color;
+}
+
+float4 PS_MAIN_HorizontalDepthBlur(PS_IN In) : SV_TARGET
+{
+	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
+	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	int size = _BlurDesc.NumSamples;
+	int numSamples = size * 2 + 1;
+
+	float depth = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv).r;
+	int loops = 0;
+	[unroll(32 + 1)]
+	for (int i = -size; i <= size; ++i)
+	{
+		float adjustX = _BlurDesc.PixelDistance * i * (1 - depth) / numSamples;
+		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
+
+		float4 color = _Sample.Sample(textureSampler, sampleUV);
+		accumulation += color;
+		++loops;
+	}
+
+	float4 color = accumulation / numSamples;
+	return color;
+}
+
+float4 PS_MAIN_VerticalDepthBlur(PS_IN In) : SV_TARGET
+{
+	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
+	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	int size = _BlurDesc.NumSamples;
+	int numSamples = size * 2 + 1;
+
+	float depth = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv).r;
+
+	[unroll(32 + 1)]
+	for (int i = -size; i <= size; ++i)
+	{
+		float adjustY = _BlurDesc.PixelDistance * i * (1 - depth) / numSamples;
+		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
+
+		float4 color = _Sample.Sample(textureSampler, sampleUV);
+		accumulation += color;
+	}
+
+	float4 color = accumulation / numSamples;
+	return color;
+}
+
+// =====================================================================================================
 
 RasterizerState RasterizerState0
 {
@@ -142,27 +292,86 @@ BlendState BlendState0
 BlendState BlendState1
 {
 	BlendEnable[0] = true;
-	SrcBlend = One;
-	DestBlend = One;
-	BlendOp = Add;
-};
-
-BlendState BlendState2
-{
-	BlendEnable[0] = false;
 	SrcBlend = Src_Alpha;
 	DestBlend = Inv_Src_Alpha;
 	BlendOp = Add;
 };
 
-technique11 Technique0
+BlendState BlendState2
 {
-	pass SSAO
+	BlendEnable[0] = true;
+	SrcBlend = One;
+	DestBlend = One;
+	BlendOp = Add;
+};
+
+technique11 PostProcessing
+{
+	pass SSAO_WirteOcclusion
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState2, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_SSAO();
+		PixelShader = compile ps_5_0 PS_MAIN_SSAO_WriteOcclusion();
+	}
+	pass SSAO_ApplyOcclusion
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState1, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_SSAO_ApplyOcclusion();
+	}
+	pass DOF_Wirte
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_DOF_Write();
+	}
+	pass DOF_Apply
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState1, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_DOF_Apply();
 	}
 }
+technique11 Common
+{
+	pass HozizontalBlur
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_HorizontalBlur();
+	}
+	pass VerticalBlur
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_VerticalBlur();
+	}
+	pass HozizontalDepthBlur
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_HorizontalDepthBlur();
+	}
+	pass VerticalDepthBlur
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_VerticalDepthBlur();
+	}
+};

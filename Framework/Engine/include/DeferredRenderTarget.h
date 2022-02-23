@@ -58,6 +58,10 @@ public:
 
 	inline RenderTarget* GetResult() const { return m_result; }
 
+	inline RenderTarget* GetBridge() const { return m_bridge; }
+	inline RenderTarget* GetSSAO() const { return m_ssao; }
+	inline RenderTarget* GetDOF() const { return m_dof; }
+
 	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
 	_declspec(property(get = GetWorldPosition)) RenderTarget* worldPosition;
@@ -80,6 +84,10 @@ public:
 	_declspec(property(get = GetForwardLightBlend)) RenderTarget* forwardLightBlend;
 
 	_declspec(property(get = GetResult)) RenderTarget* result;
+
+	_declspec(property(get = GetBridge)) RenderTarget* bridge;
+	_declspec(property(get = GetSSAO)) RenderTarget* ssao;
+	_declspec(property(get = GetDOF)) RenderTarget* dof;
 
 public:
 
@@ -121,6 +129,9 @@ private:
 
 	RenderTarget*								m_result = nullptr;
 
+	RenderTarget*								m_bridge = nullptr;
+	RenderTarget*								m_ssao = nullptr;
+	RenderTarget*								m_dof = nullptr;
 };
 
 ENGINE_END

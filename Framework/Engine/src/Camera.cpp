@@ -21,6 +21,15 @@ void Camera::Awake()
 			system->graphicSystem->device,
 			uint(system->graphicSystem->width),
 			uint(system->graphicSystem->height));
+
+	m_ssaoDesc.Enable = true;
+	m_ssaoDesc.NumSamples = 16;
+	m_ssaoDesc.BlurNumSamples = 8;
+	m_ssaoDesc.Transparency = 0.25f;
+	m_ssaoDesc.MinZ = 0.05f;
+	m_ssaoDesc.Radius = 0.2f;
+	m_ssaoDesc.Power = 2.0f;
+	m_ssaoDesc.BlurPixelDistance = 700.0f;
 }
 
 void Camera::Render()
@@ -358,6 +367,11 @@ bool Camera::Contains(const V3& point) const
 bool Camera::Intersects(const BoundingHolder& boundingHolder) const
 {
 	return m_boundingHolder.IntersectsBoundingHolder(boundingHolder);
+}
+
+const SSAODesc& Camera::GetSSAODesc() const
+{
+	return m_ssaoDesc;
 }
 
 void Camera::ResetProjectionMatrix()
