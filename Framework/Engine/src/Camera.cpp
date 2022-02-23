@@ -283,7 +283,7 @@ float Camera::GetNear() const
 
 void Camera::SetNear(float value)
 {
-	m_near = Clamp(value, 0.01f, 1.0f);
+	m_near = Clamp(value, 0.01f, m_far);
 	ResetProjectionMatrix();
 }
 

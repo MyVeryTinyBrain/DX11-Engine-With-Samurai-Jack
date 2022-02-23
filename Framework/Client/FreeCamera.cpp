@@ -20,10 +20,12 @@ void FreeCamera::Update()
     {
         SetCursorToCenter();
         m_rotation = true;
+        ShowCursor(FALSE);
     }
     if (system->input->GetKeyUp(Key::RightMouse))
     {
         m_rotation = false;
+        ShowCursor(TRUE);
     }
 
     if (m_rotation)

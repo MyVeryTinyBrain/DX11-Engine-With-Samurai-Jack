@@ -282,6 +282,20 @@ void PlayerTestScene::OnUpdate()
 
 	Camera* camera = (Camera*)system->graphicSystem->cameraManager->mainCamera;
 	ImGui::Begin("Camera");
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		float Near = camera->Near;
+		ImGui::SliderFloat("Near", &Near, 0.0f, camera->Far);
+		camera->Near = Near;
+
+		float Far = camera->Far;
+		ImGui::SliderFloat("Far", &Far, 0.0f, 1000.0f);
+		camera->Far = Far;
+
+		float FOV = camera->fov;
+		ImGui::SliderFloat("FOV", &FOV, 0.0f, 180.0f);
+		camera->fov = FOV;
+	}
 	if(ImGui::CollapsingHeader("SSAO"))
 	{
 		SSAODesc ssaoDesc = camera->ssaoDesc;
