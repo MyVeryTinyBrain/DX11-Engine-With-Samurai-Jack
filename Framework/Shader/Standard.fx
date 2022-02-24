@@ -107,7 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	output.depthLightOcclusionShadow = float4(depth, lightMask, occlusionMask, shadowMask);
 
 	float3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.uv).rgb;
-	float specularPower = _SpecularPower;
+	float specularPower = 5.0f;
 	output.specularPower = float4(specularMask, specularPower);
 
 	output.emissive = float4(0, 0, 0, 0);

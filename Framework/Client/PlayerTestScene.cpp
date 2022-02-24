@@ -130,7 +130,7 @@ void PlayerTestScene::OnLoad()
 		}
 	}
 	//*/
-
+	
 	//*
 	{
 		{
@@ -295,6 +295,10 @@ void PlayerTestScene::OnUpdate()
 		float FOV = camera->fov;
 		ImGui::SliderFloat("FOV", &FOV, 0.0f, 180.0f);
 		camera->fov = FOV;
+
+		bool postProcessing = camera->postProcessingState;
+		ImGui::Checkbox("Enable", &postProcessing);
+		camera->postProcessingState = postProcessing;
 	}
 	if(ImGui::CollapsingHeader("SSAO"))
 	{
@@ -329,10 +333,63 @@ void PlayerTestScene::OnUpdate()
 		ssaoDesc.BlurNumSamples = (uint)blurNumSamples;
 
 		float blurPixelDistance = ssaoDesc.BlurPixelDistance;
-		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 2000.0f);
 		ssaoDesc.BlurPixelDistance = blurPixelDistance;
 
 		camera->ssaoDesc = ssaoDesc;
+	}
+	if (ImGui::CollapsingHeader("Fog"))
+	{
+		FogDesc fogDesc = camera->fogDesc;
+
+		bool enable = fogDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		fogDesc.Enable = enable;
+
+		float minZ = fogDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+		fogDesc.MinZ = minZ;
+
+		float rangeZ = fogDesc.RangeZ;
+		ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+		fogDesc.RangeZ = rangeZ;
+
+		Color color = fogDesc.Color;
+		ImGui::ColorPicker4("Color", (float*)&color);
+		fogDesc.Color = color;
+
+		camera->fogDesc = fogDesc;
+	}
+	if (ImGui::CollapsingHeader("Bloom"))
+	{
+		BloomDesc bloomDesc = camera->bloomDesc;
+
+		bool enable = bloomDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		bloomDesc.Enable = enable;
+
+		const char* items[] = { "Add", "Mix" };
+		int type = (int)bloomDesc.Type;
+		ImGui::Combo("Type", &type, items, 2);
+		bloomDesc.Type = (BloomType)type;
+
+		int blurNumSamples = (int)bloomDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		bloomDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float intensity = bloomDesc.Intensity;
+		ImGui::SliderFloat("Intensity", &intensity, 0.0f, 100.0f);
+		bloomDesc.Intensity = intensity;
+
+		float threshold = bloomDesc.Threshold;
+		ImGui::SliderFloat("Threshold", &threshold, 0.0f, 1.0f);
+		bloomDesc.Threshold = threshold;
+
+		float blurPixelDistance = bloomDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 100.0f);
+		bloomDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->bloomDesc = bloomDesc;
 	}
 	if (ImGui::CollapsingHeader("DOF"))
 	{

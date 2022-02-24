@@ -139,6 +139,7 @@ void RenderQueue::Render(ICamera* camera)
 
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	drt->Clear(m_graphicSystem->deviceContext);
+	drt->ClearPostProcessings(m_graphicSystem->deviceContext);
 
 	m_light->RenderDepthes(camera);
 
@@ -160,6 +161,7 @@ void RenderQueue::Render(ICamera* camera)
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssao->srv, 000, 200, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->bloom->srv, 200, 200, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->result->srv, 000, 300, 100, 100, DeferredScreenRender::Blend::None);
 }
 

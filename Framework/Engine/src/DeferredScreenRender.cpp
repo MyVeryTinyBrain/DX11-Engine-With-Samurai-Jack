@@ -207,7 +207,8 @@ HRESULT DeferredScreenRender::SetupQuads()
 
 HRESULT DeferredScreenRender::SetupShaders()
 {
-	m_shaderScreen = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredScreen.fx"));
+	tstring error;
+	m_shaderScreen = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredScreen.fx"), error);
 	if (!m_shaderScreen)
 		RETURN_E_FAIL_ERROR_MESSAGE("ScreenRender::Initialize::Failed to load ../Shader/DeferredScreen.fx");
 

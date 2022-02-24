@@ -15,7 +15,7 @@ enum class LightType : unsigned int
 
 struct LightDesc
 {
-	bool		DrawShadow;
+	BOOL		DrawShadow;
 	LightType	Type;
 	uint		DepthSize;
 	float		ShadowWhiteness;

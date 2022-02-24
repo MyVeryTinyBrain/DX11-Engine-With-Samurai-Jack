@@ -190,16 +190,18 @@ float3 UnpackNormal(float4 packedNormal)
 
 float4 PackWorldPosition(float3 worldPosition)
 {
-    float3 normalizedWorldPosition = normalize(worldPosition) * 0.5f + 0.5f;
-    float worldPositionLength = length(worldPosition) / WORLD_POSITION_PACK_SCALE;
-    return float4(normalizedWorldPosition, worldPositionLength);
+    //float3 normalizedWorldPosition = normalize(worldPosition) * 0.5f + 0.5f;
+    //float worldPositionLength = length(worldPosition) / WORLD_POSITION_PACK_SCALE;
+    //return float4(normalizedWorldPosition, worldPositionLength);
+    return float4(worldPosition.xyz, 1.0f);
 }
 
 float3 UnpackWorldPosition(float4 packedWorldPosition)
 {
-    float3 unpackedWorldPosition = packedWorldPosition.xyz * 2.0f - 1.0f;
-    unpackedWorldPosition *= packedWorldPosition.w * WORLD_POSITION_PACK_SCALE;
-    return unpackedWorldPosition;
+    //float3 unpackedWorldPosition = packedWorldPosition.xyz * 2.0f - 1.0f;
+    //unpackedWorldPosition *= packedWorldPosition.w * WORLD_POSITION_PACK_SCALE;
+    //return unpackedWorldPosition;
+    return float3(packedWorldPosition.xyz);
 }
 
 float ToLinearDepth(float Near, float Far, float Depth)

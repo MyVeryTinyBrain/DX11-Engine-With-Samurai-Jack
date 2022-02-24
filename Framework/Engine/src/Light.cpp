@@ -48,7 +48,7 @@ void Light::SetDrawShadowMode(bool value)
 		DeleteDepthes();
 	}
 
-	m_drawShadow = true;
+	m_drawShadow = value;
 }
 
 bool Light::IsWorking() const

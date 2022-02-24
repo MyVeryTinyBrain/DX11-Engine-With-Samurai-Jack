@@ -204,6 +204,7 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
         return;
 
     IGraphicSystem* iGraphicSystem = m_graphicSystem;
+    uint2 prevViewport = iGraphicSystem->GetViewport();
 
     BoundingHolder lightBounds[6];
     uint projectionCount = light->GetProjectionCount();
@@ -226,7 +227,7 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
             Render_DepthOfLight_Skinned_Cutoff(camera, lightDesc, lightBounds, i);
         }
     }
-    iGraphicSystem->RollbackViewport();
+    iGraphicSystem->SetViewport(prevViewport.x, prevViewport.y);
 
     m_graphicSystem->RollbackRenderTarget();
 }
@@ -395,8 +396,11 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
             m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
         
             ID3D11ShaderResourceView* depthMapArray[6] = {};
-            for (uint i = 0; i < light->GetProjectionCount(); ++i)
-                depthMapArray[i] = lightDepthes[i]->srv.Get();
+            if (light->IsDrawShadow())
+            {
+                for (uint i = 0; i < light->GetProjectionCount(); ++i)
+                    depthMapArray[i] = lightDepthes[i]->srv.Get();
+            }
             m_shaderLighting->SetTextureArray("_LightDepthMap", depthMapArray, light->GetProjectionCount());
 
             lightDesc.ViewMatrix[0].Transpose();
@@ -495,15 +499,17 @@ HRESULT RenderQueueLight::SetupQuad()
 
 HRESULT RenderQueueLight::SetupShaders()
 {
-    m_shaderLightDepthWrite = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightDepthWrite.fx"));
+    tstring error;
+
+    m_shaderLightDepthWrite = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightDepthWrite.fx"), error);
     if (!m_shaderLightDepthWrite)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLightDepthWrite.fx");
 
-    m_shaderLighting = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLighting.fx"));
+    m_shaderLighting = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLighting.fx"), error);
     if (!m_shaderLighting)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLighting.fx");
 
-    m_shaderLightBlending = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightBlending.fx"));
+    m_shaderLightBlending = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightBlending.fx"), error);
     if (!m_shaderLightBlending)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLightBlending.fx");
 

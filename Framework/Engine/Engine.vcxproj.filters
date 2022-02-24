@@ -10,21 +10,6 @@
     <ClInclude Include="include\TransformData.h">
       <Filter>Object\SceneObject\Component\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="include\RefData.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Object.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ObjectBase.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ref.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ref.hpp">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="include\SceneObject.h">
       <Filter>Object\SceneObject</Filter>
     </ClInclude>
@@ -88,18 +73,6 @@
     </ClInclude>
     <ClInclude Include="include\PhysicsSystem.h">
       <Filter>EngineWorld\System\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ResourceRef.h">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ResourceRef.hpp">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ResourceObject.h">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ResourceRefData.h">
-      <Filter>Object\Resource</Filter>
     </ClInclude>
     <ClInclude Include="include\GraphicSystem.h">
       <Filter>EngineWorld\System\Graphic</Filter>
@@ -244,24 +217,6 @@
     </ClInclude>
     <ClInclude Include="include\IImGuiSystem.h">
       <Filter>EngineWorld\System\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SubResourceRef.h">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IResourceObject.h">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SubResourceObject.h">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SubResourceRef.hpp">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ISubResourceObject.h">
-      <Filter>Object\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IObject.h">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="include\imgui_internal.h">
       <Filter>Default\imgui_source</Filter>
@@ -536,6 +491,54 @@
     <ClInclude Include="include\PostProcessingTypes.h">
       <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
     </ClInclude>
+    <ClInclude Include="include\RefData.h">
+      <Filter>Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IObject.h">
+      <Filter>Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Object.h">
+      <Filter>Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ObjectBase.h">
+      <Filter>Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ref.h">
+      <Filter>Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ref.hpp">
+      <Filter>Object\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubResourceRef.hpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IResourceObject.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISubResourceObject.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceObject.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceRef.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceRef.hpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceRefData.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubResourceObject.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SubResourceRef.h">
+      <Filter>Object\Resource\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ComputeShader.h">
+      <Filter>Object\Resource\ComputeShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -543,15 +546,6 @@
     </ClCompile>
     <ClCompile Include="src\TransformData.cpp">
       <Filter>Object\SceneObject\Component\Transform</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Object.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ObjectBase.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RefData.cpp">
-      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="src\TransformUpdateArguments.cpp">
       <Filter>Object\SceneObject\Component\Transform</Filter>
@@ -615,12 +609,6 @@
     </ClCompile>
     <ClCompile Include="src\GraphicSystem.cpp">
       <Filter>EngineWorld\System\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ResourceObject.cpp">
-      <Filter>Object\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ResourceRefData.cpp">
-      <Filter>Object\Resource</Filter>
     </ClCompile>
     <ClCompile Include="src\ResourceManagement.cpp">
       <Filter>EngineWorld\System\ResourceManagement</Filter>
@@ -756,18 +744,6 @@
     </ClCompile>
     <ClCompile Include="src\IImGuiSystem.cpp">
       <Filter>EngineWorld\System\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\IResourceObject.cpp">
-      <Filter>Object\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SubResourceObject.cpp">
-      <Filter>Object\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ISubResourceObject.cpp">
-      <Filter>Object\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="src\IObject.cpp">
-      <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="src\imgui.cpp">
       <Filter>Default\imgui_source</Filter>
@@ -1020,6 +996,36 @@
     </ClCompile>
     <ClCompile Include="src\PostProcessingTypes.cpp">
       <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IObject.cpp">
+      <Filter>Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Object.cpp">
+      <Filter>Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObjectBase.cpp">
+      <Filter>Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RefData.cpp">
+      <Filter>Object\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IResourceObject.cpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISubResourceObject.cpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceObject.cpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceRefData.cpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SubResourceObject.cpp">
+      <Filter>Object\Resource\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComputeShader.cpp">
+      <Filter>Object\Resource\ComputeShader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1298,6 +1304,15 @@
     </Filter>
     <Filter Include="EngineWorld\System\Graphic\PostProcessing">
       <UniqueIdentifier>{cae0b7cc-4420-4042-b49e-8e850089e379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Base">
+      <UniqueIdentifier>{de30abd3-3857-40d7-a56c-b22f4132acae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Base">
+      <UniqueIdentifier>{ac05f86f-7368-4e32-a9fe-cd9d739052c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\ComputeShader">
+      <UniqueIdentifier>{08f9705a-a00b-4026-938f-b9d04103b9d8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

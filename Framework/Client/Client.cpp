@@ -27,7 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     makeWindowDesc.fullScreen = false;
 
     UpdateDesc updateDesc;
-    updateDesc.UpdateFPS = 14400.0f;
+    updateDesc.UpdateFPS = 154.0f;
     updateDesc.FixedUpdateFPS = 60.0f;
     updateDesc.PhysSubStepLimit = 3;
 

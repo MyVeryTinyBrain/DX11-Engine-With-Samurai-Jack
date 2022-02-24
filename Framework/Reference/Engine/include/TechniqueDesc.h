@@ -6,13 +6,15 @@ class ENGINE_API TechniqueDesc
 {
 protected:
 
-	TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes);
+	TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes, bool isCompute);
 
 public:
 
 	~TechniqueDesc();
 
 public:
+
+	bool IsComputeTechnique() const;
 
 	Com<ID3DX11EffectTechnique> GetTechnique() const;
 
@@ -24,13 +26,13 @@ public:
 
 public:
 
-	static TechniqueDesc* CreateTechqniueDesc(Com<ID3D11Device> device, ID3DX11EffectTechnique* technique);
+	static TechniqueDesc* CreateTechqniueDesc(Com<ID3D11Device> device, ID3DX11EffectTechnique* technique, tstring& out_error);
 
 private:
 
-	ID3DX11EffectTechnique* m_technique = nullptr;
-
-	vector<PassDesc*> m_passDescs;
+	bool						m_isComputeTechnique = false;
+	ID3DX11EffectTechnique*		m_technique = nullptr;
+	vector<PassDesc*>			m_passDescs;
 };
 
 ENGINE_END

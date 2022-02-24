@@ -7,7 +7,8 @@
 #include "Texture.h"
 #include "TechniqueDesc.h"
 
-Shader::Shader(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
+Shader::Shader(
+	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
 	CompiledShaderDesc* shaderDesc) :
 	ResourceObject(management, managed, path, groupName),
 	m_shaderDesc(shaderDesc)
@@ -137,15 +138,16 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 	if (find)
 		return find;
 
+	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphicSystem->device, path);
+		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphicSystem->device, path, error);
 
 	if (!compiledShaderDesc)
 	{
-		tstring error_message = TEXT("Failed to compile shader: ") + path;
+		tstring error_message = TEXT("Failed to compile Shader: ") + path;
+		if (error.length() > 0)
+			error_message += TEXT("(") + error + TEXT(")");
 		ERROR_MESSAGE_NT(error_message.c_str());
-		//bool FailedToCompileShader = true;
-		//assert(FailedToCompileShader);
 		return ResourceRef<Shader>();
 	}
 
@@ -163,11 +165,18 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 	if (find)
 		return find;
 
+	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphicSystem->device, path);
+		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphicSystem->device, path, error);
 
 	if (!compiledShaderDesc)
+	{
+		tstring error_message = TEXT("Failed to compile Shader: ") + path;
+		if (error.length() > 0)
+			error_message += TEXT("(") + error + TEXT(")");
+		ERROR_MESSAGE_NT(error_message.c_str());
 		return ResourceRef<Shader>();
+	}
 
 	Shader* shader = new Shader(management, true, path, groupName, compiledShaderDesc);
 

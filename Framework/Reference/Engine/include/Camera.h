@@ -104,13 +104,25 @@ public:
 
 public:
 
+	inline virtual bool GetPostProcessingState() const override { return m_postProcessing; }
+	inline void SetPostProcessingState(bool value) { m_postProcessing = value;; }
+
 	inline virtual const SSAODesc& GetSSAODesc() const override { return m_ssaoDesc; }
 	inline void SetSSAODesc(const SSAODesc& value) { m_ssaoDesc = value; }
+
+	inline virtual const FogDesc& GetFogDesc() const override { return m_fogDesc; }
+	inline void SetFogDesc(const FogDesc& value) { m_fogDesc = value; }
+
+	inline virtual const BloomDesc& GetBloomDesc() const override { return m_bloomDesc; }
+	inline void SetBloomDesc(const BloomDesc& value) { m_bloomDesc = value; }
 
 	inline virtual const LinearDOFDesc& GetLinearDOFDesc() const override { return m_linearDofDesc; }
 	inline void SetLinearDOFDesc(const LinearDOFDesc& value) { m_linearDofDesc = value; }
 
+	_declspec(property(get = GetPostProcessingState, put = SetPostProcessingState)) bool postProcessingState;
 	_declspec(property(get = GetSSAODesc, put = SetSSAODesc)) const SSAODesc& ssaoDesc;
+	_declspec(property(get = GetFogDesc, put = SetFogDesc)) const FogDesc& fogDesc;
+	_declspec(property(get = GetBloomDesc, put = SetBloomDesc)) const BloomDesc& bloomDesc;
 	_declspec(property(get = GetLinearDOFDesc, put = SetLinearDOFDesc)) const LinearDOFDesc& linearDofDesc;
 
 private:
@@ -143,7 +155,10 @@ private:
 
 	class DeferredRenderTarget*			m_deferredRenderTarget = nullptr;
 
+	bool								m_postProcessing = true;
 	SSAODesc							m_ssaoDesc = {};
+	FogDesc								m_fogDesc = {};
+	BloomDesc							m_bloomDesc = {};
 	LinearDOFDesc						m_linearDofDesc = {};
 };
 

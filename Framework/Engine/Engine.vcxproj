@@ -38,6 +38,7 @@
     <ClInclude Include="include\CapsuleCollider.h" />
     <ClInclude Include="include\Collider.h" />
     <ClInclude Include="include\ComponentManagement.h" />
+    <ClInclude Include="include\ComputeShader.h" />
     <ClInclude Include="include\ConvexCollider.h" />
     <ClInclude Include="include\DeferredRenderTarget.h" />
     <ClInclude Include="include\DepthStencil.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="src\CapsuleCollider.cpp" />
     <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\ComponentManagement.cpp" />
+    <ClCompile Include="src\ComputeShader.cpp" />
     <ClCompile Include="src\ConvexCollider.cpp" />
     <ClCompile Include="src\DeferredRenderTarget.cpp" />
     <ClCompile Include="src\DepthStencil.cpp" />
@@ -255,7 +257,12 @@
     <ClCompile Include="src\NodeSet.cpp" />
     <ClCompile Include="src\Channel.cpp" />
     <ClCompile Include="src\imgui.cpp" />
-    <ClCompile Include="src\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui_demo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\imgui_draw.cpp" />
     <ClCompile Include="src\imgui_impl_dx11.cpp" />
     <ClCompile Include="src\imgui_impl_win32.cpp" />

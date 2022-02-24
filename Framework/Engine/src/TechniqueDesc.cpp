@@ -2,8 +2,9 @@
 #include "TechniqueDesc.h"
 #include "PassDesc.h"
 
-TechniqueDesc::TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes)
+TechniqueDesc::TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes, bool isCompute)
 {
+	m_isComputeTechnique = isCompute;
 	m_technique = technique;
 	m_passDescs = passes;
 }
@@ -15,6 +16,11 @@ TechniqueDesc::~TechniqueDesc()
 	m_passDescs.clear();
 
 	SafeRelease(m_technique);
+}
+
+bool TechniqueDesc::IsComputeTechnique() const
+{
+	return m_isComputeTechnique;
 }
 
 Com<ID3DX11EffectTechnique> TechniqueDesc::GetTechnique() const
@@ -57,7 +63,7 @@ HRESULT TechniqueDesc::GetPassIndexByName(const string& name, uint& out_index) c
 	return E_FAIL;
 }
 
-TechniqueDesc* TechniqueDesc::CreateTechqniueDesc(Com<ID3D11Device> device, ID3DX11EffectTechnique* technique)
+TechniqueDesc* TechniqueDesc::CreateTechqniueDesc(Com<ID3D11Device> device, ID3DX11EffectTechnique* technique, tstring& out_error)
 {
 	if (!device)
 		return nullptr;
@@ -79,6 +85,8 @@ TechniqueDesc* TechniqueDesc::CreateTechqniueDesc(Com<ID3D11Device> device, ID3D
 		passes.clear();
 	};
 
+	bool hasDefaultShader = false;
+	bool hasComputeShader = false;
 	for (uint32_t i = 0; i < techniqueDesc.Passes; ++i)
 	{
 		ID3DX11EffectPass* pass = technique->GetPassByIndex(i);
@@ -88,14 +96,25 @@ TechniqueDesc* TechniqueDesc::CreateTechqniueDesc(Com<ID3D11Device> device, ID3D
 			return nullptr;
 		}
 
-		PassDesc* passDesc = PassDesc::CreatePassDesc(device, pass);
+		PassDesc* passDesc = PassDesc::CreatePassDesc(device, pass, out_error);
 		passes.push_back(passDesc);
 		if (!passDesc)
 		{
 			ReleaseVars();
 			return nullptr;
 		}
+
+		if (passDesc->IsComputePass())
+			hasComputeShader = true;
+		else
+			hasDefaultShader = true;
+		if (hasDefaultShader && hasComputeShader)
+		{
+			out_error = TEXT("Technique cannot have both a Compute Pass and a Default Pass at the same time.");
+			ReleaseVars();
+			return nullptr;
+		}
 	}
 
-	return new TechniqueDesc(technique, passes);
+	return new TechniqueDesc(technique, passes, hasComputeShader);
 }

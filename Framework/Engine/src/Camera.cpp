@@ -23,20 +23,32 @@ void Camera::Awake()
 			uint(system->graphicSystem->height));
 
 	m_ssaoDesc.Enable = true;
-	m_ssaoDesc.NumSamples = 16;
+	m_ssaoDesc.NumSamples = 8;
 	m_ssaoDesc.BlurNumSamples = 8;
-	m_ssaoDesc.Transparency = 0.25f;
-	m_ssaoDesc.MinZ = 0.05f;
+	m_ssaoDesc.Transparency = 0.225f;
+	m_ssaoDesc.MinZ = 0.003f;
 	m_ssaoDesc.Radius = 0.2f;
-	m_ssaoDesc.Power = 2.0f;
-	m_ssaoDesc.BlurPixelDistance = 700.0f;
+	m_ssaoDesc.Power = 2.5f;
+	m_ssaoDesc.BlurPixelDistance = 1100.0f;
+
+	m_fogDesc.Enable = false;
+	m_fogDesc.MinZ = 25.0f;
+	m_fogDesc.RangeZ = 10.0f;
+	m_fogDesc.Color = Color::white();
+
+	m_bloomDesc.Enable = true;
+	m_bloomDesc.Type = BloomType::Add;
+	m_bloomDesc.BlurNumSamples = 16;
+	m_bloomDesc.Intensity = 1.5f;
+	m_bloomDesc.Threshold = 0.1f;
+	m_bloomDesc.BlurPixelDistance = 50.0f;
 
 	m_linearDofDesc.Enable = true;
 	m_linearDofDesc.BlurNumSamples = 8;
 	m_linearDofDesc.MinZ = 15.0f;
 	m_linearDofDesc.RangeZ = 5.0f;
 	m_linearDofDesc.Power = 1.0f;
-	m_linearDofDesc.BlurPixelDistance = 10;
+	m_linearDofDesc.BlurPixelDistance = 10.0f;
 }
 
 void Camera::Render()

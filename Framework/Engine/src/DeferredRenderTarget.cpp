@@ -9,14 +9,14 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_width = width;
 	m_height = height;
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_diffuse);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_diffuse);
 	m_renderTargets.push_back(m_diffuse);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardDiffuse);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardDiffuse);
 	m_forwardRenderTargets.push_back(m_forwardDiffuse);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_normal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_normal);
 	m_renderTargets.push_back(m_normal);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardNormal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardNormal);
 	m_forwardRenderTargets.push_back(m_forwardNormal);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_worldPosition);
@@ -24,9 +24,9 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardWorldPosition);
 	m_forwardRenderTargets.push_back(m_forwardWorldPosition);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_depthLightOcclusionShadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_depthLightOcclusionShadow);
 	m_renderTargets.push_back(m_depthLightOcclusionShadow);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardDepthLightOcclusionShadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardDepthLightOcclusionShadow);
 	m_forwardRenderTargets.push_back(m_forwardDepthLightOcclusionShadow);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_specularPower);
@@ -37,30 +37,34 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_emissive);
 	m_renderTargets.push_back(m_emissive);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_light);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_light);
 	m_renderTargets.push_back(m_light);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardLight);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardLight);
 	m_forwardRenderTargets.push_back(m_forwardLight);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_specular);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_specular);
 	m_renderTargets.push_back(m_specular);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardSpecular);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardSpecular);
 	m_forwardRenderTargets.push_back(m_forwardSpecular);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_lightBlend);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_lightBlend);
 	m_renderTargets.push_back(m_lightBlend);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardLightBlend);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardLightBlend);
 	m_forwardRenderTargets.push_back(m_forwardLightBlend);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_result);
 	m_renderTargets.push_back(m_result);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_bridge);
-	m_renderTargets.push_back(m_bridge);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_ssao);
-	m_renderTargets.push_back(m_ssao);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_dof);
-	m_renderTargets.push_back(m_dof);
+	m_postProcessingRenderTargets.push_back(m_bridge);
+	RenderTarget::Create(device, width / 2, height / 2, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_bridgeHalf);
+	m_postProcessingRenderTargets.push_back(m_bridgeHalf);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssao);
+	m_postProcessingRenderTargets.push_back(m_ssao);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_dof);
+	m_postProcessingRenderTargets.push_back(m_dof);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bloom);
+	m_postProcessingRenderTargets.push_back(m_bloom);
 }
 
 DeferredRenderTarget* DeferredRenderTarget::Create(Com<ID3D11Device> device, uint width, uint height)
@@ -80,6 +84,8 @@ DeferredRenderTarget::~DeferredRenderTarget()
 		SafeDelete(renderTarget);
 	for (auto& forwardRenderTarget : m_forwardRenderTargets)
 		SafeDelete(forwardRenderTarget);
+	for (auto& postProcessingRenderTarget : m_forwardRenderTargets)
+		SafeDelete(postProcessingRenderTarget);
 }
 
 bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint height)
@@ -102,6 +108,20 @@ bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint hei
 			if (!forwardRenderTarget->Resize(device, width, height))
 				return false;
 		}
+	}
+
+	// Post Processing Render Targets
+	{
+		if (!m_bridge->Resize(device, width, height))
+			return false;
+		if (!m_bridgeHalf->Resize(device, width / 2, height / 2))
+			return false;
+		if (!m_ssao->Resize(device, width, height))
+			return false;
+		if (!m_dof->Resize(device, width, height))
+			return false;
+		if (!m_bloom->Resize(device, width, height))
+			return false;
 	}
 
 	return true;
@@ -136,6 +156,19 @@ void DeferredRenderTarget::ClearForwards(Com<ID3D11DeviceContext> deviceContext)
 			forwardRenderTarget->Clear(deviceContext, Color::white());
 		else
 			forwardRenderTarget->Clear(deviceContext, clearColor);
+	}
+}
+
+void DeferredRenderTarget::ClearPostProcessings(Com<ID3D11DeviceContext> deviceContext)
+{
+	if (!deviceContext)
+		return;
+
+	Color clearColor = Color::clear();
+
+	for (auto& postProcessingRenderTarget : m_postProcessingRenderTargets)
+	{
+		postProcessingRenderTarget->Clear(deviceContext, clearColor);
 	}
 }
 

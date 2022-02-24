@@ -16,6 +16,10 @@ class ENGINE_API PostProcessing
 	{
 		SSAO_WirteOcclusion,
 		SSAO_ApplyOcclusion,
+		Fog_Apply,
+		Bloom_Extract,
+		Bloom_Apply_Add,
+		Bloom_Apply_Mix,
 		LinearDOF_WritePass0,
 		LinearDOF_WritePass1,
 		LinearDOF_Apply,
@@ -55,11 +59,15 @@ private:
 private:
 
 	void GetTehcniqueAndPass(Type type, uint& out_technique, uint& out_pass) const;
+
 	void Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
 	void Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
+	void Render_Fog_Apply(ICamera* camera, const FogDesc& fogDesc);
+	void Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloomDesc);
+	void Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomDesc);
+	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
 	void Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc& dofDesc);
 	void Render_LinearDOF_Apply(ICamera* camera, const LinearDOFDesc& dofDesc);
-	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
 
 private:
 

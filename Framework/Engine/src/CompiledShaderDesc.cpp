@@ -271,7 +271,7 @@ HRESULT CompiledShaderDesc::SetTextureArray(const string& name, ID3D11ShaderReso
 	return S_OK;
 }
 
-CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path)
+CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
 {
 	if (!device)
 		return nullptr;
@@ -284,7 +284,7 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 		D3DCOMPILE_DEBUG | 
 		D3DCOMPILE_SKIP_OPTIMIZATION;
 #else
-	compileFlag1 = D3DCOMPILE_OPTIMIZATION_LEVEL1;
+	compileFlag1 = D3DCOMPILE_OPTIMIZATION_LEVEL3;
 #endif
 
 	ID3DBlob* compileShader = nullptr;
@@ -336,7 +336,10 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 		return nullptr;
 	}
 
-	techniqueDescs.reserve(effectDesc.Techniques);;
+	techniqueDescs.reserve(effectDesc.Techniques);
+
+	bool hasDefaultTechnique = false;
+	bool hasComputeTechnique = false;
 	for (uint32_t i = 0; i < effectDesc.Techniques; ++i)
 	{
 		ID3DX11EffectTechnique* technique = effect->GetTechniqueByIndex(i);
@@ -346,15 +349,29 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 			return nullptr;
 		}
 
-		TechniqueDesc* techniqueDesc = TechniqueDesc::CreateTechqniueDesc(device, technique);
+		TechniqueDesc* techniqueDesc = TechniqueDesc::CreateTechqniueDesc(device, technique, out_error);
 		if (!techniqueDesc)
 		{
 			ReleaseVars();
 			return nullptr;
 		}
 
+		if (techniqueDesc->IsComputeTechnique())
+			hasComputeTechnique = true;
+		else
+			hasDefaultTechnique = true;
+		if (hasDefaultTechnique && hasComputeTechnique)
+		{
+			out_error = TEXT("A shader cannot have both a Compute Technique and a Default Technique at the same time.");
+			ReleaseVars();
+			return nullptr;
+		}
+
 		techniqueDescs.push_back(techniqueDesc);
 	}
+
+	SafeRelease(compileShaderErrorMessage);
+	SafeRelease(compileShader);
 
 	return new CompiledShaderDesc(effect, techniqueDescs);
 }

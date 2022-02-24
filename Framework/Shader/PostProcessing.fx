@@ -24,6 +24,27 @@ struct SSAODesc
 	float	BlurPixelDistance;
 };
 
+struct FogDesc
+{
+	bool	Enable;
+	float	MinZ;
+	float	RangeZ;
+	float4	Color;
+};
+
+#define BLOOM_TYPE_ADD	0
+#define BLOOM_TYPE_MIX	1
+
+struct BloomDesc
+{
+	bool	Enable;
+	uint	Type;
+	uint	BlurNumSamples;
+	float	Intensity;
+	float	Threshold;
+	float	BlurPixelDistance;
+};
+
 struct LinearDOFDesc
 {
 	bool	Enable;
@@ -42,7 +63,9 @@ struct BlurDesc
 };
 
 SSAODesc		_SSAODesc;
+FogDesc			_FogDesc;
 LinearDOFDesc	_LinearDOFDesc;
+BloomDesc		_BloomDesc;
 BlurDesc		_BlurDesc;
 float4			_TextureSize;
 texture2D		_Diffuse;
@@ -71,25 +94,25 @@ PS_IN VS_MAIN(VS_IN In)
 
 float SSAO(float2 uv)
 {
-	const int NUM_KERNEL = 16;
-	const float3 kernels[NUM_KERNEL] =
+	const static int NUM_KERNEL = 16;
+	const static float3 kernels[NUM_KERNEL] =
 	{
-		normalize(float3(0.2024537f, 0.841204f, 0.9060141f)),
-		normalize(float3(-0.2200423f, 0.6282339f, 0.8275437f)),
-		normalize(float3(0.3677659f, 0.1086345f, 0.4466777f)),
-		normalize(float3(0.8775856f, 0.4617546f, 0.6427765f)),
-		normalize(float3(0.7867433f, -0.141479f, 0.1567597f)),
-		normalize(float3(0.4839356f, -0.8253108f, 0.1563844f)),
-		normalize(float3(0.4401554f, -0.4228428f, 0.3300118f)),
-		normalize(float3(0.0019193f, -0.8048455f, 0.0726584f)),
-		normalize(float3(-0.7578573f, -0.5583301f, 0.2347527f)),
-		normalize(float3(-0.4540417f, -0.252365f, 0.0694318f)),
-		normalize(float3(-0.0483353f, -0.2527294f, 0.5924745f)),
-		normalize(float3(-0.4192392f, 0.2084218f, 0.3672943f)),
-		normalize(float3(-0.8433938f, 0.1451271f, 0.2202872f)),
-		normalize(float3(-0.4037157f, -0.8263387f, 0.4698132f)),
-		normalize(float3(-0.6657394f, 0.6298575f, 0.6342437f)),
-		normalize(float3(-0.0001783f, 0.2834622f, 0.8343929f)),
+		normalize(float3(0.2024537f, 0.841204f, 0.9060141f)),		//1
+		normalize(float3(0.3677659f, 0.1086345f, 0.4466777f)),		//3
+		normalize(float3(0.7867433f, -0.141479f, 0.1567597f)),		//4
+		normalize(float3(0.4839356f, -0.8253108f, 0.1563844f)),		//5
+		normalize(float3(-0.4192392f, 0.2084218f, 0.3672943f)),		//6
+		normalize(float3(-0.8433938f, 0.1451271f, 0.2202872f)),		//7
+		normalize(float3(0.0019193f, -0.8048455f, 0.0726584f)),		//11
+		normalize(float3(-0.7578573f, -0.5583301f, 0.2347527f)),	//12
+		normalize(float3(-0.4540417f, -0.252365f, 0.0694318f)),		//13
+		normalize(float3(-0.4037157f, -0.8263387f, 0.4698132f)),	//15
+		normalize(float3(-0.6657394f, 0.6298575f, 0.6342437f)),		//8
+		normalize(float3(-0.2200423f, 0.6282339f, 0.8275437f)),		//2
+		normalize(float3(0.8775856f, 0.4617546f, 0.6427765f)),		//9
+		normalize(float3(-0.0001783f, 0.2834622f, 0.8343929f)),		//10
+		normalize(float3(-0.0483353f, -0.2527294f, 0.5924745f)),	//14
+		normalize(float3(0.4401554f, -0.4228428f, 0.3300118f)),		//16
 	};
 
 	float4 packedWorldPosition = _WorldPosition.Sample(textureSampler, uv);
@@ -100,6 +123,7 @@ float SSAO(float2 uv)
 	float3 normal = UnpackNormal(packedNormal);
 
 	float4 packedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, uv);
+	float depth = packedDepthLightOcclusionShadow.r;
 	float occlusionMask = packedDepthLightOcclusionShadow.z;
 
 	float3 randomSeed = 0;
@@ -126,9 +150,9 @@ float SSAO(float2 uv)
 		float2 sampleUV = float2(offset.xy / offset.w) * float2(1.0f, -1.0f);
 		sampleUV = sampleUV * 0.5f + 0.5f;
 
-		[flatten]
-		if (saturate(sampleUV.x) != sampleUV.x || saturate(sampleUV.y) != sampleUV.y)
-			continue;
+		//[flatten]
+		//if (saturate(sampleUV.x) != sampleUV.x || saturate(sampleUV.y) != sampleUV.y)
+		//	continue;
 
 		float4 samplePackedWorldPosition = _WorldPosition.Sample(textureSampler, sampleUV);
 		float3 sampleWorldPosition = UnpackWorldPosition(samplePackedWorldPosition);
@@ -138,15 +162,13 @@ float SSAO(float2 uv)
 		//float rangeCheck = abs(viewPosition.z - sampleDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
 		float rangeCheck = smoothstep(0.0, 1.0, _SSAODesc.Radius / abs(viewPosition.z - sampleDepth));
 
-		// Error guard
-		[flatten]
-		if (samplePackedWorldPosition.a == 0)
-			continue;
+		float emptyDepthCheck = float(depth < 1.0f);
 
-		occlusion += (sampleDepth <= viewSamplePos.z - _SSAODesc.MinZ ? 1.0 : 0.0) * rangeCheck;
+		occlusion += (sampleDepth <= viewSamplePos.z - _SSAODesc.MinZ ? 1.0 : 0.0) * rangeCheck * emptyDepthCheck;
 	}
 
 	occlusion = 1.0f - (occlusion / _SSAODesc.NumSamples);
+	occlusion = (_SSAODesc.NumSamples > 0) ? occlusion : 1.0f;
 	return pow(abs(occlusion), _SSAODesc.Power) * occlusionMask;
 }
 
@@ -156,6 +178,11 @@ float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 	return float4(occlusion, occlusion, occlusion, 1.0f);
 }
 
+// Middle Step ==================
+// Horizontal Blur
+// Vertical Blur
+// ==============================
+
 float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 {
 	float4 diffuse = _Diffuse.Sample(textureSampler, In.uv);
@@ -164,16 +191,86 @@ float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 	return float4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
 }
 
+// Fog =======================================================================================================
+
+float4 PS_MAIN_Fog_Apply(PS_IN In) : SV_TARGET
+{
+	float4 packedWorldPosition = _WorldPosition.Sample(textureSampler, In.uv);
+	float3 worldPosition = UnpackWorldPosition(packedWorldPosition);
+	float4 viewPosition = mul(float4(worldPosition, 1.0f), _ViewMatrix);
+	float viewDepth = viewPosition.z;
+
+	float4 packedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv);
+	float depth = packedDepthLightOcclusionShadow.r;
+
+	float emptyDepthCheck = float(depth >= 1.0f);
+
+	float percent = smoothstep(_FogDesc.MinZ, _FogDesc.MinZ + _FogDesc.RangeZ, viewDepth);
+	percent = max(emptyDepthCheck, percent);
+
+	float4 fogColor = _FogDesc.Color;
+	fogColor.a *= percent;
+
+	return fogColor;
+}
+
+// Bloom =====================================================================================================
+
+float4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
+{
+	const static float4 BLACK = float4(0, 0, 0, 1);
+
+	float4 sampleColor = _Sample.Sample(textureSampler, In.uv);
+	float brightness = Brightness(sampleColor.rgb) - 0.01f;
+
+	float percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	float4 brightedColor = normalize(sampleColor);
+
+	return lerp(BLACK, brightedColor, percent);
+}
+
+// Middle Step ==================
+// Horizontal Blur
+// Vertical Blur
+// ==============================
+
+float4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
+{
+	float4 sampleColor = _Sample.Sample(textureSampler, In.uv);
+
+	float4 color;
+	color.rgb = sampleColor.rgb;
+	color.a = 1.0f;
+	color *= _BloomDesc.Intensity;
+	color = min(float4(1.0f, 1.0f, 1.0f, 1.0f), color);
+
+	return color;
+}
+
+float4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
+{
+	float4 sampleColor = _Sample.Sample(textureSampler, In.uv);
+	float brightness = Brightness(sampleColor.rgb);
+
+	float4 color;
+	color.rgb = normalize(sampleColor.rgb);
+	color.a = brightness;
+	color *= _BloomDesc.Intensity;
+	color = min(float4(1.0f, 1.0f, 1.0f, 1.0f), color);
+
+	return color;
+}
+
 // Linear DOF ======================================================================================================
 
 float4 PS_MAIN_LinearDOF_WritePass0(PS_IN In) : SV_TARGET
 {
+	//// Horizontal Blur 
+
 	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
 	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	int size = _LinearDOFDesc.BlurNumSamples;
 	int numSamples = size * 2 + 1;
-
-	float depth = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv).r;
 
 	[unroll(32 + 1)]
 	for (int i = -size; i <= size; ++i)
@@ -185,14 +282,18 @@ float4 PS_MAIN_LinearDOF_WritePass0(PS_IN In) : SV_TARGET
 		accumulation += sampleColor;
 	}
 
-	float4 verticalBlur = accumulation / numSamples;
-	verticalBlur.a = 1.0f;
+	float4 horizontalBlur = accumulation / numSamples;
+	horizontalBlur.a = 1.0f;
 
-	return verticalBlur;
+	//// 
+
+	return horizontalBlur;
 }
 
 float4 PS_MAIN_LinearDOF_WritePass1(PS_IN In) : SV_TARGET
 {
+	//// Verticla Blur 
+
 	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
 	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	int size = _LinearDOFDesc.BlurNumSamples;
@@ -210,6 +311,9 @@ float4 PS_MAIN_LinearDOF_WritePass1(PS_IN In) : SV_TARGET
 
 	float4 blur = accumulation / numSamples;
 	blur.a = 1.0f;
+
+	//// Blend 
+
 	float4 color = _Result.Sample(textureSampler, In.uv);
 
 	float depth = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv).r;
@@ -219,6 +323,8 @@ float4 PS_MAIN_LinearDOF_WritePass1(PS_IN In) : SV_TARGET
 
 	float4 lerped = lerp(color, blur, percent);
 	return lerped;
+
+	//// 
 }
 
 float4 PS_MAIN_LinearDOF_Apply(PS_IN In) : SV_TARGET
@@ -239,7 +345,7 @@ float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 	[unroll(32 + 1)]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustX = _BlurDesc.PixelDistance * i;
+		float adjustX = _BlurDesc.PixelDistance * i / numSamples;
 		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
 
 		float4 color = _Sample.Sample(textureSampler, sampleUV);
@@ -262,7 +368,7 @@ float4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
 	[unroll(32 + 1)]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustY = _BlurDesc.PixelDistance * i;
+		float adjustY = _BlurDesc.PixelDistance * i / numSamples;
 		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
 
 		float4 color = _Sample.Sample(textureSampler, sampleUV);
@@ -380,12 +486,12 @@ DepthStencilState DepthStencilState0
 	DepthWriteMask = zero;
 };
 
-BlendState BlendState0
+BlendState BlendState_None
 {
 	BlendEnable[0] = false;
 };
 
-BlendState BlendState1
+BlendState BlendState_Mix
 {
 	BlendEnable[0] = true;
 	SrcBlend = Src_Alpha;
@@ -393,7 +499,7 @@ BlendState BlendState1
 	BlendOp = Add;
 };
 
-BlendState BlendState2
+BlendState BlendState_Add
 {
 	BlendEnable[0] = true;
 	SrcBlend = One;
@@ -407,7 +513,7 @@ technique11 PostProcessing
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_SSAO_WriteOcclusion();
 	}
@@ -415,15 +521,47 @@ technique11 PostProcessing
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState1, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_SSAO_ApplyOcclusion();
+	}
+	pass Fog_Apply
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Fog_Apply();
+	}
+	pass Bloom_Extract
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Extract();
+	}
+	pass Bloom_Apply_Add
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Add, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply_Add();
+	}
+	pass Bloom_Apply_Mix
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply_Mix();
 	}
 	pass LinearDOF_WritePass0
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_LinearDOF_WritePass0();
 	}
@@ -431,7 +569,7 @@ technique11 PostProcessing
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_LinearDOF_WritePass1();
 	}
@@ -439,7 +577,7 @@ technique11 PostProcessing
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_LinearDOF_Apply();
 	}
@@ -450,7 +588,7 @@ technique11 Common
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_HorizontalBlur();
 	}
@@ -458,7 +596,7 @@ technique11 Common
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_VerticalBlur();
 	}
@@ -466,7 +604,7 @@ technique11 Common
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_HorizontalInvDepthBlur();
 	}
@@ -474,7 +612,7 @@ technique11 Common
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_VerticalInvDepthBlur();
 	}
@@ -482,7 +620,7 @@ technique11 Common
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_HorizontalDepthBlur();
 	}
@@ -490,7 +628,7 @@ technique11 Common
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_VerticalDepthBlur();
 	}

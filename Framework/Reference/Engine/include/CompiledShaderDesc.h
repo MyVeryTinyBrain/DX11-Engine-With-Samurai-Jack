@@ -49,7 +49,7 @@ public:
 
 public:
 
-	static CompiledShaderDesc* CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path);
+	static CompiledShaderDesc* CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error);
 
 private:
 

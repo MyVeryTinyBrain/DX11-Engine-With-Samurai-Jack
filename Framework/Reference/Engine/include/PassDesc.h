@@ -8,6 +8,7 @@ class ENGINE_API PassDesc
 {
 protected:
 
+	// For Default Pass
 	PassDesc(
 		ID3DX11EffectPass* pass, ID3D11InputLayout* inputLayout, 
 		const string& name, const vector<string>& sementics, 
@@ -15,11 +16,18 @@ protected:
 		bool instancingFlag, 
 		bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha, TransparentLightMode transparentLightMode);
 
+	// For Compute Pass
+	PassDesc(
+		ID3DX11EffectPass* pass
+	);
+
 public:
 
 	~PassDesc();
 
 public:
+
+	bool IsComputePass() const;
 
 	Com<ID3DX11EffectPass> GetPass() const;
 
@@ -38,6 +46,10 @@ public:
 	float GetShadowCutoffAlpha() const;
 
 	TransparentLightMode GetTransparentLightMode() const;
+
+public:
+
+	Com<ID3D11ComputeShader> GetComputeShader() const;
 
 private:
 
@@ -61,12 +73,18 @@ private:
 
 public:
 
-	static PassDesc* CreatePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass);
+	static PassDesc* CreatePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass, tstring& out_error);
 
 private:
 
-	ID3DX11EffectPass*		m_pass = nullptr;
+	static PassDesc* CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass);
+	static PassDesc* CreateComputePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass);
 
+private:
+
+	bool					m_isComputePass = false;
+
+	ID3DX11EffectPass*		m_pass = nullptr;
 	ID3D11InputLayout*		m_inputLayout = nullptr;
 
 	string					m_name = "";

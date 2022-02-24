@@ -22,6 +22,7 @@ public:
 
 	void Clear(Com<ID3D11DeviceContext> deviceContext);
 	void ClearForwards(Com<ID3D11DeviceContext> deviceContext);
+	void ClearPostProcessings(Com<ID3D11DeviceContext> deviceContext);
 
 public:
 
@@ -59,8 +60,10 @@ public:
 	inline RenderTarget* GetResult() const { return m_result; }
 
 	inline RenderTarget* GetBridge() const { return m_bridge; }
+	inline RenderTarget* GetBridgeHalf() const { return m_bridgeHalf; }
 	inline RenderTarget* GetSSAO() const { return m_ssao; }
 	inline RenderTarget* GetDOF() const { return m_dof; }
+	inline RenderTarget* GetBloom() const { return m_bloom; }
 
 	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
@@ -86,8 +89,10 @@ public:
 	_declspec(property(get = GetResult)) RenderTarget* result;
 
 	_declspec(property(get = GetBridge)) RenderTarget* bridge;
+	_declspec(property(get = GetBridgeHalf)) RenderTarget* bridgeHalf;
 	_declspec(property(get = GetSSAO)) RenderTarget* ssao;
 	_declspec(property(get = GetDOF)) RenderTarget* dof;
+	_declspec(property(get = GetBloom)) RenderTarget* bloom;
 
 public:
 
@@ -105,6 +110,7 @@ private:
 	using RenderTargets = vector<RenderTarget*>;
 	RenderTargets								m_renderTargets;
 	RenderTargets								m_forwardRenderTargets;
+	RenderTargets								m_postProcessingRenderTargets;
 
 	RenderTarget*								m_diffuse = nullptr; // RGBA(Diffuse)
 	RenderTarget*								m_normal = nullptr; // RGB(Normal)
@@ -130,8 +136,10 @@ private:
 	RenderTarget*								m_result = nullptr;
 
 	RenderTarget*								m_bridge = nullptr;
+	RenderTarget*								m_bridgeHalf = nullptr;
 	RenderTarget*								m_ssao = nullptr;
 	RenderTarget*								m_dof = nullptr;
+	RenderTarget*								m_bloom = nullptr;
 };
 
 ENGINE_END

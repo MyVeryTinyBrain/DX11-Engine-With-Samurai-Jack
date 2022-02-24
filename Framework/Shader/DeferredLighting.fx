@@ -100,13 +100,11 @@ float ComputeFresnel(float3 viewToPixel, float3 normal)
 
 float ComputeSpecular(float3 viewToPixel, float3 normal, float power)
 {
-	float powerPercent = 0.2f + power * 0.8f;
-
 	viewToPixel = normalize(viewToPixel);
 	float3 reflection = reflect(viewToPixel * -1.0f, normal);
 	float rDotV = dot(reflection, viewToPixel);
 	rDotV = saturate(rDotV);
-	float specular = pow(rDotV, powerPercent * 10.0f);
+	float specular = pow(rDotV, power);
 	return specular;
 }
 
