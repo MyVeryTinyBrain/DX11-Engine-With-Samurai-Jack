@@ -32,8 +32,8 @@ void Camera::Awake()
 	m_ssaoDesc.BlurPixelDistance = 1100.0f;
 
 	m_fogDesc.Enable = false;
-	m_fogDesc.MinZ = 25.0f;
-	m_fogDesc.RangeZ = 10.0f;
+	m_fogDesc.MinZ = 30.0f;
+	m_fogDesc.RangeZ = 40.0f;
 	m_fogDesc.Color = Color::white();
 
 	m_bloomDesc.Enable = true;

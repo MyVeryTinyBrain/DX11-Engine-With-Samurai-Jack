@@ -98,7 +98,7 @@ RasterizerState RasterizerState0
 	FillMode = Solid;
 	Cullmode = Back;
 	DepthClipEnable = TRUE;
-	DepthBias = 100; //maybe as parameter
+	DepthBias = 100;
 	DepthBiasClamp = 0.0f;
 	SlopeScaledDepthBias = 10.0f;
 };

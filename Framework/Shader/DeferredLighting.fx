@@ -188,7 +188,7 @@ ShadowDesc ComputeShadowCommonPCF3X3(uint i, float4 worldPosition, float lightIn
 	float depthValueByCamera = lightViewPosition.z / lightViewPosition.w;
 	depthValueByCamera = depthValueByCamera - bias;
 
-	const uint numSamples = 3;
+	static const uint NUM_SAMPLES = 3;
 	const float delta = 1.0f / _LightDesc.DepthSize;
 	const float2 adjust[8] = 
 	{
@@ -231,7 +231,7 @@ ShadowDesc ComputeShadowCommonPCF3X3(uint i, float4 worldPosition, float lightIn
 	}
 
 	[unroll]
-	for (uint j = 0; j < numSamples * numSamples - 1; ++j)
+	for (uint j = 0; j < NUM_SAMPLES * NUM_SAMPLES - 1; ++j)
 	{
 		// 새로 샘플링할 UV 좌표입니다.
 		float2 sampleProjectTexCoorrd = projectTexCoord + adjust[j];
