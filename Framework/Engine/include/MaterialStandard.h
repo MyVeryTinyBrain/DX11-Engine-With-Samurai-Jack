@@ -25,6 +25,10 @@ public:
 	const ResourceRef<Texture>& GetShadowMapTexture();
 	const ResourceRef<Texture>& GetSpecularMapTexture();
 	float GetSpecularPower();
+	const ResourceRef<Texture>& GetEmissiveTexture();
+	const ResourceRef<Texture>& GetReflectionTexture();
+	float GetReflectionTransparency();
+	float GetReflectMask();
 
 	void SetNormalMapTexture(const ResourceRef<Texture>& texture);
 	void SetLightMapTexture(const ResourceRef<Texture>& texture);
@@ -32,6 +36,10 @@ public:
 	void SetShadowMapTexture(const ResourceRef<Texture>& texture);
 	void SetSpecularMapTexture(const ResourceRef<Texture>& texture);
 	void SetSpecularPower(float value);
+	void SetEmissiveTexture(const ResourceRef<Texture>& texture);
+	void SetReflectionTexture(const ResourceRef<Texture>& texture);
+	void SetReflectionTransparency(float value);
+	void SetReflectMask(float value);
 
 	_declspec(property(get = GetNormalMapTexture, put = SetNormalMapTexture)) const ResourceRef<Texture>& normalMap;
 	_declspec(property(get = GetLightMapTexture, put = SetLightMapTexture)) const ResourceRef<Texture>& lightMap;
@@ -39,6 +47,10 @@ public:
 	_declspec(property(get = GetShadowMapTexture, put = SetShadowMapTexture)) const ResourceRef<Texture>& shadowMap;
 	_declspec(property(get = GetSpecularMapTexture, put = SetSpecularMapTexture)) const ResourceRef<Texture>& specularMap;
 	_declspec(property(get = GetSpecularPower, put = SetSpecularPower)) float specularPower;
+	_declspec(property(get = GetEmissiveTexture, put = SetEmissiveTexture)) const ResourceRef<Texture>& emissive;
+	_declspec(property(get = GetReflectionTexture, put = SetReflectionTexture)) const ResourceRef<Texture>& reflection;
+	_declspec(property(get = GetReflectionTransparency, put = SetReflectionTransparency)) float reflectionTransparency;
+	_declspec(property(get = GetReflectMask, put = SetReflectMask)) float reflectMask;
 
 private:
 
@@ -59,6 +71,18 @@ private:
 
 	// float _SpecularPower;
 	float m_specularPower = 0.5f;
+
+	// texture2D _EmissiveTexture;
+	ResourceRef<Texture> m_emissiveTexture;
+
+	// texture2D _ReflectionTexture;
+	ResourceRef<Texture> m_reflectionTexture;
+
+	// float _ReflectionTransparency;
+	float m_reflectionTransparency = 0.0f;
+
+	// float _ReflectMask;
+	float m_reflectMask = 0.5f;
 };
 
 ENGINE_END

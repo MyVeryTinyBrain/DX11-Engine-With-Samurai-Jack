@@ -36,6 +36,9 @@ public:
 	const ResourceRef<Texture2D>& GetBlackTexture() const;
 	_declspec(property(get = GetBlackTexture)) const ResourceRef<Texture2D>& blackTexture;
 
+	const ResourceRef<Texture2D>& GetClearTexture() const;
+	_declspec(property(get = GetClearTexture)) const ResourceRef<Texture2D>& clearTexture;
+
 	const ResourceRef<Texture2D>& GetRedTexture() const;
 	_declspec(property(get = GetRedTexture)) const ResourceRef<Texture2D>& redTexture;
 
@@ -117,6 +120,7 @@ private: // Built-In resources
 	
 	ResourceRef<Texture2D> m_white;
 	ResourceRef<Texture2D> m_black;
+	ResourceRef<Texture2D> m_clear;
 
 	ResourceRef<Texture2D> m_red;
 	ResourceRef<Texture2D> m_green;

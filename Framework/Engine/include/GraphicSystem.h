@@ -39,6 +39,7 @@ public:
 
 	virtual CameraManager* GetCameraManager() const override;
 
+	virtual PostProcessing* GetPostProcessing() const override;
 	virtual DeferredScreenRender* GetDeferredScreenRender() const override;
 
 	virtual LightManager* GetLightManager() const override;
@@ -47,6 +48,7 @@ public:
 	_declspec(property(get = GetDeviceContext)) Com<ID3D11DeviceContext> deviceContext;
 	_declspec(property(get = GetRenderQueue)) RenderQueue* renderQueue;
 	_declspec(property(get = GetCameraManager)) CameraManager* cameraManager;
+	_declspec(property(get = GetPostProcessing)) PostProcessing* postProcessing;
 	_declspec(property(get = GetDeferredScreenRender)) DeferredScreenRender* deferredScreenRender;
 	_declspec(property(get = GetLightManager)) LightManager* lightManager;
 
@@ -155,6 +157,7 @@ private:
 
 	CameraManager*				m_cameraManager = nullptr;
 
+	PostProcessing*				m_postProcessing = nullptr;
 	DeferredScreenRender*		m_deferredScreenRender = nullptr;
 
 	LightManager*				m_lightManager = nullptr;

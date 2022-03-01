@@ -49,6 +49,7 @@ public:
 
 	virtual bool GetPostProcessingState() const = 0;
 	virtual const SSAODesc& GetSSAODesc() const = 0;
+	virtual const SSRDesc& GetSSRDesc() const = 0;
 	virtual const FogDesc& GetFogDesc() const = 0;
 	virtual const BloomDesc& GetBloomDesc() const = 0;
 	virtual const LinearDOFDesc& GetLinearDOFDesc() const = 0;

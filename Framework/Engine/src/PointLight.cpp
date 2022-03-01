@@ -46,8 +46,8 @@ LightDesc PointLight::GetLightDesc(ICamera* camera) const
 
     LightDesc desc = {};
 
-    desc.Type = LightType::Point;
     desc.DrawShadow = drawShadow;
+    desc.Type = LightType::Point;
     desc.DepthSize = depthSize;
     desc.ShadowWhiteness = shadowWhiteness;
     desc.Intensity = intensity;

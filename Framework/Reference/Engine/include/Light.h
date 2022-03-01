@@ -52,16 +52,18 @@ private:
 
 private:
 
-	float			m_intensity = 1.0f;
+	float					m_intensity = 1.0f;
 
-	Color			m_diffuse = Color::white();
-	Color			m_ambient = Color::black();
+	Color					m_diffuse = Color::white();
+	Color					m_ambient = Color::black();
 
-	bool			m_drawShadow = false;
-	float			m_shadowWhiteness = 0.5f;
+	bool					m_drawShadow = false;
+	float					m_shadowWhiteness = 0.5f;
 
-	uint			m_depthSize = 2048;
-	DepthStencil*	m_depthes[6] = {};
+	bool					m_isVolumetricLight = false;
+
+	uint					m_depthSize = 2048;
+	DepthStencil*			m_depthes[6] = {};
 };
 
 ENGINE_END

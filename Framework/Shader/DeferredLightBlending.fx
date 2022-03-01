@@ -13,7 +13,7 @@ struct PS_IN
 };
 
 texture2D		_Diffuse;
-texture2D		_DepthLightOcclusionShadow;
+texture2D		_Depth_Light_Occlusion_Shadow;
 texture2D		_Light;
 texture2D		_Specular;
 SamplerState	textureSampler
@@ -37,7 +37,7 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	float4 color = (float4)0;
 
 	float4 unpackedDiffuse = _Diffuse.Sample(textureSampler, In.uv);
-	float4 unpackedDepthLightOcclusionShadow = _DepthLightOcclusionShadow.Sample(textureSampler, In.uv);
+	float4 unpackedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv);
 	float unpackedLightMask = unpackedDepthLightOcclusionShadow.y;
 	float unpackedOcclusion = unpackedDepthLightOcclusionShadow.z;
 	float4 unpackedLight = _Light.Sample(textureSampler, In.uv);

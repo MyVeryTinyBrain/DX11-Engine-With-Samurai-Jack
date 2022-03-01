@@ -38,6 +38,7 @@ void FreeCamera::Update()
         GameObject* go = CreateGameObject();
         Rigidbody* rigidbody = go->AddComponent<Rigidbody>();
         go->transform->position = transform->position;
+        go->transform->localScale = V3::one() * float(rand() % 100 + 50) * 0.01f;
         rigidbody->velocity = system->input->GetRayInWorldSpace().direction * 10.0f;
         rigidbody->linearDamping = 0.5f;
         rigidbody->angularDamping = 0.5f;

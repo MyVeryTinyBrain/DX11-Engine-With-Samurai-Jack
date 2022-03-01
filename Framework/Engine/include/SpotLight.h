@@ -6,6 +6,8 @@ ENGINE_BEGIN
 
 class ENGINE_API SpotLight : public Light
 {
+	virtual void Awake() override;
+
 public:
 
 	inline float GetRange() const { return m_range; }

@@ -27,9 +27,10 @@ struct PS_OUT
 	float4 diffuse : SV_TARGET0;
 	float4 normal : SV_TARGET1;
 	float4 worldPosition : SV_TARGET2;
-	float4 depthLightOcclusionShadow : SV_TARGET3;
-	float4 specularPower : SV_TARGET4;
+	float4 depth_Light_Occlusion_Shadow : SV_TARGET3;
+	float4 specular_Power : SV_TARGET4;
 	float4 emissive : SV_TARGET5;
+	float4 reflection_ReflectMask : SV_TARGET6;
 };
 
 texture2D		_NormalMapTexture;
@@ -38,6 +39,10 @@ texture2D		_OcclusionTexture;
 texture2D		_ShadowMapTexture;
 texture2D		_SpecularMapTexture;
 float			_SpecularPower;
+texture2D		_EmissiveTexture;
+texture2D		_ReflectionTexture;
+float			_ReflectionTransparency;
+float			_ReflectMask;
 SamplerState	diffuseSampler
 {
 	AddressU = wrap;
@@ -104,13 +109,18 @@ PS_OUT PS_MAIN(PS_IN In)
 	float lightMask = _LightMapTexture.Sample(diffuseSampler, In.uv).r;
 	float shadowMask = _ShadowMapTexture.Sample(diffuseSampler, In.uv).r;
 	float occlusionMask = _OcclusionTexture.Sample(diffuseSampler, In.uv).r;
-	output.depthLightOcclusionShadow = float4(depth, lightMask, occlusionMask, shadowMask);
+	output.depth_Light_Occlusion_Shadow = float4(depth, lightMask, occlusionMask, shadowMask);
 
 	float3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.uv).rgb;
-	float specularPower = 5.0f;
-	output.specularPower = float4(specularMask, specularPower);
+	float specular_Power = 5.0f;
+	output.specular_Power = float4(specularMask, specular_Power);
 
-	output.emissive = float4(0, 0, 0, 0);
+	float4 emissive = _EmissiveTexture.Sample(diffuseSampler, In.uv);
+	output.emissive = emissive;
+
+	float reflection = _ReflectionTexture.Sample(diffuseSampler, In.uv).r * (1.0f - _ReflectionTransparency);
+	float reflectMask = _ReflectMask;
+	output.reflection_ReflectMask = float4(reflection, reflectMask, 0, 1);
 
 	return output;
 }

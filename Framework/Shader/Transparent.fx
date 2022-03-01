@@ -27,8 +27,8 @@ struct PS_OUT
 	float4 diffuse : SV_TARGET0;
 	float4 normal : SV_TARGET1;
 	float4 worldPosition : SV_TARGET2;
-	float4 depthLightOcclusionShadow : SV_TARGET3;
-	float4 specularPower : SV_TARGET4;
+	float4 depth_Light_Occlusion_Shadow : SV_TARGET3;
+	float4 specular_Power : SV_TARGET4;
 	float4 emissive : SV_TARGET5;
 };
 
@@ -37,7 +37,7 @@ texture2D		_LightMapTexture;
 texture2D		_OcclusionTexture;
 texture2D		_ShadowMapTexture;
 texture2D		_SpecularMapTexture;
-float			_SpecularPower;
+float			_Specular_Power;
 SamplerState	diffuseSampler
 {
 	AddressU = wrap;
@@ -95,11 +95,11 @@ PS_OUT PS_MAIN(PS_IN In)
 	float lightMask = 1.0f;
 	float shadowMask = 1.0f;
 	float occlusionMask = 1.0f;
-	output.depthLightOcclusionShadow = float4(depth, lightMask, occlusionMask, shadowMask);
+	output.depth_Light_Occlusion_Shadow = float4(depth, lightMask, occlusionMask, shadowMask);
 
 	float3 specularMask = 1.0f;
-	float specularPower = 0.5f;
-	output.specularPower = float4(specularMask, specularPower);
+	float specular_Power = 0.5f;
+	output.specular_Power = float4(specularMask, specular_Power);
 
 	output.emissive = float4(0, 0, 0, 0);
 

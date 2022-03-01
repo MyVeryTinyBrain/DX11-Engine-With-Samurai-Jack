@@ -88,13 +88,13 @@ float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 
 	float width, height;
 	_Diffuse.GetDimensions(width, height);
-	float2 pixelCoord = UVToPixelCoord(width, height, In.uv);
+	float2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
 
 	float4 horizontalColor = _Diffuse.Sample(textureSampler, In.uv);
 	for (uint i = 0; i < _Blur; ++i)
 	{
-		horizontalColor += _Diffuse.Sample(textureSampler, PixelCoordToUV(width, height, pixelCoord - float2(i, 0)));
-		horizontalColor += _Diffuse.Sample(textureSampler, PixelCoordToUV(width, height, pixelCoord + float2(i, 0)));
+		horizontalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord - float2(i, 0)));
+		horizontalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord + float2(i, 0)));
 	}
 	horizontalColor /= (1 + _Blur * 2);
 
@@ -107,13 +107,13 @@ float4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
 
 	float width, height;
 	_Diffuse.GetDimensions(width, height);
-	float2 pixelCoord = UVToPixelCoord(width, height, In.uv);
+	float2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
 
 	float4 verticalColor = _Diffuse.Sample(textureSampler, In.uv);
 	for (uint j = 0; j < _Blur; ++j)
 	{
-		verticalColor += _Diffuse.Sample(textureSampler, PixelCoordToUV(width, height, pixelCoord - float2(0, j)));
-		verticalColor += _Diffuse.Sample(textureSampler, PixelCoordToUV(width, height, pixelCoord + float2(0, j)));
+		verticalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord - float2(0, j)));
+		verticalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord + float2(0, j)));
 	}
 	verticalColor /= (1 + _Blur * 2);
 

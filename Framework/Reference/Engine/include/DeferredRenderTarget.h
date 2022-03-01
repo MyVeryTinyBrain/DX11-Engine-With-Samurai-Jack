@@ -36,18 +36,19 @@ public:
 
 public:
 
-	inline RenderTarget* GetDiffuse() const { return m_diffuse; }
-	inline RenderTarget* GetNormal() const { return m_normal; }
-	inline RenderTarget* GetWorldPosition() const { return m_worldPosition; }
-	inline RenderTarget* GetDepthLightOcclusionShadow() const { return m_depthLightOcclusionShadow; }
-	inline RenderTarget* GetSpecularPower() const { return m_specularPower; }
-	inline RenderTarget* GetEmissive() const { return m_emissive; }
+	inline RenderTarget* GetDiffuse() const { return m_Diffuse; }
+	inline RenderTarget* GetNormal() const { return m_Normal; }
+	inline RenderTarget* GetWorldPosition() const { return m_WorldPosition; }
+	inline RenderTarget* GetDepth_Light_Occlusion_Shadow() const { return m_Depth_Light_Occlusion_Shadow; }
+	inline RenderTarget* GetSpecular_Power() const { return m_Specular_Power; }
+	inline RenderTarget* GetEmissive() const { return m_Emissive; }
+	inline RenderTarget* GetReflection_ReflectMask() const { return m_Reflection_ReflectMask; }
 
 	inline RenderTarget* GetForwardDiffuse() const { return m_forwardDiffuse; }
 	inline RenderTarget* GetForwardNormal() const { return m_forwardNormal; }
 	inline RenderTarget* GetForwardWorldPosition() const { return m_forwardWorldPosition; }
-	inline RenderTarget* GetForwardDepthLightOcclusionShadow() const { return m_forwardDepthLightOcclusionShadow; }
-	inline RenderTarget* GetForwardSpecularPower() const { return m_forwardSpecularPower; }
+	inline RenderTarget* GetForwardDepth_Light_Occlusion_Shadow() const { return m_forwardDepth_Light_Occlusion_Shadow; }
+	inline RenderTarget* GetForwardSpecular_Power() const { return m_forwardSpecular_Power; }
 
 	inline RenderTarget* GetLight() const { return m_light; }
 	inline RenderTarget* GetSpecular() const { return m_specular; }
@@ -62,21 +63,23 @@ public:
 	inline RenderTarget* GetBridge() const { return m_bridge; }
 	inline RenderTarget* GetBridgeHalf() const { return m_bridgeHalf; }
 	inline RenderTarget* GetSSAO() const { return m_ssao; }
+	inline RenderTarget* GetSSR() const { return m_ssr; }
 	inline RenderTarget* GetDOF() const { return m_dof; }
 	inline RenderTarget* GetBloom() const { return m_bloom; }
 
 	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
 	_declspec(property(get = GetWorldPosition)) RenderTarget* worldPosition;
-	_declspec(property(get = GetDepthLightOcclusionShadow)) RenderTarget* depthLightOcclusionShadow;
-	_declspec(property(get = GetSpecularPower)) RenderTarget* specularPower;
+	_declspec(property(get = GetDepth_Light_Occlusion_Shadow)) RenderTarget* depth_Light_Occlusion_Shadow;
+	_declspec(property(get = GetSpecular_Power)) RenderTarget* specular_Power;
 	_declspec(property(get = GetEmissive)) RenderTarget* emissive;
+	_declspec(property(get = GetReflection_ReflectMask)) RenderTarget* reflection_ReflectMask;
 
 	_declspec(property(get = GetForwardDiffuse)) RenderTarget* forwardDiffuse;
 	_declspec(property(get = GetForwardNormal)) RenderTarget* forwardNormal;
 	_declspec(property(get = GetForwardWorldPosition)) RenderTarget* forwardWorldPosition;
-	_declspec(property(get = GetForwardDepthLightOcclusionShadow)) RenderTarget* forwardDepthLightOcclusionShadow;
-	_declspec(property(get = GetForwardSpecularPower)) RenderTarget* forwardSpecularPower;
+	_declspec(property(get = GetForwardDepth_Light_Occlusion_Shadow)) RenderTarget* forwardDepth_Light_Occlusion_Shadow;
+	_declspec(property(get = GetForwardSpecular_Power)) RenderTarget* forwardSpecular_Power;
 
 	_declspec(property(get = GetLight)) RenderTarget* light;
 	_declspec(property(get = GetSpecular)) RenderTarget* specular;
@@ -91,6 +94,7 @@ public:
 	_declspec(property(get = GetBridge)) RenderTarget* bridge;
 	_declspec(property(get = GetBridgeHalf)) RenderTarget* bridgeHalf;
 	_declspec(property(get = GetSSAO)) RenderTarget* ssao;
+	_declspec(property(get = GetSSR)) RenderTarget* ssr;
 	_declspec(property(get = GetDOF)) RenderTarget* dof;
 	_declspec(property(get = GetBloom)) RenderTarget* bloom;
 
@@ -112,18 +116,19 @@ private:
 	RenderTargets								m_forwardRenderTargets;
 	RenderTargets								m_postProcessingRenderTargets;
 
-	RenderTarget*								m_diffuse = nullptr; // RGBA(Diffuse)
-	RenderTarget*								m_normal = nullptr; // RGB(Normal)
-	RenderTarget*								m_worldPosition = nullptr; // RGB(WorldPositionDirection)A(WorldPositionDistance)
-	RenderTarget*								m_depthLightOcclusionShadow = nullptr; // R(Depth)G(LightMask)B(OcclusionMask)A(ShadowMask)
-	RenderTarget*								m_specularPower = nullptr; // RGB(SpecularMask)A(Power)
-	RenderTarget*								m_emissive = nullptr; // RGBA(Emissive)
+	RenderTarget*								m_Diffuse = nullptr; // RGBA(Diffuse)
+	RenderTarget*								m_Normal = nullptr; // RGB(Normal)
+	RenderTarget*								m_WorldPosition = nullptr; // RGB(WorldPositionDirection)A(WorldPositionDistance)
+	RenderTarget*								m_Depth_Light_Occlusion_Shadow = nullptr; // R(Depth)G(LightMask)B(OcclusionMask)A(ShadowMask)
+	RenderTarget*								m_Specular_Power = nullptr; // RGB(SpecularMask)A(Power)
+	RenderTarget*								m_Emissive = nullptr; // RGBA(Emissive)
+	RenderTarget*								m_Reflection_ReflectMask = nullptr; // R(Reflection)G(ReflectMask)
 
 	RenderTarget*								m_forwardDiffuse = nullptr;
 	RenderTarget*								m_forwardNormal = nullptr; 
 	RenderTarget*								m_forwardWorldPosition = nullptr; 
-	RenderTarget*								m_forwardDepthLightOcclusionShadow = nullptr; 
-	RenderTarget*								m_forwardSpecularPower = nullptr; 
+	RenderTarget*								m_forwardDepth_Light_Occlusion_Shadow = nullptr; 
+	RenderTarget*								m_forwardSpecular_Power = nullptr; 
 
 	RenderTarget*								m_light = nullptr;
 	RenderTarget*								m_specular = nullptr;
@@ -138,6 +143,7 @@ private:
 	RenderTarget*								m_bridge = nullptr;
 	RenderTarget*								m_bridgeHalf = nullptr;
 	RenderTarget*								m_ssao = nullptr;
+	RenderTarget*								m_ssr = nullptr;
 	RenderTarget*								m_dof = nullptr;
 	RenderTarget*								m_bloom = nullptr;
 };

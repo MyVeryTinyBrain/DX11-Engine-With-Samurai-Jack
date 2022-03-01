@@ -20,8 +20,8 @@ struct LightDesc
 	uint		DepthSize;
 	float		ShadowWhiteness;
 	float		Intensity;
-	float		Range; // (0~Infinite)
-	float		Angle; // (0~90)
+	float		Range;					// [0~inf]
+	float		Angle;					// [0~90]
 	float		Near;
 	float		Far;
 	V4			Position;

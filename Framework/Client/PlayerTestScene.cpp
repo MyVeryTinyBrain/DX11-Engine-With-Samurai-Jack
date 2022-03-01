@@ -72,6 +72,8 @@ void PlayerTestScene::OnLoad()
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
 			meshRenderer->material->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png"));
+			ResourceRef<MaterialStandard> mat = meshRenderer->material;
+			mat->reflection = system->resourceManagement->builtInResources->whiteTexture;
 		}
 
 		{
@@ -182,6 +184,7 @@ void PlayerTestScene::OnLoad()
 
 			ResourceRef<MaterialStandard> standardMaterial = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialStandard>();
 			standardMaterial->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png"));
+			standardMaterial->reflection = system->resourceManagement->builtInResources->whiteTexture;
 			meshRenderer->material = standardMaterial;
 
 			Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
@@ -284,6 +287,8 @@ void PlayerTestScene::OnUpdate()
 	ImGui::Begin("Camera");
 	if (ImGui::CollapsingHeader("Camera"))
 	{
+		ImGui::PushID("Camera");
+
 		float Near = camera->Near;
 		ImGui::SliderFloat("Near", &Near, 0.0f, camera->Far);
 		camera->Near = Near;
@@ -299,9 +304,13 @@ void PlayerTestScene::OnUpdate()
 		bool postProcessing = camera->postProcessingState;
 		ImGui::Checkbox("Enable", &postProcessing);
 		camera->postProcessingState = postProcessing;
+
+		ImGui::PopID();
 	}
 	if(ImGui::CollapsingHeader("SSAO"))
 	{
+		ImGui::PushID("SSAO");
+
 		SSAODesc ssaoDesc = camera->ssaoDesc;
 
 		bool enable = ssaoDesc.Enable;
@@ -337,14 +346,70 @@ void PlayerTestScene::OnUpdate()
 		ssaoDesc.BlurPixelDistance = blurPixelDistance;
 
 		camera->ssaoDesc = ssaoDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("SSR"))
+	{
+		ImGui::PushID("SSR");
+
+		SSRDesc ssrDesc = camera->ssrDesc;
+
+		bool enable = ssrDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		ssrDesc.Enable = enable;
+
+		bool blurEnable = ssrDesc.BlurEnable;
+		ImGui::Checkbox("BlurEnable", &blurEnable);
+		ssrDesc.BlurEnable = blurEnable;
+
+		const char* items[] = { "Default", "InvDepth", "Depth" };
+		int blurType = (int)ssrDesc.BlurType;
+		ImGui::Combo("BlurType", &blurType, items, 3);
+		ssrDesc.BlurType = (BlurType)blurType;
+
+		int numSamples = (int)ssrDesc.NumSamples;
+		ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
+		ssrDesc.NumSamples = (uint)numSamples;
+
+		int blurNumSamples = (int)ssrDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		ssrDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float step = ssrDesc.Step;
+		ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
+		ssrDesc.Step = step;
+
+		float thickness = ssrDesc.Thickness;
+		ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
+		ssrDesc.Thickness = thickness;
+
+		float bias = ssrDesc.Bias;
+		ImGui::SliderFloat("Bias", &bias, 0.0f, 0.5f);
+		ssrDesc.Bias = bias;
+
+		float blurPixelDistance = ssrDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		ssrDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->ssrDesc = ssrDesc;
+
+		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Fog"))
 	{
+		ImGui::PushID("Fog");
+
 		FogDesc fogDesc = camera->fogDesc;
 
 		bool enable = fogDesc.Enable;
 		ImGui::Checkbox("Enable", &enable);
 		fogDesc.Enable = enable;
+
+		const char* items[] = { "Distance", "Z" };
+		int type = (int)fogDesc.Type;
+		ImGui::Combo("Type", &type, items, 2);
+		fogDesc.Type = (FogType)type;
 
 		float minZ = fogDesc.MinZ;
 		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
@@ -359,9 +424,13 @@ void PlayerTestScene::OnUpdate()
 		fogDesc.Color = color;
 
 		camera->fogDesc = fogDesc;
+
+		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Bloom"))
 	{
+		ImGui::PushID("Bloom");
+
 		BloomDesc bloomDesc = camera->bloomDesc;
 
 		bool enable = bloomDesc.Enable;
@@ -390,9 +459,13 @@ void PlayerTestScene::OnUpdate()
 		bloomDesc.BlurPixelDistance = blurPixelDistance;
 
 		camera->bloomDesc = bloomDesc;
+
+		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("DOF"))
 	{
+		ImGui::PushID("DOF");
+
 		LinearDOFDesc linearDofDesc = camera->linearDofDesc;
 
 		bool enable = linearDofDesc.Enable;
@@ -420,12 +493,16 @@ void PlayerTestScene::OnUpdate()
 		linearDofDesc.BlurPixelDistance = blurPixelDistance;
 
 		camera->linearDofDesc = linearDofDesc;
+
+		ImGui::PopID();
 	}
 	ImGui::End();
 
 	ImGui::Begin("Lights");
 	if (ImGui::CollapsingHeader("Directional Light"))
 	{
+		ImGui::PushID("Directional Light");
+
 		GameObject* goDirectionalLight = FindGameObject(TEXT("DirectionalLight"));
 		DirectionalLight* light = goDirectionalLight->GetComponent<DirectionalLight>();
 
@@ -452,9 +529,13 @@ void PlayerTestScene::OnUpdate()
 		Color ambient = light->ambient;
 		ImGui::ColorPicker3("Ambient", (float*)&ambient);
 		light->ambient = ambient;
+
+		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Spot Light"))
 	{
+		ImGui::PushID("Spot Light");
+
 		GameObject* goSpotLight = FindGameObject(TEXT("SpotLight"));
 		SpotLight* light = goSpotLight->GetComponent<SpotLight>();
 
@@ -493,9 +574,13 @@ void PlayerTestScene::OnUpdate()
 		Color ambient = light->ambient;
 		ImGui::ColorPicker3("Ambient", (float*)&ambient);
 		light->ambient = ambient;
+
+		ImGui::PopID();
 	}
 	if (ImGui::CollapsingHeader("Point Light"))
 	{
+		ImGui::PushID("Point Light");
+
 		GameObject* goPointLight = FindGameObject(TEXT("PointLight"));
 		PointLight* light = goPointLight->GetComponent<PointLight>();
 
@@ -526,6 +611,8 @@ void PlayerTestScene::OnUpdate()
 		Color ambient = light->ambient;
 		ImGui::ColorPicker3("Ambient", (float*)&ambient);
 		light->ambient = ambient;
+
+		ImGui::PopID();
 	}
 	ImGui::End();
 }

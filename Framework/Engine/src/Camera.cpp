@@ -31,7 +31,18 @@ void Camera::Awake()
 	m_ssaoDesc.Power = 2.5f;
 	m_ssaoDesc.BlurPixelDistance = 1100.0f;
 
+	m_ssrDesc.Enable = true;
+	m_ssrDesc.BlurEnable = true;
+	m_ssrDesc.BlurType = BlurType::InvDepth;
+	m_ssrDesc.NumSamples = 150;
+	m_ssrDesc.BlurNumSamples = 4;
+	m_ssrDesc.Step = 0.05f;
+	m_ssrDesc.Thickness = 0.05f;
+	m_ssrDesc.Bias = 0.18f;
+	m_ssrDesc.BlurPixelDistance = 1000.0f;
+
 	m_fogDesc.Enable = false;
+	m_fogDesc.Type = FogType::Distance;
 	m_fogDesc.MinZ = 30.0f;
 	m_fogDesc.RangeZ = 40.0f;
 	m_fogDesc.Color = Color::white();

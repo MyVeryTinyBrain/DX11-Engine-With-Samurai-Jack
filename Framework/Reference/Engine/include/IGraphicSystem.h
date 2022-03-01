@@ -7,6 +7,7 @@ class RenderQueue;
 class CameraManager;
 class DeferredScreenRender;
 class LightManager;
+class PostProcessing;
 class ENGINE_API IGraphicSystem abstract
 {
 public:
@@ -33,6 +34,7 @@ public:
 
 	virtual CameraManager* GetCameraManager() const = 0;
 
+	virtual PostProcessing* GetPostProcessing() const = 0;
 	virtual DeferredScreenRender* GetDeferredScreenRender() const = 0;
 
 	virtual LightManager* GetLightManager() const = 0;

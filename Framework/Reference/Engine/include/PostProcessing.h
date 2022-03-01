@@ -16,7 +16,10 @@ class ENGINE_API PostProcessing
 	{
 		SSAO_WirteOcclusion,
 		SSAO_ApplyOcclusion,
-		Fog_Apply,
+		SSR_Write,
+		SSR_Apply,
+		Fog_Apply_Z,
+		Fog_Apply_Distance,
 		Bloom_Extract,
 		Bloom_Apply_Add,
 		Bloom_Apply_Mix,
@@ -50,6 +53,7 @@ public:
 public:
 
 	void PostProcess(ICamera* camera, PostProcessing::Step step);
+	void Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
 
 private:
 
@@ -62,7 +66,11 @@ private:
 
 	void Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
 	void Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
+	void Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc);
+	void Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc);
 	void Render_Fog_Apply(ICamera* camera, const FogDesc& fogDesc);
+	void Render_Fog_Apply_Distance(ICamera* camera, const FogDesc& fogDesc);
+	void Render_Fog_Apply_Z(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloomDesc);
 	void Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomDesc);
 	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);

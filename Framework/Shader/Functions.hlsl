@@ -1,23 +1,23 @@
 #include "Macros.hlsl"
 
-float2 UVToPixelCoord(float width, float height, float2 uv)
+inline float2 UVToTexPixelCoord(float width, float height, float2 uv)
 {
 	int iU = int(width * uv.x);
 	int iH = int(height * uv.y);
 	return float2(iU, iH);
 }
 
-float2 PixelCoordToUV(float width, float height, float2 pixelCoord)
+inline float2 TexPixelCoordToUV(float width, float height, float2 pixelCoord)
 {
 	return float2(pixelCoord.x / width, pixelCoord.y / height);
 }
 
-float Sin01(float value)
+inline float Sin01(float value)
 {
 	return sin(value) * 0.5 + 0.5;
 }
 
-float Cos01(float value)
+inline float Cos01(float value)
 {
 	return cos(value) * 0.5 + 0.5;
 }
@@ -62,7 +62,7 @@ float4x4 Inverse(float4x4 m)
     return ret;
 }
 
-float4x4 Identity()
+inline float4x4 Identity()
 {
     return float4x4(
         1, 0, 0, 0,
@@ -72,7 +72,7 @@ float4x4 Identity()
         );
 }
 
-float4x4 Tranlsation(float3 value)
+inline float4x4 Tranlsation(float3 value)
 {
     return float4x4(
         1, 0, 0, 0,
@@ -82,7 +82,7 @@ float4x4 Tranlsation(float3 value)
         );
 }
 
-float4x4 RotationX(float rad)
+inline float4x4 RotationX(float rad)
 {
     float c = cos(rad);
     float s = sin(rad);
@@ -94,7 +94,7 @@ float4x4 RotationX(float rad)
         );
 }
 
-float4x4 RotationY(float rad)
+inline float4x4 RotationY(float rad)
 {
     float c = cos(rad);
     float s = sin(rad);
@@ -146,7 +146,7 @@ float4x4 RotationAxis(float3 axis, float rad)
     return transpose(m);
 }
 
-float4x4 Scale(float3 value)
+inline float4x4 Scale(float3 value)
 {
     return float4x4(
         value.x, 0, 0, 0,
@@ -156,12 +156,12 @@ float4x4 Scale(float3 value)
         );
 }
 
-float3 DecomposeTranslation(float4x4 value)
+inline float3 DecomposeTranslation(float4x4 value)
 {
     return float3(value[3][0], value[3][1], value[3][2]);
 }
 
-float3 DecomposeScale(float4x4 value)
+inline float3 DecomposeScale(float4x4 value)
 {
     float xs = length(float3(value[0][0], value[0][1], value[0][2]));
     float ys = length(float3(value[1][0], value[1][1], value[1][2]));
@@ -169,26 +169,26 @@ float3 DecomposeScale(float4x4 value)
     return float3(xs, ys, zs);
 }
 
-float3 UnpackNormalMap(float3 normalMap, float3 normal, float3 tangent, float3 binormal)
+inline float3 UnpackNormalMap(float3 normalMap, float3 normal, float3 tangent, float3 binormal)
 {
     float3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);
     unpackedNormalMap = normalize(unpackedNormalMap);
     return unpackedNormalMap;
 }
 
-float4 PackNormal(float3 normal)
+inline float4 PackNormal(float3 normal)
 {
     normal = normalize(normal);
     float3 normalizedNormal = normal * 0.5f + 0.5f;
     return float4(normalizedNormal, 1.0f);
 }
 
-float3 UnpackNormal(float4 packedNormal)
+inline float3 UnpackNormal(float4 packedNormal)
 {
     return packedNormal.xyz * 2.0f - 1.0f;
 }
 
-float4 PackWorldPosition(float3 worldPosition)
+inline float4 PackWorldPosition(float3 worldPosition)
 {
     //float3 normalizedWorldPosition = normalize(worldPosition) * 0.5f + 0.5f;
     //float worldPositionLength = length(worldPosition) / WORLD_POSITION_PACK_SCALE;
@@ -196,7 +196,7 @@ float4 PackWorldPosition(float3 worldPosition)
     return float4(worldPosition.xyz, 1.0f);
 }
 
-float3 UnpackWorldPosition(float4 packedWorldPosition)
+inline float3 UnpackWorldPosition(float4 packedWorldPosition)
 {
     //float3 unpackedWorldPosition = packedWorldPosition.xyz * 2.0f - 1.0f;
     //unpackedWorldPosition *= packedWorldPosition.w * WORLD_POSITION_PACK_SCALE;
@@ -204,30 +204,30 @@ float3 UnpackWorldPosition(float4 packedWorldPosition)
     return float3(packedWorldPosition.xyz);
 }
 
-float ToLinearDepth(float Near, float Far, float Depth)
+inline float ToLinearDepth(float Near, float Far, float Depth)
 {
     return 2.0f * Near / (Far + Near - Depth * (Far - Near));
 }
 
-float Brightness(float3 colorRGB)
+inline float Brightness(float3 colorRGB)
 {
     float a = max(colorRGB.r, colorRGB.g);
     float b = max(a, colorRGB.b);
     return b;
 }
 
-float Brightness(float4 colorRGBA)
+inline float Brightness(float4 colorRGBA)
 {
     return Brightness(colorRGBA.rgb) * colorRGBA.a;
 }
 
-float Random(float2 xy)
+inline float Random(float2 xy)
 {
     float2 noise = (frac(sin(dot(xy, float2(12.9898f, 78.233f) * 2.0f)) * 43758.5453f));
     return frac(abs(noise.x + noise.y) * 0.5);
 }
 
-float3 RandomVector(float2 xy)
+inline float3 RandomVector(float2 xy)
 {
     float x0 = frac(sin(dot(xy, float2(15.8989f, 76.132f) * 1.0f)) * 46336.23745f);
     float y0 = frac(sin(dot(xy, float2(11.9899f, 62.223f) * 2.0f)) * 34748.34744f);
@@ -241,7 +241,7 @@ float3 RandomVector(float2 xy)
 }
 
 // Screen -> NDC
-float4 ToNDC(float2 uv, float depth)
+inline float4 ToNDC(float2 uv, float depth)
 {
     float4 NDC;
     NDC.xy = uv * 2.0f - 1.0f;
@@ -252,7 +252,7 @@ float4 ToNDC(float2 uv, float depth)
 }
 
 // Screen -> View
-float3 ToViewSpace(float2 uv, float depth, float4x4 inverseProjectionMatrix)
+inline float3 ToViewSpace(float2 uv, float depth, float4x4 inverseProjectionMatrix)
 {
     float4 NDC;
     NDC.xy = uv * 2.0f - 1.0f;

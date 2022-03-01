@@ -25,6 +25,8 @@ void MaterialStandard::OnCreated()
 	m_occlusionTexture = system->resourceManagement->builtInResources->whiteTexture;
 	m_shadowMapTexture = system->resourceManagement->builtInResources->whiteTexture;
 	m_specularMapTexture = system->resourceManagement->builtInResources->whiteTexture;
+	m_emissiveTexture = system->resourceManagement->builtInResources->clearTexture;
+	m_reflectionTexture = system->resourceManagement->builtInResources->blackTexture;
 }
 
 void MaterialStandard::OnSetMaterialValues()
@@ -35,6 +37,10 @@ void MaterialStandard::OnSetMaterialValues()
 	SetTexture("_ShadowMapTexture", m_occlusionTexture);
 	SetTexture("_SpecularMapTexture", m_occlusionTexture);
 	SetFloat("_SpecularPower", m_specularPower);
+	SetTexture("_EmissiveTexture", m_emissiveTexture);
+	SetTexture("_ReflectionTexture", m_reflectionTexture);
+	SetFloat("_ReflectionTransparency", m_reflectionTransparency);
+	SetFloat("_ReflectMask", m_reflectMask);
 }
 
 const ResourceRef<Texture>& MaterialStandard::GetNormalMapTexture()
@@ -65,6 +71,26 @@ const ResourceRef<Texture>& MaterialStandard::GetSpecularMapTexture()
 float MaterialStandard::GetSpecularPower()
 {
 	return m_specularPower;
+}
+
+const ResourceRef<Texture>& MaterialStandard::GetEmissiveTexture()
+{
+	return m_emissiveTexture;
+}
+
+const ResourceRef<Texture>& MaterialStandard::GetReflectionTexture()
+{
+	return m_reflectionTexture;
+}
+
+float MaterialStandard::GetReflectionTransparency()
+{
+	return m_reflectionTransparency;
+}
+
+float MaterialStandard::GetReflectMask()
+{
+	return m_reflectMask;
 }
 
 void MaterialStandard::SetNormalMapTexture(const ResourceRef<Texture>& texture)
@@ -100,4 +126,24 @@ void MaterialStandard::SetSpecularMapTexture(const ResourceRef<Texture>& texture
 void MaterialStandard::SetSpecularPower(float value)
 {
 	m_specularPower = value;
+}
+
+void MaterialStandard::SetEmissiveTexture(const ResourceRef<Texture>& texture)
+{
+	m_emissiveTexture = texture;
+}
+
+void MaterialStandard::SetReflectionTexture(const ResourceRef<Texture>& texture)
+{
+	m_reflectionTexture = texture;
+}
+
+void MaterialStandard::SetReflectionTransparency(float value)
+{
+	m_reflectionTransparency = value;
+}
+
+void MaterialStandard::SetReflectMask(float value)
+{
+	m_reflectMask = value;
 }

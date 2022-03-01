@@ -29,7 +29,6 @@ RenderQueue::RenderQueue(GraphicSystem* graphicSystem, CBufferManager* cBufferMa
 RenderQueue::~RenderQueue()
 {
 	SafeDelete(m_light);
-	SafeDelete(m_postProcessing);
 	SafeDelete(m_priority);
 	SafeDelete(m_priorityInstance);
 	SafeDelete(m_standard);
@@ -48,10 +47,6 @@ HRESULT RenderQueue::Initialize()
 
 	m_light = new RenderQueueLight();
 	if (FAILED(hr = m_light->Initialize(m_graphicSystem, m_CBufferManager, m_instanceBufferManager)))
-		return hr;
-
-	m_postProcessing = new PostProcessing(m_graphicSystem, m_CBufferManager, m_instanceBufferManager);
-	if (FAILED(hr = m_postProcessing->Initialize()))
 		return hr;
 
 	m_priority = new RenderQueueStandard(m_light);
@@ -153,15 +148,17 @@ void RenderQueue::Render(ICamera* camera)
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->diffuse->srv, 0, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->normal->srv, 100, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->worldPosition->srv, 200, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depthLightOcclusionShadow->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specularPower->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depth_Light_Occlusion_Shadow->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular_Power->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->reflection_ReflectMask->srv, 600, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 000, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssao->srv, 000, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->bloom->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 200, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssr->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->bloom->srv, 200, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 300, 200, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->result->srv, 000, 300, 100, 100, DeferredScreenRender::Blend::None);
 }
 
@@ -197,7 +194,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 
 	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->lightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::AlphaTest);
 	
-	m_postProcessing->PostProcess(camera, PostProcessing::Step::Deferred);
+	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::Deferred);
 }
 
 void RenderQueue::Render_Forward(ICamera* camera)
@@ -208,7 +205,7 @@ void RenderQueue::Render_Forward(ICamera* camera)
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
 
-	m_postProcessing->PostProcess(camera, PostProcessing::Step::After);
+	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::After);
 
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);

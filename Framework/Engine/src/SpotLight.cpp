@@ -3,6 +3,11 @@
 #include "Transform.h"
 #include "ICamera.h"
 
+void SpotLight::Awake()
+{
+    Light::Awake();
+}
+
 void SpotLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const
 {
     float Far = m_range - m_near;
@@ -18,8 +23,8 @@ LightDesc SpotLight::GetLightDesc(ICamera* camera) const
 
     LightDesc desc = {};
 
-    desc.Type = LightType::Spot;
     desc.DrawShadow = drawShadow;
+    desc.Type = LightType::Spot;
     desc.DepthSize = depthSize;
     desc.ShadowWhiteness = shadowWhiteness;
     desc.Intensity = intensity;

@@ -9,33 +9,36 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_width = width;
 	m_height = height;
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_diffuse);
-	m_renderTargets.push_back(m_diffuse);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Diffuse);
+	m_renderTargets.push_back(m_Diffuse);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardDiffuse);
 	m_forwardRenderTargets.push_back(m_forwardDiffuse);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_normal);
-	m_renderTargets.push_back(m_normal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Normal);
+	m_renderTargets.push_back(m_Normal);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardNormal);
 	m_forwardRenderTargets.push_back(m_forwardNormal);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_worldPosition);
-	m_renderTargets.push_back(m_worldPosition);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_WorldPosition);
+	m_renderTargets.push_back(m_WorldPosition);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardWorldPosition);
 	m_forwardRenderTargets.push_back(m_forwardWorldPosition);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_depthLightOcclusionShadow);
-	m_renderTargets.push_back(m_depthLightOcclusionShadow);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardDepthLightOcclusionShadow);
-	m_forwardRenderTargets.push_back(m_forwardDepthLightOcclusionShadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Depth_Light_Occlusion_Shadow);
+	m_renderTargets.push_back(m_Depth_Light_Occlusion_Shadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardDepth_Light_Occlusion_Shadow);
+	m_forwardRenderTargets.push_back(m_forwardDepth_Light_Occlusion_Shadow);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_specularPower);
-	m_renderTargets.push_back(m_specularPower);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardSpecularPower);
-	m_forwardRenderTargets.push_back(m_forwardSpecularPower);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Specular_Power);
+	m_renderTargets.push_back(m_Specular_Power);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_forwardSpecular_Power);
+	m_forwardRenderTargets.push_back(m_forwardSpecular_Power);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_emissive);
-	m_renderTargets.push_back(m_emissive);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Emissive);
+	m_renderTargets.push_back(m_Emissive);
+
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Reflection_ReflectMask);
+	m_renderTargets.push_back(m_Reflection_ReflectMask);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_light);
 	m_renderTargets.push_back(m_light);
@@ -61,6 +64,8 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_postProcessingRenderTargets.push_back(m_bridgeHalf);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssao);
 	m_postProcessingRenderTargets.push_back(m_ssao);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssr);
+	m_postProcessingRenderTargets.push_back(m_ssr);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_dof);
 	m_postProcessingRenderTargets.push_back(m_dof);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bloom);
@@ -118,6 +123,8 @@ bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint hei
 			return false;
 		if (!m_ssao->Resize(device, width, height))
 			return false;
+		if (!m_ssr->Resize(device, width, height))
+			return false;
 		if (!m_dof->Resize(device, width, height))
 			return false;
 		if (!m_bloom->Resize(device, width, height))
@@ -136,7 +143,7 @@ void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> deviceContext)
 
 	for (auto& renderTarget : m_renderTargets)
 	{
-		if (renderTarget == m_depthLightOcclusionShadow)
+		if (renderTarget == m_Depth_Light_Occlusion_Shadow)
 			renderTarget->Clear(deviceContext, Color::white());
 		else
 			renderTarget->Clear(deviceContext, clearColor);
@@ -152,7 +159,7 @@ void DeferredRenderTarget::ClearForwards(Com<ID3D11DeviceContext> deviceContext)
 
 	for (auto& forwardRenderTarget : m_forwardRenderTargets)
 	{
-		if (forwardRenderTarget == m_depthLightOcclusionShadow)
+		if (forwardRenderTarget == m_Depth_Light_Occlusion_Shadow)
 			forwardRenderTarget->Clear(deviceContext, Color::white());
 		else
 			forwardRenderTarget->Clear(deviceContext, clearColor);
@@ -177,14 +184,15 @@ void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	ZeroMemory(arrRTV, sizeof(arrRTV));
-	arrRTV[0] = m_diffuse->rtv.Get();
-	arrRTV[1] = m_normal->rtv.Get();
-	arrRTV[2] = m_worldPosition->rtv.Get();
-	arrRTV[3] = m_depthLightOcclusionShadow->rtv.Get();
-	arrRTV[4] = m_specularPower->rtv.Get();
-	arrRTV[5] = m_emissive->rtv.Get();
+	arrRTV[0] = m_Diffuse->rtv.Get();
+	arrRTV[1] = m_Normal->rtv.Get();
+	arrRTV[2] = m_WorldPosition->rtv.Get();
+	arrRTV[3] = m_Depth_Light_Occlusion_Shadow->rtv.Get();
+	arrRTV[4] = m_Specular_Power->rtv.Get();
+	arrRTV[5] = m_Emissive->rtv.Get();
+	arrRTV[6] = m_Reflection_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(6, arrRTV);
+	graphicSystem->SetRenderTargets(7, arrRTV);
 }
 
 void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem)
@@ -193,13 +201,14 @@ void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem)
 
 	ZeroMemory(arrRTV, sizeof(arrRTV));
 	arrRTV[0] = m_result->rtv.Get();
-	arrRTV[1] = m_normal->rtv.Get();
-	arrRTV[2] = m_worldPosition->rtv.Get();
-	arrRTV[3] = m_depthLightOcclusionShadow->rtv.Get();
-	arrRTV[4] = m_specularPower->rtv.Get();
-	arrRTV[5] = m_emissive->rtv.Get();
+	arrRTV[1] = m_Normal->rtv.Get();
+	arrRTV[2] = m_WorldPosition->rtv.Get();
+	arrRTV[3] = m_Depth_Light_Occlusion_Shadow->rtv.Get();
+	arrRTV[4] = m_Specular_Power->rtv.Get();
+	arrRTV[5] = m_Emissive->rtv.Get();
+	arrRTV[6] = m_Reflection_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(6, arrRTV);
+	graphicSystem->SetRenderTargets(7, arrRTV);
 }
 
 void DeferredRenderTarget::SetForwardLightRenderTargets(GraphicSystem* graphicSystem)
@@ -210,11 +219,12 @@ void DeferredRenderTarget::SetForwardLightRenderTargets(GraphicSystem* graphicSy
 	arrRTV[0] = m_forwardDiffuse->rtv.Get();
 	arrRTV[1] = m_forwardNormal->rtv.Get();
 	arrRTV[2] = m_forwardWorldPosition->rtv.Get();
-	arrRTV[3] = m_forwardDepthLightOcclusionShadow->rtv.Get();
-	arrRTV[4] = m_forwardSpecularPower->rtv.Get();
+	arrRTV[3] = m_forwardDepth_Light_Occlusion_Shadow->rtv.Get();
+	arrRTV[4] = m_forwardSpecular_Power->rtv.Get();
 	arrRTV[5] = emissive->rtv.Get();
+	arrRTV[6] = m_Reflection_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(6, arrRTV);
+	graphicSystem->SetRenderTargets(7, arrRTV);
 }
 
 void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem)
