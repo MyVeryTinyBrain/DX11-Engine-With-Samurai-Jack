@@ -34,19 +34,6 @@ struct SSAODesc
 	float	BlurPixelDistance;
 };
 
-struct SSRDesc
-{
-	bool	Enable;
-	bool	BlurEnable;
-	uint	BlurType;
-	uint	NumSamples;			
-	uint	BlurNumSamples;		
-	float	Step;				
-	float	Thickness;			
-	float	Bias;				
-	float	BlurPixelDistance;	
-};
-
 struct FogDesc
 {
 	bool	Enable;
@@ -63,6 +50,19 @@ struct BloomDesc
 	uint	BlurNumSamples;
 	float	Intensity;
 	float	Threshold;
+	float	BlurPixelDistance;
+};
+
+struct SSRDesc
+{
+	bool	Enable;
+	bool	BlurEnable;
+	uint	BlurType;
+	uint	NumSamples;
+	uint	BlurNumSamples;
+	float	Step;
+	float	Thickness;
+	float	Bias;
 	float	BlurPixelDistance;
 };
 
@@ -84,10 +84,10 @@ struct BlurDesc
 };
 
 SSAODesc		_SSAODesc;
-SSRDesc			_SSRDesc;
 FogDesc			_FogDesc;
-LinearDOFDesc	_LinearDOFDesc;
 BloomDesc		_BloomDesc;
+SSRDesc			_SSRDesc;
+LinearDOFDesc	_LinearDOFDesc;
 BlurDesc		_BlurDesc;
 float4			_TextureSize;
 texture2D		_Diffuse;
@@ -667,22 +667,6 @@ technique11 PostProcessing
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_SSAO_ApplyOcclusion();
 	}
-	pass SSR_Write
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_SSR_Write();
-	}
-	pass SSR_Apply
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_SSR_Apply();
-	}
 	pass Fog_Apply_Distance
 	{
 		SetRasterizerState(RasterizerState0);
@@ -722,6 +706,22 @@ technique11 PostProcessing
 		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply_Mix();
+	}
+	pass SSR_Write
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_SSR_Write();
+	}
+	pass SSR_Apply
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_SSR_Apply();
 	}
 	pass LinearDOF_WritePass0
 	{

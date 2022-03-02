@@ -63,9 +63,9 @@ public:
 	inline RenderTarget* GetBridge() const { return m_bridge; }
 	inline RenderTarget* GetBridgeHalf() const { return m_bridgeHalf; }
 	inline RenderTarget* GetSSAO() const { return m_ssao; }
+	inline RenderTarget* GetBloom() const { return m_bloom; }
 	inline RenderTarget* GetSSR() const { return m_ssr; }
 	inline RenderTarget* GetDOF() const { return m_dof; }
-	inline RenderTarget* GetBloom() const { return m_bloom; }
 
 	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
@@ -94,9 +94,9 @@ public:
 	_declspec(property(get = GetBridge)) RenderTarget* bridge;
 	_declspec(property(get = GetBridgeHalf)) RenderTarget* bridgeHalf;
 	_declspec(property(get = GetSSAO)) RenderTarget* ssao;
+	_declspec(property(get = GetBloom)) RenderTarget* bloom;
 	_declspec(property(get = GetSSR)) RenderTarget* ssr;
 	_declspec(property(get = GetDOF)) RenderTarget* dof;
-	_declspec(property(get = GetBloom)) RenderTarget* bloom;
 
 public:
 
@@ -143,9 +143,9 @@ private:
 	RenderTarget*								m_bridge = nullptr;
 	RenderTarget*								m_bridgeHalf = nullptr;
 	RenderTarget*								m_ssao = nullptr;
+	RenderTarget*								m_bloom = nullptr;
 	RenderTarget*								m_ssr = nullptr;
 	RenderTarget*								m_dof = nullptr;
-	RenderTarget*								m_bloom = nullptr;
 };
 
 ENGINE_END

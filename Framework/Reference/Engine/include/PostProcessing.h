@@ -16,13 +16,13 @@ class ENGINE_API PostProcessing
 	{
 		SSAO_WirteOcclusion,
 		SSAO_ApplyOcclusion,
-		SSR_Write,
-		SSR_Apply,
 		Fog_Apply_Z,
 		Fog_Apply_Distance,
 		Bloom_Extract,
 		Bloom_Apply_Add,
 		Bloom_Apply_Mix,
+		SSR_Write,
+		SSR_Apply,
 		LinearDOF_WritePass0,
 		LinearDOF_WritePass1,
 		LinearDOF_Apply,
@@ -66,16 +66,16 @@ private:
 
 	void Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
 	void Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
-	void Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc);
-	void Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc);
 	void Render_Fog_Apply(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Fog_Apply_Distance(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Fog_Apply_Z(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloomDesc);
 	void Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomDesc);
-	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
+	void Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc);
+	void Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc);
 	void Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc& dofDesc);
 	void Render_LinearDOF_Apply(ICamera* camera, const LinearDOFDesc& dofDesc);
+	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
 
 private:
 

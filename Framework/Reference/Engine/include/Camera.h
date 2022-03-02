@@ -110,23 +110,23 @@ public:
 	inline virtual const SSAODesc& GetSSAODesc() const override { return m_ssaoDesc; }
 	inline void SetSSAODesc(const SSAODesc& value) { m_ssaoDesc = value; }
 
-	inline virtual const SSRDesc& GetSSRDesc() const override { return m_ssrDesc; }
-	inline void SetSSRDesc(const SSRDesc& value) { m_ssrDesc = value; }
-
 	inline virtual const FogDesc& GetFogDesc() const override { return m_fogDesc; }
 	inline void SetFogDesc(const FogDesc& value) { m_fogDesc = value; }
 
 	inline virtual const BloomDesc& GetBloomDesc() const override { return m_bloomDesc; }
 	inline void SetBloomDesc(const BloomDesc& value) { m_bloomDesc = value; }
 
+	inline virtual const SSRDesc& GetSSRDesc() const override { return m_ssrDesc; }
+	inline void SetSSRDesc(const SSRDesc& value) { m_ssrDesc = value; }
+
 	inline virtual const LinearDOFDesc& GetLinearDOFDesc() const override { return m_linearDofDesc; }
 	inline void SetLinearDOFDesc(const LinearDOFDesc& value) { m_linearDofDesc = value; }
 
 	_declspec(property(get = GetPostProcessingState, put = SetPostProcessingState)) bool postProcessingState;
 	_declspec(property(get = GetSSAODesc, put = SetSSAODesc)) const SSAODesc& ssaoDesc;
-	_declspec(property(get = GetSSRDesc, put = SetSSRDesc)) const SSRDesc& ssrDesc;
 	_declspec(property(get = GetFogDesc, put = SetFogDesc)) const FogDesc& fogDesc;
 	_declspec(property(get = GetBloomDesc, put = SetBloomDesc)) const BloomDesc& bloomDesc;
+	_declspec(property(get = GetSSRDesc, put = SetSSRDesc)) const SSRDesc& ssrDesc;
 	_declspec(property(get = GetLinearDOFDesc, put = SetLinearDOFDesc)) const LinearDOFDesc& linearDofDesc;
 
 private:
@@ -161,9 +161,9 @@ private:
 
 	bool								m_postProcessing = true;
 	SSAODesc							m_ssaoDesc = {};
-	SSRDesc								m_ssrDesc = {};
 	FogDesc								m_fogDesc = {};
 	BloomDesc							m_bloomDesc = {};
+	SSRDesc								m_ssrDesc = {};
 	LinearDOFDesc						m_linearDofDesc = {};
 };
 

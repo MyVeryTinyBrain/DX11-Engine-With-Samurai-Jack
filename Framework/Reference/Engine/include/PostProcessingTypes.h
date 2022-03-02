@@ -33,6 +33,25 @@ struct SSAODesc
 	float	BlurPixelDistance;		// [0~inf]
 };
 
+struct FogDesc
+{
+	BOOL	Enable;					
+	FogType	Type;
+	float	MinZ;					// [0~inf]
+	float	RangeZ;					// [0~inf]
+	Color	Color;					// [rgba]
+};
+
+struct BloomDesc
+{
+	BOOL		Enable;				
+	BloomType	Type;				
+	uint		BlurNumSamples;		// [0~16]
+	float		Intensity;			// [0~inf]
+	float		Threshold;			// [0~1]
+	float		BlurPixelDistance;	// [0~inf]
+};
+
 struct SSRDesc
 {
 	BOOL		Enable;
@@ -46,15 +65,6 @@ struct SSRDesc
 	float		BlurPixelDistance;		// [0~inf]
 };
 
-struct FogDesc
-{
-	BOOL	Enable;					
-	FogType	Type;
-	float	MinZ;					// [0~inf]
-	float	RangeZ;					// [0~inf]
-	Color	Color;					// [rgba]
-};
-
 struct LinearDOFDesc
 {
 	BOOL	Enable;
@@ -63,16 +73,6 @@ struct LinearDOFDesc
 	float	RangeZ;					// [0~inf]
 	float	Power;					// [0~inf]
 	float	BlurPixelDistance;		// [0~inf]
-};
-
-struct BloomDesc
-{
-	BOOL		Enable;				
-	BloomType	Type;				
-	uint		BlurNumSamples;		// [0~16]
-	float		Intensity;			// [0~inf]
-	float		Threshold;			// [0~1]
-	float		BlurPixelDistance;	// [0~inf]
 };
 
 struct BlurDesc

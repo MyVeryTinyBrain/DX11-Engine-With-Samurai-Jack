@@ -349,53 +349,6 @@ void PlayerTestScene::OnUpdate()
 
 		ImGui::PopID();
 	}
-	if (ImGui::CollapsingHeader("SSR"))
-	{
-		ImGui::PushID("SSR");
-
-		SSRDesc ssrDesc = camera->ssrDesc;
-
-		bool enable = ssrDesc.Enable;
-		ImGui::Checkbox("Enable", &enable);
-		ssrDesc.Enable = enable;
-
-		bool blurEnable = ssrDesc.BlurEnable;
-		ImGui::Checkbox("BlurEnable", &blurEnable);
-		ssrDesc.BlurEnable = blurEnable;
-
-		const char* items[] = { "Default", "InvDepth", "Depth" };
-		int blurType = (int)ssrDesc.BlurType;
-		ImGui::Combo("BlurType", &blurType, items, 3);
-		ssrDesc.BlurType = (BlurType)blurType;
-
-		int numSamples = (int)ssrDesc.NumSamples;
-		ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
-		ssrDesc.NumSamples = (uint)numSamples;
-
-		int blurNumSamples = (int)ssrDesc.BlurNumSamples;
-		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
-		ssrDesc.BlurNumSamples = (uint)blurNumSamples;
-
-		float step = ssrDesc.Step;
-		ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
-		ssrDesc.Step = step;
-
-		float thickness = ssrDesc.Thickness;
-		ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
-		ssrDesc.Thickness = thickness;
-
-		float bias = ssrDesc.Bias;
-		ImGui::SliderFloat("Bias", &bias, 0.0f, 0.5f);
-		ssrDesc.Bias = bias;
-
-		float blurPixelDistance = ssrDesc.BlurPixelDistance;
-		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
-		ssrDesc.BlurPixelDistance = blurPixelDistance;
-
-		camera->ssrDesc = ssrDesc;
-
-		ImGui::PopID();
-	}
 	if (ImGui::CollapsingHeader("Fog"))
 	{
 		ImGui::PushID("Fog");
@@ -459,6 +412,53 @@ void PlayerTestScene::OnUpdate()
 		bloomDesc.BlurPixelDistance = blurPixelDistance;
 
 		camera->bloomDesc = bloomDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("SSR"))
+	{
+		ImGui::PushID("SSR");
+
+		SSRDesc ssrDesc = camera->ssrDesc;
+
+		bool enable = ssrDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		ssrDesc.Enable = enable;
+
+		bool blurEnable = ssrDesc.BlurEnable;
+		ImGui::Checkbox("BlurEnable", &blurEnable);
+		ssrDesc.BlurEnable = blurEnable;
+
+		const char* items[] = { "Default", "InvDepth", "Depth" };
+		int blurType = (int)ssrDesc.BlurType;
+		ImGui::Combo("BlurType", &blurType, items, 3);
+		ssrDesc.BlurType = (BlurType)blurType;
+
+		int numSamples = (int)ssrDesc.NumSamples;
+		ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
+		ssrDesc.NumSamples = (uint)numSamples;
+
+		int blurNumSamples = (int)ssrDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		ssrDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float step = ssrDesc.Step;
+		ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
+		ssrDesc.Step = step;
+
+		float thickness = ssrDesc.Thickness;
+		ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
+		ssrDesc.Thickness = thickness;
+
+		float bias = ssrDesc.Bias;
+		ImGui::SliderFloat("Bias", &bias, 0.0f, 0.5f);
+		ssrDesc.Bias = bias;
+
+		float blurPixelDistance = ssrDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		ssrDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->ssrDesc = ssrDesc;
 
 		ImGui::PopID();
 	}

@@ -87,13 +87,6 @@ void PostProcessing::PostProcess_Deferred(ICamera* camera)
 		Render_SSAO_WriteOcclusion(camera, ssaoDesc);
 		Render_SSAO_ApplyOcclusion(camera, ssaoDesc);
 	}
-
-	const SSRDesc& ssrDesc = camera->GetSSRDesc();
-	if (ssrDesc.Enable)
-	{
-		Render_SSR_Write(camera, ssrDesc);
-		Render_SSR_Apply(camera, ssrDesc);
-	}
 }
 
 void PostProcessing::PostProcess_After(ICamera* camera)
@@ -109,6 +102,13 @@ void PostProcessing::PostProcess_After(ICamera* camera)
 	{
 		Render_Bloom_Extract(camera, bloomDesc);
 		Render_Bloom_Apply(camera, bloomDesc);
+	}
+
+	const SSRDesc& ssrDesc = camera->GetSSRDesc();
+	if (ssrDesc.Enable)
+	{
+		Render_SSR_Write(camera, ssrDesc);
+		Render_SSR_Apply(camera, ssrDesc);
 	}
 
 	const LinearDOFDesc& dofDesc = camera->GetLinearDOFDesc();
@@ -134,31 +134,31 @@ void PostProcessing::GetTehcniqueAndPass(Type type, uint& out_technique, uint& o
 			technique = 0;
 			pass = 1;
 			break;
-		case Type::SSR_Write:
+		case Type::Fog_Apply_Distance:
 			technique = 0;
 			pass = 2;
 			break;
-		case Type::SSR_Apply:
+		case Type::Fog_Apply_Z:
 			technique = 0;
 			pass = 3;
 			break;
-		case Type::Fog_Apply_Distance:
+		case Type::Bloom_Extract:
 			technique = 0;
 			pass = 4;
 			break;
-		case Type::Fog_Apply_Z:
+		case Type::Bloom_Apply_Add:
 			technique = 0;
 			pass = 5;
 			break;
-		case Type::Bloom_Extract:
+		case Type::Bloom_Apply_Mix:
 			technique = 0;
 			pass = 6;
 			break;
-		case Type::Bloom_Apply_Add:
+		case Type::SSR_Write:
 			technique = 0;
 			pass = 7;
 			break;
-		case Type::Bloom_Apply_Mix:
+		case Type::SSR_Apply:
 			technique = 0;
 			pass = 8;
 			break;
@@ -243,49 +243,6 @@ void PostProcessing::Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc&
 
 	m_shaderPostProcessing->SetRawValue("_SSAODesc", &ssaoDesc, sizeof(SSAODesc));
 	m_shaderPostProcessing->SetTexture("_Sample", drt->ssao->srv.Get());
-	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
-	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
-	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
-}
-
-void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
-{
-	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	ID3D11RenderTargetView* arrRTV[8] = {};
-	arrRTV[0] = drt->ssr->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
-
-	uint technique, pass;
-	GetTehcniqueAndPass(PostProcessing::Type::SSR_Write, technique, pass);
-
-	m_shaderPostProcessing->SetRawValue("_SSRDesc", &ssrDesc, sizeof(SSRDesc));
-	m_shaderPostProcessing->SetTexture("_Sample", drt->result->srv.Get());
-	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
-	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
-	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
-
-	if (ssrDesc.BlurEnable)
-	{
-		BlurDesc blurDesc;
-		blurDesc.NumSamples = ssrDesc.BlurNumSamples;
-		blurDesc.PixelDistance = ssrDesc.BlurPixelDistance;
-		blurDesc.Type = ssrDesc.BlurType;
-		Render_Blur(blurDesc, drt->ssr, drt->bridgeHalf, drt->ssr);
-	}
-}
-
-void PostProcessing::Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc)
-{
-	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	ID3D11RenderTargetView* arrRTV[8] = {};
-	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
-
-	uint technique, pass;
-	GetTehcniqueAndPass(PostProcessing::Type::SSR_Apply, technique, pass);
-
-	m_shaderPostProcessing->SetRawValue("_SSRDesc", &ssrDesc, sizeof(SSRDesc));
-	m_shaderPostProcessing->SetTexture("_Sample", drt->ssr->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
@@ -387,6 +344,54 @@ void PostProcessing::Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomD
 
 	m_shaderPostProcessing->SetRawValue("_BloomDesc", &bloomDesc, sizeof(BloomDesc));
 	m_shaderPostProcessing->SetTexture("_Sample", drt->bloom->srv.Get());
+	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
+	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
+	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+}
+
+void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	ID3D11RenderTargetView* arrRTV[8] = {};
+	arrRTV[0] = drt->ssr->rtv.Get();
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+
+	IGraphicSystem* iGraphicSystem = m_graphicSystem;
+	iGraphicSystem->SetViewport(drt->ssr->width, drt->ssr->height);
+
+	uint technique, pass;
+	GetTehcniqueAndPass(PostProcessing::Type::SSR_Write, technique, pass);
+
+	m_shaderPostProcessing->SetRawValue("_SSRDesc", &ssrDesc, sizeof(SSRDesc));
+	m_shaderPostProcessing->SetTexture("_Sample", drt->result->srv.Get());
+	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
+	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
+	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+
+	if (ssrDesc.BlurEnable)
+	{
+		BlurDesc blurDesc;
+		blurDesc.NumSamples = ssrDesc.BlurNumSamples;
+		blurDesc.PixelDistance = ssrDesc.BlurPixelDistance;
+		blurDesc.Type = ssrDesc.BlurType;
+		Render_Blur(blurDesc, drt->ssr, drt->bridgeHalf, drt->ssr);
+	}
+
+	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+}
+
+void PostProcessing::Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	ID3D11RenderTargetView* arrRTV[8] = {};
+	arrRTV[0] = drt->result->rtv.Get();
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+
+	uint technique, pass;
+	GetTehcniqueAndPass(PostProcessing::Type::SSR_Apply, technique, pass);
+
+	m_shaderPostProcessing->SetRawValue("_SSRDesc", &ssrDesc, sizeof(SSRDesc));
+	m_shaderPostProcessing->SetTexture("_Sample", drt->ssr->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
