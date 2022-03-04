@@ -1,28 +1,16 @@
 #include "Macros.hlsl"
 
-inline float2 UVToTexPixelCoord(float width, float height, float2 uv)
-{
-	int iU = int(width * uv.x);
-	int iH = int(height * uv.y);
-	return float2(iU, iH);
-}
-
-inline float2 TexPixelCoordToUV(float width, float height, float2 pixelCoord)
-{
-	return float2(pixelCoord.x / width, pixelCoord.y / height);
-}
-
-inline float Sin01(float value)
+inline float Sin01(half value)
 {
 	return sin(value) * 0.5 + 0.5;
 }
 
-inline float Cos01(float value)
+inline float Cos01(half value)
 {
 	return cos(value) * 0.5 + 0.5;
 }
 
-float4x4 Inverse(float4x4 m)
+inline float4x4 Inverse(float4x4 m)
 {
     float n11 = m[0][0], n12 = m[1][0], n13 = m[2][0], n14 = m[3][0];
     float n21 = m[0][1], n22 = m[1][1], n23 = m[2][1], n24 = m[3][1];
@@ -62,9 +50,9 @@ float4x4 Inverse(float4x4 m)
     return ret;
 }
 
-inline float4x4 Identity()
+inline half4x4 Identity()
 {
-    return float4x4(
+    return half4x4(
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -82,11 +70,11 @@ inline float4x4 Tranlsation(float3 value)
         );
 }
 
-inline float4x4 RotationX(float rad)
+inline half4x4 RotationX(half rad)
 {
-    float c = cos(rad);
-    float s = sin(rad);
-    return float4x4(
+    half c = cos(rad);
+    half s = sin(rad);
+    return half4x4(
         1, 0, 0, 0,
         0, c, s, 0,
         0, -s, c, 0,
@@ -94,11 +82,11 @@ inline float4x4 RotationX(float rad)
         );
 }
 
-inline float4x4 RotationY(float rad)
+inline half4x4 RotationY(half rad)
 {
-    float c = cos(rad);
-    float s = sin(rad);
-    return float4x4(
+    half c = cos(rad);
+    half s = sin(rad);
+    return half4x4(
         c, 0, -s, 0,
         0, 1, 0, 0,
         s, 0, c, 0,
@@ -106,11 +94,11 @@ inline float4x4 RotationY(float rad)
         );
 }
 
-float4x4 RotationZ(float rad)
+half4x4 RotationZ(half rad)
 {
-    float c = cos(rad);
-    float s = sin(rad);
-    return float4x4(
+    half c = cos(rad);
+    half s = sin(rad);
+    return half4x4(
         c, s, 0, 0,
         -s, c, 0, 0,
         0, 0, 1, 0,
@@ -118,17 +106,17 @@ float4x4 RotationZ(float rad)
         );
 }
 
-float4x4 RotationAxis(float3 axis, float rad)
+inline half4x4 RotationAxis(half3 axis, half rad)
 {
-    float x = axis.x;
-    float y = axis.y;
-    float z = axis.z;
-    float c = cos(rad);
-    float s = sin(rad);
+    half x = axis.x;
+    half y = axis.y;
+    half z = axis.z;
+    half c = cos(rad);
+    half s = sin(rad);
 
-    float ic = 1.0f - c;
+    half ic = 1.0f - c;
 
-    float4x4 m = 0;
+    half4x4 m = 0;
 
     m[0][0] = c + x * x * ic;
     m[0][1] = x * y * ic - z * s;
@@ -169,81 +157,65 @@ inline float3 DecomposeScale(float4x4 value)
     return float3(xs, ys, zs);
 }
 
-inline float3 UnpackNormalMap(float3 normalMap, float3 normal, float3 tangent, float3 binormal)
+inline half3 UnpackNormalMap(half3 normalMap, half3 normal, half3 tangent, half3 binormal)
 {
-    float3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);
+    half3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);
     unpackedNormalMap = normalize(unpackedNormalMap);
     return unpackedNormalMap;
 }
 
-inline float4 PackNormal(float3 normal)
+inline half2 UVToTexPixelCoord(half width, half height, half2 uv)
 {
-    normal = normalize(normal);
-    float3 normalizedNormal = normal * 0.5f + 0.5f;
-    return float4(normalizedNormal, 1.0f);
+    int iU = int(width * uv.x);
+    int iH = int(height * uv.y);
+    return half2(iU, iH);
 }
 
-inline float3 UnpackNormal(float4 packedNormal)
+inline half2 TexPixelCoordToUV(half width, half height, half2 pixelCoord)
 {
-    return packedNormal.xyz * 2.0f - 1.0f;
+    return half2(pixelCoord.x / width, pixelCoord.y / height);
 }
 
-inline float4 PackWorldPosition(float3 worldPosition)
-{
-    //float3 normalizedWorldPosition = normalize(worldPosition) * 0.5f + 0.5f;
-    //float worldPositionLength = length(worldPosition) / WORLD_POSITION_PACK_SCALE;
-    //return float4(normalizedWorldPosition, worldPositionLength);
-    return float4(worldPosition.xyz, 1.0f);
-}
-
-inline float3 UnpackWorldPosition(float4 packedWorldPosition)
-{
-    //float3 unpackedWorldPosition = packedWorldPosition.xyz * 2.0f - 1.0f;
-    //unpackedWorldPosition *= packedWorldPosition.w * WORLD_POSITION_PACK_SCALE;
-    //return unpackedWorldPosition;
-    return float3(packedWorldPosition.xyz);
-}
-
-inline float ToLinearDepth(float Near, float Far, float Depth)
+inline half ToLinearDepth(half Near, half Far, half Depth)
 {
     return 2.0f * Near / (Far + Near - Depth * (Far - Near));
 }
 
-inline float Brightness(float3 colorRGB)
+inline half Brightness(half3 colorRGB)
 {
-    float a = max(colorRGB.r, colorRGB.g);
-    float b = max(a, colorRGB.b);
+    half a = max(colorRGB.r, colorRGB.g);
+    half b = max(a, colorRGB.b);
     return b;
 }
 
-inline float Brightness(float4 colorRGBA)
+inline half Brightness(half4 colorRGBA)
 {
     return Brightness(colorRGBA.rgb) * colorRGBA.a;
 }
 
-inline float Random(float2 xy)
+inline half Random(half2 xy)
 {
-    float2 noise = (frac(sin(dot(xy, float2(12.9898f, 78.233f) * 2.0f)) * 43758.5453f));
+    float2 noise = (frac(sin(dot(xy, half2(12.9898f, 78.233f) * 2.0f)) * 43758.5453f));
     return frac(abs(noise.x + noise.y) * 0.5);
 }
 
-inline float3 RandomVector(float2 xy)
+inline half3 RandomVector(half2 xy)
 {
-    float x0 = frac(sin(dot(xy, float2(15.8989f, 76.132f) * 1.0f)) * 46336.23745f);
-    float y0 = frac(sin(dot(xy, float2(11.9899f, 62.223f) * 2.0f)) * 34748.34744f);
-    float z0 = frac(sin(dot(xy, float2(13.3238f, 63.122f) * 3.0f)) * 59998.47362f);
+    half x0 = frac(sin(dot(xy, half2(15.8989f, 76.132f) * 1.0f)) * 46336.23745f);
+    half y0 = frac(sin(dot(xy, half2(11.9899f, 62.223f) * 2.0f)) * 34748.34744f);
+    half z0 = frac(sin(dot(xy, half2(13.3238f, 63.122f) * 3.0f)) * 59998.47362f);
 
-    float x1 = (x0 + y0) * 0.5;
-    float y1 = (y0 + z0) * 0.5;
-    float z1 = (z0 + x0) * 0.5;
+    half x1 = (x0 + y0) * 0.5;
+    half y1 = (y0 + z0) * 0.5;
+    half z1 = (z0 + x0) * 0.5;
 
-    return normalize(float3(x1, y1, z1));
+    return normalize(half3(x1, y1, z1));
 }
 
 // Screen -> NDC
-inline float4 ToNDC(float2 uv, float depth)
+inline half4 ToNDC(half2 uv, half depth)
 {
-    float4 NDC;
+    half4 NDC;
     NDC.xy = uv * 2.0f - 1.0f;
     NDC.y *= -1;
     NDC.z = depth;
@@ -252,13 +224,64 @@ inline float4 ToNDC(float2 uv, float depth)
 }
 
 // Screen -> View
-inline float3 ToViewSpace(float2 uv, float depth, float4x4 inverseProjectionMatrix)
+inline half3 ToViewSpace(half2 uv, half depth, half4x4 inverseProjectionMatrix)
 {
-    float4 NDC;
+    half4 NDC;
     NDC.xy = uv * 2.0f - 1.0f;
     NDC.y *= -1;
     NDC.z = depth;
     NDC.w = 1.0f;
-    float4 view = mul(NDC, inverseProjectionMatrix);
+    half4 view = mul(NDC, inverseProjectionMatrix);
     return view.xyz / view.w;
+}
+
+// NDC -> UV
+inline half2 ToUV(half2 ndc_xy)
+{
+    return ndc_xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
+}
+
+inline float Saturate(float f)
+{
+    return saturate(f.x);
+}
+
+inline float2 Saturate(float2 f)
+{
+    return float2(saturate(f.x), saturate(f.y));
+}
+
+inline float3 Saturate(float3 f)
+{
+
+    return float3(saturate(f.x), saturate(f.y), saturate(f.y));
+}
+
+inline float4 Saturate(float4 f)
+{
+    return float4(saturate(f.x), saturate(f.y), saturate(f.y), saturate(f.y));
+}
+
+inline bool IsSaturated(float f)
+{
+    float v = Saturate(f);
+    return v == f;
+}
+
+inline bool IsSaturated(float2 f)
+{
+    float2 v = Saturate(f);
+    return f.x == v.x && f.y == v.y;
+}
+
+inline bool IsSaturated(float3 f)
+{
+    float3 v = Saturate(f);
+    return f.x == v.x && f.y == v.y && f.z == v.z;
+}
+
+inline bool IsSaturated(float4 f)
+{
+    float4 v = Saturate(f);
+    return f.x == v.x && f.y == v.y && f.z == v.z && f.w == v.w;
 }

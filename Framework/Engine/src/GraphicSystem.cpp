@@ -27,7 +27,7 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 	unsigned int flag = 0;
 
 #ifdef _DEBUG
-	flag = D3D11_CREATE_DEVICE_DEBUG;
+	flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	D3D_FEATURE_LEVEL feature;

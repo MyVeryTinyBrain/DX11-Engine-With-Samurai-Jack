@@ -97,10 +97,23 @@ texture2D		_Depth_Light_Occlusion_Shadow;
 texture2D		_Reflection_ReflectMask;
 texture2D		_Result;
 texture2D		_Sample; // For Temp Texture
-SamplerState	textureSampler
+SamplerState	linearSampler
 {
 	AddressU = Clamp;
 	AddressV = Clamp;
+	ComparisonFunc = Never;
+	MinLOD = 0;
+	MaxLOD = FLT_MAX;
+	Filter = MIN_MAG_MIP_LINEAR;
+};
+SamplerState	pointSampler
+{
+	AddressU = Clamp;
+	AddressV = Clamp;
+	ComparisonFunc = Never;
+	MinLOD = 0;
+	MaxLOD = FLT_MAX;
+	Filter = MIN_MAG_MIP_POINT;
 };
 
 PS_IN VS_MAIN(VS_IN In)
@@ -115,79 +128,75 @@ PS_IN VS_MAIN(VS_IN In)
 
 // SSAO =======================================================================================================
 
-float SSAORayMarch(float2 uv)
+half SSAORayMarch(float2 uv)
 {
 	const static int NUM_KERNEL = 16;
-	const static float3 kernels[NUM_KERNEL] =
+	const static half3 kernels[NUM_KERNEL] =
 	{
-		normalize(float3(0.2024537f, 0.841204f, 0.9060141f)),		//1
-		normalize(float3(0.3677659f, 0.1086345f, 0.4466777f)),		//3
-		normalize(float3(0.7867433f, -0.141479f, 0.1567597f)),		//4
-		normalize(float3(0.4839356f, -0.8253108f, 0.1563844f)),		//5
-		normalize(float3(-0.4192392f, 0.2084218f, 0.3672943f)),		//6
-		normalize(float3(-0.8433938f, 0.1451271f, 0.2202872f)),		//7
-		normalize(float3(0.0019193f, -0.8048455f, 0.0726584f)),		//11
-		normalize(float3(-0.7578573f, -0.5583301f, 0.2347527f)),	//12
-		normalize(float3(-0.4540417f, -0.252365f, 0.0694318f)),		//13
-		normalize(float3(-0.4037157f, -0.8263387f, 0.4698132f)),	//15
-		normalize(float3(-0.6657394f, 0.6298575f, 0.6342437f)),		//8
-		normalize(float3(-0.2200423f, 0.6282339f, 0.8275437f)),		//2
-		normalize(float3(0.8775856f, 0.4617546f, 0.6427765f)),		//9
-		normalize(float3(-0.0001783f, 0.2834622f, 0.8343929f)),		//10
-		normalize(float3(-0.0483353f, -0.2527294f, 0.5924745f)),	//14
-		normalize(float3(0.4401554f, -0.4228428f, 0.3300118f)),		//16
+		normalize(half3(0.2024537f, 0.841204f, 0.9060141f)),	
+		normalize(half3(0.4839356f, -0.8253108f, 0.1563844f)),	
+		normalize(half3(0.3677659f, 0.1086345f, 0.4466777f)),	
+		normalize(half3(0.0019193f, -0.8048455f, 0.0726584f)),	
+		normalize(half3(0.7867433f, -0.141479f, 0.1567597f)),	
+		normalize(half3(-0.7578573f, -0.5583301f, 0.2347527f)),
+		normalize(half3(-0.4192392f, 0.2084218f, 0.3672943f)),	
+		normalize(half3(-0.8433938f, 0.1451271f, 0.2202872f)),	
+		normalize(half3(-0.4540417f, -0.252365f, 0.0694318f)),	
+		normalize(half3(-0.4037157f, -0.8263387f, 0.4698132f)),
+		normalize(half3(-0.6657394f, 0.6298575f, 0.6342437f)),	
+		normalize(half3(-0.2200423f, 0.6282339f, 0.8275437f)),	
+		normalize(half3(0.8775856f, 0.4617546f, 0.6427765f)),	
+		normalize(half3(-0.0001783f, 0.2834622f, 0.8343929f)),	
+		normalize(half3(-0.0483353f, -0.2527294f, 0.5924745f)),
+		normalize(half3(0.4401554f, -0.4228428f, 0.3300118f)),	
 	};
 
-	float4 packedWorldPosition = _WorldPosition.Sample(textureSampler, uv, 0);
-	float3 worldPosition = UnpackWorldPosition(packedWorldPosition);
-	float3 viewPosition = mul(float4(worldPosition, 1.0f), _ViewMatrix).xyz;
+	half3 normal = _Normal.Sample(pointSampler, uv, 0).xyz;
 
-	float4 packedNormal = _Normal.Sample(textureSampler, uv, 0);
-	float3 normal = UnpackNormal(packedNormal);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv, 0);
+	float depth = depthLightOcclusionShadow.r;
+	half occlusionMask = depthLightOcclusionShadow.z;
 
-	float4 packedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, uv, 0);
-	float depth = packedDepthLightOcclusionShadow.r;
-	float occlusionMask = packedDepthLightOcclusionShadow.z;
+	half3 vPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
+	float3 worldPosition = mul(float4(vPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
 
-	float3 randomSeed = 0;
+	half3 randomSeed = 0;
 	randomSeed.x = dot(worldPosition.xy, worldPosition.yz) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
 	randomSeed.y = dot(worldPosition.yz, worldPosition.zx) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
 	randomSeed.z = dot(worldPosition.zx, worldPosition.xy) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
 
-	float3 rvec = RandomVector(randomSeed.xy);
-	float3 tangent = normalize(rvec - normal * dot(rvec, normal));
-	float3 bitangent = cross(normal, tangent);
-	float3x3 tbn = float3x3(tangent, bitangent, normal);
+	half3 rvec = RandomVector(randomSeed.xy);
+	half3 tangent = normalize(rvec - normal * dot(rvec, normal));
+	half3 bitangent = cross(normal, tangent);
+	half3x3 tbn = half3x3(tangent, bitangent, normal);
 
-	float occlusion = 0.0f;
-	[unroll(NUM_KERNEL)]
+	half occlusion = 0.0f;
+	[loop]
 	for (uint i = 0; i < _SSAODesc.NumSamples; ++i)
 	{
-		float3 dir = mul(kernels[i], tbn);
-		dir = mul(float4(dir, 0.0f), _ViewMatrix).xyz;
-		float3 viewSamplePos = viewPosition + dir * _SSAODesc.Radius * Random(randomSeed.xy);
+		half3 dir = mul(kernels[i], tbn);
+		dir = mul(half4(dir, 0.0f), _ViewMatrix).xyz;
+		half3 vSamplePos = vPosition + dir * _SSAODesc.Radius * Random(randomSeed.xy);
 
-		float4 offset = float4(viewSamplePos, 1.0f);
+		half4 offset = half4(vSamplePos, 1.0f);
 		offset = mul(offset, _ProjectionMatrix);
-		
-		float2 sampleUV = float2(offset.xy / offset.w) * float2(1.0f, -1.0f);
+
+		half2 sampleUV = half2(offset.xy / offset.w) * half2(1.0f, -1.0f);
 		sampleUV = sampleUV * 0.5f + 0.5f;
 
-		//[flatten]
-		//if (saturate(sampleUV.x) != sampleUV.x || saturate(sampleUV.y) != sampleUV.y)
-		//	continue;
+		[branch]
+		if (!IsSaturated(sampleUV))
+			continue;
 
-		float4 samplePackedWorldPosition = _WorldPosition.SampleLevel(textureSampler, sampleUV, 0);
-		float3 sampleWorldPosition = UnpackWorldPosition(samplePackedWorldPosition);
-		float3 sampleViewPosition = mul(float4(sampleWorldPosition, 1.0f), _ViewMatrix).xyz;
-		float sampleDepth = sampleViewPosition.z;
+		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(linearSampler, sampleUV, 0).r;
+		half sampleVDepth = ToViewSpace(sampleUV, sampleDepth, Inverse(_ProjectionMatrix)).z;
 
-		//float rangeCheck = abs(viewPosition.z - sampleDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
-		float rangeCheck = smoothstep(0.0, 1.0, _SSAODesc.Radius / abs(viewPosition.z - sampleDepth));
+		//float rangeCheck = abs(vPosition.z - sampleVDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
+		half rangeCheck = smoothstep(0.0, 1.0, _SSAODesc.Radius / abs(vPosition.z - sampleVDepth));
 
-		float emptyDepthCheck = float(depth < 1.0f);
+		half emptyDepthCheck = half(sampleDepth < 1.0f);
 
-		occlusion += (sampleDepth <= viewSamplePos.z - _SSAODesc.MinZ ? 1.0 : 0.0) * rangeCheck * emptyDepthCheck;
+		occlusion += half(sampleVDepth <= vSamplePos.z - _SSAODesc.MinZ) * rangeCheck * emptyDepthCheck;
 	}
 
 	occlusion = 1.0f - (occlusion / _SSAODesc.NumSamples);
@@ -197,8 +206,8 @@ float SSAORayMarch(float2 uv)
 
 float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 {
-	float occlusion = SSAORayMarch(In.uv);
-	return float4(occlusion, occlusion, occlusion, 1.0f);
+	half occlusion = SSAORayMarch(In.uv);
+	return half4(occlusion, occlusion, occlusion, 1.0f);
 }
 
 // Middle Step ==================
@@ -208,116 +217,160 @@ float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 
 float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 {
-	float4 diffuse = _Diffuse.Sample(textureSampler, In.uv);
-	float occlusionMask = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).b;
-	float4 occlusion = 1.0f - _Sample.Sample(textureSampler, In.uv);
-	return float4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
+	half4 diffuse = _Diffuse.Sample(pointSampler, In.uv);
+	half occlusionMask = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).b;
+	half4 occlusion = 1.0f - _Sample.Sample(pointSampler, In.uv);
+	return half4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
 }
 
 // SSR =======================================================================================================
 
-float2 SSRRayMarch(float2 uv)
+half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 {
-	const int	_Loop = _SSRDesc.NumSamples;
-	const float _Step = _SSRDesc.Step;
-	const float _Thickness = _SSRDesc.Thickness;
+	vRayPos -= vDir * _SSRDesc.Step * 0.5f;
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, uv).r;
+	half step = _SSRDesc.Step;
+	half2 outputUV = half2(0.0f, 0.0f);
 
-	float2 outputUV = float2(0, 0);
-	[flatten]
-	if (depth >= 1.0f)
-		return outputUV;
-
-	float3 viewPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
-	float3 viewDir = normalize(viewPosition);
-	float viewDepth = viewPosition.z;
-
-	float3 worldNormal = UnpackNormal(_Normal.Sample(textureSampler, uv));
-	worldNormal = normalize(worldNormal);
-	float3 viewNormal = mul(float4(worldNormal, 0.0f), _ViewMatrix).xyz;
-	viewNormal = normalize(viewNormal);
-
-	float3 reflectDir = reflect(viewDir, viewNormal);
-	reflectDir = normalize(reflectDir);
-
-	float3 current = viewPosition;
-
-	[loop]
-	for (int i = 0; i < _Loop; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
-		current += reflectDir * _Step;
+		half4 pSamplePos = mul(half4(vRayPos, 1.0f), _ProjectionMatrix);
+		half3 sSamplePos = pSamplePos.xyz / pSamplePos.w;
+		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
 
-		float4 sampleProj = mul(float4(current, 1.0f), _ProjectionMatrix);
-		sampleProj.xyz /= sampleProj.w;
+		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
 
-		float2 sampleUV = sampleProj.xy * float2(1.0f, -1.0f) * 0.5f + 0.5f;
+		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, Inverse(_ProjectionMatrix));
 
-		[branch]
-		if (saturate(sampleUV.x) != sampleUV.x || saturate(sampleUV.y) != sampleUV.y)
-			break;
+		half depthDiff = vRayPos.z - vSamplePos.z;
 
-		float targetDepth = current.z;
-		float sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(textureSampler, sampleUV, 0).r;
-		float3 sampleView = ToViewSpace(sampleUV, sampleDepth, Inverse(_ProjectionMatrix));
-		sampleDepth = sampleView.z;
-
-		float depthDiff = targetDepth - sampleDepth;
-
-		float3 delta = sampleView - viewPosition;
-		float3 deltaDir = normalize(delta);
-
-		[branch]
-		if (depthDiff >= _Thickness && depthDiff <= _SSRDesc.Bias)
+		if (depthDiff >= 0.0f)
 		{
-			outputUV = sampleUV;
-			break;
+			outputUV = sSamplePos.xy;
+			vRayPos -= vDir * step;
 		}
+		else
+		{
+			vRayPos += vDir * step;
+		}
+
+		step *= 0.5f;
 	}
 
 	return outputUV;
 }
 
-inline float SSRFadeFunction(float a, float w, float h, float x)
+half2 SSRRayMarch_Screen(half2 uv)
+{
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv).r;
+
+	[flatten]
+	if (depth >= 1.0f)
+		return half2(0.0f, 0.0f);
+
+	half3 vPos = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPixelDir = normalize(vPos);
+
+	half3 normal = _Normal.Sample(pointSampler, uv).rgb;
+	half3 vNormal = mul(float4(normal, 0.0f), _ViewMatrix).xyz;
+	vNormal = normalize(vNormal);
+	float3 vDir = reflect(vPixelDir, vNormal);
+	vDir = normalize(vDir);
+
+	float4 pPos = mul(float4(vPos, 1.0f), _ProjectionMatrix);
+	pPos.xyz /= pPos.w;
+	float2 sPos = pPos.xy;
+
+	float4 pDir = mul(float4(vDir, 0.0f), _ProjectionMatrix);
+	pDir.xyz /= pDir.w;
+	float2 sDir = pDir.xy;
+
+	return 0.0f;
+}
+
+half2 SSRRayMarch_View(half2 uv)
+{
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv).r;
+
+	[flatten]
+	if (depth >= 1.0f)
+		return half2(0.0f, 0.0f);
+
+	half3 vPos = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPixelDir = normalize(vPos);
+
+	half3 normal = _Normal.Sample(pointSampler, uv).rgb;
+	half3 vNormal = mul(half4(normal, 0.0f), _ViewMatrix).xyz;
+	vNormal = normalize(vNormal);
+	half3 vDir = reflect(vPixelDir, vNormal);
+	vDir = normalize(vDir);
+
+	half3 vRayPos = vPos;
+
+	[loop]
+	for (uint i = 0; i < _SSRDesc.NumSamples; ++i)
+	{
+		vRayPos += vDir * _SSRDesc.Step;
+
+		half4 pSamplePos = mul(half4(vRayPos, 1.0f), _ProjectionMatrix);
+		half3 sSamplePos = pSamplePos.xyz / pSamplePos.w;
+		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
+
+		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
+
+		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, Inverse(_ProjectionMatrix));
+
+		half depthDiff = vRayPos.z - vSamplePos.z;
+
+		if (depthDiff >= _SSRDesc.Bias && depthDiff <= _SSRDesc.Thickness)
+		{
+			return SSRBinarySearch(vRayPos, vDir);
+		}
+	}
+
+	return half2(0.0f, 0.0f);
+}
+
+inline half SSRFadeFunction(half a, half w, half h, half x)
 {
 	// a: downscale
 	// w: range
 	// h: step limit
 	// x: variable
-	float f0 = (x - w / 2);
-	float f1 = 1.0f - (4.0f / w * w) * a * f0 * f0;
-	float f2 = smoothstep(0, h, f1);
+	half f0 = (x - w / 2);
+	half f1 = 1.0f - (4.0f / w * w) * a * f0 * f0;
+	half f2 = smoothstep(0, h, f1);
 	return f2;
 }
 
-inline float SSRFadeFunction(float a, float w, float h, float2 uv)
+inline half SSRFadeFunction(half a, half w, half h, half2 uv)
 {
 	return SSRFadeFunction(a, w, h, uv.x) * SSRFadeFunction(a, w, h, uv.y);
 }
 
-float4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
+half4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
 {
-	float4 color = float4(0,0,0,0);
+	half4 color = half4(0,0,0,0);
 
-	float2 uv = SSRRayMarch(In.uv);
+	half2 uv = SSRRayMarch_View(In.uv);
 
-	float fade = SSRFadeFunction(1, 1, 0.3f, uv);
+	half fade = SSRFadeFunction(1.0f, 1, 0.3f, uv);
 	
-	float4 reflectionReflectMask = _Reflection_ReflectMask.Sample(textureSampler, uv);
-	float reflectMask = reflectionReflectMask.g;
+	half4 reflectionReflectMask = _Reflection_ReflectMask.Sample(pointSampler, uv);
+	half reflectMask = reflectionReflectMask.g;
 
-	color.rgb = _Sample.Sample(textureSampler, uv, 0).rgb;
+	color.rgb = _Sample.Sample(pointSampler, uv, 0).rgb;
 	color.a = reflectMask * fade;
 
 	return color;
 }
 
-float4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
+half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 {
-	float4 color = _Sample.Sample(textureSampler, In.uv);
+	half4 color = _Sample.Sample(pointSampler, In.uv);
 
-	float4 reflectionReflectMask = _Reflection_ReflectMask.Sample(textureSampler, In.uv);
-	float reflection = reflectionReflectMask.r;
+	half4 reflectionReflectMask = _Reflection_ReflectMask.Sample(pointSampler, In.uv);
+	half reflection = reflectionReflectMask.r;
 	color.a *= reflection;
 
 	return color;
@@ -325,32 +378,32 @@ float4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 
 // Fog =======================================================================================================
 
-float4 PS_MAIN_Fog_Apply_Distance(PS_IN In) : SV_TARGET
+half4 PS_MAIN_Fog_Apply_Distance(PS_IN In) : SV_TARGET
 {
-	float4 packedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv);
-	float depth = packedDepthLightOcclusionShadow.r;
-	float3 viewPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half depth = depthLightOcclusionShadow.r;
+	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
 
-	float d = length(viewPosition.xyz - _ViewPosition.xyz);
+	half d = length(vPosition.xyz - _ViewPosition.xyz);
 
-	float percent = smoothstep(_FogDesc.MinZ, _FogDesc.MinZ + _FogDesc.RangeZ, d);
+	half percent = smoothstep(_FogDesc.MinZ, _FogDesc.MinZ + _FogDesc.RangeZ, d);
 
-	float4 fogColor = _FogDesc.Color;
+	half4 fogColor = _FogDesc.Color;
 	fogColor.a *= percent;
 
 	return fogColor;
 }
 
-float4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
+half4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
 {
-	float4 packedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv);
-	float depth = packedDepthLightOcclusionShadow.r;
-	float3 viewPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
-	float viewDepth = viewPosition.z;
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half depth = depthLightOcclusionShadow.r;
+	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half vDepth = vPosition.z;
 
-	float percent = smoothstep(_FogDesc.MinZ, _FogDesc.MinZ + _FogDesc.RangeZ, viewDepth);
+	half percent = smoothstep(_FogDesc.MinZ, _FogDesc.MinZ + _FogDesc.RangeZ, vDepth);
 
-	float4 fogColor = _FogDesc.Color;
+	half4 fogColor = _FogDesc.Color;
 	fogColor.a *= percent;
 
 	return fogColor;
@@ -358,15 +411,15 @@ float4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
 
 // Bloom =====================================================================================================
 
-float4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
+half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 {
-	const static float4 BLACK = float4(0, 0, 0, 1);
+	const static half4 BLACK = half4(0, 0, 0, 1);
 
-	float4 sampleColor = _Sample.Sample(textureSampler, In.uv);
-	float brightness = Brightness(sampleColor.rgb) - 0.01f;
+	half4 sampleColor = _Sample.Sample(pointSampler, In.uv);
+	half brightness = Brightness(sampleColor.rgb);
 
-	float percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
-	float4 brightedColor = normalize(sampleColor);
+	half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	half4 brightedColor = normalize(sampleColor);
 
 	return lerp(BLACK, brightedColor, percent);
 }
@@ -376,55 +429,55 @@ float4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 // Vertical Blur
 // ==============================
 
-float4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
+half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
 {
-	float4 sampleColor = _Sample.Sample(textureSampler, In.uv);
+	half4 sampleColor = _Sample.Sample(pointSampler, In.uv);
 
-	float4 color;
+	half4 color;
 	color.rgb = sampleColor.rgb;
 	color.a = 1.0f;
 	color *= _BloomDesc.Intensity;
-	color = min(float4(1.0f, 1.0f, 1.0f, 1.0f), color);
+	color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
 
 	return color;
 }
 
-float4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
+half4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
 {
-	float4 sampleColor = _Sample.Sample(textureSampler, In.uv);
-	float brightness = Brightness(sampleColor.rgb);
+	half4 sampleColor = _Sample.Sample(pointSampler, In.uv);
+	half brightness = Brightness(sampleColor.rgb);
 
-	float4 color;
+	half4 color;
 	color.rgb = normalize(sampleColor.rgb);
 	color.a = brightness;
 	color *= _BloomDesc.Intensity;
-	color = min(float4(1.0f, 1.0f, 1.0f, 1.0f), color);
+	color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
 
 	return color;
 }
 
 // Linear DOF ======================================================================================================
 
-float4 PS_MAIN_LinearDOF_WritePass0(PS_IN In) : SV_TARGET
+half4 PS_MAIN_LinearDOF_WritePass0(PS_IN In) : SV_TARGET
 {
 	//// Horizontal Blur 
 
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
 	int size = _LinearDOFDesc.BlurNumSamples;
 	int numSamples = size * 2 + 1;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustX = _LinearDOFDesc.BlurPixelDistance * i / numSamples;
-		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
+		half adjustX = _LinearDOFDesc.BlurPixelDistance * i / numSamples;
+		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
 
-		float4 sampleColor = _Sample.Sample(textureSampler, sampleUV);
+		half4 sampleColor = _Sample.Sample(pointSampler, sampleUV);
 		accumulation += sampleColor;
 	}
 
-	float4 horizontalBlur = accumulation / numSamples;
+	half4 horizontalBlur = accumulation / numSamples;
 	horizontalBlur.a = 1.0f;
 
 	//// 
@@ -432,184 +485,184 @@ float4 PS_MAIN_LinearDOF_WritePass0(PS_IN In) : SV_TARGET
 	return horizontalBlur;
 }
 
-float4 PS_MAIN_LinearDOF_WritePass1(PS_IN In) : SV_TARGET
+half4 PS_MAIN_LinearDOF_WritePass1(PS_IN In) : SV_TARGET
 {
 	//// Verticla Blur 
 
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
 	int size = _LinearDOFDesc.BlurNumSamples;
 	int numSamples = size * 2 + 1;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustY = _LinearDOFDesc.BlurPixelDistance * i / numSamples;
-		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
+		half adjustY = _LinearDOFDesc.BlurPixelDistance * i / numSamples;
+		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
 
-		float4 sampleColor = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += sampleColor;
 	}
 
-	float4 blur = accumulation / numSamples;
+	half4 blur = accumulation / numSamples;
 	blur.a = 1.0f;
 
 	//// Blend 
 
-	float4 color = _Result.Sample(textureSampler, In.uv);
+	half4 color = _Result.Sample(pointSampler, In.uv);
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).r;
-	float3 viewPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
+	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
 
-	float percent = smoothstep(_LinearDOFDesc.MinZ, _LinearDOFDesc.MinZ + _LinearDOFDesc.RangeZ, viewPosition.z);
+	half percent = smoothstep(_LinearDOFDesc.MinZ, _LinearDOFDesc.MinZ + _LinearDOFDesc.RangeZ, vPosition.z);
 
-	float4 lerped = lerp(color, blur, percent);
+	half4 lerped = lerp(color, blur, percent);
 	return lerped;
 
 	//// 
 }
 
-float4 PS_MAIN_LinearDOF_Apply(PS_IN In) : SV_TARGET
+half4 PS_MAIN_LinearDOF_Apply(PS_IN In) : SV_TARGET
 {
-	float4 color = _Sample.Sample(textureSampler, In.uv);
+	half4 color = _Sample.Sample(pointSampler, In.uv);
 	return color;
 }
 
 // Blur ======================================================================================================
 
-float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
+half4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 {
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 0.0f);
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustX = _BlurDesc.PixelDistance * i / numSamples;
-		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
+		half adjustX = _BlurDesc.PixelDistance * i / numSamples;
+		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
 
-		float4 color = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += color;
 	}
 
-	float4 color = accumulation / numSamples;
+	half4 color = accumulation / numSamples;
 	return color;
 }
 
-float4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
+half4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
 {
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 0.0f);
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustY = _BlurDesc.PixelDistance * i / numSamples;
-		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
+		half adjustY = _BlurDesc.PixelDistance * i / numSamples;
+		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
 
-		float4 color = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += color;
 	}
 
-	float4 color = accumulation / numSamples;
+	half4 color = accumulation / numSamples;
 	return color;
 }
 
-float4 PS_MAIN_HorizontalInvDepthBlur(PS_IN In) : SV_TARGET
+half4 PS_MAIN_HorizontalInvDepthBlur(PS_IN In) : SV_TARGET
 {
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 0.0f);
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustX = _BlurDesc.PixelDistance * (1 - depth) * i / numSamples;
-		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
+		half adjustX = _BlurDesc.PixelDistance * (1 - depth) * i / numSamples;
+		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
 
-		float4 color = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += color;
 	}
 
-	float4 color = accumulation / numSamples;
+	half4 color = accumulation / numSamples;
 	return color;
 }
 
-float4 PS_MAIN_VerticalInvDepthBlur(PS_IN In) : SV_TARGET
+half4 PS_MAIN_VerticalInvDepthBlur(PS_IN In) : SV_TARGET
 {
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 0.0f);
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustY = _BlurDesc.PixelDistance * (1 - depth) * i / numSamples;
-		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
+		half adjustY = _BlurDesc.PixelDistance * (1 - depth) * i / numSamples;
+		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
 
-		float4 color = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += color;
 	}
 
-	float4 color = accumulation / numSamples;
+	half4 color = accumulation / numSamples;
 	return color;
 }
 
-float4 PS_MAIN_HorizontalDepthBlur(PS_IN In) : SV_TARGET
+half4 PS_MAIN_HorizontalDepthBlur(PS_IN In) : SV_TARGET
 {
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 0.0f);
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustX = _BlurDesc.PixelDistance * depth * i / numSamples;
-		float2 sampleUV = In.uv + float2(adjustX, 0.0f) * deltaPixel;
+		half adjustX = _BlurDesc.PixelDistance * depth * i / numSamples;
+		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
 
-		float4 sampleColor = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += sampleColor;
 	}
 
-	float4 color = accumulation / numSamples;
+	half4 color = accumulation / numSamples;
 	return color;
 }
 
-float4 PS_MAIN_VerticalDepthBlur(PS_IN In) : SV_TARGET
+half4 PS_MAIN_VerticalDepthBlur(PS_IN In) : SV_TARGET
 {
-	float2 deltaPixel = float2(1.0f, 1.0f) / _TextureSize.xy;
-	float4 accumulation = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 0.0f);
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	float depth = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
 
-	[unroll(32 + 1)]
+	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
-		float adjustY = _BlurDesc.PixelDistance * depth * i / numSamples;
-		float2 sampleUV = In.uv + float2(0.0f, adjustY) * deltaPixel;
+		half adjustY = _BlurDesc.PixelDistance * depth * i / numSamples;
+		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
 
-		float4 sampleColor = _Sample.SampleLevel(textureSampler, sampleUV, 0);
+		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += sampleColor;
 	}
 
-	float4 color = accumulation / numSamples;
+	half4 color = accumulation / numSamples;
 	return color;
 }
 

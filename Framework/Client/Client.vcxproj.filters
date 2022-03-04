@@ -107,9 +107,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\SkinnedOutline.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\Shader\Transparent.fx">
       <Filter>Shaders</Filter>
     </FxCompile>

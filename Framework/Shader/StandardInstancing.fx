@@ -53,7 +53,7 @@ PS_IN VS_MAIN(VS_IN In)
 	PS_IN output = (PS_IN)0;
 
 	float4 position = float4(In.position, 1);
-	float4 normal = float4(In.normal, 0);
+	half4 normal = half4(In.normal, 0);
 
 	if (_BoneMatricesUsage.x > 0)
 	{
@@ -74,10 +74,10 @@ PS_IN VS_MAIN(VS_IN In)
 	instanceWorldMatrix[3] = In.instance_position;
 
 	float4 worldPosition = mul(position, instanceWorldMatrix);
-	float4 viewPosition = mul(worldPosition, _ViewMatrix);
-	float4 outputPosition = mul(viewPosition, _ProjectionMatrix);
+	half4 vPosition = mul(worldPosition, _ViewMatrix);
+	half4 outputPosition = mul(vPosition, _ProjectionMatrix);
 
-	float4 outputNormal = mul(normal, _WorldMatrix);
+	half4 outputNormal = mul(normal, _WorldMatrix);
 
 	output.position = outputPosition;
 	output.uv = In.uv;
@@ -96,24 +96,26 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	output.diffuse = _DiffuseTexture.Sample(diffuseSampler, In.uv);
 
-	float3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.uv).rgb;
-	float3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.normal, In.tangent, In.binormal);
-	float3 normal = mul(float4(unpackedNormalMap, 0.0f), _WorldMatrix).xyz;
-	output.normal = PackNormal(normal);
+	half3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.uv).rgb;
+	half3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.normal, In.tangent, In.binormal);
+	output.normal.xyz = mul(half4(unpackedNormalMap, 0.0f), _WorldMatrix).xyz;
+	output.normal.xyz = normalize(output.normal.xyz);
+	output.normal.w = 1;
 
-	output.worldPosition = PackWorldPosition(In.worldPosition.xyz);
+	output.worldPosition.xyz = In.worldPosition.xyz;
+	output.worldPosition.w = 1;
 
-	float depth = In.projPosition.z / In.projPosition.w;
-	float lightMask = _LightMapTexture.Sample(diffuseSampler, In.uv).r;
-	float shadowMask = _ShadowMapTexture.Sample(diffuseSampler, In.uv).r;
-	float occlusionMask = _OcclusionTexture.Sample(diffuseSampler, In.uv).r;
-	output.depth_Light_Occlusion_Shadow = float4(depth, lightMask, occlusionMask, shadowMask);
+	half depth = In.projPosition.z / In.projPosition.w;
+	half lightMask = _LightMapTexture.Sample(diffuseSampler, In.uv).r;
+	half shadowMask = _ShadowMapTexture.Sample(diffuseSampler, In.uv).r;
+	half occlusionMask = _OcclusionTexture.Sample(diffuseSampler, In.uv).r;
+	output.depth_Light_Occlusion_Shadow = half4(depth, lightMask, occlusionMask, shadowMask);
 
-	float3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.uv).rgb;
-	float specular_Power = _Specular_Power;
-	output.specular_Power = float4(specularMask, specular_Power);
+	half3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.uv).rgb;
+	half specular_Power = _Specular_Power;
+	output.specular_Power = half4(specularMask, specular_Power);
 
-	output.emissive = float4(0, 0, 0, 0);
+	output.emissive = half4(0, 0, 0, 0);
 
 	return output;
 }

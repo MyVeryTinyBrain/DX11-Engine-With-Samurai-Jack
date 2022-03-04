@@ -451,7 +451,7 @@ void PlayerTestScene::OnUpdate()
 		ssrDesc.Thickness = thickness;
 
 		float bias = ssrDesc.Bias;
-		ImGui::SliderFloat("Bias", &bias, 0.0f, 0.5f);
+		ImGui::SliderFloat("Bias", &bias, 0.0f, 1.0f);
 		ssrDesc.Bias = bias;
 
 		float blurPixelDistance = ssrDesc.BlurPixelDistance;
@@ -518,6 +518,10 @@ void PlayerTestScene::OnUpdate()
 		ImGui::SliderFloat("Shadow Whiteness", &shadowWhiteness, 0.0f, 1.0f);
 		light->shadowWhiteness = shadowWhiteness;
 
+		float shadowBias = light->shadowBias;
+		ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.0f, 1.0f);
+		light->shadowBias = shadowBias;
+
 		bool drawShadow = light->drawShadow;
 		ImGui::Checkbox("Draw Shadow", &drawShadow);
 		light->drawShadow = drawShadow;
@@ -563,6 +567,10 @@ void PlayerTestScene::OnUpdate()
 		ImGui::SliderFloat("Shadow Whiteness", &shadowWhiteness, 0.0f, 1.0f);
 		light->shadowWhiteness = shadowWhiteness;
 
+		float shadowBias = light->shadowBias;
+		ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.0f, 1.0f);
+		light->shadowBias = shadowBias;
+
 		bool drawShadow = light->drawShadow;
 		ImGui::Checkbox("Draw Shadow", &drawShadow);
 		light->drawShadow = drawShadow;
@@ -599,6 +607,10 @@ void PlayerTestScene::OnUpdate()
 		float shadowWhiteness = light->shadowWhiteness;
 		ImGui::SliderFloat("Shadow Whiteness", &shadowWhiteness, 0.0f, 1.0f);
 		light->shadowWhiteness = shadowWhiteness;
+
+		float shadowBias = light->shadowBias;
+		ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.0f, 1.0f);
+		light->shadowBias = shadowBias;
 
 		bool drawShadow = light->drawShadow;
 		ImGui::Checkbox("Draw Shadow", &drawShadow);

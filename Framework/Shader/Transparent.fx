@@ -86,10 +86,11 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	float3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.uv).rgb;
 	float3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.normal, In.tangent, In.binormal);
-	float3 normal = mul(float4(unpackedNormalMap, 0.0f), _WorldMatrix).xyz;
-	output.normal = PackNormal(normal);
+	output.normal.xyz = mul(float4(unpackedNormalMap, 0.0f), _WorldMatrix).xyz;
+	output.normal.w = 1;
 
-	output.worldPosition = PackWorldPosition(In.worldPosition.xyz);
+	output.worldPosition.xyz = In.worldPosition.xyz;
+	output.worldPosition.w = 1;
 
 	float depth = In.projPosition.z / In.projPosition.w;
 	float lightMask = 1.0f;

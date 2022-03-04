@@ -26,10 +26,14 @@ struct PS_IN
 
 texture2D		_ShadowCutoffTexture;
 float			_ShadowCutoffAlpha;
-SamplerState	textureSampler
+SamplerState	pointSampler
 {
 	AddressU = Clamp;
 	AddressV = Clamp;
+	ComparisonFunc = Never;
+	MinLOD = 0;
+	MaxLOD = FLT_MAX;
+	Filter = MIN_MAG_MIP_POINT;
 };
 
 PS_IN VS_MAIN_Instance(VS_IN_Instance In)
@@ -45,8 +49,8 @@ PS_IN VS_MAIN_Instance(VS_IN_Instance In)
 	instanceWorldMatrix[3] = In.instance_position;
 
 	float4 worldPosition = mul(position, instanceWorldMatrix);
-	float4 viewPosition = mul(worldPosition, _ViewMatrix);
-	float4 outputPosition = mul(viewPosition, _ProjectionMatrix);
+	half4 viewPosition = mul(worldPosition, _ViewMatrix);
+	half4 outputPosition = mul(viewPosition, _ProjectionMatrix);
 
 	output.position = outputPosition;
 	output.uv = In.uv;
@@ -72,8 +76,8 @@ PS_IN VS_MAIN_Skinned(VS_IN_Skinned In)
 	}
 
 	float4 worldPosition = mul(position, _WorldMatrix);
-	float4 viewPosition = mul(worldPosition, _ViewMatrix);
-	float4 outputPosition = mul(viewPosition, _ProjectionMatrix);
+	half4 viewPosition = mul(worldPosition, _ViewMatrix);
+	half4 outputPosition = mul(viewPosition, _ProjectionMatrix);
 
 	output.position = outputPosition;
 	output.uv = In.uv;
@@ -88,7 +92,7 @@ void PS_MAIN(PS_IN In)
 
 void PS_MAIN_AlphaTest(PS_IN In)
 {
-	float alpha = _ShadowCutoffTexture.Sample(textureSampler, In.uv).a;
+	float alpha = _ShadowCutoffTexture.Sample(pointSampler, In.uv).a;
 	if (alpha < _ShadowCutoffAlpha)
 		discard;
 }
@@ -98,7 +102,7 @@ RasterizerState RasterizerState0
 	FillMode = Solid;
 	Cullmode = Back;
 	DepthClipEnable = TRUE;
-	DepthBias = 100;
+	DepthBias = 100; // DepthBias = 100 * ShadowSmoothness
 	DepthBiasClamp = 0.0f;
 	SlopeScaledDepthBias = 10.0f;
 };

@@ -14,10 +14,14 @@ struct PS_IN
 
 texture2D		_Diffuse;
 uint			_Blur;
-SamplerState	textureSampler
+SamplerState	pointSampler
 {
 	AddressU = Clamp;
 	AddressV = Clamp;
+	ComparisonFunc = Never;
+	MinLOD = 0;
+	MaxLOD = FLT_MAX;
+	Filter = MIN_MAG_MIP_POINT;
 };
 
 PS_IN VS_MAIN(VS_IN In)
@@ -32,29 +36,29 @@ PS_IN VS_MAIN(VS_IN In)
 
 float4 PS_MAIN_NonBlend(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(textureSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.uv);
 	if (color.a < 1.0f)
-		color = float4(color.xyz, 1.0f);
+		color = half4(color.xyz, 1.0f);
 
 	return color;
 }
 
 float4 PS_MAIN_Blend(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(textureSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.uv);
 
 	return color;
 }
 
 float4 PS_MAIN_AlphaTest(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(textureSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.uv);
 
 	clip(color.a - 0.99f);
 
@@ -63,38 +67,38 @@ float4 PS_MAIN_AlphaTest(PS_IN In) : SV_TARGET
 
 float4 PS_MAIN_PerspectiveDepthVisualize(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(textureSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.uv);
 
-	const float const_near = 0.1f;
-	const float const_far = 50.0f;
+	const half const_near = 0.1f;
+	const half const_far = 50.0f;
 	float linearDepth = ToLinearDepth(const_near, const_far, color.r);
-	return float4(linearDepth, linearDepth, linearDepth, 1.0f);
+	return half4(linearDepth, linearDepth, linearDepth, 1.0f);
 }
 
 float4 PS_MAIN_OrthoDepthVisualize(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(textureSampler, In.uv);
-	float depth = pow(abs(color), 1.5f).r;
-	return float4(depth, depth, depth, 1.0f);
+	color = _Diffuse.Sample(pointSampler, In.uv);
+	half depth = pow(abs(color), 1.5f).r;
+	return half4(depth, depth, depth, 1.0f);
 }
 
 float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
 	float width, height;
 	_Diffuse.GetDimensions(width, height);
-	float2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
+	half2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
 
-	float4 horizontalColor = _Diffuse.Sample(textureSampler, In.uv);
+	half4 horizontalColor = _Diffuse.Sample(pointSampler, In.uv);
 	for (uint i = 0; i < _Blur; ++i)
 	{
-		horizontalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord - float2(i, 0)));
-		horizontalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord + float2(i, 0)));
+		horizontalColor += _Diffuse.Sample(pointSampler, TexPixelCoordToUV(width, height, pixelCoord - half2(i, 0)));
+		horizontalColor += _Diffuse.Sample(pointSampler, TexPixelCoordToUV(width, height, pixelCoord + half2(i, 0)));
 	}
 	horizontalColor /= (1 + _Blur * 2);
 
@@ -103,17 +107,17 @@ float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 
 float4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
 {
-	float4 color = (float4)0;
+	half4 color = (half4)0;
 
-	float width, height;
+	half width, height;
 	_Diffuse.GetDimensions(width, height);
-	float2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
+	half2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
 
-	float4 verticalColor = _Diffuse.Sample(textureSampler, In.uv);
+	float4 verticalColor = _Diffuse.Sample(pointSampler, In.uv);
 	for (uint j = 0; j < _Blur; ++j)
 	{
-		verticalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord - float2(0, j)));
-		verticalColor += _Diffuse.Sample(textureSampler, TexPixelCoordToUV(width, height, pixelCoord + float2(0, j)));
+		verticalColor += _Diffuse.Sample(pointSampler, TexPixelCoordToUV(width, height, pixelCoord - half2(0, j)));
+		verticalColor += _Diffuse.Sample(pointSampler, TexPixelCoordToUV(width, height, pixelCoord + half2(0, j)));
 	}
 	verticalColor /= (1 + _Blur * 2);
 

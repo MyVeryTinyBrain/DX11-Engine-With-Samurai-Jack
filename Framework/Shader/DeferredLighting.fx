@@ -20,7 +20,7 @@ struct PS_OUT
 
 struct ShadowDesc
 {
-	float	Value;
+	half	Value;
 	bool	InShadowMap;
 };
 
@@ -37,6 +37,7 @@ struct LightDesc
 	float		Intensity;
 	float		Range;					// [0~inf]
 	float		Angle;					// [0~90]
+	float		ShadowBias;				// [0~1]
 	float		Near;
 	float		Far;
 	float4		Position;
@@ -53,10 +54,23 @@ texture2D				_WorldPosition;
 texture2D				_Depth_Light_Occlusion_Shadow;
 texture2D				_Specular_Power;
 texture2D				_LightDepthMap[6];
-SamplerState			textureSampler
+SamplerState			linearSampler
 {
 	AddressU = Clamp;
 	AddressV = Clamp;
+	ComparisonFunc = Never;
+	MinLOD = 0;
+	MaxLOD = FLT_MAX;
+	Filter = MIN_MAG_MIP_LINEAR;
+};
+SamplerState			pointSampler
+{
+	AddressU = Clamp;
+	AddressV = Clamp;
+	ComparisonFunc = Never;
+	MinLOD = 0;
+	MaxLOD = FLT_MAX;
+	Filter = MIN_MAG_MIP_POINT;
 };
 SamplerComparisonState	shadowSampler
 {
@@ -82,77 +96,71 @@ PS_IN VS_MAIN(VS_IN In)
 	return output;
 }
 
-void UnpackGBuffersForLight(float2 uv,
-	out float3 normal,
+void UnpackGBuffersForLight(half2 uv,
+	out half3 normal,
 	out float4 worldPosition,
-	out float occlusionMask, out float shadowMask,
-	out float3 specularMask, out float specular_Power)
+	out half occlusionMask, out half shadowMask,
+	out half3 specularMask, out half specularPower)
 {
-	float4 packedNormal = _Normal.Sample(textureSampler, uv);
-	float3 unpackedNormal = UnpackNormal(packedNormal);
+	normal = _Normal.Sample(pointSampler, uv).xyz;
 
-	float4 packedWorldPosition = _WorldPosition.Sample(textureSampler, uv);
-	float4 unpackedWorldPosition = float4(UnpackWorldPosition(packedWorldPosition), 1.0f);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv);
+	float depth = depthLightOcclusionShadow.r;
+	occlusionMask = depthLightOcclusionShadow.b;
+	shadowMask = depthLightOcclusionShadow.a;
 
-	float4 unpackedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, uv);
-	float OcclusionMask = unpackedDepthLightOcclusionShadow.z;
-	float ShadowMask = unpackedDepthLightOcclusionShadow.w;
+	half3 viewPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
+	worldPosition.xyz = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix));
+	worldPosition.w = 1.0f;
 
-	float4 packedSpecularPower = _Specular_Power.Sample(textureSampler, uv);
-	float3 unpackedSpecularMask = packedSpecularPower.rgb;
-	float unpackedSpecularPower = packedSpecularPower.a;
-
-	normal = unpackedNormal;
-	worldPosition = unpackedWorldPosition;
-	occlusionMask = OcclusionMask;
-	shadowMask = ShadowMask;
-	specularMask = unpackedSpecularMask;
-	specular_Power = unpackedSpecularPower;
+	half4 specular_Power = _Specular_Power.Sample(pointSampler, uv);
+	specularMask = specular_Power.rgb;
+	specularPower = specular_Power.a;
 }
 
-float ComputeDistanceAtten(float3 lightToPixel)
+half ComputeDistanceAtten(half3 lightToPixel)
 {
-	float d = length(lightToPixel);
-	float distAtten = max(_LightDesc.Range - d, 0) / _LightDesc.Range;
+	half d = length(lightToPixel);
+	half distAtten = max(_LightDesc.Range - d, 0) / _LightDesc.Range;
 	return distAtten;
 }
 
-float ComputeAngleAtten(float3 lightToPixel)
+half ComputeAngleAtten(half3 lightToPixel)
 {
-	float cosAngle = cos(_LightDesc.Angle * Deg2Rad);
-	float oneMinusCosAngle = 1 - cosAngle;
-	float angleAtten = (dot(normalize(lightToPixel), _LightDesc.Direction.xyz) - cosAngle) / oneMinusCosAngle;
+	half cosAngle = cos(_LightDesc.Angle * Deg2Rad);
+	half oneMinusCosAngle = 1 - cosAngle;
+	half angleAtten = (dot(normalize(lightToPixel), _LightDesc.Direction.xyz) - cosAngle) / oneMinusCosAngle;
 	angleAtten = saturate(angleAtten);
 	return angleAtten;
 }
 
-float ComputeLightIntensity(float3 lightDirection, float3 normal)
+half ComputeLightIntensity(half3 lightDirection, half3 normal)
 {
 	lightDirection = normalize(lightDirection);
-	float nDotL = dot(lightDirection * -1.0f, normal);
+	half nDotL = dot(lightDirection * -1.0f, normal);
 	return saturate(nDotL);
 }
 
-float ComputeFresnel(float3 viewToPixel, float3 normal)
+half ComputeFresnel(half3 viewToPixel, half3 normal)
 {
 	viewToPixel = -normalize(viewToPixel);
-	float f0 = 0.04f;
-	float cosTheta = dot(viewToPixel, normal);
-	float fresnel = f0 + (1.0f - f0) * pow(1.0f - cosTheta, 5.0f);
+	half f0 = 0.04f;
+	half cosTheta = dot(viewToPixel, normal);
+	half fresnel = f0 + (1.0f - f0) * pow(1.0f - cosTheta, 5.0f);
 	return saturate(fresnel);
 }
 
-float ComputeSpecular(float3 viewToPixel, float3 normal, float power)
+half ComputeSpecular(half3 viewToPixel, half3 normal, half power)
 {
 	viewToPixel = normalize(viewToPixel);
-	float3 reflection = reflect(viewToPixel * -1.0f, normal);
-	float rDotV = dot(reflection, viewToPixel);
+	half3 reflection = reflect(viewToPixel * -1.0f, normal);
+	half rDotV = dot(reflection, viewToPixel);
 	rDotV = saturate(rDotV);
-	float specular = pow(rDotV, power);
+	half specular = pow(rDotV, power);
 	return specular;
 }
 
-float SampleShadow(uint index, float2 texCoord, float depth)
+inline half SampleShadow(uint index, half2 texCoord, half depth)
 {
 	switch (index)
 	{
@@ -166,158 +174,112 @@ float SampleShadow(uint index, float2 texCoord, float depth)
 	}
 }
 
-ShadowDesc ComputeShadowCommon(uint i, float4 worldPosition, float lightIntensity, float shadowWhiteness)
+ShadowDesc ComputeShadowCommon(uint index, float4 worldPosition)
 {
 	ShadowDesc shadowDesc = (ShadowDesc)0;
 
-	float4 lightViewPosition;
-	lightViewPosition = mul(worldPosition, _LightDesc.ViewMatrix[i]);
-	lightViewPosition = mul(lightViewPosition, _LightDesc.ProjectionMatrix[i]);
+	half4 lightViewPosition;
+	lightViewPosition = mul(worldPosition, _LightDesc.ViewMatrix[index]);
+	lightViewPosition = mul(lightViewPosition, _LightDesc.ProjectionMatrix[index]);
 
-	float2 projectTexCoord;
+	half2 projectTexCoord;
 	projectTexCoord.x = (lightViewPosition.x / lightViewPosition.w) / 2.0f + 0.5f;
 	projectTexCoord.y = -(lightViewPosition.y / lightViewPosition.w) / 2.0f + 0.5f;
 
-	float depth = lightViewPosition.z / lightViewPosition.w;
+	half depthValueByCamera = lightViewPosition.z / lightViewPosition.w;
+	depthValueByCamera = depthValueByCamera - _LightDesc.ShadowBias;
 
-	float bias = 0.0001f;
-	float depthValueByCamera = lightViewPosition.z / lightViewPosition.w;
-	depthValueByCamera = depthValueByCamera - bias;
+	half depth = lightViewPosition.z / lightViewPosition.w;
 
-	// 이 픽셀이 쉐도우맵 내부에 있는지 검사합니다.
 	[flatten]
-	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+	if (IsSaturated(projectTexCoord))
 	{
 		shadowDesc.InShadowMap = true;
 
-		float depthValueByLight = SampleShadow(i, projectTexCoord.xy, depth);
+		half depthValueByLight = SampleShadow(index, projectTexCoord, depth);
 
-		// 이 픽셀이 가려져 있지 않다면 조명 연산된 밝기를 사용합니다.
 		[flatten]
 		if (depthValueByCamera <= depthValueByLight)
 		{
-			[flatten]
-			if (lightIntensity > 0.0f)
-			{
-				shadowDesc.Value = 1.0f;
-				return shadowDesc;
-			}
-		}
-
-		// 이 픽셀이 가려져 있다면 설정된 그림자 밝기를 사용합니다.
-		shadowDesc.Value = shadowWhiteness;
-		return shadowDesc;
-	}
-
-	// 이 픽셀이 그림자 맵의 영역 외부에 있다면 조명 연산된 밝기를 사용합니다.
-	shadowDesc.Value = 1.0f;
-	return shadowDesc;
-}
-
-ShadowDesc ComputeShadowCommonPCF3X3(uint i, float4 worldPosition, float lightIntensity, float shadowWhiteness)
-{
-	ShadowDesc shadowDesc = (ShadowDesc)0;
-
-	float4 lightViewPosition;
-	lightViewPosition = mul(worldPosition, _LightDesc.ViewMatrix[i]);
-	lightViewPosition = mul(lightViewPosition, _LightDesc.ProjectionMatrix[i]);
-
-	float2 projectTexCoord;
-	projectTexCoord.x = (lightViewPosition.x / lightViewPosition.w) / 2.0f + 0.5f;
-	projectTexCoord.y = -(lightViewPosition.y / lightViewPosition.w) / 2.0f + 0.5f;
-
-	float depth = lightViewPosition.z / lightViewPosition.w;
-
-	float bias = 0.0001f;
-	float depthValueByCamera = lightViewPosition.z / lightViewPosition.w;
-	depthValueByCamera = depthValueByCamera - bias;
-
-	static const uint NUM_SAMPLES = 3;
-	const float delta = 1.0f / _LightDesc.DepthSize;
-	const float2 adjust[8] = 
-	{
-		float2(-delta, +delta),	float2(0, +delta),	float2(+delta, +delta),
-		float2(-delta, 0),							float2(+delta, 0),
-		float2(-delta, -delta), float2(0, -delta),	float2(+delta, -delta),
-	};
-	uint numInShadowMap = 1;
-	
-	// 이 픽셀(중심 픽셀)이 쉐도우맵 내부에 있는지 검사합니다.
-	[flatten]
-	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-	{
-		shadowDesc.InShadowMap = true;
-
-		float depthValueByLight = SampleShadow(i, projectTexCoord.xy, depth);
-
-		// 이 픽셀이 가려져 있지 않다면 조명 연산된 밝기를 사용합니다.
-		[flatten]
-		if (depthValueByCamera <= depthValueByLight)
-		{
-			[flatten]
-			if (lightIntensity > 0.0f)
-			{
-				shadowDesc.Value += 1.0f;
-			}
+			shadowDesc.Value += 1.0f;
 		}
 		else
 		{
-			// 이 픽셀이 가려져 있다면 설정된 그림자 밝기를 사용합니다.
-			shadowDesc.Value += shadowWhiteness;
+			shadowDesc.Value += _LightDesc.ShadowWhiteness;
 		}
 	}
 	else
 	{
-		// 이 픽셀이 그림자 맵의 영역 외부에 있다면 조명 연산된 밝기를 사용합니다.
-		shadowDesc.Value += 1.0f;
-		// 중심 픽셀이 쉐도우맵 외부에 있다면, 중심 픽셀에 대해서만 연산합니다.
+		shadowDesc.InShadowMap = false;
+		return shadowDesc;
+	}
+
+	return shadowDesc;
+}
+
+ShadowDesc ComputeShadowCommonPCF3X3(uint index, float4 worldPosition)
+{
+	ShadowDesc shadowDesc = (ShadowDesc)0;
+
+	half4 lightViewPosition;
+	lightViewPosition = mul(worldPosition, _LightDesc.ViewMatrix[index]);
+	lightViewPosition = mul(lightViewPosition, _LightDesc.ProjectionMatrix[index]);
+
+	half2 projectTexCoord;
+	projectTexCoord.x = (lightViewPosition.x / lightViewPosition.w) / 2.0f + 0.5f;
+	projectTexCoord.y = -(lightViewPosition.y / lightViewPosition.w) / 2.0f + 0.5f;
+
+	half depthValueByCamera = lightViewPosition.z / lightViewPosition.w;
+	depthValueByCamera = depthValueByCamera - _LightDesc.ShadowBias;
+
+	half depth = lightViewPosition.z / lightViewPosition.w;
+
+	static const int NUM_SAMPLES = 3;
+	const half delta = 1.0f / _LightDesc.DepthSize;
+	int numInShadowMap = 1;
+	
+	[flatten]
+	if (IsSaturated(projectTexCoord))
+	{
+		shadowDesc.InShadowMap = true;
+	}
+	else
+	{
+		shadowDesc.InShadowMap = false;
 		return shadowDesc;
 	}
 
 	[unroll]
-	for (uint j = 0; j < NUM_SAMPLES * NUM_SAMPLES - 1; ++j)
+	for (int i = 0; i < NUM_SAMPLES * NUM_SAMPLES; ++i)
 	{
-		// 새로 샘플링할 UV 좌표입니다.
-		float2 sampleProjectTexCoorrd = projectTexCoord + adjust[j];
+		int stepU = (i % NUM_SAMPLES) - (NUM_SAMPLES / 2);
+		int stepV = (i / NUM_SAMPLES) - NUM_SAMPLES / 2;
+		half2 sampeUV = projectTexCoord + half2(stepU, stepV) * delta;
+		half depthValueByLight = SampleShadow(index, sampeUV, depth);
 
-		// 이 픽셀이 쉐도우맵 내부에 있는지 검사합니다.
 		[flatten]
-		if ((saturate(sampleProjectTexCoorrd.x) == sampleProjectTexCoorrd.x) && (saturate(sampleProjectTexCoorrd.y) == sampleProjectTexCoorrd.y))
+		if (depthValueByCamera <= depthValueByLight)
 		{
-			float depthValueByLight = SampleShadow(i, sampleProjectTexCoorrd, depth);
-
-			// 이 픽셀이 가려져 있지 않다면 조명 연산된 밝기를 사용합니다.
-			[flatten]
-			if (depthValueByCamera <= depthValueByLight)
-			{
-				[flatten]
-				if (lightIntensity > 0.0f)
-				{
-					shadowDesc.Value += 1.0f;
-				}
-			}
-			else
-			{
-				// 이 픽셀이 가려져 있다면 설정된 그림자 밝기를 사용합니다.
-				shadowDesc.Value += shadowWhiteness;
-			}
-
-			++numInShadowMap;
+			shadowDesc.Value += 1.0f;
+		}
+		else
+		{
+			shadowDesc.Value += _LightDesc.ShadowWhiteness;
 		}
 	}
 
-	shadowDesc.Value /= numInShadowMap;
+	shadowDesc.Value /= (NUM_SAMPLES * NUM_SAMPLES);
 	return shadowDesc;
 }
 
-float ComputeShadow_Directional(float4 worldPosition, float lightIntensity)
+half ComputeShadow_Directional(float4 worldPosition)
 {
 	// 가까운 쉐도우맵부터 순회합니다.
 	// 픽셀의 월드 위치가 i번째 쉐도우맵에 포함되어 있다면 i번째 쉐도우맵에 대하여 연산합니다.
 	[unroll]
 	for (uint i = 0; i < 3; ++i)
 	{
-		ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(i, worldPosition, lightIntensity, _LightDesc.ShadowWhiteness);
+		ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(i, worldPosition);
 
 		[flatten]
 		if (shadowDesc.InShadowMap)
@@ -328,7 +290,7 @@ float ComputeShadow_Directional(float4 worldPosition, float lightIntensity)
 	return 1.0f;
 }
 
-float ComputeShadow_Point(float3 lightToPixel, float4 worldPosition, float lightIntensity)
+half ComputeShadow_Point(half3 lightToPixel, float4 worldPosition)
 {
 	// PointLight.h에 정의된 뷰 행렬의 순서입니다.
 	// const V3	m_arrDirection[6] = { V3::right(),V3::left(),V3::forward(),V3::back(),V3::up(),V3::down(), };
@@ -339,14 +301,14 @@ float ComputeShadow_Point(float3 lightToPixel, float4 worldPosition, float light
 	// 쉐도우맵의 방향과 조명이 픽셀까지의 방향을 내적한 값들중 최대값입니다.
 	// 이것은 쉐도우맵의 방향과 가장 적은 각도차이를 나타냅니다.
 	// 또한 가장 적은 각도차이를 나타내는 인덱스를 사용하게 됩니다.
-	float maxDot = -2.0f;
-	float dotResult[6];
-	dotResult[0] = dot(lightToPixel, float3(1, 0, 0));
-	dotResult[1] = dot(lightToPixel, -float3(1, 0, 0));
-	dotResult[2] = dot(lightToPixel, float3(0, 0, 1));
-	dotResult[3] = dot(lightToPixel, -float3(0, 0, 1));
-	dotResult[4] = dot(lightToPixel, float3(0, 1, 0));
-	dotResult[5] = dot(lightToPixel, -float3(0, 1, 0));
+	half maxDot = -2.0f;
+	half dotResult[6];
+	dotResult[0] = dot(lightToPixel, half3(1, 0, 0));
+	dotResult[1] = dot(lightToPixel, -half3(1, 0, 0));
+	dotResult[2] = dot(lightToPixel, half3(0, 0, 1));
+	dotResult[3] = dot(lightToPixel, -half3(0, 0, 1));
+	dotResult[4] = dot(lightToPixel, half3(0, 1, 0));
+	dotResult[5] = dot(lightToPixel, -half3(0, 1, 0));
 
 	// 가장 적은 각도차이를 가지는 인덱스를 구합니다.
 	[unroll]
@@ -360,13 +322,13 @@ float ComputeShadow_Point(float3 lightToPixel, float4 worldPosition, float light
 		}
 	}
 
-	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(shadowmapIndex, worldPosition, lightIntensity, _LightDesc.ShadowWhiteness);
+	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(shadowmapIndex, worldPosition);
 	return shadowDesc.Value;
 }
 
-float ComputeShadow_Spot(float4 worldPosition, float lightIntensity)
+half ComputeShadow_Spot(float4 worldPosition)
 {
-	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(0, worldPosition, lightIntensity, _LightDesc.ShadowWhiteness);
+	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(0, worldPosition);
 	return shadowDesc.Value;
 }
 
@@ -374,38 +336,38 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	float3 normal;
+	half3 normal;
 	float4 worldPosition;
-	float occlusionMask, shadowMask;
-	float3 specularMask;
-	float specular_Power;
+	half occlusionMask, shadowMask;
+	half3 specularMask;
+	half specular_Power;
 	UnpackGBuffersForLight(In.uv,
 		normal,
 		worldPosition,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	float lightIntensity = ComputeLightIntensity(_LightDesc.Direction.xyz, normal);
+	half lightIntensity = ComputeLightIntensity(_LightDesc.Direction.xyz, normal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity);
 
-	float ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity);
+	half ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity);
 
-	float shadow = 1.0f;
+	half shadow = 1.0f;
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow_Directional(worldPosition, lightIntensity + ambientBrightness);
+		shadow = ComputeShadow_Directional(worldPosition);
 		shadow = lerp(1.0f, shadow, shadowMask);
 	}
 
 	lightIntensity = lightIntensity * shadow;
 
-	float3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
-	float3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
+	half3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
+	half3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
 	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * occlusionMask, 1.0f);
-	output.specular = float4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
+	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * occlusionMask, 1.0f);
+	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
 
 	return output;
 }
@@ -414,46 +376,46 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	float3 normal;
+	half3 normal;
 	float4 worldPosition;
-	float occlusionMask, shadowMask;
-	float3 specularMask;
-	float specular_Power;
+	half occlusionMask, shadowMask;
+	half3 specularMask;
+	half specular_Power;
 	UnpackGBuffersForLight(In.uv,
 		normal,
 		worldPosition,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	float4 packedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv);
-	float depth = packedDepthLightOcclusionShadow.r;
-	float3 viewPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
-	worldPosition = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix));
-	float3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half depth = depthLightOcclusionShadow.r;
+	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	worldPosition = mul(half4(vPosition, 1.0f), Inverse(_ViewMatrix));
+	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
 
-	float atten = ComputeDistanceAtten(lightToPixel);
+	half atten = ComputeDistanceAtten(lightToPixel);
 
-	float lightIntensity = ComputeLightIntensity(lightToPixel, normal);
+	half lightIntensity = ComputeLightIntensity(lightToPixel, normal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity * atten);
 
-	float ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * atten);
+	half ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * atten);
 
-	float shadow = 1.0f;
+	half shadow = 1.0f;
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow_Point(lightToPixel, worldPosition, lightIntensity + ambientBrightness);
+		shadow = ComputeShadow_Point(lightToPixel, worldPosition);
 		shadow = lerp(1.0f, shadow, shadowMask);
 	}
 
 	lightIntensity = lightIntensity * shadow;
 
-	float3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
-	float3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
+	half3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
+	half3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
 	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
-	output.specular = float4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
+	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
+	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
 
 	return output;
 }
@@ -462,48 +424,48 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	float3 normal;
+	half3 normal;
 	float4 worldPosition;
-	float occlusionMask, shadowMask;
-	float3 specularMask;
-	float specular_Power;
+	half occlusionMask, shadowMask;
+	half3 specularMask;
+	half specular_Power;
 	UnpackGBuffersForLight(In.uv,
 		normal,
 		worldPosition,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	float4 packedDepthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(textureSampler, In.uv);
-	float depth = packedDepthLightOcclusionShadow.r;
-	float3 viewPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
-	worldPosition = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix));
-	float3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half depth = depthLightOcclusionShadow.r;
+	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	worldPosition = mul(half4(vPosition, 1.0f), Inverse(_ViewMatrix));
+	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
 
-	float distAtten = ComputeDistanceAtten(lightToPixel);
-	float angleAtten = ComputeAngleAtten(lightToPixel);
-	float atten = distAtten * angleAtten;
+	half distAtten = ComputeDistanceAtten(lightToPixel);
+	half angleAtten = ComputeAngleAtten(lightToPixel);
+	half atten = distAtten * angleAtten;
 
-	float lightIntensity = ComputeLightIntensity(lightToPixel, normal);
+	half lightIntensity = ComputeLightIntensity(lightToPixel, normal);
 	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity * atten);
 
-	float ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * atten);
+	half ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * atten);
 
-	float shadow = 1.0f;
+	half shadow = 1.0f;
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow_Spot(worldPosition, lightIntensity + ambientBrightness);
+		shadow = ComputeShadow_Spot(worldPosition);
 		shadow = lerp(1.0f, shadow, shadowMask);
 	}
 
 	lightIntensity = lightIntensity * shadow;
 
-	float3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
-	float3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
+	half3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
+	half3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
 	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
 
-	output.light = float4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
-	output.specular = float4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
+	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
+	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
 
 	return output;
 }

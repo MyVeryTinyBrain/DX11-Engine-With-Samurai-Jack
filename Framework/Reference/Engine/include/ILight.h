@@ -22,6 +22,7 @@ struct LightDesc
 	float		Intensity;
 	float		Range;					// [0~inf]
 	float		Angle;					// [0~90]
+	float		ShadowBias;				// [0~1]
 	float		Near;
 	float		Far;
 	V4			Position;

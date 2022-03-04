@@ -37,6 +37,7 @@ void MaterialStandard::OnSetMaterialValues()
 	SetTexture("_ShadowMapTexture", m_occlusionTexture);
 	SetTexture("_SpecularMapTexture", m_occlusionTexture);
 	SetFloat("_SpecularPower", m_specularPower);
+	SetFloat("_SpecularTransparency", m_specularTransparency);
 	SetTexture("_EmissiveTexture", m_emissiveTexture);
 	SetTexture("_ReflectionTexture", m_reflectionTexture);
 	SetFloat("_ReflectionTransparency", m_reflectionTransparency);
@@ -71,6 +72,11 @@ const ResourceRef<Texture>& MaterialStandard::GetSpecularMapTexture()
 float MaterialStandard::GetSpecularPower()
 {
 	return m_specularPower;
+}
+
+float MaterialStandard::GetSpecularTransparency()
+{
+	return m_specularTransparency;
 }
 
 const ResourceRef<Texture>& MaterialStandard::GetEmissiveTexture()
@@ -121,6 +127,11 @@ void MaterialStandard::SetShadowMapTexture(const ResourceRef<Texture>& texture)
 void MaterialStandard::SetSpecularMapTexture(const ResourceRef<Texture>& texture)
 {
 	m_specularMapTexture = texture;
+}
+
+void MaterialStandard::SetSpecularTransparency(float value)
+{
+	m_specularTransparency = value;
 }
 
 void MaterialStandard::SetSpecularPower(float value)

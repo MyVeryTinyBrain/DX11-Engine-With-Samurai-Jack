@@ -202,8 +202,9 @@ void SkinnedMeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 		else
 		{
 			tstring materialPath = texturePath + tstring(TEXT(".skinned.material"));
-			ResourceRef<Material> material = system->resourceManagement->factory->CreateManagedMaterial<MaterialStandard>(materialPath);
+			ResourceRef<MaterialStandard> material = system->resourceManagement->factory->CreateManagedMaterial<MaterialStandard>(materialPath);
 			material->diffuseTexture = texture;
+			material->specularTransparency = 0.0f;
 			SetMaterialByIndex(i, material);
 		}
 	}

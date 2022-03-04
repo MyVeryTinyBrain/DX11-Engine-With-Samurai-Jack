@@ -24,6 +24,7 @@ public:
 	const ResourceRef<Texture>& GetOcclusionTexture();
 	const ResourceRef<Texture>& GetShadowMapTexture();
 	const ResourceRef<Texture>& GetSpecularMapTexture();
+	float GetSpecularTransparency();
 	float GetSpecularPower();
 	const ResourceRef<Texture>& GetEmissiveTexture();
 	const ResourceRef<Texture>& GetReflectionTexture();
@@ -35,6 +36,7 @@ public:
 	void SetOcclusionTexture(const ResourceRef<Texture>& texture);
 	void SetShadowMapTexture(const ResourceRef<Texture>& texture);
 	void SetSpecularMapTexture(const ResourceRef<Texture>& texture);
+	void SetSpecularTransparency(float value);
 	void SetSpecularPower(float value);
 	void SetEmissiveTexture(const ResourceRef<Texture>& texture);
 	void SetReflectionTexture(const ResourceRef<Texture>& texture);
@@ -46,6 +48,7 @@ public:
 	_declspec(property(get = GetOcclusionTexture, put = SetOcclusionTexture)) const ResourceRef<Texture>& occlusion;
 	_declspec(property(get = GetShadowMapTexture, put = SetShadowMapTexture)) const ResourceRef<Texture>& shadowMap;
 	_declspec(property(get = GetSpecularMapTexture, put = SetSpecularMapTexture)) const ResourceRef<Texture>& specularMap;
+	_declspec(property(get = GetSpecularTransparency, put = SetSpecularTransparency)) float specularTransparency;
 	_declspec(property(get = GetSpecularPower, put = SetSpecularPower)) float specularPower;
 	_declspec(property(get = GetEmissiveTexture, put = SetEmissiveTexture)) const ResourceRef<Texture>& emissive;
 	_declspec(property(get = GetReflectionTexture, put = SetReflectionTexture)) const ResourceRef<Texture>& reflection;
@@ -69,8 +72,11 @@ private:
 	// texture2D _SpecularMapTexture;
 	ResourceRef<Texture> m_specularMapTexture;
 
+	// float _SpecularTransparency
+	float m_specularTransparency = 1.0f;
+
 	// float _SpecularPower;
-	float m_specularPower = 0.5f;
+	float m_specularPower = 5.0f;
 
 	// texture2D _EmissiveTexture;
 	ResourceRef<Texture> m_emissiveTexture;

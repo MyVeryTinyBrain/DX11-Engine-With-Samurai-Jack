@@ -9,14 +9,14 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_width = width;
 	m_height = height;
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Diffuse);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Diffuse);
 	m_renderTargets.push_back(m_Diffuse);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardDiffuse);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_forwardDiffuse);
 	m_forwardRenderTargets.push_back(m_forwardDiffuse);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Normal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Normal);
 	m_renderTargets.push_back(m_Normal);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_forwardNormal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardNormal);
 	m_forwardRenderTargets.push_back(m_forwardNormal);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_WorldPosition);
@@ -62,7 +62,7 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_postProcessingRenderTargets.push_back(m_bridge);
 	RenderTarget::Create(device, width / 2, height / 2, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_bridgeHalf);
 	m_postProcessingRenderTargets.push_back(m_bridgeHalf);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssao);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_ssao);
 	m_postProcessingRenderTargets.push_back(m_ssao);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bloom);
 	m_postProcessingRenderTargets.push_back(m_bloom);

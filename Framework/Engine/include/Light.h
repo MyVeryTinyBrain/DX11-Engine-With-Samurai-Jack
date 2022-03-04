@@ -30,6 +30,9 @@ public:
 	virtual inline float GetShadowWhiteness() const override { return m_shadowWhiteness; }
 	inline void SetShadowWhiteness(float value) { m_shadowWhiteness = value; }
 
+	virtual inline float GetShadowBias() const { return m_shadowBias; }
+	inline void SetShadowBias(float value) { m_shadowBias = value; }
+
 	virtual inline uint GetDepthSize() const override { return m_depthSize; }
 
 	_declspec(property(get = GetIntensity, put = SetIntensity)) float intensity;
@@ -37,6 +40,7 @@ public:
 	_declspec(property(get = GetAmbient, put = SetAmbient)) const Color& ambient;
 	_declspec(property(get = IsDrawShadow, put = SetDrawShadowMode)) bool drawShadow;
 	_declspec(property(get = GetShadowWhiteness, put = SetShadowWhiteness)) float shadowWhiteness;
+	_declspec(property(get = GetShadowBias, put = SetShadowBias)) float shadowBias;
 	_declspec(property(get = GetDepthSize)) uint depthSize;
 
 protected:
@@ -59,6 +63,7 @@ private:
 
 	bool					m_drawShadow = false;
 	float					m_shadowWhiteness = 0.5f;
+	float					m_shadowBias = 0.0001f;
 
 	bool					m_isVolumetricLight = false;
 

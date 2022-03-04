@@ -55,6 +55,7 @@ LightDesc PointLight::GetLightDesc(ICamera* camera) const
     desc.Direction = transform->forward;
     desc.Range = m_range;
     desc.Angle = 0;
+    desc.ShadowBias = shadowBias;
     desc.Diffuse = diffuse;
     desc.Ambient = ambient;
     desc.Near = m_near;

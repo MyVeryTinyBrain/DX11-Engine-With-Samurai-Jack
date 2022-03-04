@@ -23,7 +23,7 @@ void Camera::Awake()
 			uint(system->graphicSystem->height));
 
 	m_ssaoDesc.Enable = true;
-	m_ssaoDesc.NumSamples = 8;
+	m_ssaoDesc.NumSamples = 4;
 	m_ssaoDesc.BlurNumSamples = 8;
 	m_ssaoDesc.Transparency = 0.225f;
 	m_ssaoDesc.MinZ = 0.003f;
@@ -39,7 +39,7 @@ void Camera::Awake()
 
 	m_bloomDesc.Enable = true;
 	m_bloomDesc.Type = BloomType::Add;
-	m_bloomDesc.BlurNumSamples = 16;
+	m_bloomDesc.BlurNumSamples = 8;
 	m_bloomDesc.Intensity = 1.5f;
 	m_bloomDesc.Threshold = 0.1f;
 	m_bloomDesc.BlurPixelDistance = 50.0f;
@@ -47,11 +47,17 @@ void Camera::Awake()
 	m_ssrDesc.Enable = true;
 	m_ssrDesc.BlurEnable = true;
 	m_ssrDesc.BlurType = BlurType::InvDepth;
-	m_ssrDesc.NumSamples = 150;
+	//m_ssrDesc.NumSamples = 100;
+	//m_ssrDesc.BlurNumSamples = 4;
+	//m_ssrDesc.Step = 0.1f;
+	//m_ssrDesc.Thickness = 0.3f;
+	//m_ssrDesc.Bias = 0.05f;
+	//m_ssrDesc.BlurPixelDistance = 1000.0f;
+	m_ssrDesc.NumSamples = 50;
 	m_ssrDesc.BlurNumSamples = 4;
-	m_ssrDesc.Step = 0.05f;
-	m_ssrDesc.Thickness = 0.05f;
-	m_ssrDesc.Bias = 0.18f;
+	m_ssrDesc.Step = 0.2f;
+	m_ssrDesc.Thickness = 0.5f;
+	m_ssrDesc.Bias = 0.04f;
 	m_ssrDesc.BlurPixelDistance = 1000.0f;
 
 	m_linearDofDesc.Enable = true;
