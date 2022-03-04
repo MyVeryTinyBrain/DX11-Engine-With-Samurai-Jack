@@ -27,7 +27,7 @@ void Camera::Awake()
 	m_ssaoDesc.BlurNumSamples = 8;
 	m_ssaoDesc.Transparency = 0.225f;
 	m_ssaoDesc.MinZ = 0.003f;
-	m_ssaoDesc.Radius = 0.2f;
+	m_ssaoDesc.Radius = 0.28f;
 	m_ssaoDesc.Power = 2.5f;
 	m_ssaoDesc.BlurPixelDistance = 1100.0f;
 

@@ -147,11 +147,10 @@ void RenderQueue::Render(ICamera* camera)
 
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->diffuse->srv, 0, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->normal->srv, 100, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->worldPosition->srv, 200, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depth_Light_Occlusion_Shadow->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular_Power->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->reflection_ReflectMask->srv, 600, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depth_Light_Occlusion_Shadow->srv, 200, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular_Power->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->reflection_ReflectMask->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 000, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);

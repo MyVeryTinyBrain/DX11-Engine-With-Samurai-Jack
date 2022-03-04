@@ -360,14 +360,12 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
     // Inputs
     RenderTarget* normal = nullptr;
-    RenderTarget* worldPosition = nullptr;
     RenderTarget* depth_Light_Occlusion_Shadow = nullptr;
     RenderTarget* specular_Power = nullptr;
     DepthStencil* lightDepthes[6] = {};
     if (forward == false)
     {
         normal = drt->normal;
-        worldPosition = drt->worldPosition;
         depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;
         specular_Power = drt->specular_Power;
         light->GetDepthes(lightDepthes);
@@ -375,7 +373,6 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     else
     {
         normal = drt->forwardNormal;
-        worldPosition = drt->forwardWorldPosition;
         depth_Light_Occlusion_Shadow = drt->forwardDepth_Light_Occlusion_Shadow;
         specular_Power = drt->forwardSpecular_Power;
         light->GetDepthes(lightDepthes);
@@ -419,7 +416,6 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
             m_shaderLighting->SetRawValue("_LightDesc", &lightDesc, sizeof(LightDesc));
             m_shaderLighting->SetTexture("_Normal", normal->srv);
-            m_shaderLighting->SetTexture("_WorldPosition", worldPosition->srv);
             m_shaderLighting->SetTexture("_Depth_Light_Occlusion_Shadow", depth_Light_Occlusion_Shadow->srv);
             m_shaderLighting->SetTexture("_Specular_Power", specular_Power->srv);
 

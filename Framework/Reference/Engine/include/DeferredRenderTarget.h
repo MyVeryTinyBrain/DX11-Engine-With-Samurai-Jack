@@ -38,7 +38,6 @@ public:
 
 	inline RenderTarget* GetDiffuse() const { return m_Diffuse; }
 	inline RenderTarget* GetNormal() const { return m_Normal; }
-	inline RenderTarget* GetWorldPosition() const { return m_WorldPosition; }
 	inline RenderTarget* GetDepth_Light_Occlusion_Shadow() const { return m_Depth_Light_Occlusion_Shadow; }
 	inline RenderTarget* GetSpecular_Power() const { return m_Specular_Power; }
 	inline RenderTarget* GetEmissive() const { return m_Emissive; }
@@ -46,7 +45,6 @@ public:
 
 	inline RenderTarget* GetForwardDiffuse() const { return m_forwardDiffuse; }
 	inline RenderTarget* GetForwardNormal() const { return m_forwardNormal; }
-	inline RenderTarget* GetForwardWorldPosition() const { return m_forwardWorldPosition; }
 	inline RenderTarget* GetForwardDepth_Light_Occlusion_Shadow() const { return m_forwardDepth_Light_Occlusion_Shadow; }
 	inline RenderTarget* GetForwardSpecular_Power() const { return m_forwardSpecular_Power; }
 
@@ -69,7 +67,6 @@ public:
 
 	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
-	_declspec(property(get = GetWorldPosition)) RenderTarget* worldPosition;
 	_declspec(property(get = GetDepth_Light_Occlusion_Shadow)) RenderTarget* depth_Light_Occlusion_Shadow;
 	_declspec(property(get = GetSpecular_Power)) RenderTarget* specular_Power;
 	_declspec(property(get = GetEmissive)) RenderTarget* emissive;
@@ -77,7 +74,6 @@ public:
 
 	_declspec(property(get = GetForwardDiffuse)) RenderTarget* forwardDiffuse;
 	_declspec(property(get = GetForwardNormal)) RenderTarget* forwardNormal;
-	_declspec(property(get = GetForwardWorldPosition)) RenderTarget* forwardWorldPosition;
 	_declspec(property(get = GetForwardDepth_Light_Occlusion_Shadow)) RenderTarget* forwardDepth_Light_Occlusion_Shadow;
 	_declspec(property(get = GetForwardSpecular_Power)) RenderTarget* forwardSpecular_Power;
 
@@ -118,7 +114,6 @@ private:
 
 	RenderTarget*								m_Diffuse = nullptr; // RGBA(Diffuse)
 	RenderTarget*								m_Normal = nullptr; // RGB(Normal)
-	RenderTarget*								m_WorldPosition = nullptr; // RGB(WorldPositionDirection)A(WorldPositionDistance)
 	RenderTarget*								m_Depth_Light_Occlusion_Shadow = nullptr; // R(Depth)G(LightMask)B(OcclusionMask)A(ShadowMask)
 	RenderTarget*								m_Specular_Power = nullptr; // RGB(SpecularMask)A(Power)
 	RenderTarget*								m_Emissive = nullptr; // RGBA(Emissive)
@@ -126,7 +121,6 @@ private:
 
 	RenderTarget*								m_forwardDiffuse = nullptr;
 	RenderTarget*								m_forwardNormal = nullptr; 
-	RenderTarget*								m_forwardWorldPosition = nullptr; 
 	RenderTarget*								m_forwardDepth_Light_Occlusion_Shadow = nullptr; 
 	RenderTarget*								m_forwardSpecular_Power = nullptr; 
 

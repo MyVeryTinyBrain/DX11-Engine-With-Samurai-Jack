@@ -26,11 +26,10 @@ struct PS_OUT
 {
 	float4 diffuse : SV_TARGET0;
 	float4 normal : SV_TARGET1;
-	float4 worldPosition : SV_TARGET2;
-	float4 depth_Light_Occlusion_Shadow : SV_TARGET3;
-	float4 specular_Power : SV_TARGET4;
-	float4 emissive : SV_TARGET5;
-	float4 reflection_ReflectMask : SV_TARGET6;
+	float4 depth_Light_Occlusion_Shadow : SV_TARGET2;
+	float4 specular_Power : SV_TARGET3;
+	float4 emissive : SV_TARGET4;
+	float4 reflection_ReflectMask : SV_TARGET5;
 };
 
 texture2D		_NormalMapTexture;
@@ -104,9 +103,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	output.normal.xyz = mul(half4(unpackedNormalMap, 0.0f), _WorldMatrix).xyz;
 	output.normal.xyz = normalize(output.normal.xyz);
 	output.normal.w = 1;
-
-	output.worldPosition.xyz = In.worldPosition.xyz;
-	output.worldPosition.w = 1;
 
 	half depth = In.projPosition.z / In.projPosition.w;
 	half lightMask = _LightMapTexture.Sample(diffuseSampler, In.uv).r;

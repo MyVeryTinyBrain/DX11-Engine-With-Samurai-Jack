@@ -19,11 +19,6 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardNormal);
 	m_forwardRenderTargets.push_back(m_forwardNormal);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_WorldPosition);
-	m_renderTargets.push_back(m_WorldPosition);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardWorldPosition);
-	m_forwardRenderTargets.push_back(m_forwardWorldPosition);
-
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Depth_Light_Occlusion_Shadow);
 	m_renderTargets.push_back(m_Depth_Light_Occlusion_Shadow);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_forwardDepth_Light_Occlusion_Shadow);
@@ -186,13 +181,12 @@ void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem
 	ZeroMemory(arrRTV, sizeof(arrRTV));
 	arrRTV[0] = m_Diffuse->rtv.Get();
 	arrRTV[1] = m_Normal->rtv.Get();
-	arrRTV[2] = m_WorldPosition->rtv.Get();
-	arrRTV[3] = m_Depth_Light_Occlusion_Shadow->rtv.Get();
-	arrRTV[4] = m_Specular_Power->rtv.Get();
-	arrRTV[5] = m_Emissive->rtv.Get();
-	arrRTV[6] = m_Reflection_ReflectMask->rtv.Get();
+	arrRTV[2] = m_Depth_Light_Occlusion_Shadow->rtv.Get();
+	arrRTV[3] = m_Specular_Power->rtv.Get();
+	arrRTV[4] = m_Emissive->rtv.Get();
+	arrRTV[5] = m_Reflection_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(7, arrRTV);
+	graphicSystem->SetRenderTargets(6, arrRTV);
 }
 
 void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem)
@@ -202,13 +196,12 @@ void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem)
 	ZeroMemory(arrRTV, sizeof(arrRTV));
 	arrRTV[0] = m_result->rtv.Get();
 	arrRTV[1] = m_Normal->rtv.Get();
-	arrRTV[2] = m_WorldPosition->rtv.Get();
-	arrRTV[3] = m_Depth_Light_Occlusion_Shadow->rtv.Get();
-	arrRTV[4] = m_Specular_Power->rtv.Get();
-	arrRTV[5] = m_Emissive->rtv.Get();
-	arrRTV[6] = m_Reflection_ReflectMask->rtv.Get();
+	arrRTV[2] = m_Depth_Light_Occlusion_Shadow->rtv.Get();
+	arrRTV[3] = m_Specular_Power->rtv.Get();
+	arrRTV[4] = m_Emissive->rtv.Get();
+	arrRTV[5] = m_Reflection_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(7, arrRTV);
+	graphicSystem->SetRenderTargets(6, arrRTV);
 }
 
 void DeferredRenderTarget::SetForwardLightRenderTargets(GraphicSystem* graphicSystem)
@@ -218,13 +211,12 @@ void DeferredRenderTarget::SetForwardLightRenderTargets(GraphicSystem* graphicSy
 	ZeroMemory(arrRTV, sizeof(arrRTV));
 	arrRTV[0] = m_forwardDiffuse->rtv.Get();
 	arrRTV[1] = m_forwardNormal->rtv.Get();
-	arrRTV[2] = m_forwardWorldPosition->rtv.Get();
-	arrRTV[3] = m_forwardDepth_Light_Occlusion_Shadow->rtv.Get();
-	arrRTV[4] = m_forwardSpecular_Power->rtv.Get();
-	arrRTV[5] = emissive->rtv.Get();
-	arrRTV[6] = m_Reflection_ReflectMask->rtv.Get();
+	arrRTV[2] = m_forwardDepth_Light_Occlusion_Shadow->rtv.Get();
+	arrRTV[3] = m_forwardSpecular_Power->rtv.Get();
+	arrRTV[4] = emissive->rtv.Get();
+	arrRTV[5] = m_Reflection_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(7, arrRTV);
+	graphicSystem->SetRenderTargets(6, arrRTV);
 }
 
 void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem)

@@ -135,12 +135,12 @@ half SSAORayMarch(float2 uv)
 	{
 		normalize(half3(0.2024537f, 0.841204f, 0.9060141f)),	
 		normalize(half3(0.4839356f, -0.8253108f, 0.1563844f)),	
-		normalize(half3(0.3677659f, 0.1086345f, 0.4466777f)),	
-		normalize(half3(0.0019193f, -0.8048455f, 0.0726584f)),	
-		normalize(half3(0.7867433f, -0.141479f, 0.1567597f)),	
 		normalize(half3(-0.7578573f, -0.5583301f, 0.2347527f)),
 		normalize(half3(-0.4192392f, 0.2084218f, 0.3672943f)),	
 		normalize(half3(-0.8433938f, 0.1451271f, 0.2202872f)),	
+		normalize(half3(0.0019193f, -0.8048455f, 0.0726584f)),	
+		normalize(half3(0.7867433f, -0.141479f, 0.1567597f)),	
+		normalize(half3(0.3677659f, 0.1086345f, 0.4466777f)),	
 		normalize(half3(-0.4540417f, -0.252365f, 0.0694318f)),	
 		normalize(half3(-0.4037157f, -0.8263387f, 0.4698132f)),
 		normalize(half3(-0.6657394f, 0.6298575f, 0.6342437f)),	
@@ -160,10 +160,15 @@ half SSAORayMarch(float2 uv)
 	half3 vPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
 	float3 worldPosition = mul(float4(vPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
 
+	half3 fracWorldPosition;
+	fracWorldPosition.x = frac(worldPosition.x * 100.0f);
+	fracWorldPosition.y = frac(worldPosition.y * 100.0f);
+	fracWorldPosition.z = frac(worldPosition.z * 100.0f);
+	half fracWPSum = fracWorldPosition.x + fracWorldPosition.y + fracWorldPosition.z;
 	half3 randomSeed = 0;
-	randomSeed.x = dot(worldPosition.xy, worldPosition.yz) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
-	randomSeed.y = dot(worldPosition.yz, worldPosition.zx) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
-	randomSeed.z = dot(worldPosition.zx, worldPosition.xy) + frac(worldPosition.x + worldPosition.y + worldPosition.z);
+	randomSeed.x = dot(fracWorldPosition.xy, fracWorldPosition.yz) + fracWPSum;
+	randomSeed.y = dot(fracWorldPosition.yz, fracWorldPosition.zx) + fracWPSum;
+	randomSeed.z = dot(fracWorldPosition.zx, fracWorldPosition.xy) + fracWPSum;
 
 	half3 rvec = RandomVector(randomSeed.xy);
 	half3 tangent = normalize(rvec - normal * dot(rvec, normal));

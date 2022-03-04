@@ -52,7 +52,6 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 		m_shaderPostProcessing->SetVector("_TextureSize", V2(float(drt->width), float(drt->height)));
 		m_shaderPostProcessing->SetTexture("_Diffuse", drt->diffuse->srv);
 		m_shaderPostProcessing->SetTexture("_Normal", drt->normal->srv);
-		m_shaderPostProcessing->SetTexture("_WorldPosition", drt->worldPosition->srv);
 		m_shaderPostProcessing->SetTexture("_Depth_Light_Occlusion_Shadow", drt->depth_Light_Occlusion_Shadow->srv);
 		m_shaderPostProcessing->SetTexture("_Reflection_ReflectMask", drt->reflection_ReflectMask->srv);
 
