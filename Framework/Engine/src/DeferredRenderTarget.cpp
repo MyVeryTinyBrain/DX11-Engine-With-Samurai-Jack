@@ -61,7 +61,7 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_postProcessingRenderTargets.push_back(m_ssao);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bloom);
 	m_postProcessingRenderTargets.push_back(m_bloom);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssr);
+	RenderTarget::Create(device, width / 2, height / 2, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssr);
 	m_postProcessingRenderTargets.push_back(m_ssr);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_dof);
 	m_postProcessingRenderTargets.push_back(m_dof);
@@ -120,7 +120,7 @@ bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint hei
 			return false;
 		if (!m_bloom->Resize(device, width, height))
 			return false;
-		if (!m_ssr->Resize(device, width, height))
+		if (!m_ssr->Resize(device, width / 2, height / 2))
 			return false;
 		if (!m_dof->Resize(device, width, height))
 			return false;

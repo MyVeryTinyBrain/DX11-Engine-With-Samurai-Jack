@@ -364,7 +364,7 @@ half4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
 	half4 reflectionReflectMask = _Reflection_ReflectMask.Sample(pointSampler, uv);
 	half reflectMask = reflectionReflectMask.g;
 
-	color.rgb = _Sample.Sample(pointSampler, uv, 0).rgb;
+	color.rgb = _Sample.Sample(linearSampler, uv, 0).rgb;
 	color.a = reflectMask * fade;
 
 	return color;
@@ -372,7 +372,7 @@ half4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 {
-	half4 color = _Sample.Sample(pointSampler, In.uv);
+	half4 color = _Sample.Sample(linearSampler, In.uv);
 
 	half4 reflectionReflectMask = _Reflection_ReflectMask.Sample(pointSampler, In.uv);
 	half reflection = reflectionReflectMask.r;

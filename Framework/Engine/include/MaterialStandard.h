@@ -85,10 +85,10 @@ private:
 	ResourceRef<Texture> m_reflectionTexture;
 
 	// float _ReflectionTransparency;
-	float m_reflectionTransparency = 0.0f;
+	float m_reflectionTransparency = 0.5f;
 
 	// float _ReflectMask;
-	float m_reflectMask = 0.5f;
+	float m_reflectMask = 1.0f;
 };
 
 ENGINE_END
