@@ -41,6 +41,7 @@ void MaterialStandard::OnSetMaterialValues()
 	SetTexture("_EmissiveTexture", m_emissiveTexture);
 	SetTexture("_ReflectionTexture", m_reflectionTexture);
 	SetFloat("_ReflectionTransparency", m_reflectionTransparency);
+	SetFloat("_ReflectionBlur", m_reflectionBlur);
 	SetFloat("_ReflectMask", m_reflectMask);
 }
 
@@ -92,6 +93,11 @@ const ResourceRef<Texture>& MaterialStandard::GetReflectionTexture()
 float MaterialStandard::GetReflectionTransparency()
 {
 	return m_reflectionTransparency;
+}
+
+float MaterialStandard::GetReflectionBlur()
+{
+	return m_reflectionBlur;
 }
 
 float MaterialStandard::GetReflectMask()
@@ -152,6 +158,11 @@ void MaterialStandard::SetReflectionTexture(const ResourceRef<Texture>& texture)
 void MaterialStandard::SetReflectionTransparency(float value)
 {
 	m_reflectionTransparency = value;
+}
+
+void MaterialStandard::SetReflectionBlur(float value)
+{
+	m_reflectionBlur = value;
 }
 
 void MaterialStandard::SetReflectMask(float value)

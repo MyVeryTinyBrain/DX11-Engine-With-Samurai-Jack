@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RenderTypes.h"
+#include "ShaderTypes.h"
 #include "IMaterial.h"
 #include "IMesh.h"
 #include "ICamera.h"
@@ -13,48 +13,47 @@ ENGINE_BEGIN
 
 struct ENGINE_API RenderRequestEssential
 {
-	M4							worldMatrix;
-	RenderGroup					renderGroup;
-	int							renderGroupOrder;
-	uint8_t						layerIndex;
-	IMaterial*					material;
-	uint						techniqueIndex;
-	uint						passIndex;
-	IMesh*						mesh;
-	uint						subMeshIndex;
-	bool						instance;
+	M4										worldMatrix;
+	RenderGroup								renderGroup;
+	int										renderGroupOrder;
+	uint8_t									layerIndex;
+	IMaterial*								material;
+	uint									techniqueIndex;
+	uint									passIndex;
+	IMesh*									mesh;
+	uint									subMeshIndex;
+	bool									instance;
 
 	bool IsValid() const;
 };
 
-struct ENGINE_API RenderRequestSub
+struct ENGINE_API RenderRequestCustomPrimitiveCount
 {
-	TransparentLightMode		transparentLightMode;
+	bool									usePrimitiveCount;
+	uint									primitiveCount;
 };
 
 struct ENGINE_API RenderRequestOp
 {
-	// * 특정 Operation은 instance 플래그가 활성화 상태인경우 처리되지 않습니다.
-
-	IRendererBoundsOp*			boundsOp;
-	IRendererCullOp*			cullOp;
-	IRendererBoneOp*			boneOp;
+	IRendererBoundsOp*						boundsOp; // instance 플래그가 활성화 상태에서는 인식되지 않습니다.
+	IRendererCullOp*						cullOp;
+	IRendererBoneOp*						boneOp;
 };
 
 struct ENGINE_API RenderRequestShadow
 {
-	bool						draw;
-	bool						cutoffEnable;
-	float						cutoffAlpha;
-	ITexture*					cutoffTexture;
+	bool									draw;
+	bool									cutoffEnable;
+	float									cutoffAlpha;
+	ITexture*								cutoffTexture;
 };
 
 struct ENGINE_API RenderRequest
 {
-	RenderRequestEssential	essential = {};
-	RenderRequestSub		sub = {};
-	RenderRequestShadow		shadow = {};
-	RenderRequestOp			op = {};
+	RenderRequestEssential					essential = {};
+	RenderRequestCustomPrimitiveCount		customPrimitiveCount = {};
+	RenderRequestShadow						shadow = {};
+	RenderRequestOp							op = {};
 
 	inline bool IsValid() { return essential.IsValid(); }
 };

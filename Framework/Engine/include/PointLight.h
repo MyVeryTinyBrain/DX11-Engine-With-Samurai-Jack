@@ -11,7 +11,7 @@ class ENGINE_API PointLight : public Light
 public:
 
 	inline float GetRange() const { return m_range; }
-	void SetRange(float value) { m_range = Clamp(value, 0.0f, FLT_MAX); }
+	void SetRange(float value) { m_range = Saturate(value); }
 
 	_declspec(property(get = GetRange, put = SetRange)) float range;
 

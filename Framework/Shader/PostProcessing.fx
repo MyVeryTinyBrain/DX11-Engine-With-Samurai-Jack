@@ -2,14 +2,14 @@
 
 struct VS_IN
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
+	float3 Position : POSITION;
+	float2 UV : TEXCOORD;
 };
 
 struct PS_IN
 {
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
+	float4 Screen : SV_POSITION;
+	float2 UV : TEXCOORD;
 };
 
 #define FOG_TYPE_Distance	0
@@ -34,6 +34,29 @@ struct SSAODesc
 	float	BlurPixelDistance;
 };
 
+struct SSRDesc
+{
+	bool	Enable;
+	bool	BlurEnable;
+	uint	BlurType;
+	uint	NumSamples;
+	uint	BlurNumSamples;
+	float	Step;
+	float	Thickness;
+	float	Bias;
+	float	BlurPixelDistance;
+};
+
+struct DOFDesc
+{
+	bool	Enable;
+	uint	BlurNumSamples;
+	float	MinZ;
+	float	RangeZ;
+	float	Power;
+	float	BlurPixelDistance;
+};
+
 struct FogDesc
 {
 	bool	Enable;
@@ -53,27 +76,12 @@ struct BloomDesc
 	float	BlurPixelDistance;
 };
 
-struct SSRDesc
+struct ChromaticAberrationDesc
 {
 	bool	Enable;
-	bool	BlurEnable;
-	uint	BlurType;
-	uint	NumSamples;
-	uint	BlurNumSamples;
-	float	Step;
-	float	Thickness;
-	float	Bias;
-	float	BlurPixelDistance;
-};
-
-struct LinearDOFDesc
-{
-	bool	Enable;
-	uint	BlurNumSamples;
-	float	MinZ;
-	float	RangeZ;
-	float	Power;
-	float	BlurPixelDistance;
+	float4	Blend;	
+	float4	Offset;
+	float4	Angle;	
 };
 
 struct BlurDesc
@@ -83,21 +91,23 @@ struct BlurDesc
 	float	PixelDistance;
 };
 
-SSAODesc		_SSAODesc;
-FogDesc			_FogDesc;
-BloomDesc		_BloomDesc;
-SSRDesc			_SSRDesc;
-LinearDOFDesc	_LinearDOFDesc;
-BlurDesc		_BlurDesc;
-float4			_TextureSize;
-texture2D		_Diffuse;
-texture2D		_Normal;
-texture2D		_WorldPosition;
-texture2D		_Depth_Light_Occlusion_Shadow;
-texture2D		_Reflection_ReflectMask;
-texture2D		_Result;
-texture2D		_Sample; // For Temp Texture
-SamplerState	linearSampler
+SSAODesc				_SSAODesc;
+FogDesc					_FogDesc;
+BloomDesc				_BloomDesc;
+SSRDesc					_SSRDesc;
+DOFDesc					_DOFDesc;
+BlurDesc				_BlurDesc;
+ChromaticAberrationDesc _ChromaticAberrationDesc;
+float4					_TextureSize;
+texture2D				_Diffuse;
+texture2D				_Normal;
+texture2D				_WorldPosition;
+texture2D				_Depth_Light_Occlusion_Shadow;
+texture2D				_Reflection_ReflectionBlur_ReflectMask;
+texture2D				_Result;
+texture2D				_Sample; // For Temp Texture
+texture2D				_Other; // For Temp Texture
+SamplerState			linearSampler
 {
 	AddressU = Clamp;
 	AddressV = Clamp;
@@ -106,7 +116,7 @@ SamplerState	linearSampler
 	MaxLOD = FLT_MAX;
 	Filter = MIN_MAG_MIP_LINEAR;
 };
-SamplerState	pointSampler
+SamplerState			pointSampler
 {
 	AddressU = Clamp;
 	AddressV = Clamp;
@@ -120,8 +130,8 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	output.position = float4(In.position, 1.0f);
-	output.uv = In.uv;
+	output.Screen = float4(In.Position, 1.0f);
+	output.UV = In.UV;
 
 	return output;
 }
@@ -151,14 +161,19 @@ half SSAORayMarch(float2 uv)
 		normalize(half3(0.4401554f, -0.4228428f, 0.3300118f)),	
 	};
 
+	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
+
 	half3 normal = _Normal.Sample(pointSampler, uv, 0).xyz;
 
 	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv, 0);
 	float depth = depthLightOcclusionShadow.r;
 	half occlusionMask = depthLightOcclusionShadow.z;
 
-	half3 vPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
-	float3 worldPosition = mul(float4(vPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
+	[flatten] // Fast exit
+	if (depth == 1.0f) return 1.0f;
+
+	half3 vPosition = ToViewSpace(uv, depth, invProjMatrix);
+	float3 worldPosition = mul(float4(vPosition, 1.0f), invProjMatrix).xyz;
 
 	half3 fracWorldPosition;
 	fracWorldPosition.x = frac(worldPosition.x * 100.0f);
@@ -181,7 +196,7 @@ half SSAORayMarch(float2 uv)
 	{
 		half3 dir = mul(kernels[i], tbn);
 		dir = mul(half4(dir, 0.0f), _ViewMatrix).xyz;
-		half3 vSamplePos = vPosition + dir * _SSAODesc.Radius * Random(randomSeed.xy);
+		half3 vSamplePos = vPosition + dir * _SSAODesc.Radius * Random(uv);
 
 		half4 offset = half4(vSamplePos, 1.0f);
 		offset = mul(offset, _ProjectionMatrix);
@@ -193,8 +208,9 @@ half SSAORayMarch(float2 uv)
 		if (!IsSaturated(sampleUV))
 			continue;
 
+		// Must use Linear Sampler
 		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(linearSampler, sampleUV, 0).r;
-		half sampleVDepth = ToViewSpace(sampleUV, sampleDepth, Inverse(_ProjectionMatrix)).z;
+		half sampleVDepth = ToViewSpace(sampleUV, sampleDepth, invProjMatrix).z;
 
 		//float rangeCheck = abs(vPosition.z - sampleVDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
 		half rangeCheck = smoothstep(0.0, 1.0, _SSAODesc.Radius / abs(vPosition.z - sampleVDepth));
@@ -211,7 +227,7 @@ half SSAORayMarch(float2 uv)
 
 float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 {
-	half occlusion = SSAORayMarch(In.uv);
+	half occlusion = SSAORayMarch(In.UV);
 	return half4(occlusion, occlusion, occlusion, 1.0f);
 }
 
@@ -222,9 +238,9 @@ float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 
 float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 {
-	half4 diffuse = _Diffuse.Sample(pointSampler, In.uv);
-	half occlusionMask = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).b;
-	half4 occlusion = 1.0f - _Sample.Sample(pointSampler, In.uv);
+	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
+	half occlusionMask = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).b;
+	half4 occlusion = 1.0f - _Sample.Sample(pointSampler, In.UV);
 	return half4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
 }
 
@@ -232,6 +248,8 @@ float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 
 half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 {
+	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
+
 	vRayPos -= vDir * _SSRDesc.Step * 0.5f;
 
 	half step = _SSRDesc.Step;
@@ -245,11 +263,11 @@ half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 
 		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
 
-		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, Inverse(_ProjectionMatrix));
+		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
 
 		half depthDiff = vRayPos.z - vSamplePos.z;
 
-		if (depthDiff >= 0.0f)
+		if (depthDiff >= _SSRDesc.Bias && depthDiff <= _SSRDesc.Thickness)
 		{
 			outputUV = sSamplePos.xy;
 			vRayPos -= vDir * step;
@@ -265,43 +283,16 @@ half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 	return outputUV;
 }
 
-half2 SSRRayMarch_Screen(half2 uv)
+half2 SSRRayMarch(half2 uv)
 {
+	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
+
 	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv).r;
 
-	[flatten]
-	if (depth >= 1.0f)
-		return half2(0.0f, 0.0f);
+	[flatten] // Fast exit
+	if (depth >= 1.0f) return half2(0.0f, 0.0f);
 
-	half3 vPos = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
-	half3 vPixelDir = normalize(vPos);
-
-	half3 normal = _Normal.Sample(pointSampler, uv).rgb;
-	half3 vNormal = mul(float4(normal, 0.0f), _ViewMatrix).xyz;
-	vNormal = normalize(vNormal);
-	float3 vDir = reflect(vPixelDir, vNormal);
-	vDir = normalize(vDir);
-
-	float4 pPos = mul(float4(vPos, 1.0f), _ProjectionMatrix);
-	pPos.xyz /= pPos.w;
-	float2 sPos = pPos.xy;
-
-	float4 pDir = mul(float4(vDir, 0.0f), _ProjectionMatrix);
-	pDir.xyz /= pDir.w;
-	float2 sDir = pDir.xy;
-
-	return 0.0f;
-}
-
-half2 SSRRayMarch_View(half2 uv)
-{
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv).r;
-
-	[flatten]
-	if (depth >= 1.0f)
-		return half2(0.0f, 0.0f);
-
-	half3 vPos = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPos = ToViewSpace(uv, depth, invProjMatrix);
 	half3 vPixelDir = normalize(vPos);
 
 	half3 normal = _Normal.Sample(pointSampler, uv).rgb;
@@ -311,11 +302,12 @@ half2 SSRRayMarch_View(half2 uv)
 	vDir = normalize(vDir);
 
 	half3 vRayPos = vPos;
+	half step = _SSRDesc.Step;
 
 	[loop]
 	for (uint i = 0; i < _SSRDesc.NumSamples; ++i)
 	{
-		vRayPos += vDir * _SSRDesc.Step;
+		vRayPos += vDir * step;
 
 		half4 pSamplePos = mul(half4(vRayPos, 1.0f), _ProjectionMatrix);
 		half3 sSamplePos = pSamplePos.xyz / pSamplePos.w;
@@ -323,7 +315,7 @@ half2 SSRRayMarch_View(half2 uv)
 
 		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
 
-		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, Inverse(_ProjectionMatrix));
+		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
 
 		half depthDiff = vRayPos.z - vSamplePos.z;
 
@@ -336,7 +328,7 @@ half2 SSRRayMarch_View(half2 uv)
 	return half2(0.0f, 0.0f);
 }
 
-inline half SSRFadeFunction(half a, half w, half h, half x)
+inline half SSRSideFadeFunction(half a, half w, half h, half x)
 {
 	// a: downscale
 	// w: range
@@ -348,36 +340,112 @@ inline half SSRFadeFunction(half a, half w, half h, half x)
 	return f2;
 }
 
-inline half SSRFadeFunction(half a, half w, half h, half2 uv)
+inline half SSRSideFadeFunction(half a, half w, half h, half2 uv)
 {
-	return SSRFadeFunction(a, w, h, uv.x) * SSRFadeFunction(a, w, h, uv.y);
+	return SSRSideFadeFunction(a, w, h, uv.x) * SSRSideFadeFunction(a, w, h, uv.y);
 }
 
 half4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
 {
 	half4 color = half4(0,0,0,0);
 
-	half2 uv = SSRRayMarch_View(In.uv);
+	half2 uv = SSRRayMarch(In.UV);
 
-	half fade = SSRFadeFunction(1.0f, 1, 0.3f, uv);
-	
-	half4 reflectionReflectMask = _Reflection_ReflectMask.Sample(pointSampler, uv);
-	half reflectMask = reflectionReflectMask.g;
+	half sideFade = SSRSideFadeFunction(1.0f, 1, 0.3f, uv);
 
-	color.rgb = _Sample.Sample(linearSampler, uv, 0).rgb;
-	color.a = reflectMask * fade;
+	half4 reflectionReflectionBlurReflectMask = _Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, uv);
+	half reflectMask = reflectionReflectionBlurReflectMask.b;
+
+	color.rgb = _Sample.Sample(pointSampler, uv, 0).rgb;
+	color.a = reflectMask * sideFade;
 
 	return color;
 }
 
 half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 {
-	half4 color = _Sample.Sample(linearSampler, In.uv);
+	half4 reflectedColor = _Sample.Sample(pointSampler, In.UV);
+	half4 reflectedBlurColor = _Other.Sample(pointSampler, In.UV);
 
-	half4 reflectionReflectMask = _Reflection_ReflectMask.Sample(pointSampler, In.uv);
-	half reflection = reflectionReflectMask.r;
+	half4 reflectionReflectionBlurReflectMask = _Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, In.UV);
+	half reflection = reflectionReflectionBlurReflectMask.r;
+	half reflectionBlur = reflectionReflectionBlurReflectMask.g;
+
+	half4 color = lerp(reflectedColor, reflectedBlurColor, reflectionBlur);
 	color.a *= reflection;
 
+	return color;
+}
+
+// DOF =============================================================================================================
+
+half4 PS_MAIN_DOF_WritePass0(PS_IN In) : SV_TARGET
+{
+	//// Horizontal Blur 
+
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
+	int size = _DOFDesc.BlurNumSamples;
+	int numSamples = size * 2 + 1;
+
+	[loop]
+	for (int i = -size; i <= size; ++i)
+	{
+		half adjustX = _DOFDesc.BlurPixelDistance * i / numSamples;
+		half2 sampleUV = In.UV + half2(adjustX, 0.0f) * deltaPixel;
+
+		half4 sampleColor = _Sample.Sample(linearSampler, sampleUV);
+		accumulation += sampleColor;
+	}
+
+	half4 horizontalBlur = accumulation / numSamples;
+	horizontalBlur.a = 1.0f;
+
+	//// 
+
+	return horizontalBlur;
+}
+
+half4 PS_MAIN_DOF_WritePass1(PS_IN In) : SV_TARGET
+{
+	//// Verticla Blur 
+
+	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
+	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
+	int size = _DOFDesc.BlurNumSamples;
+	int numSamples = size * 2 + 1;
+
+	[loop]
+	for (int i = -size; i <= size; ++i)
+	{
+		half adjustY = _DOFDesc.BlurPixelDistance * i / numSamples;
+		half2 sampleUV = In.UV + half2(0.0f, adjustY) * deltaPixel;
+
+		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
+		accumulation += sampleColor;
+	}
+
+	half4 blur = accumulation / numSamples;
+	blur.a = 1.0f;
+
+	//// Blend 
+
+	half4 color = _Result.Sample(pointSampler, In.UV);
+
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
+	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
+
+	half percent = smoothstep(_DOFDesc.MinZ, _DOFDesc.MinZ + _DOFDesc.RangeZ, vPosition.z);
+
+	half4 lerped = lerp(color, blur, percent);
+	return lerped;
+
+	//// 
+}
+
+half4 PS_MAIN_DOF_Apply(PS_IN In) : SV_TARGET
+{
+	half4 color = _Sample.Sample(pointSampler, In.UV);
 	return color;
 }
 
@@ -385,9 +453,9 @@ half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Fog_Apply_Distance(PS_IN In) : SV_TARGET
 {
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
 	half depth = depthLightOcclusionShadow.r;
-	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 
 	half d = length(vPosition.xyz - _ViewPosition.xyz);
 
@@ -401,9 +469,9 @@ half4 PS_MAIN_Fog_Apply_Distance(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
 {
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
 	half depth = depthLightOcclusionShadow.r;
-	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 	half vDepth = vPosition.z;
 
 	half percent = smoothstep(_FogDesc.MinZ, _FogDesc.MinZ + _FogDesc.RangeZ, vDepth);
@@ -420,10 +488,11 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 {
 	const static half4 BLACK = half4(0, 0, 0, 1);
 
-	half4 sampleColor = _Sample.Sample(pointSampler, In.uv);
+	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 	half brightness = Brightness(sampleColor.rgb);
 
-	half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	//half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	half percent = step(1.0f - _BloomDesc.Threshold, brightness);
 	half4 brightedColor = normalize(sampleColor);
 
 	return lerp(BLACK, brightedColor, percent);
@@ -436,7 +505,7 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
 {
-	half4 sampleColor = _Sample.Sample(pointSampler, In.uv);
+	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 
 	half4 color;
 	color.rgb = sampleColor.rgb;
@@ -449,7 +518,7 @@ half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
 {
-	half4 sampleColor = _Sample.Sample(pointSampler, In.uv);
+	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 	half brightness = Brightness(sampleColor.rgb);
 
 	half4 color;
@@ -461,79 +530,39 @@ half4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
 	return color;
 }
 
-// Linear DOF ======================================================================================================
+// Chromatic Aberration ============================================================================================
 
-half4 PS_MAIN_LinearDOF_WritePass0(PS_IN In) : SV_TARGET
+half4 PS_MAIN_ChromaticAberration_Write(PS_IN In) : SV_TARGET
 {
-	//// Horizontal Blur 
+	half4 radAngle = _ChromaticAberrationDesc.Angle * Deg2Rad;
 
-	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
-	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
-	int size = _LinearDOFDesc.BlurNumSamples;
-	int numSamples = size * 2 + 1;
+	half2 pixelDist = 1.0f / _TextureSize.xy;
+	half2 r_dir = half2(cos(radAngle.r), sin(radAngle.r)) * pixelDist * _ChromaticAberrationDesc.Offset.r;
+	half2 g_dir = half2(cos(radAngle.g), sin(radAngle.g)) * pixelDist * _ChromaticAberrationDesc.Offset.g;
+	half2 b_dir = half2(cos(radAngle.b), sin(radAngle.b)) * pixelDist * _ChromaticAberrationDesc.Offset.b;
 
-	[loop]
-	for (int i = -size; i <= size; ++i)
-	{
-		half adjustX = _LinearDOFDesc.BlurPixelDistance * i / numSamples;
-		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
+	half3 sampleColor;
+	sampleColor.r = _Sample.Sample(pointSampler, In.UV + r_dir).r;
+	sampleColor.g = _Sample.Sample(pointSampler, In.UV + g_dir).g;
+	sampleColor.b = _Sample.Sample(pointSampler, In.UV + b_dir).b;
 
-		half4 sampleColor = _Sample.Sample(pointSampler, sampleUV);
-		accumulation += sampleColor;
-	}
+	half4 currentColor = _Sample.Sample(pointSampler, In.UV);
 
-	half4 horizontalBlur = accumulation / numSamples;
-	horizontalBlur.a = 1.0f;
+	half4 result;
+	result.r = lerp(currentColor.r, sampleColor.r, _ChromaticAberrationDesc.Blend.r);
+	result.g = lerp(currentColor.g, sampleColor.g, _ChromaticAberrationDesc.Blend.g);
+	result.b = lerp(currentColor.b, sampleColor.b, _ChromaticAberrationDesc.Blend.b);
+	result.a = currentColor.a;
 
-	//// 
-
-	return horizontalBlur;
+	return result;
 }
 
-half4 PS_MAIN_LinearDOF_WritePass1(PS_IN In) : SV_TARGET
+half4 PS_MAIN_ChromaticAberration_Apply(PS_IN In) : SV_TARGET
 {
-	//// Verticla Blur 
-
-	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
-	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
-	int size = _LinearDOFDesc.BlurNumSamples;
-	int numSamples = size * 2 + 1;
-
-	[loop]
-	for (int i = -size; i <= size; ++i)
-	{
-		half adjustY = _LinearDOFDesc.BlurPixelDistance * i / numSamples;
-		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
-
-		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
-		accumulation += sampleColor;
-	}
-
-	half4 blur = accumulation / numSamples;
-	blur.a = 1.0f;
-
-	//// Blend 
-
-	half4 color = _Result.Sample(pointSampler, In.uv);
-
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
-	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
-
-	half percent = smoothstep(_LinearDOFDesc.MinZ, _LinearDOFDesc.MinZ + _LinearDOFDesc.RangeZ, vPosition.z);
-
-	half4 lerped = lerp(color, blur, percent);
-	return lerped;
-
-	//// 
+	return _Sample.Sample(pointSampler, In.UV);
 }
 
-half4 PS_MAIN_LinearDOF_Apply(PS_IN In) : SV_TARGET
-{
-	half4 color = _Sample.Sample(pointSampler, In.uv);
-	return color;
-}
-
-// Blur ======================================================================================================
+// Blur ============================================================================================================
 
 half4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 {
@@ -546,9 +575,9 @@ half4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 	for (int i = -size; i <= size; ++i)
 	{
 		half adjustX = _BlurDesc.PixelDistance * i / numSamples;
-		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
+		half2 sampleUV = In.UV + half2(adjustX, 0.0f) * deltaPixel;
 
-		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
+		half4 color = _Sample.SampleLevel(linearSampler, sampleUV, 0);
 		accumulation += color;
 	}
 
@@ -563,13 +592,11 @@ half4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
-
 	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
 		half adjustY = _BlurDesc.PixelDistance * i / numSamples;
-		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
+		half2 sampleUV = In.UV + half2(0.0f, adjustY) * deltaPixel;
 
 		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += color;
@@ -586,15 +613,15 @@ half4 PS_MAIN_HorizontalInvDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
 		half adjustX = _BlurDesc.PixelDistance * (1 - depth) * i / numSamples;
-		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
+		half2 sampleUV = In.UV + half2(adjustX, 0.0f) * deltaPixel;
 
-		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
+		half4 color = _Sample.SampleLevel(linearSampler, sampleUV, 0);
 		accumulation += color;
 	}
 
@@ -609,13 +636,13 @@ half4 PS_MAIN_VerticalInvDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
 		half adjustY = _BlurDesc.PixelDistance * (1 - depth) * i / numSamples;
-		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
+		half2 sampleUV = In.UV + half2(0.0f, adjustY) * deltaPixel;
 
 		half4 color = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += color;
@@ -632,15 +659,15 @@ half4 PS_MAIN_HorizontalDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
 		half adjustX = _BlurDesc.PixelDistance * depth * i / numSamples;
-		half2 sampleUV = In.uv + half2(adjustX, 0.0f) * deltaPixel;
+		half2 sampleUV = In.UV + half2(adjustX, 0.0f) * deltaPixel;
 
-		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
+		half4 sampleColor = _Sample.SampleLevel(linearSampler, sampleUV, 0);
 		accumulation += sampleColor;
 	}
 
@@ -655,13 +682,13 @@ half4 PS_MAIN_VerticalDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv).r;
+	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
 	{
 		half adjustY = _BlurDesc.PixelDistance * depth * i / numSamples;
-		half2 sampleUV = In.uv + half2(0.0f, adjustY) * deltaPixel;
+		half2 sampleUV = In.UV + half2(0.0f, adjustY) * deltaPixel;
 
 		half4 sampleColor = _Sample.SampleLevel(pointSampler, sampleUV, 0);
 		accumulation += sampleColor;
@@ -725,6 +752,46 @@ technique11 PostProcessing
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_SSAO_ApplyOcclusion();
 	}
+	pass SSR_Write
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_SSR_Write();
+	}
+	pass SSR_Apply
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_SSR_Apply();
+	}
+	pass DOF_WritePass0
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_DOF_WritePass0();
+	}
+	pass DOF_WritePass1
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_DOF_WritePass1();
+	}
+	pass DOF_Apply
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_DOF_Apply();
+	}
 	pass Fog_Apply_Distance
 	{
 		SetRasterizerState(RasterizerState0);
@@ -765,45 +832,21 @@ technique11 PostProcessing
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply_Mix();
 	}
-	pass SSR_Write
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_SSR_Write();
-	}
-	pass SSR_Apply
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_SSR_Apply();
-	}
-	pass LinearDOF_WritePass0
+	pass ChromaticAberration_Write
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
 		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_LinearDOF_WritePass0();
+		PixelShader = compile ps_5_0 PS_MAIN_ChromaticAberration_Write();
 	}
-	pass LinearDOF_WritePass1
+	pass ChromaticAberration_Apply
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
 		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_LinearDOF_WritePass1();
-	}
-	pass LinearDOF_Apply
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_LinearDOF_Apply();
+		PixelShader = compile ps_5_0 PS_MAIN_ChromaticAberration_Apply();
 	}
 }
 technique11 Common

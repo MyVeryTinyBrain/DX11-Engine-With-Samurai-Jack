@@ -18,35 +18,35 @@ protected:
 public:
 
 	HRESULT SetRawValue(const string& name, const void* data, size_t size);
-
 	HRESULT SetFloat(const string& name, float value);
-
 	HRESULT SetVector(const string& name, const V4& value);
-
 	HRESULT SetColor(const string& name, const Color& value);
-
 	HRESULT SetMatrix(const string& name, const M4& value);
-
 	HRESULT SetTexture(const string& name, ResourceRef<Texture> texture);
+	HRESULT SetTextures(const string& name, ResourceRef<Texture>* textures, uint count);
 
-	HRESULT SetInputLayout(size_t techniqueIndex, size_t passIndex);
-
-	HRESULT ApplyPass(size_t techniqueIndex, size_t passIndex);
+	HRESULT SetInputLayout(uint techniqueIndex, uint passIndex);
+	HRESULT ApplyPass(uint techniqueIndex, uint passIndex);
 
 public:
 
-	HRESULT GetTechniqueCount(size_t& out_techniqueCount) const;
-
-	HRESULT GetPassCount(size_t techniqueIndex, size_t& out_passCount) const;
-
+	HRESULT GetTechniqueCount(uint& out_techniqueCount) const;
+	HRESULT GetPassCount(uint techniqueIndex, uint& out_passCount) const;
 	CompiledShaderDesc* GetShaderDesc();
 
 	_declspec(property(get = GetShaderDesc)) CompiledShaderDesc* shaderDesc;
 
 public:
 
-	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path);
+	const uint GetVariableCount() const;
+	const ShaderVariableInfo* FindVariableByName(const string& name);
+	const ShaderVariableInfo* FindVariableByIndex(uint index);
 
+	_declspec(property(get = GetVariableCount)) uint variableCount;
+
+public:
+
+	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path);
 	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName);
 
 private:

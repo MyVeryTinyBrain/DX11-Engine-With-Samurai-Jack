@@ -7,10 +7,8 @@ PassDesc::PassDesc(
 	const string& name, const vector<string>& sementics, 
 	RenderGroup renderGroup, int renderGroupOrder,
 	bool instancingFlag, 
-	bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha, TransparentLightMode transparentLightMode)
+	bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha)
 {
-	m_isComputePass = false;
-
 	m_pass = pass;
 	m_inputLayout = inputLayout;
 	m_name = name;
@@ -21,14 +19,6 @@ PassDesc::PassDesc(
 	m_isDrawingShadow = drawShadowFlag;
 	m_isShadowCutoffEnable = shadowCutoffEnable;
 	m_shadowCutoffAlpha = shadowCutoffAlpha;
-	m_transparentLightMode = transparentLightMode;
-}
-
-PassDesc::PassDesc(ID3DX11EffectPass* pass)
-{
-	m_isComputePass = true;
-
-	m_pass = pass;
 }
 
 PassDesc::~PassDesc()
@@ -36,11 +26,6 @@ PassDesc::~PassDesc()
 	SafeRelease(m_inputLayout);
 
 	SafeRelease(m_pass);
-}
-
-bool PassDesc::IsComputePass() const
-{
-	return m_isComputePass;
 }
 
 Com<ID3DX11EffectPass> PassDesc::GetPass() const
@@ -83,31 +68,7 @@ float PassDesc::GetShadowCutoffAlpha() const
 	return m_shadowCutoffAlpha;
 }
 
-TransparentLightMode PassDesc::GetTransparentLightMode() const
-{
-	return m_transparentLightMode;
-}
-
-Com<ID3D11ComputeShader> PassDesc::GetComputeShader() const
-{
-	HRESULT hr = S_OK;
-	D3DX11_PASS_SHADER_DESC desc = {};
-	
-	if (FAILED(hr = m_pass->GetComputeShaderDesc(&desc)))
-		return nullptr;
-
-	ID3D11ComputeShader* computeShader = nullptr;
-	desc.pShaderVariable->GetComputeShader(desc.ShaderIndex, &computeShader);
-	if (!computeShader)
-		return nullptr;
-
-	if (computeShader)
-		computeShader->Release();
-
-	return computeShader;
-}
-
-bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_DESC** out_arrElements, size_t* out_count)
+bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_DESC** out_arrElements, uint* out_count)
 {
 	if (!pass || !out_arrElements || !out_count)
 		return false;
@@ -183,10 +144,10 @@ bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_
 			element.InputSlot = Vertex::InputSlot();
 			element.InstanceDataStepRate = Vertex::InstanceDataStepRate();
 		}
-		else if (!strcmp(element.SemanticName, Vertex::UVName()))
+		else if (!strcmp(element.SemanticName, Vertex::UVWName()))
 		{
-			element.AlignedByteOffset = Vertex::UVPosition();
-			element.Format = Vertex::UVFormat();
+			element.AlignedByteOffset = Vertex::UVWPosition();
+			element.Format = Vertex::UVWFormat();
 			element.InputSlotClass = Vertex::InputSlotClass();
 			element.InputSlot = Vertex::InputSlot();
 			element.InstanceDataStepRate = Vertex::InstanceDataStepRate();
@@ -252,7 +213,7 @@ bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_
 	copy(vecElements.begin(), vecElements.end(), elements);
 
 	*out_arrElements = elements;
-	*out_count = vecElements.size();
+	*out_count = uint(vecElements.size());
 
 	return true;
 }
@@ -263,7 +224,7 @@ ID3D11InputLayout* PassDesc::CreateInputLayout(Com<ID3D11Device> device, ID3DX11
 		return nullptr;
 
 	D3D11_INPUT_ELEMENT_DESC* arrElements = nullptr;
-	size_t elementCount = 0;
+	uint elementCount = 0;
 	if (!CreateInputElements(pass, &arrElements, &elementCount))
 		return nullptr;
 
@@ -294,7 +255,7 @@ ID3D11InputLayout* PassDesc::CreateInputLayout(Com<ID3D11Device> device, ID3DX11
 	out_name = passDesc.Name;
 
 	out_sementics.reserve(elementCount);
-	for (size_t i = 0; i < elementCount; ++i)
+	for (uint i = 0; i < elementCount; ++i)
 		out_sementics.push_back(arrElements->SemanticName);
 
 	ReleaseVars();
@@ -620,115 +581,12 @@ bool PassDesc::ExtractShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shad
 	return true;
 }
 
-bool PassDesc::ExtractTransparentLightMode(ID3DX11EffectPass* pass, TransparentLightMode* out_value)
-{
-	if (!pass || !out_value)
-		return false;
-
-	*out_value = TransparentLightMode::None;
-
-	D3DX11_PASS_DESC passDesc = {};
-	if (FAILED(pass->GetDesc(&passDesc)))
-		return false;
-
-	ID3DX11EffectStringVariable* hTransparentLightMode = nullptr;
-
-	// find annotation <string rendergroup>
-	for (uint32_t i = 0; i < passDesc.Annotations; ++i)
-	{
-		ID3DX11EffectVariable* annotation = pass->GetAnnotationByIndex(i);
-
-		if (!annotation->IsValid())
-			continue;
-
-		D3DX11_EFFECT_VARIABLE_DESC annotationDesc = {};
-		if (FAILED(annotation->GetDesc(&annotationDesc)))
-			continue;
-
-		string name = annotationDesc.Name;
-		std::transform(name.begin(), name.end(), name.begin(), std::tolower);
-		if (name == "transparentlightmode" && annotation->AsString()->IsValid())
-		{
-			hTransparentLightMode = annotation->AsString();
-			break;
-		}
-
-		SafeRelease(annotation);
-	}
-
-	if (!hTransparentLightMode)
-		return true;
-
-	LPCSTR lpcstrRenderGroup;
-	if (FAILED(hTransparentLightMode->GetString(&lpcstrRenderGroup)))
-		return false;
-
-	string strRenderGroup = lpcstrRenderGroup;
-	std::transform(strRenderGroup.begin(), strRenderGroup.end(), strRenderGroup.begin(), std::tolower);
-	if (strRenderGroup == "none")
-	{
-		*out_value = TransparentLightMode::None;
-	}
-	else if (strRenderGroup == "use")
-	{
-		*out_value = TransparentLightMode::Use;
-	}
-	else
-	{
-		return false;
-	}
-
-	SafeRelease(hTransparentLightMode);
-
-	return true;
-}
-
 PassDesc* PassDesc::CreatePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass, tstring& out_error)
 {
 	if (!device || !pass)
 		return nullptr;
 
-	D3DX11_PASS_SHADER_DESC vertexShaderDesc = {};
-	if (FAILED(pass->GetVertexShaderDesc(&vertexShaderDesc)))
-		return nullptr;
-
-	D3DX11_PASS_SHADER_DESC pixelShaderDesc = {};
-	if (FAILED(pass->GetPixelShaderDesc(&pixelShaderDesc)))
-		return nullptr;
-
-	D3DX11_PASS_SHADER_DESC computeShaderDesc = {};
-	if (FAILED(pass->GetComputeShaderDesc(&computeShaderDesc)))
-		return nullptr;
-
-	bool hasDefaultShader = true;
-	bool hasComputeShader = true;
-
-	ID3D11VertexShader* vertexShader = nullptr;
-	if (FAILED(vertexShaderDesc.pShaderVariable->GetVertexShader(computeShaderDesc.ShaderIndex, &vertexShader)))
-		hasDefaultShader = false;
-
-	ID3D11PixelShader* pixelShader = nullptr;
-	if (FAILED(pixelShaderDesc.pShaderVariable->GetPixelShader(computeShaderDesc.ShaderIndex, &pixelShader)))
-		hasDefaultShader = false;
-
-	ID3D11ComputeShader* computeShader = nullptr;
-	if (FAILED(computeShaderDesc.pShaderVariable->GetComputeShader(computeShaderDesc.ShaderIndex, &computeShader)))
-		hasComputeShader = false;
-
-	SafeRelease(vertexShader);
-	SafeRelease(pixelShader);
-	SafeRelease(computeShader);
-
-	if (hasDefaultShader && hasComputeShader)
-	{
-		out_error = TEXT("Pass cannot have Compute Shader and Default Shader at the same time.");
-		return nullptr;
-	}
-
-	if (hasDefaultShader)
-		return CreateDefaultPassDesc(device, pass);
-	else
-		return CreateComputePassDesc(device, pass);
+	return CreateDefaultPassDesc(device, pass);
 }
 
 PassDesc* PassDesc::CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass)
@@ -760,20 +618,16 @@ PassDesc* PassDesc::CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11Effec
 	if (!ExtractShadowCutoffAlpha(pass, &shadowCutoffAlpha))
 		return nullptr;
 
-	TransparentLightMode transparentLightMode = TransparentLightMode::None;
-	if (!ExtractTransparentLightMode(pass, &transparentLightMode))
-		return nullptr;
-
 	string name;
 	vector<string> sementics;
 	ID3D11InputLayout* inputLayout = CreateInputLayout(device, pass, name, sementics);
 	if (!inputLayout)
 		return nullptr;
 
-	return new PassDesc(pass, inputLayout, name, sementics, renderGroup, renderGroupOrder, instancingFlag, drawShadow, shadowCutoffEnable, shadowCutoffAlpha, transparentLightMode);
-}
-
-PassDesc* PassDesc::CreateComputePassDesc(Com<ID3D11Device> device, ID3DX11EffectPass* pass)
-{
-	return new PassDesc(pass);
+	return new PassDesc(
+		pass, inputLayout, 
+		name, sementics, 
+		renderGroup, renderGroupOrder, 
+		instancingFlag, 
+		drawShadow, shadowCutoffEnable, shadowCutoffAlpha);
 }

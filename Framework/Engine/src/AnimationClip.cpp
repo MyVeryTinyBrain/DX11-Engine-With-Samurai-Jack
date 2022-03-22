@@ -21,7 +21,7 @@ const Channel* AnimationClip::GetChannel(uint index) const
 	return m_animation->GetChannel(index);
 }
 
-size_t AnimationClip::GetChannelCount() const
+uint AnimationClip::GetChannelCount() const
 {
 	if (!m_animation)
 		return 0;

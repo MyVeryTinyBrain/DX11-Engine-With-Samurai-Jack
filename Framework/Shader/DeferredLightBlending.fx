@@ -2,14 +2,14 @@
 
 struct VS_IN
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
+	float3 Position : POSITION;
+	float2 UV : TEXCOORD;
 };
 
 struct PS_IN
 {
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
+	float4 Screen : SV_POSITION;
+	float2 UV : TEXCOORD;
 };
 
 texture2D		_Diffuse;
@@ -30,8 +30,8 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	output.position = float4(In.position, 1.0f);
-	output.uv = In.uv;
+	output.Screen = float4(In.Position, 1.0f);
+	output.UV = In.UV;
 
 	return output;
 }
@@ -40,12 +40,12 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
 	float4 color = (float4)0;
 
-	half4 diffuse = _Diffuse.Sample(pointSampler, In.uv);
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
 	half lightMask = depthLightOcclusionShadow.g;
 	half occlusion = depthLightOcclusionShadow.b;
-	half4 light = _Light.Sample(pointSampler, In.uv);
-	half4 specular = _Specular.Sample(pointSampler, In.uv);
+	half4 light = _Light.Sample(pointSampler, In.UV);
+	half4 specular = _Specular.Sample(pointSampler, In.UV);
 
 	half3 lightedColor = saturate(diffuse.rgb * light.rgb + specular.rgb);
 	half3 unlighttedColor = saturate(diffuse.rgb);

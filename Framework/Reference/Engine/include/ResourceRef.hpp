@@ -281,7 +281,7 @@ inline T* ResourceRef<T>::GetPointer() const
 }
 
 template<class T>
-inline size_t ResourceRef<T>::GetRefCount() const
+inline uint ResourceRef<T>::GetRefCount() const
 {
 	if (!m_refData)
 		return 0;

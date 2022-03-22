@@ -40,8 +40,6 @@ public:
 
 	virtual void Render(ICamera* camera) override;
 
-	virtual void RenderForward(ICamera* camera);
-
 	virtual void Clear() override;
 
 private:
@@ -60,9 +58,9 @@ private:
 	void Render_DepthOfLight_Skinned_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
 	void Render_DepthOfLight_Skinned(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff);
 
-	void Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc, bool forward);
+	void Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc);
 
-	void Render_LightBlend(ICamera* camera, bool forward);
+	void Render_LightBlend(ICamera* camera);
 
 private:
 

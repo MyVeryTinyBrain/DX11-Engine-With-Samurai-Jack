@@ -27,14 +27,14 @@ void Channel::GetKeyframeTransform(float time, V3& out_position, Q& out_rotation
 	uint maxKeyframes = (uint)m_keyframes.size();
 
 	uint nextIndex = ClosetIndex(time);
-	nextIndex = Clamp(nextIndex, 0u, maxKeyframes - 1);
+	nextIndex = Min(nextIndex, maxKeyframes - 1);
 
 	uint index = nextIndex == 0 ? 0 : nextIndex - 1;
 
 	float deltaTime = m_keyframes[nextIndex].time - m_keyframes[index].time;
 	float ratio = (time - m_keyframes[index].time) / deltaTime;
 
-	ratio = Clamp(ratio, 0.0f, 1.0f);
+	ratio = Clamp01(ratio);
 
 	if (deltaTime == 0)
 		ratio = 0;

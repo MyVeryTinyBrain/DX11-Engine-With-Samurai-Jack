@@ -68,7 +68,19 @@ HRESULT Shader::SetTexture(const string& name, ResourceRef<Texture> texture)
 	return m_shaderDesc->SetTexture(name, texture->shaderResourceView);
 }
 
-HRESULT Shader::SetInputLayout(size_t techniqueIndex, size_t passIndex)
+HRESULT Shader::SetTextures(const string& name, ResourceRef<Texture>* textures, uint count)
+{
+	if (!m_shaderDesc || !textures)
+		return E_FAIL;
+
+	ID3D11ShaderResourceView* shaderResourceViews[32] = {};
+	for (uint i = 0; i < count; ++i)
+		shaderResourceViews[i] = textures[i]->shaderResourceView.Get();
+
+	return m_shaderDesc->SetTextures(name, shaderResourceViews, count);
+}
+
+HRESULT Shader::SetInputLayout(uint techniqueIndex, uint passIndex)
 {
 	if (!m_shaderDesc)
 		return E_FAIL;
@@ -79,7 +91,7 @@ HRESULT Shader::SetInputLayout(size_t techniqueIndex, size_t passIndex)
 	return m_shaderDesc->SetInputLayout(system->graphicSystem->deviceContext, techniqueIndex, passIndex);
 }
 
-HRESULT Shader::ApplyPass(size_t techniqueIndex, size_t passIndex)
+HRESULT Shader::ApplyPass(uint techniqueIndex, uint passIndex)
 {
 	if (!m_shaderDesc)
 		return E_FAIL;
@@ -90,7 +102,7 @@ HRESULT Shader::ApplyPass(size_t techniqueIndex, size_t passIndex)
 	return m_shaderDesc->ApplyPass(system->graphicSystem->deviceContext, techniqueIndex, passIndex);
 }
 
-HRESULT Shader::GetTechniqueCount(size_t& out_techniqueCount) const
+HRESULT Shader::GetTechniqueCount(uint& out_techniqueCount) const
 {
 	if (!m_shaderDesc)
 	{
@@ -103,7 +115,7 @@ HRESULT Shader::GetTechniqueCount(size_t& out_techniqueCount) const
 	return S_OK;
 }
 
-HRESULT Shader::GetPassCount(size_t techniqueIndex, size_t& out_passCount) const
+HRESULT Shader::GetPassCount(uint techniqueIndex, uint& out_passCount) const
 {
 	if (!m_shaderDesc)
 	{
@@ -127,6 +139,21 @@ HRESULT Shader::GetPassCount(size_t techniqueIndex, size_t& out_passCount) const
 CompiledShaderDesc* Shader::GetShaderDesc()
 {
 	return m_shaderDesc;
+}
+
+const uint Shader::GetVariableCount() const
+{
+	return m_shaderDesc->GetVariableCount();
+}
+
+const ShaderVariableInfo* Shader::FindVariableByName(const string& name)
+{
+	return m_shaderDesc->FindVariableByName(name);
+}
+
+const ShaderVariableInfo* Shader::FindVariableByIndex(uint index)
+{
+	return m_shaderDesc->FindVariableByIndex(index);
 }
 
 ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path)

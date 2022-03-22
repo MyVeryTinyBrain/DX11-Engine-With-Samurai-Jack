@@ -28,7 +28,7 @@ public:
 
 	inline const Node* GetParent() const { return m_parent; }
 
-	inline size_t GetChildCount() const { return m_childs.size(); }
+	inline uint GetChildCount() const { return uint(m_childs.size()); }
 
 	inline const Node* GetChild(uint index) const { return m_childs[index]; }
 
@@ -40,7 +40,7 @@ public:
 	_declspec(property(get = GetTransformationMatrix)) const M4& transformationMatrix;
 	_declspec(property(get = GetIndex)) uint index;
 	_declspec(property(get = GetParent)) const Node* parent;
-	_declspec(property(get = GetChildCount)) size_t childCount;
+	_declspec(property(get = GetChildCount)) uint childCount;
 	_declspec(property(get = GetDepth)) uint depth;
 
 private:

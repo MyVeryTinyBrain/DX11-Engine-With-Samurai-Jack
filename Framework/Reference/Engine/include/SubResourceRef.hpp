@@ -314,7 +314,7 @@ inline T* SubResourceRef<T>::GetPointer() const
 }
 
 template<class T>
-inline size_t SubResourceRef<T>::GetRefCount() const
+inline uint SubResourceRef<T>::GetRefCount() const
 {
 	if (!m_refData || !m_basedResourceRefData)
 		return nullptr;

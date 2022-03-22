@@ -62,6 +62,21 @@ HRESULT VIBuffer::DrawOnce(Com<ID3D11DeviceContext> deviceContext)
 	return S_OK;
 }
 
+HRESULT VIBuffer::DrawOnce(Com<ID3D11DeviceContext> deviceContext, uint primitiveCount)
+{
+	if (!deviceContext)
+		return E_FAIL;
+
+	if (!m_vi)
+		return E_FAIL;
+
+	primitiveCount = Min(primitiveCount * m_vi->GetPrimitiveVertexCount(), m_vi->GetIndexCount());
+
+	deviceContext->DrawIndexed(primitiveCount, 0, 0);
+
+	return S_OK;
+}
+
 HRESULT VIBuffer::DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, UINT index)
 {
 	if (!deviceContext)
@@ -85,6 +100,31 @@ HRESULT VIBuffer::DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, UINT index
 	return S_OK;
 }
 
+HRESULT VIBuffer::DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, UINT index, uint primitiveCount)
+{
+	if (!deviceContext)
+		return E_FAIL;
+
+	if (!m_vi)
+		return E_FAIL;
+
+	HRESULT hr = S_OK;
+
+	UINT start = 0;
+	if (FAILED(hr = m_vi->GetStartOfSubIndices(index, &start)))
+		return hr;
+
+	SubIndicesDesc* desc = m_vi->GetSubIndicesDesc(index);
+	if (!desc)
+		return E_FAIL;
+
+	primitiveCount = Min(primitiveCount * m_vi->GetPrimitiveVertexCount(), desc->Count);
+
+	deviceContext->DrawIndexed(primitiveCount, start, 0);
+
+	return S_OK;
+}
+
 HRESULT VIBuffer::ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceBuffer)
 {
 	if (!m_vb || !m_vi || !instanceBuffer)
@@ -99,7 +139,7 @@ HRESULT VIBuffer::ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceCo
 	return S_OK;
 }
 
-HRESULT VIBuffer::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex, uint instanceCount)
+HRESULT VIBuffer::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount)
 {
 	if (!deviceContext)
 		return E_FAIL;
@@ -110,14 +150,39 @@ HRESULT VIBuffer::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, si
 	HRESULT hr = S_OK;
 
 	UINT start = 0;
-	if (FAILED(hr = m_vi->GetStartOfSubIndices((UINT)subMeshIndex, &start)))
+	if (FAILED(hr = m_vi->GetStartOfSubIndices(subMeshIndex, &start)))
 		return hr;
 
-	SubIndicesDesc* desc = m_vi->GetSubIndicesDesc((UINT)subMeshIndex);
+	SubIndicesDesc* desc = m_vi->GetSubIndicesDesc(subMeshIndex);
 	if (!desc)
 		return E_FAIL;
 
 	deviceContext->DrawIndexedInstanced(desc->Count, instanceCount, start, 0, 0);
+
+	return S_OK;
+}
+
+HRESULT VIBuffer::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount, uint primitiveCount)
+{
+	if (!deviceContext)
+		return E_FAIL;
+
+	if (!m_vi)
+		return E_FAIL;
+
+	HRESULT hr = S_OK;
+
+	UINT start = 0;
+	if (FAILED(hr = m_vi->GetStartOfSubIndices(subMeshIndex, &start)))
+		return hr;
+
+	SubIndicesDesc* desc = m_vi->GetSubIndicesDesc(subMeshIndex);
+	if (!desc)
+		return E_FAIL;
+
+	primitiveCount = Min(primitiveCount * m_vi->GetPrimitiveVertexCount(), desc->Count);
+
+	deviceContext->DrawIndexedInstanced(primitiveCount, instanceCount, start, 0, 0);
 
 	return S_OK;
 }

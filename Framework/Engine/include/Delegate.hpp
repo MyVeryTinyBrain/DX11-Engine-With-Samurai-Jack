@@ -5,19 +5,19 @@
 ENGINE_BEGIN
 
 template<class Ret, class ...Args>
-inline Delegate<Ret(Args...)>::Delegate(Delegate&& other) noexcept
+inline delegate<Ret(Args...)>::delegate(delegate&& other) noexcept
 {
 	m_funcs = std::move(other.m_funcs);
 }
 
 template<class Ret, class ...Args>
-inline Delegate<Ret(Args...)>::~Delegate()
+inline delegate<Ret(Args...)>::~delegate()
 {
 	Clear();
 }
 
 template<class Ret, class ...Args>
-inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator=(const Delegate& other)
+inline delegate<Ret(Args...)>& delegate<Ret(Args...)>::operator=(const delegate& other)
 {
 	m_funcs = other.m_funcs;
 
@@ -25,7 +25,7 @@ inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator=(const Delegate&
 }
 
 template<class Ret, class ...Args>
-inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator=(Delegate&& other)
+inline delegate<Ret(Args...)>& delegate<Ret(Args...)>::operator=(delegate&& other)
 {
 	m_funcs = std::move(other.m_funcs);
 
@@ -33,7 +33,7 @@ inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator=(Delegate&& othe
 }
 
 template<class Ret, class ...Args>
-inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator+=(const Function& function)
+inline delegate<Ret(Args...)>& delegate<Ret(Args...)>::operator+=(const func& function)
 {
 	Add(function);
 
@@ -41,7 +41,7 @@ inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator+=(const Function
 }
 
 template<class Ret, class ...Args>
-inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator-=(const Function& function)
+inline delegate<Ret(Args...)>& delegate<Ret(Args...)>::operator-=(const func& function)
 {
 	Remove(function);
 
@@ -49,13 +49,13 @@ inline Delegate<Ret(Args...)>& Delegate<Ret(Args...)>::operator-=(const Function
 }
 
 template<class Ret, class ...Args>
-inline void Delegate<Ret(Args...)>::operator()(Args ...args)
+inline void delegate<Ret(Args...)>::operator()(Args ...args)
 {
 	Invoke(args...);
 }
 
 template<class Ret, class ...Args>
-inline void Delegate<Ret(Args...)>::Add(const Function& function)
+inline void delegate<Ret(Args...)>::Add(const func& function)
 {
 	auto find_it = std::find(m_funcs.begin(), m_funcs.end(), function);
 	if (find_it == m_funcs.end())
@@ -63,7 +63,7 @@ inline void Delegate<Ret(Args...)>::Add(const Function& function)
 }
 
 template<class Ret, class ...Args>
-inline void Delegate<Ret(Args...)>::Remove(const Function& function)
+inline void delegate<Ret(Args...)>::Remove(const func& function)
 {
 	auto find_it = std::find(m_funcs.begin(), m_funcs.end(), function);
 	if (find_it != m_funcs.end()) 
@@ -71,13 +71,13 @@ inline void Delegate<Ret(Args...)>::Remove(const Function& function)
 }
 
 template<class Ret, class ...Args>
-inline void Delegate<Ret(Args...)>::Clear()
+inline void delegate<Ret(Args...)>::Clear()
 {
 	m_funcs.clear();
 }
 
 template<class Ret, class ...Args>
-inline void Delegate<Ret(Args...)>::Invoke(Args ...args)
+inline void delegate<Ret(Args...)>::Invoke(Args ...args)
 {
 	for (auto& func : m_funcs)
 	{
@@ -86,31 +86,31 @@ inline void Delegate<Ret(Args...)>::Invoke(Args ...args)
 }
 
 template<class Ret, class ...Args>
-inline unsigned long Delegate<Ret(Args...)>::GetFunctionCount() const
+inline unsigned long delegate<Ret(Args...)>::GetFunctionCount() const
 {
 	return m_funcs.size();
 }
 
 template<class Ret, class ...Args>
-inline const Function<Ret(Args...)>& Delegate<Ret(Args...)>::GetFunction(unsigned long index) const
+inline const func<Ret(Args...)>& delegate<Ret(Args...)>::GetFunction(unsigned long index) const
 {
 	return m_funcs[index];
 }
 
 template<class Ret, class ...Args>
-inline const Function<Ret(Args...)>& Delegate<Ret(Args...)>::GetFrontFunction() const
+inline const func<Ret(Args...)>& delegate<Ret(Args...)>::GetFrontFunction() const
 {
 	return m_funcs.front();
 }
 
 template<class Ret, class ...Args>
-inline const Function<Ret(Args...)>& Delegate<Ret(Args...)>::GetBackFunction() const
+inline const func<Ret(Args...)>& delegate<Ret(Args...)>::GetBackFunction() const
 {
 	return m_funcs.back();
 }
 
 template<class Ret, class ...Args>
-inline bool Delegate<Ret(Args...)>::Find(const Function& function, unsigned long* pIndex) const
+inline bool delegate<Ret(Args...)>::Find(const func& function, unsigned long* pIndex) const
 {
 	for (unsigned long i = 0; i < m_funcs.size(); ++i)
 	{

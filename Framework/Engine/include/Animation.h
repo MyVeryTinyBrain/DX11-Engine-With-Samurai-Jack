@@ -22,7 +22,7 @@ public:
 
 	inline float GetRealtimeDuration() const { return m_realtimeDuration; }
 
-	inline size_t GetChannelCount() const { return m_channels.size(); }
+	inline uint GetChannelCount() const { return uint(m_channels.size()); }
 
 	const Channel* GetChannel(uint index) const;
 
@@ -30,7 +30,7 @@ public:
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = GetTickPerSecond)) float tickPerSecond;
 	_declspec(property(get = GetRealtimeDuration)) float realtimeDuration;
-	_declspec(property(get = GetChannelCount)) size_t channelCount;
+	_declspec(property(get = GetChannelCount)) uint channelCount;
 
 private:
 

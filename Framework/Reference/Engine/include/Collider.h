@@ -142,9 +142,9 @@ protected:
 
 public:
 
-	Delegate<void(const Collision&)> OnCollisionEnter;
-	Delegate<void(const Collision&)> OnCollisionStay;
-	Delegate<void(const Collision&)> OnCollisionExit;
+	delegate<void(const Collision&)> OnCollisionEnter;
+	delegate<void(const Collision&)> OnCollisionStay;
+	delegate<void(const Collision&)> OnCollisionExit;
 };
 
 ENGINE_END

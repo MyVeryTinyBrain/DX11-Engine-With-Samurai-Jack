@@ -61,30 +61,19 @@ void RenderQueueTransparent::Render(ICamera* camera)
 				if (!CullOp(camera, request.op.cullOp))
 					continue;
 
-				switch (request.sub.transparentLightMode)
-				{
-					case TransparentLightMode::Use:
-						BeginForwardLightRender(camera);
-						break;
-				}
-
 				ApplyCameraBuffer(camera);
 				ApplyMaterial(deviceContext, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
 				ApplyMesh(deviceContext, mesh, &prevMesh);
 				ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
 				ApplyWorldMatrix(request.essential.worldMatrix);
-				if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex)))
-					continue;
-
-				switch (request.sub.transparentLightMode)
+				
+				if (request.customPrimitiveCount.usePrimitiveCount)
 				{
-					case TransparentLightMode::Use:
-						EndForwardLightRender(camera);
-						
-						// Forward Light Render 과정에 의해서 설정된 쉐이더와 정점/인덱스 버퍼가 변경되었기 때문에 초기화합니다.
-						prevMaterial = nullptr;
-						prevMesh = nullptr;
-						break;
+					if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex, request.customPrimitiveCount.primitiveCount))) continue;
+				}
+				else
+				{
+					if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex))) continue;
 				}
 			}
 			m_CBufferManager->EndApply();
@@ -167,23 +156,4 @@ void RenderQueueTransparent::ApplyBoneMatrices(IRendererBoneOp* boneOp, uint sub
 void RenderQueueTransparent::ApplyWorldMatrix(const M4& worldMatrix)
 {
 	m_CBufferManager->ApplyWorldMatrixBuffer(worldMatrix);
-}
-
-void RenderQueueTransparent::BeginForwardLightRender(ICamera* camera)
-{
-	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->SetForwardLightRenderTargets(m_graphicSystem);
-
-	drt->ClearForwards(m_graphicSystem->deviceContext);
-}
-
-void RenderQueueTransparent::EndForwardLightRender(ICamera* camera)
-{
-	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-
-	m_light->RenderForward(camera);
-
-	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->forwardLightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::Blend);
-
-	drt->SetForwardRenderTargets(m_graphicSystem);
 }

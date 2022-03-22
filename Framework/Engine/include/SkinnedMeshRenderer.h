@@ -28,7 +28,7 @@ public:
 
 	void SetMesh(const ResourceRef<Mesh>& mesh); 
 
-	size_t GetNodeTransformCount() const;
+	uint GetNodeTransformCount() const;
 
 	Ref<NodeTransform> GetNodeTransformByIndex(uint index) const;
 
@@ -49,8 +49,6 @@ private:
 	void SetupNodeTransforms();
 
 private:
-
-	uint										m_techniqueIndex = 0;
 
 	NodeTransform*								m_rootNodeTransform = nullptr;
 

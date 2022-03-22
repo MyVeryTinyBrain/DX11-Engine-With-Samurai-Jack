@@ -11,7 +11,7 @@ class ENGINE_API SpotLight : public Light
 public:
 
 	inline float GetRange() const { return m_range; }
-	void SetRange(float value) { m_range = Clamp(value, 0.0f, FLT_MAX); }
+	void SetRange(float value) { m_range = Saturate(value); }
 
 	inline float GetAngle() const { return m_angle; }
 	void SetAngle(float value) { m_angle = Clamp(value, 0.0f, 90.0f); }

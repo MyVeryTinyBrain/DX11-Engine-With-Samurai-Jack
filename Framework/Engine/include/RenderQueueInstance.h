@@ -55,11 +55,6 @@ private:
 
 private:
 
-	void BeginForwardLightRender(ICamera* camera);
-	void EndForwardLightRender(ICamera* camera);
-
-private:
-
 	RenderQueueLight*				m_light = nullptr;
 
 	Map_RenderRequestsByOrder		m_requests;

@@ -25,7 +25,7 @@ HRESULT InstanceBufferManager::Initialize()
     return S_OK;
 }
 
-HRESULT InstanceBufferManager::Resize(size_t count)
+HRESULT InstanceBufferManager::Resize(uint count)
 {
     HRESULT hr = S_OK;
     InstanceData* newArrDatas = nullptr;
@@ -64,17 +64,17 @@ HRESULT InstanceBufferManager::Resize(size_t count)
     return S_OK;
 }
 
-HRESULT InstanceBufferManager::Reserve(size_t count)
+HRESULT InstanceBufferManager::Reserve(uint count)
 {
     if (count <= m_count)
         return S_OK;
 
-    count = Clamp(uint(count), 1u, UINT_MAX);
+    count = Clamp(count, 1u, UINT_MAX);
 
     return Resize(count);
 }
 
-HRESULT InstanceBufferManager::BeginSetDatas(size_t maxCount)
+HRESULT InstanceBufferManager::BeginSetDatas(uint maxCount)
 {
     HRESULT hr = S_OK;
 

@@ -12,11 +12,13 @@ public:
 
 	virtual HRESULT ApplyIndexBuffer(Com<ID3D11DeviceContext> deviceContext) = 0;
 
-	virtual HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex) = 0;
+	virtual HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex) = 0;
+	virtual HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint primitiveCount) = 0;
 
 	virtual HRESULT ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceBuffer) = 0;
 
-	virtual HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex, uint instanceCount) = 0;
+	virtual HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount) = 0;
+	virtual HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount, uint primitiveCount) = 0;
 };
 
 ENGINE_END

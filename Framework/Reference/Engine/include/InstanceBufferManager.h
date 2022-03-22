@@ -16,11 +16,11 @@ public:
 
 public:
 
-	HRESULT Resize(size_t count);
+	HRESULT Resize(uint count);
 
-	HRESULT Reserve(size_t count);
+	HRESULT Reserve(uint count);
 
-	HRESULT BeginSetDatas(size_t maxCount);
+	HRESULT BeginSetDatas(uint maxCount);
 
 	void EndSetDatas();
 
@@ -36,7 +36,7 @@ private:
 
 	GraphicSystem*				m_graphicSystem = nullptr;
 
-	size_t						m_count = 0;
+	uint						m_count = 0;
 
 	ID3D11Buffer*				m_buffer = nullptr;
 

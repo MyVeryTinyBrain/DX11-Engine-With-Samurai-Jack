@@ -330,8 +330,8 @@ HRESULT VI::RecalculateTangentsBinormals()
 			V3 delta0 = v1.position - v0.position;
 			V3 delta1 = v2.position - v0.position;
 
-			V2 tu = v1.uv - v0.uv;
-			V2 tv = v2.uv - v0.uv;
+			V2 tu = v1.uvw - v0.uvw;
+			V2 tv = v2.uvw - v0.uvw;
 
 			float cross = (tu.x * tv.y - tu.y * tv.x);
 			if (cross == 0)
@@ -387,7 +387,7 @@ HRESULT VI::CreateIndicesStream(IndicesStream* out_indices) const
 	Index* indices = new Index[m_indexCount];
 
 	UINT cursor = 0;
-	for (size_t i = 0; i < m_subIndecesCount; ++i)
+	for (uint i = 0; i < m_subIndecesCount; ++i)
 	{
 		if (!m_arrSubIndicesDesc[i])
 			continue;

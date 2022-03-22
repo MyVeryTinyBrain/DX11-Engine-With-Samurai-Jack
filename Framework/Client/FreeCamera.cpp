@@ -44,6 +44,12 @@ void FreeCamera::Update()
         rigidbody->angularDamping = 0.5f;
         rigidbody->SetInterpolateMode(Rigidbody::Interpolate::Interpolate);
 
+        if (system->input->GetKey(Key::Q))
+        {
+            go->transform->localScale = V3::one() * 10.0f;
+            r = 0;
+        }
+
         switch (r)
         {
             case 0:

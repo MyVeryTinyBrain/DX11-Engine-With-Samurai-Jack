@@ -2,7 +2,7 @@
 
 #include "ResourceObject.h"
 #include "IMaterial.h"
-#include "RenderTypes.h"
+#include "ShaderTypes.h"
 
 ENGINE_BEGIN
 class Shader;
@@ -24,42 +24,28 @@ public:
 public:
 
 	HRESULT SetRawValue(const string& name, const void* data, size_t size);
-
 	HRESULT SetFloat(const string& name, float value);
-
 	HRESULT SetVector(const string& name, const V4& value);
-
 	HRESULT SetColor(const string& name, const Color& value);
-
 	HRESULT SetMatrix(const string& name, const M4& value);
-
 	HRESULT SetTexture(const string& name, ResourceRef<Texture> texture);
+	HRESULT SetTextures(const string& name, ResourceRef<Texture>* textures, uint count);
 
 public:
 
-	virtual HRESULT GetTechniqueCount(size_t& out_techniqueCount) const final override;
+	virtual HRESULT GetTechniqueCount(uint& out_techniqueCount) const final override;
+	virtual HRESULT GetPassCount(uint techniqueIndex, uint& out_passCount) const final override;
 
-	virtual HRESULT GetPassCount(size_t techniqueIndex, size_t& out_passCount) const final override;
-
-	void SetTechniqueIndex(uint index) { m_techniqueIndex = index; }
-
+	inline void SetTechniqueIndex(uint index) { m_techniqueIndex = index; }
 	inline uint GetTechniqueIndex() const { return m_techniqueIndex; }
 
-	size_t GetPassCountOfAppliedTechnique() const;
-
+	uint GetPassCountOfAppliedTechnique() const;
 	HRESULT GetRenderGroupOfAppliedTechnique(uint passIndex, RenderGroup& out_renderGroup) const;
-
 	HRESULT GetRenderGroupOrderOfAppliedTechnique(uint passIndex, int& out_renderGroupOrder) const;
-
 	HRESULT GetInstancingFlagOfAppliedTechnique(uint passIndex, bool& out_instancingFlag) const;
-
 	HRESULT GetDrawShadowFlagOfAppliedTechnique(uint passIndex, bool& out_drawShadowFlag) const;
-
 	HRESULT GetShadowCutoffEnableFlagOfAppliedTechnique(uint passIndex, bool& out_shadowCutoffEnableFlag) const;
-
 	HRESULT GetShadowCutoffAlphaOfAppliedTechnique(uint passIndex, float& out_shadowCutoffAlpha) const;
-
-	HRESULT GetTransparentLightModeOfAppliedTechqniue(uint passIndex, TransparentLightMode& out_transparentLightMode) const;
 
 	bool IsValid() const;
 
@@ -93,9 +79,9 @@ private:
 
 	virtual HRESULT GetEffectDesc(Com<ID3DX11Effect>& out_effect) const final override;
 
-	virtual HRESULT SetInputLayout(Com<ID3D11DeviceContext> deviceContext, size_t techniqueIndex, size_t passIndex) final override;
+	virtual HRESULT SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex) final override;
 
-	virtual HRESULT ApplyPass(Com<ID3D11DeviceContext> deviceContext, size_t techniqueIndex, size_t passIndex) final override;
+	virtual HRESULT ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex) final override;
 
 private:
 
@@ -113,6 +99,8 @@ private:
 
 	// texture2D _DiffuseTexture
 	ResourceRef<Texture> m_diffuseTexture;
+
+
 };
 
 ENGINE_END

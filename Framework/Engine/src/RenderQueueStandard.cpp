@@ -72,8 +72,15 @@ void RenderQueueStandard::Render(ICamera* camera)
 						ApplyMesh(deviceContext, mesh, &prevMesh);
 						ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
 						ApplyWorldMatrix(request.essential.worldMatrix);
-						if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex)))
-							continue;
+						
+						if (request.customPrimitiveCount.usePrimitiveCount)
+						{
+							if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex, request.customPrimitiveCount.primitiveCount))) continue;
+						}
+						else
+						{
+							if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex))) continue;
+						}
 					}
 				}
 			}

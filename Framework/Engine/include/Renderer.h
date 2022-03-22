@@ -21,17 +21,17 @@ public:
 
 	void SetMaterial(ResourceRef<Material> material);
 
-	void SetMaterialByIndex(size_t index, ResourceRef<Material> material);
+	void SetMaterialByIndex(uint index, ResourceRef<Material> material);
 
 	const vector<ResourceRef<Material>>& GetMaterials() const;
 
 	void SetMaterials(const vector<ResourceRef<Material>>& materials);
 
-	ResourceRef<Material> GetMaterialByIndex(size_t index) const;
+	ResourceRef<Material> GetMaterialByIndex(uint index) const;
 
-	void SetMaterialCount(size_t count);
+	void SetMaterialCount(uint count);
 
-	size_t GetMaterialCount() const;
+	uint GetMaterialCount() const;
 
 	inline uint GetLayerIndex() const { return m_layerIndex; }
 
@@ -43,7 +43,7 @@ public:
 
 	_declspec(property(get = GetMaterial, put = SetMaterial)) ResourceRef<Material> material;
 	_declspec(property(get = GetMaterials, put = SetMaterials)) const vector<ResourceRef<Material>>& materials;
-	_declspec(property(get = GetMaterialCount)) size_t materialCount;
+	_declspec(property(get = GetMaterialCount)) uint materialCount;
 	_declspec(property(get = IsValid)) bool isValid;
 
 protected:

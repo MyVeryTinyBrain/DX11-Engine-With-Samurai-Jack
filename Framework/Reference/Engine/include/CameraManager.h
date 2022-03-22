@@ -7,9 +7,9 @@ class ENGINE_API CameraManager : public ICameraManager
 {
 public:
 
-	ICamera* GetCamera(size_t index) const;
+	ICamera* GetCamera(uint index) const;
 
-	size_t GetCameraCount() const;
+	uint GetCameraCount() const;
 
 	void SetMainCamera(ICamera* camera);
 

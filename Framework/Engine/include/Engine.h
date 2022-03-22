@@ -67,3 +67,5 @@
 #include "SpotLight.h"
 
 #include "Gizmo.h"
+
+#include "TrailRenderer.h"

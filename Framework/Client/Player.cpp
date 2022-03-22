@@ -157,8 +157,8 @@ void Player::SetupPhysics()
 	m_goCollider = CreateGameObjectToChild(transform);
 	m_goCollider->transform->localPosition = V3::up() * 1.0f;
 	m_collider = m_goCollider->AddComponent<CapsuleCollider>();
-	m_collider->OnCollisionEnter += Function<void(const Collision&)>(this, &Player::OnCollisionEnter);
-	m_collider->OnCollisionExit += Function<void(const Collision&)>(this, &Player::OnCollisionExit);
+	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &Player::OnCollisionEnter);
+	m_collider->OnCollisionExit += func<void(const Collision&)>(this, &Player::OnCollisionExit);
 
 	m_goWeaponTrigger = CreateGameObjectToChild(transform);
 	m_weaponTrigger = m_goWeaponTrigger->AddComponent<SphereCollider>();

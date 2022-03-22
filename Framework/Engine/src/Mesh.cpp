@@ -334,9 +334,14 @@ HRESULT Mesh::ApplyIndexBuffer(Com<ID3D11DeviceContext> deviceContext)
 	return m_viBuffer->ApplyIndexBuffer(deviceContext);
 }
 
-HRESULT Mesh::DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex)
+HRESULT Mesh::DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex)
 {
 	return m_viBuffer->DrawSubMesh(deviceContext, UINT(subMeshIndex));
+}
+
+HRESULT Mesh::DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint primitiveCount)
+{
+	return m_viBuffer->DrawSubMesh(deviceContext, UINT(subMeshIndex), primitiveCount);
 }
 
 HRESULT Mesh::ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceBuffer)
@@ -344,7 +349,12 @@ HRESULT Mesh::ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceContex
 	return m_viBuffer->ApplyVertexAndInstanceBuffer(deviceContext, instanceBuffer);
 }
 
-HRESULT Mesh::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex, uint instanceCount)
+HRESULT Mesh::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount)
 {
 	return m_viBuffer->DrawInstanceSubMesh(deviceContext, UINT(subMeshIndex), instanceCount);
+}
+
+HRESULT Mesh::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount, uint primitiveCount)
+{
+	return m_viBuffer->DrawInstanceSubMesh(deviceContext, UINT(subMeshIndex), instanceCount, primitiveCount);
 }

@@ -10,10 +10,10 @@ ENGINE_BEGIN
 class Caller {};
 
 template <class T>
-class Function;
+class func;
 
 template <class Ret, class... Args>
-class Function<Ret(Args...)>
+class func<Ret(Args...)>
 {
 public:
 
@@ -29,23 +29,23 @@ public:
 public:
 
 	template <class Class>
-	Function(void* obj, In_MemFunc<Class, Ret, Args...> mf);
+	func(void* obj, In_MemFunc<Class, Ret, Args...> mf);
 
-	Function(In_GloFunc gf);
+	func(In_GloFunc gf);
 
-	Function(const Function& other);
+	func(const func& other);
 
-	Function(Function&& other) noexcept;
+	func(func&& other) noexcept;
 
-	Function& operator = (const Function& other);
+	func& operator = (const func& other);
 
-	Function& operator = (In_GloFunc gf);
+	func& operator = (In_GloFunc gf);
 
-	Function& operator = (Function&& other) noexcept;
+	func& operator = (func&& other) noexcept;
 
-	bool operator == (const Function& other) const;
+	bool operator == (const func& other) const;
 
-	bool operator != (const Function& other) const;
+	bool operator != (const func& other) const;
 
 	Ret operator () (Args ...args);
 

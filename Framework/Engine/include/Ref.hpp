@@ -280,7 +280,7 @@ inline T* Ref<T>::GetPointer() const
 }
 
 template<class T>
-inline size_t Ref<T>::GetRefCount() const
+inline uint Ref<T>::GetRefCount() const
 {
 	if (!m_refData)
 		return 0;

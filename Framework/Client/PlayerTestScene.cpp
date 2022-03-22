@@ -3,7 +3,6 @@
 #include "Player.h"
 #include "FreeCamera.h"
 #include "JackAnimator.h"
-#include "MaterialTransparent.h"
 
 Scene* PlayerTestScene::Clone()
 {
@@ -220,6 +219,23 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
+			m_sphere = CreateGameObject(TEXT("Sphere"));
+			m_sphere->transform->position = V3(2.0f, 1.5f, 0.0f);
+			m_sphere->transform->localScale = V3::one();
+
+			MeshRenderer* meshRenderer = m_sphere->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+
+			m_trailRenderer = m_sphere->AddComponent<TrailRenderer>();
+
+			m_rigidbody = m_sphere->AddComponent<Rigidbody>();
+			m_rigidbody->sleepThresholder = 1000;
+			m_sphere->AddComponent<SphereCollider>();
+
+			m_sphere->activeSelf = false;
+		}
+
+		{
 			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
 			goSphere->transform->position = V3(-4.5f, 1.5f, +4.5f);
 
@@ -272,6 +288,14 @@ void PlayerTestScene::OnUnload()
 
 void PlayerTestScene::OnUpdate()
 {
+	if (m_sphere)
+	{
+		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
+		m_sphere->transform->position = V3::up() * 2.0f + spin * 6.0f;
+		m_trailRenderer->AddPosition(m_sphere->transform->position);
+	}
+
+
 	{
 		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 
@@ -349,6 +373,87 @@ void PlayerTestScene::OnUpdate()
 
 		ImGui::PopID();
 	}
+	if (ImGui::CollapsingHeader("SSR"))
+	{
+		ImGui::PushID("SSR");
+
+		SSRDesc ssrDesc = camera->ssrDesc;
+
+		bool enable = ssrDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		ssrDesc.Enable = enable;
+
+		bool blurEnable = ssrDesc.BlurEnable;
+		ImGui::Checkbox("BlurEnable", &blurEnable);
+		ssrDesc.BlurEnable = blurEnable;
+
+		const char* items[] = { "Default", "InvDepth", "Depth" };
+		int blurType = (int)ssrDesc.BlurType;
+		ImGui::Combo("BlurType", &blurType, items, 3);
+		ssrDesc.BlurType = (BlurType)blurType;
+
+		int numSamples = (int)ssrDesc.NumSamples;
+		ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
+		ssrDesc.NumSamples = (uint)numSamples;
+
+		int blurNumSamples = (int)ssrDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		ssrDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float step = ssrDesc.Step;
+		ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
+		ssrDesc.Step = step;
+
+		float thickness = ssrDesc.Thickness;
+		ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
+		ssrDesc.Thickness = thickness;
+
+		float bias = ssrDesc.Bias;
+		ImGui::SliderFloat("Bias", &bias, 0.0f, 1.0f);
+		ssrDesc.Bias = bias;
+
+		float blurPixelDistance = ssrDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		ssrDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->ssrDesc = ssrDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("DOF"))
+	{
+		ImGui::PushID("DOF");
+
+		DOFDesc dofDesc = camera->dofDesc;
+
+		bool enable = dofDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		dofDesc.Enable = enable;
+
+		int blurNumSamples = (int)dofDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		dofDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float minZ = dofDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+		dofDesc.MinZ = minZ;
+
+		float rangeZ = dofDesc.RangeZ;
+		ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+		dofDesc.RangeZ = rangeZ;
+
+		float power = dofDesc.Power;
+		ImGui::SliderFloat("Power", &power, 0.0f, 100.0f);
+		dofDesc.Power = power;
+
+		float blurPixelDistance = dofDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		dofDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->dofDesc = dofDesc;
+
+		ImGui::PopID();
+	}
 	if (ImGui::CollapsingHeader("Fog"))
 	{
 		ImGui::PushID("Fog");
@@ -414,85 +519,24 @@ void PlayerTestScene::OnUpdate()
 		camera->bloomDesc = bloomDesc;
 
 		ImGui::PopID();
-	}
-	if (ImGui::CollapsingHeader("SSR"))
+	}	
+	if (ImGui::CollapsingHeader("ChromaticAberration"))
 	{
-		ImGui::PushID("SSR");
+		ImGui::PushID("ChromaticAberration");
 
-		SSRDesc ssrDesc = camera->ssrDesc;
+		ChromaticAberrationDesc chromaticAberrationDesc = camera->chromaticAberrationDesc;
 
-		bool enable = ssrDesc.Enable;
+		bool enable = chromaticAberrationDesc.Enable;
 		ImGui::Checkbox("Enable", &enable);
-		ssrDesc.Enable = enable;
+		chromaticAberrationDesc.Enable = enable;
 
-		bool blurEnable = ssrDesc.BlurEnable;
-		ImGui::Checkbox("BlurEnable", &blurEnable);
-		ssrDesc.BlurEnable = blurEnable;
+		ImGui::SliderFloat3("Blend", (float*)&chromaticAberrationDesc.Blend, 0.0f, 1.0f);
 
-		const char* items[] = { "Default", "InvDepth", "Depth" };
-		int blurType = (int)ssrDesc.BlurType;
-		ImGui::Combo("BlurType", &blurType, items, 3);
-		ssrDesc.BlurType = (BlurType)blurType;
+		ImGui::SliderFloat3("Offset", (float*)&chromaticAberrationDesc.Offset, 0.0f, 50.0f);
 
-		int numSamples = (int)ssrDesc.NumSamples;
-		ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
-		ssrDesc.NumSamples = (uint)numSamples;
+		ImGui::SliderFloat3("Angle", (float*)&chromaticAberrationDesc.Angle, 0.0f, 360.0f);
 
-		int blurNumSamples = (int)ssrDesc.BlurNumSamples;
-		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
-		ssrDesc.BlurNumSamples = (uint)blurNumSamples;
-
-		float step = ssrDesc.Step;
-		ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
-		ssrDesc.Step = step;
-
-		float thickness = ssrDesc.Thickness;
-		ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
-		ssrDesc.Thickness = thickness;
-
-		float bias = ssrDesc.Bias;
-		ImGui::SliderFloat("Bias", &bias, 0.0f, 1.0f);
-		ssrDesc.Bias = bias;
-
-		float blurPixelDistance = ssrDesc.BlurPixelDistance;
-		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
-		ssrDesc.BlurPixelDistance = blurPixelDistance;
-
-		camera->ssrDesc = ssrDesc;
-
-		ImGui::PopID();
-	}
-	if (ImGui::CollapsingHeader("DOF"))
-	{
-		ImGui::PushID("DOF");
-
-		LinearDOFDesc linearDofDesc = camera->linearDofDesc;
-
-		bool enable = linearDofDesc.Enable;
-		ImGui::Checkbox("Enable", &enable);
-		linearDofDesc.Enable = enable;
-
-		int blurNumSamples = (int)linearDofDesc.BlurNumSamples;
-		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
-		linearDofDesc.BlurNumSamples = (uint)blurNumSamples;
-
-		float minZ = linearDofDesc.MinZ;
-		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
-		linearDofDesc.MinZ = minZ;
-
-		float rangeZ = linearDofDesc.RangeZ;
-		ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
-		linearDofDesc.RangeZ = rangeZ;
-
-		float power = linearDofDesc.Power;
-		ImGui::SliderFloat("Power", &power, 0.0f, 100.0f);
-		linearDofDesc.Power = power;
-
-		float blurPixelDistance = linearDofDesc.BlurPixelDistance;
-		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
-		linearDofDesc.BlurPixelDistance = blurPixelDistance;
-
-		camera->linearDofDesc = linearDofDesc;
+		camera->chromaticAberrationDesc = chromaticAberrationDesc;
 
 		ImGui::PopID();
 	}
@@ -506,9 +550,9 @@ void PlayerTestScene::OnUpdate()
 		GameObject* goDirectionalLight = FindGameObject(TEXT("DirectionalLight"));
 		DirectionalLight* light = goDirectionalLight->GetComponent<DirectionalLight>();
 
-		float eulerAngles[3] = { goDirectionalLight->transform->eulerAngles.x, goDirectionalLight->transform->eulerAngles.y, goDirectionalLight->transform->eulerAngles.z };
-		ImGui::SliderFloat3("Euler Angles", eulerAngles, -180, +180);
-		goDirectionalLight->transform->eulerAngles = V3(eulerAngles[0], eulerAngles[1], eulerAngles[2]);
+		V3 eulerAngles = goDirectionalLight->transform->eulerAngles;
+		ImGui::SliderFloat3("Euler Angles", (float*)&eulerAngles, -180, +180);
+		goDirectionalLight->transform->eulerAngles = eulerAngles;
 
 		float intensity = light->intensity;
 		ImGui::SliderFloat("Intensity", &intensity, 0, 60);
@@ -543,13 +587,11 @@ void PlayerTestScene::OnUpdate()
 		GameObject* goSpotLight = FindGameObject(TEXT("SpotLight"));
 		SpotLight* light = goSpotLight->GetComponent<SpotLight>();
 
-		float eulerAngles[3] = { goSpotLight->transform->eulerAngles.x, goSpotLight->transform->eulerAngles.y, goSpotLight->transform->eulerAngles.z };
-		ImGui::SliderFloat3("Euler Angles", eulerAngles, -180, +180);
-		goSpotLight->transform->eulerAngles = V3(eulerAngles[0], eulerAngles[1], eulerAngles[2]);
+		V3 eulerAngles = goSpotLight->transform->eulerAngles;
+		ImGui::SliderFloat3("Euler Angles", (float*)&eulerAngles, -180, +180);
+		goSpotLight->transform->eulerAngles = eulerAngles;
 
-		float positions[3] = { goSpotLight->transform->position.x, goSpotLight->transform->position.y, goSpotLight->transform->position.z };
-		ImGui::DragFloat3("Positions", positions, 0.1f, -25, +25);
-		goSpotLight->transform->position = V3(positions[0], positions[1], positions[2]);
+		ImGui::DragFloat3("Positions", (float*)&goSpotLight->transform->position, 0.1f, -25, +25);
 
 		float angle = light->angle;
 		ImGui::SliderFloat("Angle", &angle, 0, 90);
@@ -592,9 +634,7 @@ void PlayerTestScene::OnUpdate()
 		GameObject* goPointLight = FindGameObject(TEXT("PointLight"));
 		PointLight* light = goPointLight->GetComponent<PointLight>();
 
-		float positions[3] = { goPointLight->transform->position.x, goPointLight->transform->position.y, goPointLight->transform->position.z };
-		ImGui::DragFloat3("Positions", positions, 0.1f, -25, +25);
-		goPointLight->transform->position = V3(positions[0], positions[1], positions[2]);
+		ImGui::DragFloat3("Positions", (float*)&goPointLight->transform->position, 0.1f, -25, +25);
 
 		float range = light->range;
 		ImGui::SliderFloat("Range", &range, 0, 60);

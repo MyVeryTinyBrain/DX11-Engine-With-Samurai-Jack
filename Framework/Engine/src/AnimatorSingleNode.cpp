@@ -42,7 +42,7 @@ bool AnimatorSingleNode::AnimateNodeImpl(
 	if (m_isLoop)
 		newNormalizedTime = Mod(newNormalizedTime, 1.0f);
 	else
-		newNormalizedTime = Clamp(newNormalizedTime, 0.0f, 1.0f);
+		newNormalizedTime = Clamp01(newNormalizedTime);
 	float time = newNormalizedTime * duration;
 
 	float keyframeTime = time * m_animationClip->tickPerSecond;
@@ -53,7 +53,7 @@ bool AnimatorSingleNode::AnimateNodeImpl(
 	if (m_rootNode && m_rootNode->node->index == out_nodeIndex)
 	{
 		float duration = GetDurationImpl();
-		float prevNormalizedTime = Clamp(m_normalizedTime - (m_dt / duration), 0.0f, FLT_MAX);
+		float prevNormalizedTime = Saturate(m_normalizedTime - (m_dt / duration));
 
 		uint beforeLoopCount = uint(Abs(prevNormalizedTime));
 		uint currentLoopCount = uint(Abs(m_normalizedTime));
@@ -63,7 +63,7 @@ bool AnimatorSingleNode::AnimateNodeImpl(
 			if (m_isLoop)
 				prevNormalizedTime = Mod(prevNormalizedTime, 1.0f);
 			else
-				prevNormalizedTime = Clamp(prevNormalizedTime, 0.0f, 1.0f);
+				prevNormalizedTime = Clamp01(prevNormalizedTime);
 			float prevTime = prevNormalizedTime * duration * m_animationClip->tickPerSecond;
 
 			V3 prevPosition;

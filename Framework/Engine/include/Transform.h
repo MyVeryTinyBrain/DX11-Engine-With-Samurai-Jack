@@ -105,15 +105,15 @@ public:
 
 	Transform* GetParent() const;
 
-	size_t GetChildCount() const;
+	uint GetChildCount() const;
 
-	Transform* GetChild(size_t index) const;
+	Transform* GetChild(uint index) const;
 
 	_declspec(property(get = IsActiveSelf, put = SetActiveSelf)) bool activeSelf;
 	_declspec(property(get = IsActiveInHierarchy)) bool activeInHierarchy;
 	_declspec(property(get = GetRoot)) Transform* root;
 	_declspec(property(get = GetParent, put = SetParent)) Transform* parent;
-	_declspec(property(get = GetChildCount)) size_t childCount;
+	_declspec(property(get = GetChildCount)) uint childCount;
 
 public:
 

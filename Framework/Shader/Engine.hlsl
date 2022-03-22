@@ -35,10 +35,10 @@
 		설정하지 않을 경우에는 false로 설정됩니다.
 
 		인스턴싱에서는 월드 행렬 대신에 아래의 시멘틱들을 사용합니다.
-		float4 right : INSTANCE_RIGHT;
-		float4 up : INSTANCE_UP;
-		float4 forward : INSTANCE_FORWARD;
-		float4 instance_position : INSTANCE_POSITION;
+		float4 Right : INSTANCE_RIGHT;
+		float4 Up : INSTANCE_UP;
+		float4 Forward : INSTANCE_FORWARD;
+		float4 Instance_Position : INSTANCE_POSITION;
 
 	- 그림자 설정
 		패스 선언에서 bool DrawShadow를 설정할수 있습니다.
@@ -63,28 +63,28 @@
 
 cbuffer WorldMatrixCBuffer
 {
-	float4x4	_WorldMatrix;
+	float4x4	_WorldMatrix : ENGINE;
 };
 
 cbuffer CameraCBuffer 
 {
-	float4		_ViewPosition;
-	float4		_ViewDirection;
-	float4x4	_ViewMatrix;
-	float4x4	_ProjectionMatrix;
-	float		_Near;
-	float		_Far;
-	float2		_CameraCBufferUnused[2];
+	float4		_ViewPosition : ENGINE;
+	float4		_ViewDirection : ENGINE;
+	float4x4	_ViewMatrix : ENGINE;
+	float4x4	_ProjectionMatrix : ENGINE;
+	float		_Near : ENGINE;
+	float		_Far : ENGINE;
+	float2		_CameraCBufferUnused[2] : ENGINE;
 };
 
 cbuffer BoneMatricesUsageCBuffer
 {
-	uint4		_BoneMatricesUsage;
+	uint4		_BoneMatricesUsage : ENGINE;
 };
 
 cbuffer BoneMatricesCBuffer
 {
-	float4x4	_BoneMatrices[512];
+	float4x4	_BoneMatrices[512] : ENGINE;
 };
 
 // From material

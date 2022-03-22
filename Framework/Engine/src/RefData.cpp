@@ -10,7 +10,7 @@ RefData::RefData(Object* vp)
     }
 
     m_obj = vp;
-    m_pRefCount = new size_t(0);
+    m_pRefCount = new uint(0);
     m_pIsDestroyed = new bool(false);
 }
 
@@ -58,7 +58,7 @@ bool RefData::operator!=(const RefData& other) const
     return m_obj != other.m_obj;
 }
 
-size_t RefData::GetReferenceCount() const
+uint RefData::GetReferenceCount() const
 {
 	return *m_pRefCount;
 }

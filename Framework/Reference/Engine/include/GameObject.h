@@ -77,9 +77,9 @@ public:
 	template <class T>
 	vector<T*> GetComponentsInChilds() const;
 
-	size_t GetComponentCount() const;
+	uint GetComponentCount() const;
 
-	inline Component* GetComponent(size_t index) { return index < m_components.size() ? m_components[index] : nullptr; }
+	inline Component* GetComponent(uint index) { return index < m_components.size() ? m_components[index] : nullptr; }
 
 private:
 

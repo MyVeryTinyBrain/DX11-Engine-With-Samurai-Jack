@@ -4,12 +4,12 @@ float4 color;
 
 struct VS_IN
 {
-	float3 position : POSITION;
+	float3 Position : POSITION;
 };
 
 struct PS_IN
 {
-	float4 position : SV_POSITION;
+	float4 Screen : SV_POSITION;
 };
 
 SamplerState	diffuseSampler
@@ -22,12 +22,12 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	float4 position = float4(In.position, 1);
+	float4 position = float4(In.Position, 1);
 	float4 worldPosition = mul(position, _WorldMatrix);
 	float4 viewPosition = mul(worldPosition, _ViewMatrix);
 	float4 outputPosition = mul(viewPosition, _ProjectionMatrix);
 
-	output.position = outputPosition;
+	output.Screen = outputPosition;
 
 	return output;
 }

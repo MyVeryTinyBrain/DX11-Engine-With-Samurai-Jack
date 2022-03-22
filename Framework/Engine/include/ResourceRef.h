@@ -72,7 +72,7 @@ public:
 
 	T* GetPointer() const;
 
-	size_t GetRefCount() const;
+	uint GetRefCount() const;
 
 	// Member Functions =======================================
 

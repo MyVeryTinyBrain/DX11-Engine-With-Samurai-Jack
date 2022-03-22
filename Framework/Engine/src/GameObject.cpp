@@ -68,9 +68,9 @@ bool GameObject::IsActiveInHierarchy() const
 	return transform->activeInHierarchy;
 }
 
-size_t GameObject::GetComponentCount() const
+uint GameObject::GetComponentCount() const
 {
-	return m_components.size();
+	return uint(m_components.size());
 }
 
 bool GameObject::IsActive() const
@@ -146,7 +146,7 @@ void GameObject::BroadcastMessageInChilds(const tstring& message, void* args)
 
 		t->gameObject->BroadcastMessage(message, args);
 
-		for (size_t i = 0; i < t->childCount; ++i)
+		for (uint i = 0; i < t->childCount; ++i)
 			s.push(t->GetChild(i));
 	}
 }

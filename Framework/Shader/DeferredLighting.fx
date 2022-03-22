@@ -2,14 +2,14 @@
 
 struct VS_IN
 {
-	float3	position : POSITION;
-	float2	uv : TEXCOORD;
+	float3	Position : POSITION;
+	float2	UV : TEXCOORD;
 };
 
 struct PS_IN
 {
-	float4	position : SV_POSITION;
-	float2	uv : TEXCOORD;
+	float4	Position : SV_POSITION;
+	float2	UV : TEXCOORD;
 };
 
 struct PS_OUT
@@ -90,8 +90,8 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	output.position = float4(In.position, 1.0f);
-	output.uv = In.uv;
+	output.Position = float4(In.Position, 1.0f);
+	output.UV = In.UV;
 
 	return output;
 }
@@ -110,7 +110,7 @@ void UnpackGBuffersForLight(half2 uv,
 	shadowMask = depthLightOcclusionShadow.a;
 
 	half3 viewPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
-	worldPosition.xyz = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix));
+	worldPosition.xyz = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
 	worldPosition.w = 1.0f;
 
 	half4 specular_Power = _Specular_Power.Sample(pointSampler, uv);
@@ -341,7 +341,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	half occlusionMask, shadowMask;
 	half3 specularMask;
 	half specular_Power;
-	UnpackGBuffersForLight(In.uv,
+	UnpackGBuffersForLight(In.UV,
 		normal,
 		worldPosition,
 		occlusionMask, shadowMask,
@@ -381,15 +381,15 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	half occlusionMask, shadowMask;
 	half3 specularMask;
 	half specular_Power;
-	UnpackGBuffersForLight(In.uv,
+	UnpackGBuffersForLight(In.UV,
 		normal,
 		worldPosition,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
 	half depth = depthLightOcclusionShadow.r;
-	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 	worldPosition = mul(half4(vPosition, 1.0f), Inverse(_ViewMatrix));
 	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
 
@@ -429,15 +429,15 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	half occlusionMask, shadowMask;
 	half3 specularMask;
 	half specular_Power;
-	UnpackGBuffersForLight(In.uv,
+	UnpackGBuffersForLight(In.UV,
 		normal,
 		worldPosition,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.uv);
+	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
 	half depth = depthLightOcclusionShadow.r;
-	half3 vPosition = ToViewSpace(In.uv, depth, Inverse(_ProjectionMatrix));
+	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 	worldPosition = mul(half4(vPosition, 1.0f), Inverse(_ViewMatrix));
 	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
 

@@ -23,14 +23,14 @@ struct ENGINE_API Vertex
 	XM_CONSTEXPR inline static const char*		PositionName() { return "POSITION"; }
 	XM_CONSTEXPR inline static DXGI_FORMAT		PositionFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
 
-	V3 uv;					// float3			TEXCOORD
-	XM_CONSTEXPR inline static uint32_t			UVPosition() { return PositionPosition() + PositionSize(); }
-	XM_CONSTEXPR inline static uint32_t			UVSize() { return sizeof(V3); }
-	XM_CONSTEXPR inline static const char*		UVName() { return "TEXCOORD"; }
-	XM_CONSTEXPR inline static DXGI_FORMAT		UVFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
+	V3 uvw;					// float3			TEXCOORD
+	XM_CONSTEXPR inline static uint32_t			UVWPosition() { return PositionPosition() + PositionSize(); }
+	XM_CONSTEXPR inline static uint32_t			UVWSize() { return sizeof(V3); }
+	XM_CONSTEXPR inline static const char*		UVWName() { return "TEXCOORD"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		UVWFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }
 
 	V3 normal;				// float3			NORMAL	
-	XM_CONSTEXPR inline static uint32_t			NormalPosition() { return UVPosition() + UVSize(); }
+	XM_CONSTEXPR inline static uint32_t			NormalPosition() { return UVWPosition() + UVWSize(); }
 	XM_CONSTEXPR inline static uint32_t			NormalSize() { return sizeof(V3); }
 	XM_CONSTEXPR inline static const char*		NormalName() { return "NORMAL"; }
 	XM_CONSTEXPR inline static DXGI_FORMAT		NormalFormat() { return DXGI_FORMAT_R32G32B32_FLOAT; }

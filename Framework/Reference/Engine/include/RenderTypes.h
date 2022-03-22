@@ -12,6 +12,4 @@ enum class RenderGroup
 	Max 
 };
 
-enum class TransparentLightMode { None, Use };
-
 ENGINE_END

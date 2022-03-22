@@ -4,43 +4,42 @@
 #include "Function.h"
 
 #include <vector>
-#include <type_traits>
 
 ENGINE_BEGIN
 
 template <class T>
-class Delegate;
+class delegate;
 
 template <class Ret, class... Args>
-class Delegate<Ret(Args...)>
+class delegate<Ret(Args...)>
 {
 public:
 
-	using Function = typename Function<Ret(Args...)>;
+	using func = typename func<Ret(Args...)>;
 
 public:
 
-	Delegate() = default;
+	delegate() = default;
 
-	Delegate(const Delegate& other) = default;
+	delegate(const delegate& other) = default;
 
-	Delegate(Delegate&& other) noexcept;
+	delegate(delegate&& other) noexcept;
 
-	~Delegate();
+	~delegate();
 
-	Delegate& operator = (const Delegate& other);
+	delegate& operator = (const delegate& other);
 
-	Delegate& operator = (Delegate&& other);
+	delegate& operator = (delegate&& other);
 
-	Delegate& operator += (const Function& function);
+	delegate& operator += (const func& function);
 
-	Delegate& operator -= (const Function& function);
+	delegate& operator -= (const func& function);
 
 	void operator () (Args ...args);
 
-	void Add(const Function& function);
+	void Add(const func& function);
 
-	void Remove(const Function& function);
+	void Remove(const func& function);
 
 	void Clear();
 
@@ -48,17 +47,17 @@ public:
 
 	unsigned long GetFunctionCount() const;
 
-	const Function& GetFunction(unsigned long index) const;
+	const func& GetFunction(unsigned long index) const;
 
-	const Function& GetFrontFunction() const;
+	const func& GetFrontFunction() const;
 
-	const Function& GetBackFunction() const;
+	const func& GetBackFunction() const;
 
-	bool Find(const Function& function, unsigned long* pIndex) const;
+	bool Find(const func& function, unsigned long* pIndex) const;
 
 private:
 
-	std::vector<Function> m_funcs;
+	std::vector<func> m_funcs;
 };
 
 ENGINE_END

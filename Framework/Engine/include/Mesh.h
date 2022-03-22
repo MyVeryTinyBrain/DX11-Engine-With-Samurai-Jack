@@ -42,7 +42,7 @@ public:
 
 	inline const AnimationSet* GetAnimationSet() const { return m_animationSet; }
 
-	inline size_t GetAnimationCount() const { return m_animationClipsByIndex.size(); }
+	inline uint GetAnimationCount() const { return uint(m_animationClipsByIndex.size()); }
 
 	inline const SubResourceRef<AnimationClip> GetAnimationClipByIndex(uint index);
 
@@ -93,11 +93,13 @@ private:
 
 	virtual HRESULT ApplyIndexBuffer(Com<ID3D11DeviceContext> deviceContext) override;
 
-	virtual HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex) override;
+	virtual HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex) override;
+	virtual HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint primitiveCount) override;
 
 	virtual HRESULT ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceBuffer) override;
 
-	virtual HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex, uint instanceCount) override;
+	virtual HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount) override;
+	virtual HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount, uint primitiveCount) override;
 
 private:
 

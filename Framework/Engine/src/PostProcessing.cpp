@@ -53,7 +53,7 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 		m_shaderPostProcessing->SetTexture("_Diffuse", drt->diffuse->srv);
 		m_shaderPostProcessing->SetTexture("_Normal", drt->normal->srv);
 		m_shaderPostProcessing->SetTexture("_Depth_Light_Occlusion_Shadow", drt->depth_Light_Occlusion_Shadow->srv);
-		m_shaderPostProcessing->SetTexture("_Reflection_ReflectMask", drt->reflection_ReflectMask->srv);
+		m_shaderPostProcessing->SetTexture("_Reflection_ReflectionBlur_ReflectMask", drt->reflection_ReflectionBlur_ReflectMask->srv);
 
 		m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
 		m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
@@ -86,6 +86,20 @@ void PostProcessing::PostProcess_Deferred(ICamera* camera)
 		Render_SSAO_WriteOcclusion(camera, ssaoDesc);
 		Render_SSAO_ApplyOcclusion(camera, ssaoDesc);
 	}
+
+	const SSRDesc& ssrDesc = camera->GetSSRDesc();
+	if (ssrDesc.Enable)
+	{
+		Render_SSR_Write(camera, ssrDesc);
+		Render_SSR_Apply(camera, ssrDesc);
+	}
+
+	const DOFDesc& dofDesc = camera->GetDOFDesc();
+	if (dofDesc.Enable)
+	{
+		Render_DOF_Write(camera, dofDesc);
+		Render_DOF_Apply(camera, dofDesc);
+	}
 }
 
 void PostProcessing::PostProcess_After(ICamera* camera)
@@ -103,18 +117,11 @@ void PostProcessing::PostProcess_After(ICamera* camera)
 		Render_Bloom_Apply(camera, bloomDesc);
 	}
 
-	const SSRDesc& ssrDesc = camera->GetSSRDesc();
-	if (ssrDesc.Enable)
+	const ChromaticAberrationDesc& chromaticAberrationDesc = camera->GetChromaticAberrationDesc();
+	if (chromaticAberrationDesc.Enable)
 	{
-		Render_SSR_Write(camera, ssrDesc);
-		Render_SSR_Apply(camera, ssrDesc);
-	}
-
-	const LinearDOFDesc& dofDesc = camera->GetLinearDOFDesc();
-	if (dofDesc.Enable)
-	{
-		Render_LinearDOF_Write(camera, dofDesc);
-		Render_LinearDOF_Apply(camera, dofDesc);
+		Render_ChromaticAberration_Write(camera, chromaticAberrationDesc);
+		Render_ChromaticAberration_Apply(camera, chromaticAberrationDesc);
 	}
 }
 
@@ -133,45 +140,53 @@ void PostProcessing::GetTehcniqueAndPass(Type type, uint& out_technique, uint& o
 			technique = 0;
 			pass = 1;
 			break;
-		case Type::Fog_Apply_Distance:
+		case Type::SSR_Write:
 			technique = 0;
 			pass = 2;
 			break;
-		case Type::Fog_Apply_Z:
+		case Type::SSR_Apply:
 			technique = 0;
 			pass = 3;
 			break;
-		case Type::Bloom_Extract:
+		case Type::DOF_WritePass0:
 			technique = 0;
 			pass = 4;
 			break;
-		case Type::Bloom_Apply_Add:
+		case Type::DOF_WritePass1:
 			technique = 0;
 			pass = 5;
 			break;
-		case Type::Bloom_Apply_Mix:
+		case Type::DOF_Apply:
 			technique = 0;
 			pass = 6;
 			break;
-		case Type::SSR_Write:
+		case Type::Fog_Apply_Distance:
 			technique = 0;
 			pass = 7;
 			break;
-		case Type::SSR_Apply:
+		case Type::Fog_Apply_Z:
 			technique = 0;
 			pass = 8;
 			break;
-		case Type::LinearDOF_WritePass0:
+		case Type::Bloom_Extract:
 			technique = 0;
 			pass = 9;
 			break;
-		case Type::LinearDOF_WritePass1:
+		case Type::Bloom_Apply_Add:
 			technique = 0;
 			pass = 10;
 			break;
-		case Type::LinearDOF_Apply:
+		case Type::Bloom_Apply_Mix:
 			technique = 0;
 			pass = 11;
+			break;
+		case Type::ChromaticAberration_Write:
+			technique = 0;
+			pass = 12;
+			break;
+		case Type::ChromaticAberration_Apply:
+			technique = 0;
+			pass = 13;
 			break;
 		case Type::HorizontalBlur:
 			technique = 1;
@@ -348,6 +363,45 @@ void PostProcessing::Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomD
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 }
 
+void PostProcessing::Render_ChromaticAberration_Write(ICamera* camera, const ChromaticAberrationDesc& chromaticAberrationDesc)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	ID3D11RenderTargetView* arrRTV[8] = {};
+	arrRTV[0] = drt->bridge->rtv.Get();
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+
+	IGraphicSystem* iGraphicSystem = m_graphicSystem;
+	iGraphicSystem->SetViewport(drt->bridge->width, drt->bridge->height);
+
+	uint technique, pass;
+	GetTehcniqueAndPass(PostProcessing::Type::ChromaticAberration_Write, technique, pass);
+
+	m_shaderPostProcessing->SetRawValue("_ChromaticAberrationDesc", &chromaticAberrationDesc, sizeof(ChromaticAberrationDesc));
+	m_shaderPostProcessing->SetTexture("_Sample", drt->result->srv.Get());
+	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
+	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
+	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+
+	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+}
+
+void PostProcessing::Render_ChromaticAberration_Apply(ICamera* camera, const ChromaticAberrationDesc& chromaticAberrationDesc)
+{
+	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	ID3D11RenderTargetView* arrRTV[8] = {};
+	arrRTV[0] = drt->result->rtv.Get();
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+
+	uint technique, pass;
+	GetTehcniqueAndPass(PostProcessing::Type::ChromaticAberration_Apply, technique, pass);
+
+	m_shaderPostProcessing->SetRawValue("_ChromaticAberrationDesc", &chromaticAberrationDesc, sizeof(ChromaticAberrationDesc));
+	m_shaderPostProcessing->SetTexture("_Sample", drt->bridge->srv.Get());
+	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
+	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
+	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+}
+
 void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
@@ -373,7 +427,7 @@ void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
 		blurDesc.NumSamples = ssrDesc.BlurNumSamples;
 		blurDesc.PixelDistance = ssrDesc.BlurPixelDistance;
 		blurDesc.Type = ssrDesc.BlurType;
-		Render_Blur(blurDesc, drt->ssr, drt->bridgeHalf, drt->ssr);
+		Render_Blur(blurDesc, drt->ssr, drt->bridgeHalf, drt->ssrBlur);
 	}
 
 	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
@@ -391,12 +445,14 @@ void PostProcessing::Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc)
 
 	m_shaderPostProcessing->SetRawValue("_SSRDesc", &ssrDesc, sizeof(SSRDesc));
 	m_shaderPostProcessing->SetTexture("_Sample", drt->ssr->srv.Get());
+	if (ssrDesc.BlurEnable) { m_shaderPostProcessing->SetTexture("_Other", drt->ssrBlur->srv.Get()); }
+	else					{ m_shaderPostProcessing->SetTexture("_Other", drt->ssr->srv.Get()); }
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 }
 
-void PostProcessing::Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc& dofDesc)
+void PostProcessing::Render_DOF_Write(ICamera* camera, const DOFDesc& dofDesc)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[2][8] = {};
@@ -404,10 +460,10 @@ void PostProcessing::Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc
 	arrRTV[1][0] = drt->dof->rtv.Get();
 
 	uint technique[2], pass[2];
-	GetTehcniqueAndPass(PostProcessing::Type::LinearDOF_WritePass0, technique[0], pass[0]);
-	GetTehcniqueAndPass(PostProcessing::Type::LinearDOF_WritePass1, technique[1], pass[1]);
+	GetTehcniqueAndPass(PostProcessing::Type::DOF_WritePass0, technique[0], pass[0]);
+	GetTehcniqueAndPass(PostProcessing::Type::DOF_WritePass1, technique[1], pass[1]);
 
-	m_shaderPostProcessing->SetRawValue("_LinearDOFDesc", &dofDesc, sizeof(LinearDOFDesc));
+	m_shaderPostProcessing->SetRawValue("_DOFDesc", &dofDesc, sizeof(DOFDesc));
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
 
@@ -430,7 +486,7 @@ void PostProcessing::Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc
 	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
 }
 
-void PostProcessing::Render_LinearDOF_Apply(ICamera* camera, const LinearDOFDesc& linearDOFDesc)
+void PostProcessing::Render_DOF_Apply(ICamera* camera, const DOFDesc& linearDOFDesc)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
@@ -438,9 +494,9 @@ void PostProcessing::Render_LinearDOF_Apply(ICamera* camera, const LinearDOFDesc
 	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
 
 	uint technique, pass;
-	GetTehcniqueAndPass(PostProcessing::Type::LinearDOF_Apply, technique, pass);
+	GetTehcniqueAndPass(PostProcessing::Type::DOF_Apply, technique, pass);
 
-	m_shaderPostProcessing->SetRawValue("_LinearDOFDesc", &linearDOFDesc, sizeof(LinearDOFDesc));
+	m_shaderPostProcessing->SetRawValue("_DOFDesc", &linearDOFDesc, sizeof(DOFDesc));
 	m_shaderPostProcessing->SetTexture("_Sample", drt->dof->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);

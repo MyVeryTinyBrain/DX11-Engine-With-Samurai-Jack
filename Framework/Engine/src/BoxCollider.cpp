@@ -52,7 +52,7 @@ void BoxCollider::DebugRender()
 	if (!m_dbgMaterial || !m_dbgMaterial->isValid)
 		return;
 
-	size_t passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
+	uint passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
 	if (passCount == 0)
 		return;
 

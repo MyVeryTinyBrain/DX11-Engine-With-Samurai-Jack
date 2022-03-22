@@ -380,12 +380,12 @@ Transform* Transform::GetParent() const
 	return m_parent;
 }
 
-size_t Transform::GetChildCount() const
+uint Transform::GetChildCount() const
 {
-	return m_childs.size();
+	return uint(m_childs.size());
 }
 
-Transform* Transform::GetChild(size_t index) const
+Transform* Transform::GetChild(uint index) const
 {
 	return m_childs[index];
 }
@@ -471,9 +471,9 @@ void Transform::OnDestroyed()
 void Transform::ApplyAcive()
 {
 	// 이 게임오브젝트의 컴포넌트들에게 상태변경 알림 함수를 호출합니다.
-	size_t count = gameObject->GetComponentCount();
+	uint count = gameObject->GetComponentCount();
 
-	for (size_t i = 0; i < count; ++i) 
+	for (uint i = 0; i < count; ++i)
 	{
 		Component* component = gameObject->GetComponent(i);
 		IComponent* iCom = component;

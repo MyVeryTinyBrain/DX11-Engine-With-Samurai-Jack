@@ -2,16 +2,16 @@
 
 struct VS_IN
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
-	float3 normal : NORMAL;
+	float3 Position : POSITION;
+	float2 UV : TEXCOORD;
+	float3 Normal : NORMAL;
 };
 
 struct PS_IN
 {
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
-	float3 normal : NORMAL;
+	float4 Screen : SV_POSITION;
+	float2 UV : TEXCOORD;
+	float3 Normal : NORMAL;
 };
 
 SamplerState	diffuseSampler
@@ -24,14 +24,14 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	float4 position = float4(In.position, 1);
+	float4 position = float4(In.Position, 1);
 	float4 worldPosition = mul(position, _WorldMatrix);
 	float4 viewPosition = mul(worldPosition, _ViewMatrix);
 	float4 outputPosition = mul(viewPosition, _ProjectionMatrix);
 
-	output.position = outputPosition;
-	output.uv = In.uv;
-	output.normal = In.normal;
+	output.Screen = outputPosition;
+	output.UV = In.UV;
+	output.Normal = In.Normal;
 
 	return output;
 }
@@ -40,7 +40,7 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
 	float4 color = (float4)0;
 
-	color = _DiffuseTexture.Sample(diffuseSampler, In.uv);
+	color = _DiffuseTexture.Sample(diffuseSampler, In.UV);
 
 	return color;
 }

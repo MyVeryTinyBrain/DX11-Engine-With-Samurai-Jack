@@ -29,7 +29,7 @@ void MeshRenderer::Render()
 		if (!currentMaterial || !currentMaterial->isValid)
 			continue;
 
-		size_t passCount = currentMaterial->GetPassCountOfAppliedTechnique();
+		uint passCount = currentMaterial->GetPassCountOfAppliedTechnique();
 
 		for (uint j = 0; j < passCount; ++j)
 		{
@@ -40,23 +40,12 @@ void MeshRenderer::Render()
 			bool shadowCutoffEnableFlag;
 			float shadowCutoffAlpha;
 
-			TransparentLightMode transparentLightMode;
-
-			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
-				continue;
-			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
-				continue;
-			if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
-				continue;
-			if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag)))
-				continue;
-			if (FAILED(currentMaterial->GetShadowCutoffEnableFlagOfAppliedTechnique(j, shadowCutoffEnableFlag)))
-				continue;
-			if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha)))
-				continue;
-
-			if (FAILED(currentMaterial->GetTransparentLightModeOfAppliedTechqniue(j, transparentLightMode)))
-				continue;
+			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup))) continue;
+			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder))) continue;
+			if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag))) continue;
+			if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag))) continue;
+			if (FAILED(currentMaterial->GetShadowCutoffEnableFlagOfAppliedTechnique(j, shadowCutoffEnableFlag))) continue;
+			if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha))) continue;
 
 			RenderRequest input = {};
 			input.essential.worldMatrix = localToWorldMatrix;
@@ -64,13 +53,11 @@ void MeshRenderer::Render()
 			input.essential.renderGroupOrder = renderGroupOrder;
 			input.essential.layerIndex = m_layerIndex;
 			input.essential.material = currentMaterial;
-			input.essential.techniqueIndex = m_techniqueIndex;
+			input.essential.techniqueIndex = currentMaterial->techniqueIndex;
 			input.essential.passIndex = j;
 			input.essential.mesh = m_mesh;
 			input.essential.subMeshIndex = i;
 			input.essential.instance = instancingFlag;
-
-			input.sub.transparentLightMode = transparentLightMode;
 
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;
@@ -113,9 +100,6 @@ bool MeshRenderer::IsValid() const
 
 void MeshRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 {
-	if (name == TEXT("KatanaRenderer"))
-		int i = 0;
-
 	SetupMaterialsToDefault(mesh);
 
 	m_mesh = mesh;
@@ -143,11 +127,15 @@ void MeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 
 		tstring texturePath;
 		ResourceRef<Texture2D> texture;
+		ResourceRef<Texture2D> normal;
 
 		if (i < materialIndices.size())
 		{
 			texturePath = materials[materialIndices[i]].diffuse;
 			texture = system->resourceManagement->Find(texturePath);
+
+			texturePath = materials[materialIndices[i]].normals;
+			normal = system->resourceManagement->Find(texturePath);
 		}
 
 		if (!texture)
@@ -157,8 +145,9 @@ void MeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 		else
 		{
 			tstring materialPath = texturePath + tstring(TEXT(".material"));
-			ResourceRef<Material> material = system->resourceManagement->factory->CreateManagedMaterial<MaterialStandard>(materialPath);
+			ResourceRef<MaterialStandard> material = system->resourceManagement->factory->CreateManagedMaterial<MaterialStandard>(materialPath);
 			material->diffuseTexture = texture;
+			material->normalMap = normal;
 			SetMaterialByIndex(i, material);
 		}
 	}

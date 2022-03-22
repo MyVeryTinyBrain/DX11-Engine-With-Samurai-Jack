@@ -94,9 +94,12 @@ bool AnimatorBlendNode::CalculateClosetIndices(float position, uint& out_aIndex,
 		});
 
 	uint bIndex = (uint)std::distance(m_elements.begin(), it);
-	bIndex = Clamp(bIndex, 0u, uint(m_elements.size() - 1));
+	//bIndex = Clamp(bIndex, 0u, uint(m_elements.size() - 1));
+	bIndex = Min(bIndex, uint(m_elements.size() - 1));
+
 	uint aIndex = bIndex == 0 ? 1 : bIndex - 1;
-	aIndex = Clamp(aIndex, 0u, uint(m_elements.size() - 1));
+	//aIndex = Clamp(aIndex, 0u, uint(m_elements.size() - 1));
+	aIndex = Min(aIndex, uint(m_elements.size() - 1));
 
 	out_aIndex = aIndex;
 	out_bIndex = bIndex;

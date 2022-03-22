@@ -18,17 +18,17 @@ void CameraManager::AddCamera(ICamera* camera)
 	SortByOrder();
 }
 
-ICamera* CameraManager::GetCamera(size_t index) const
+ICamera* CameraManager::GetCamera(uint index) const
 {
-	if (index >= m_cameras.size())
+	if (index >= uint(m_cameras.size()))
 		return nullptr;
 
 	return m_cameras[index];
 }
 
-size_t CameraManager::GetCameraCount() const
+uint CameraManager::GetCameraCount() const
 {
-	return m_cameras.size();
+	return uint(m_cameras.size());
 }
 
 void CameraManager::SetMainCamera(ICamera* camera)

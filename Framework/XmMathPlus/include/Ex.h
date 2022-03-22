@@ -28,11 +28,15 @@ namespace XmMathPlus
 
 		XMMATHPLUS_API uint Clamp(uint value, uint min, uint max);
 
-		XMMATHPLUS_API Real Clamp01(Real value, Real min, Real max);
+		XMMATHPLUS_API inline Real Clamp01(Real value) { return Clamp(value, 0.0f, 1.0f); }
 
-		XMMATHPLUS_API int Clamp01(int value, int min, int max);
+		XMMATHPLUS_API inline int Clamp01(int value) { return Clamp(value, 0, 1); }
+		
+		XMMATHPLUS_API inline uint Clamp01(uint value) { return Clamp(value, 0u, 1u); }
 
-		XMMATHPLUS_API uint Clamp01(uint value, uint min, uint max);
+		XMMATHPLUS_API inline Real Saturate(Real value) { return value > 0.0f ? value : 0.0f; }
+
+		XMMATHPLUS_API inline int Saturate(int value) { return value > 0 ? value : 0; }
 
 		XMMATHPLUS_API Real Closet(Real value, Real min, Real max);
 
@@ -41,6 +45,8 @@ namespace XmMathPlus
 		XMMATHPLUS_API uint Closet(uint value, uint min, uint max);
 
 		XMMATHPLUS_API Real DeltaAngle(Real from, Real to);
+
+		XMMATHPLUS_API inline Real LerpAngle(Real from, Real to, Real t) { return from + Lerp(0, DeltaAngle(from, to), t); }
 
 		XMMATHPLUS_API Real Repeat(Real value, Real max);
 
@@ -91,6 +97,10 @@ namespace XmMathPlus
 		XMMATHPLUS_API inline uint Mod(uint x, uint y) { return x % y; }
 
 		XMMATHPLUS_API inline bool IsNaN(Real value) { return ::isnan(value); }
+
+		XMMATHPLUS_API inline float SmoothStep(float min, float max, float value) { return Clamp((value - min) / (max - min), 0.0f, 1.0f); }
+
+		XMMATHPLUS_API inline float CatmullRom(float p0, float p1, float p2, float p3, float t) { return 0.5f * ((2.0f * p1) + (-p0 + p2) * t + (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t * t + (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t * t * t); }
 
 	};
 }

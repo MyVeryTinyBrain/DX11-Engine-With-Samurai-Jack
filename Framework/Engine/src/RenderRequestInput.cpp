@@ -9,13 +9,13 @@ bool RenderRequestEssential::IsValid() const
 	if (!material || !mesh)
 		return false;
 
-	size_t techniqueCount = 0;
+	uint techniqueCount = 0;
 	if (FAILED(material->GetTechniqueCount(techniqueCount)))
 		return false;
 	if (techniqueIndex >= techniqueCount)
 		return false;
 
-	size_t passCount = 0;
+	uint passCount = 0;
 	if (FAILED(material->GetPassCount(techniqueIndex, passCount)))
 		return false;
 	if (passIndex >= passCount)

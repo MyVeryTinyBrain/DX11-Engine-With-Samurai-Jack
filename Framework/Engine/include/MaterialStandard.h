@@ -29,6 +29,7 @@ public:
 	const ResourceRef<Texture>& GetEmissiveTexture();
 	const ResourceRef<Texture>& GetReflectionTexture();
 	float GetReflectionTransparency();
+	float GetReflectionBlur();
 	float GetReflectMask();
 
 	void SetNormalMapTexture(const ResourceRef<Texture>& texture);
@@ -41,6 +42,7 @@ public:
 	void SetEmissiveTexture(const ResourceRef<Texture>& texture);
 	void SetReflectionTexture(const ResourceRef<Texture>& texture);
 	void SetReflectionTransparency(float value);
+	void SetReflectionBlur(float value);
 	void SetReflectMask(float value);
 
 	_declspec(property(get = GetNormalMapTexture, put = SetNormalMapTexture)) const ResourceRef<Texture>& normalMap;
@@ -53,6 +55,7 @@ public:
 	_declspec(property(get = GetEmissiveTexture, put = SetEmissiveTexture)) const ResourceRef<Texture>& emissive;
 	_declspec(property(get = GetReflectionTexture, put = SetReflectionTexture)) const ResourceRef<Texture>& reflection;
 	_declspec(property(get = GetReflectionTransparency, put = SetReflectionTransparency)) float reflectionTransparency;
+	_declspec(property(get = GetReflectionBlur, put = SetReflectionBlur)) float reflectionBlur;
 	_declspec(property(get = GetReflectMask, put = SetReflectMask)) float reflectMask;
 
 private:
@@ -86,6 +89,9 @@ private:
 
 	// float _ReflectionTransparency;
 	float m_reflectionTransparency = 0.5f;
+
+	// float _ReflectionBlur;
+	float m_reflectionBlur = 1.0f;
 
 	// float _ReflectMask;
 	float m_reflectMask = 1.0f;

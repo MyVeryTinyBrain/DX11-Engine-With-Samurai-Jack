@@ -267,7 +267,7 @@ void TestScene::OnUpdate()
 				BoxCollider* boxCollider = go->AddComponent<BoxCollider>();
 				boxCollider->restitution = 0.1f;
 
-				boxCollider->OnCollisionEnter += Function<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
+				boxCollider->OnCollisionEnter += func<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
 			}
 			break;
 			case 1:
@@ -275,7 +275,7 @@ void TestScene::OnUpdate()
 				CapsuleCollider* capsuleCollider = go->AddComponent<CapsuleCollider>();
 				capsuleCollider->restitution = 0.1f;
 
-				capsuleCollider->OnCollisionEnter += Function<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
+				capsuleCollider->OnCollisionEnter += func<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
 			}
 			break;
 			case 2:
@@ -283,7 +283,7 @@ void TestScene::OnUpdate()
 				SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
 				sphereCollider->restitution = 0.1f;
 
-				sphereCollider->OnCollisionEnter += Function<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
+				sphereCollider->OnCollisionEnter += func<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
 			}
 			break;
 		}

@@ -21,7 +21,7 @@ public:
 
 	const Channel* GetChannel(uint index) const;
 
-	size_t GetChannelCount() const;
+	uint GetChannelCount() const;
 
 	float GetDuration() const;
 
@@ -30,7 +30,7 @@ public:
 	float GetRealtimeDuration() const;
 
 	_declspec(property(get = GetAnimation)) const Animation* animation;
-	_declspec(property(get = GetChannelCount)) size_t channelCount;
+	_declspec(property(get = GetChannelCount)) uint channelCount;
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = GetTickPerSecond)) float tickPerSecond;
 	_declspec(property(get = GetRealtimeDuration)) float realtimeDuration;

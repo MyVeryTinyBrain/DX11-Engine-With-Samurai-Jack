@@ -38,7 +38,7 @@ Real Ex::Clamp(Real value, Real min, Real max)
 	return value;
 }
 
-XMMATHPLUS_API int XmMathPlus::Ex::Clamp(int value, int min, int max)
+int XmMathPlus::Ex::Clamp(int value, int min, int max)
 {
 	if (value < min)
 	{
@@ -52,7 +52,7 @@ XMMATHPLUS_API int XmMathPlus::Ex::Clamp(int value, int min, int max)
 	return value;
 }
 
-XMMATHPLUS_API uint XmMathPlus::Ex::Clamp(uint value, uint min, uint max)
+uint XmMathPlus::Ex::Clamp(uint value, uint min, uint max)
 {
 	if (value < min)
 	{
@@ -64,39 +64,6 @@ XMMATHPLUS_API uint XmMathPlus::Ex::Clamp(uint value, uint min, uint max)
 	}
 
 	return value;
-}
-
-Real Ex::Clamp01(Real value, Real min, Real max)
-{
-	value = Clamp(value, min, max);
-
-	Real delta = max - min;
-	Real valueFromMin = value - min;
-	Real percent = valueFromMin / delta;
-
-	return percent;
-}
-
-XMMATHPLUS_API int XmMathPlus::Ex::Clamp01(int value, int min, int max)
-{
-	value = Clamp(value, min, max);
-
-	int delta = max - min;
-	int valueFromMin = value - min;
-	int percent = valueFromMin / delta;
-
-	return percent;
-}
-
-XMMATHPLUS_API uint XmMathPlus::Ex::Clamp01(uint value, uint min, uint max)
-{
-	value = Clamp(value, min, max);
-
-	uint delta = max - min;
-	uint valueFromMin = value - min;
-	uint percent = valueFromMin / delta;
-
-	return percent;
 }
 
 Real Ex::Closet(Real value, Real min, Real max)
@@ -108,7 +75,7 @@ Real Ex::Closet(Real value, Real min, Real max)
 	else return max;
 }
 
-XMMATHPLUS_API int XmMathPlus::Ex::Closet(int value, int min, int max)
+int XmMathPlus::Ex::Closet(int value, int min, int max)
 {
 	int toMin = abs(value - min);
 	int toMax = abs(value - max);
@@ -117,7 +84,7 @@ XMMATHPLUS_API int XmMathPlus::Ex::Closet(int value, int min, int max)
 	else return max;
 }
 
-XMMATHPLUS_API uint XmMathPlus::Ex::Closet(uint value, uint min, uint max)
+uint XmMathPlus::Ex::Closet(uint value, uint min, uint max)
 {
 	if (value < min)
 		return min;
@@ -136,11 +103,22 @@ Real Ex::DeltaAngle(Real from, Real to)
 {
 	Real delta = to - from;
 
-	while (delta > 180.0f)
-		delta -= 360.0f;
+	//while (delta > 180.0f)
+	//	delta -= 360.0f;
 
-	while (delta < -180.0f)
-		delta += 360.0f;
+	//while (delta < -180.0f)
+	//	delta += 360.0f;
+
+	if (delta > 180.0f)
+	{
+		Real temp = delta - 180.0f;
+		delta -= int(temp / 360.0f + 1) * 360.0f;
+	}
+	else if (delta < -180.0f)
+	{
+		Real temp = delta + 180.0f;
+		delta += int(temp / 360.0f + 1) * 360.0f;
+	}
 
 	return delta;
 }
@@ -150,12 +128,12 @@ Real Ex::Repeat(Real value, Real max)
 	return fmod(value, max);
 }
 
-XMMATHPLUS_API int XmMathPlus::Ex::Repeat(int value, int max)
+int XmMathPlus::Ex::Repeat(int value, int max)
 {
 	return value % max;
 }
 
-XMMATHPLUS_API uint XmMathPlus::Ex::Repeat(uint value, uint max)
+uint XmMathPlus::Ex::Repeat(uint value, uint max)
 {
 	return value % max;
 }
@@ -167,14 +145,14 @@ Real XmMathPlus::Ex::Sign(Real value)
 	else return 0;
 }
 
-XMMATHPLUS_API int XmMathPlus::Ex::Sign(int value)
+int XmMathPlus::Ex::Sign(int value)
 {
 	if (value < 0) return -1;
 	else if (value > 0) return +1;
 	else return 0;
 }
 
-XMMATHPLUS_API uint XmMathPlus::Ex::Sign(uint value)
+uint XmMathPlus::Ex::Sign(uint value)
 {
 	if (value > 0) return +1;
 	else return 0;

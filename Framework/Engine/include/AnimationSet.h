@@ -16,13 +16,13 @@ public:
 
 public:
 
-	inline size_t GetAnimationCount() const { return m_animationsByIndex.size(); }
+	inline uint GetAnimationCount() const { return uint(m_animationsByIndex.size()); }
 
 	inline const Animation* GetAnimationByIndex(uint index) const { return m_animationsByIndex[index]; }
 
 	const Animation* GetAnimationByName(const tstring& name) const;
 
-	_declspec(property(get = GetAnimationCount)) size_t animationCount;
+	_declspec(property(get = GetAnimationCount)) uint animationCount;
 
 private:
 

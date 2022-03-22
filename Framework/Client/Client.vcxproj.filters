@@ -34,9 +34,6 @@
     <ClInclude Include="JackAnimator.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="MaterialTransparent.h">
-      <Filter>Shaders</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -102,13 +99,5 @@
     <ClCompile Include="JackAnimator.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="MaterialTransparent.cpp">
-      <Filter>Shaders</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Shader\Transparent.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

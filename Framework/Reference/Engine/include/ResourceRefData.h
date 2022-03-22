@@ -26,9 +26,9 @@ public:
 
 	// Member Variables =======================================
 
-	size_t GetReferenceCount() const;
+	uint GetReferenceCount() const;
 
-	_declspec(property(get = GetReferenceCount)) size_t referenceCount;
+	_declspec(property(get = GetReferenceCount)) uint referenceCount;
 
 	// Member Functions =======================================
 
@@ -48,7 +48,7 @@ private:
 
 	ResourceObject* m_obj = nullptr;
 
-	size_t* m_pRefCount = nullptr;
+	uint* m_pRefCount = nullptr;
 
 	bool* m_pIsDestroyed = nullptr;
 };

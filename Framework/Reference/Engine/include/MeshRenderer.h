@@ -30,10 +30,6 @@ private:
 
 	void SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh);
 
-private:
-
-	uint				m_techniqueIndex = 0;
-
 };
 
 ENGINE_END

@@ -3,10 +3,11 @@
 #include "TechniqueDesc.h"
 #include "PassDesc.h"
 
-CompiledShaderDesc::CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs)
+CompiledShaderDesc::CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs, const vector<ShaderVariableInfo>& infos)
 {
 	m_effect = effect;
 	m_techniqueDescs = techniqueDescs;
+	m_variableInfos = infos;
 }
 
 CompiledShaderDesc::~CompiledShaderDesc()
@@ -14,7 +15,7 @@ CompiledShaderDesc::~CompiledShaderDesc()
 	for (auto& technique : m_techniqueDescs)
 		SafeDelete(technique);
 	m_techniqueDescs.clear();
-
+	m_variableInfos.clear();
 	SafeRelease(m_effect);
 }
 
@@ -23,14 +24,14 @@ Com<ID3DX11Effect> CompiledShaderDesc::GetEffect() const
 	return m_effect;
 }
 
-size_t CompiledShaderDesc::GetTechniqueDescCount() const
+uint CompiledShaderDesc::GetTechniqueDescCount() const
 {
-	return m_techniqueDescs.size();
+	return uint(m_techniqueDescs.size());
 }
 
-TechniqueDesc* CompiledShaderDesc::GetTechniqueDesc(size_t index) const
+TechniqueDesc* CompiledShaderDesc::GetTechniqueDesc(uint index) const
 {
-	if (index >= m_techniqueDescs.size())
+	if (index >= uint(m_techniqueDescs.size()))
 		return nullptr;
 	
 	return m_techniqueDescs[index];
@@ -84,15 +85,9 @@ HRESULT CompiledShaderDesc::SetRawValue(const string& name, const void* data, si
 		return E_FAIL;
 	}
 
-	hr = hValue->SetRawValue(data, 0, uint32_t(size));
-
-	if (FAILED(hr))
-	{
-		SafeRelease(hValue);
+	if (FAILED(hr = hValue->SetRawValue(data, 0, uint32_t(size))))
 		return hr;
-	}
 
-	SafeRelease(hValue);
 	return S_OK;
 }
 
@@ -126,7 +121,7 @@ HRESULT CompiledShaderDesc::SetBool(const string& name, bool value)
 
 	if (!m_effect)
 		return E_FAIL;
-
+	
 	ID3DX11EffectScalarVariable* hValue = m_effect->GetVariableByName(name.c_str())->AsScalar();
 	if (!hValue->IsValid())
 	{
@@ -244,14 +239,14 @@ HRESULT CompiledShaderDesc::SetTexture(const string& name, Com<ID3D11ShaderResou
 	return S_OK;
 }
 
-HRESULT CompiledShaderDesc::SetTextureArray(const string& name, ID3D11ShaderResourceView** textureArray, uint count)
+HRESULT CompiledShaderDesc::SetTextures(const string& name, ID3D11ShaderResourceView** textures, uint count)
 {
 	HRESULT hr = S_OK;
 
 	if (nullptr == m_effect)
 		return E_FAIL;
 
-	if (!textureArray)
+	if (!textures)
 		return E_FAIL;
 
 	ID3DX11EffectShaderResourceVariable* hValue = m_effect->GetVariableByName(name.c_str())->AsShaderResource();
@@ -261,7 +256,7 @@ HRESULT CompiledShaderDesc::SetTextureArray(const string& name, ID3D11ShaderReso
 		return E_FAIL;
 	}
 
-	if (FAILED(hr = hValue->SetResourceArray(textureArray, 0, count)))
+	if (FAILED(hr = hValue->SetResourceArray(textures, 0, count)))
 	{
 		SafeRelease(hValue);
 		return hr;
@@ -273,35 +268,41 @@ HRESULT CompiledShaderDesc::SetTextureArray(const string& name, ID3D11ShaderReso
 
 CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
 {
-	if (!device)
-		return nullptr;
+	ID3DBlob* compileShader = nullptr;
+	ID3DBlob* compileShaderErrorMessage = nullptr;
 
+	auto ReleaseVars = [&]()
+	{
+		SafeRelease(compileShaderErrorMessage);
+		SafeRelease(compileShader);
+	};
+
+	HRESULT hr = S_OK;
+
+	if(FAILED(hr = CompileShader(path, &compileShader, &compileShaderErrorMessage)))
+	{
+		ReleaseVars();
+		return nullptr;
+	}
+
+	CompiledShaderDesc* shader = CreateCompiledShader(device, compileShader, out_error);
+
+	ReleaseVars();
+	return shader;
+}
+
+HRESULT CompiledShaderDesc::CompileShader(const tstring& path, ID3DBlob** out_memory, ID3DBlob** out_errorMsg)
+{
 	uint32_t compileFlag1 = 0;
 	uint32_t compileFlag2 = 0;
 
 #ifdef _DEBUG
-	compileFlag1 = 
-		D3DCOMPILE_DEBUG | 
+	compileFlag1 =
+		D3DCOMPILE_DEBUG |
 		D3DCOMPILE_SKIP_OPTIMIZATION;
 #else
 	compileFlag1 = D3DCOMPILE_OPTIMIZATION_LEVEL3;
 #endif
-
-	ID3DBlob* compileShader = nullptr;
-	ID3DBlob* compileShaderErrorMessage = nullptr;
-	ID3DX11Effect* effect = nullptr;
-	vector<TechniqueDesc*> techniqueDescs;
-
-	auto ReleaseVars = [&]()
-	{
-		for (auto& techniqueDesc : techniqueDescs)
-			SafeDelete(techniqueDesc);
-		techniqueDescs.clear();
-
-		SafeRelease(effect);
-		SafeRelease(compileShaderErrorMessage);
-		SafeRelease(compileShader);
-	};
 
 	HRESULT hr = S_OK;
 
@@ -312,15 +313,39 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 		nullptr,
 		"fx_5_0",
 		compileFlag1, compileFlag2,
-		&compileShader, &compileShaderErrorMessage)))
+		out_memory, out_errorMsg)))
 	{
-		ReleaseVars();
-		return nullptr;
+		SafeDelete(out_memory);
+		SafeDelete(out_errorMsg);
+		return hr;
 	}
 
+	return S_OK;
+}
+
+CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShader(Com<ID3D11Device> device, ID3DBlob* memory, tstring& out_error)
+{
+	if (!device || !memory)
+		return nullptr;
+
+	ID3DX11Effect* effect = nullptr;
+	vector<TechniqueDesc*> techniqueDescs;
+	vector<ShaderVariableInfo> infos;
+
+	auto ReleaseVars = [&]()
+	{
+		for (auto& techniqueDesc : techniqueDescs)
+			SafeDelete(techniqueDesc);
+		techniqueDescs.clear();
+
+		SafeRelease(effect);
+	};
+
+	HRESULT hr = S_OK;
+
 	if (FAILED(hr = D3DX11CreateEffectFromMemory(
-		compileShader->GetBufferPointer(),
-		compileShader->GetBufferSize(),
+		memory->GetBufferPointer(),
+		memory->GetBufferSize(),
 		0,
 		device.Get(),
 		&effect)))
@@ -338,8 +363,6 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 
 	techniqueDescs.reserve(effectDesc.Techniques);
 
-	bool hasDefaultTechnique = false;
-	bool hasComputeTechnique = false;
 	for (uint32_t i = 0; i < effectDesc.Techniques; ++i)
 	{
 		ID3DX11EffectTechnique* technique = effect->GetTechniqueByIndex(i);
@@ -356,27 +379,93 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 			return nullptr;
 		}
 
-		if (techniqueDesc->IsComputeTechnique())
-			hasComputeTechnique = true;
-		else
-			hasDefaultTechnique = true;
-		if (hasDefaultTechnique && hasComputeTechnique)
-		{
-			out_error = TEXT("A shader cannot have both a Compute Technique and a Default Technique at the same time.");
-			ReleaseVars();
-			return nullptr;
-		}
-
 		techniqueDescs.push_back(techniqueDesc);
 	}
 
-	SafeRelease(compileShaderErrorMessage);
-	SafeRelease(compileShader);
+	infos.reserve(effectDesc.GlobalVariables);
 
-	return new CompiledShaderDesc(effect, techniqueDescs);
+	for (uint32_t i = 0; i < effectDesc.GlobalVariables; ++i)
+	{
+		ID3DX11EffectVariable* handle = effect->GetVariableByIndex(i);
+		ID3DX11EffectType* type = handle->GetType();
+		D3DX11_EFFECT_VARIABLE_DESC variableDesc;
+		D3DX11_EFFECT_TYPE_DESC typeDesc;
+		if (FAILED(hr = handle->GetDesc(&variableDesc)))
+		{
+			ReleaseVars();
+			return nullptr;
+		}
+		if (FAILED(hr = type->GetDesc(&typeDesc)))
+		{
+			ReleaseVars();
+			return nullptr;
+		}
+		if (variableDesc.Semantic && !strcmp(variableDesc.Semantic, "ENGINE"))
+		{
+			SafeRelease(handle);
+			SafeRelease(type);
+			continue;
+		}
+		
+		ShaderVariableInfo info;
+		info.Name = variableDesc.Name;
+		info.Semantic = variableDesc.Semantic != nullptr ? variableDesc.Semantic : "";
+		info.Type = TypeOf(typeDesc);
+		info.Size = typeDesc.Stride;
+		info.Elements = typeDesc.Elements;
+		info.Handle = handle;
+
+		SafeRelease(type);
+
+		infos.push_back(info);
+	}
+
+	return new CompiledShaderDesc(effect, techniqueDescs, infos);
 }
 
-HRESULT CompiledShaderDesc::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, size_t techniqueIndex, size_t passIndex)
+ShaderVariableType CompiledShaderDesc::TypeOf(const D3DX11_EFFECT_TYPE_DESC& typeDesc)
+{
+	switch (typeDesc.Class)
+	{
+		case D3D_SVC_VECTOR:
+			return ShaderVariableType::Vector;
+		case D3D_SVC_MATRIX_ROWS:
+		case D3D_SVC_MATRIX_COLUMNS:
+			return ShaderVariableType::Matrix;
+		case D3D_SVC_STRUCT:
+			return ShaderVariableType::Struct;
+	}
+
+	switch (typeDesc.Type)
+	{
+		case D3D_SVT_VOID:
+			return ShaderVariableType::Other;
+		case D3D_SVT_BOOL:
+			return ShaderVariableType::Bool;
+		case D3D_SVT_INT:
+			return ShaderVariableType::Int;
+		case D3D_SVT_UINT:
+			return ShaderVariableType::UInt;
+		case D3D_SVT_FLOAT:
+			return ShaderVariableType::Float;
+		case D3D_SVT_STRING:
+			return ShaderVariableType::String;
+		case D3D_SVT_TEXTURE1D:
+			return ShaderVariableType::Texture1D;
+		case D3D_SVT_TEXTURE2D:
+			return ShaderVariableType::Texture2D;
+		case D3D_SVT_TEXTURE3D:
+			return ShaderVariableType::Texture3D;
+		case D3D_SVT_TEXTURE1DARRAY:
+			return ShaderVariableType::Texture1DArray;
+		case D3D_SVT_TEXTURE2DARRAY:
+			return ShaderVariableType::Texture2DArray;
+		default:
+			return ShaderVariableType::Other;
+	}
+}
+
+HRESULT CompiledShaderDesc::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
 {
 	HRESULT hr = S_OK;
 
@@ -401,7 +490,7 @@ HRESULT CompiledShaderDesc::SetInputLayout(Com<ID3D11DeviceContext> deviceContex
 	return S_OK;
 }
 
-HRESULT CompiledShaderDesc::ApplyPass(Com<ID3D11DeviceContext> deviceContext, size_t techniqueIndex, size_t passIndex)
+HRESULT CompiledShaderDesc::ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
 {
 	HRESULT hr = S_OK;
 
@@ -425,4 +514,26 @@ HRESULT CompiledShaderDesc::ApplyPass(Com<ID3D11DeviceContext> deviceContext, si
 		return hr;
 
 	return S_OK;
+}
+
+const ShaderVariableInfo* CompiledShaderDesc::FindVariableByName(const string& name)
+{
+	auto find_it = std::find_if(m_variableInfos.begin(), m_variableInfos.end(),
+		[&](const ShaderVariableInfo& e)
+		{
+			return e.Name == name;
+		});
+
+	if (find_it == m_variableInfos.end())
+		return nullptr;
+	else
+		return find_it._Ptr;
+}
+
+const ShaderVariableInfo* CompiledShaderDesc::FindVariableByIndex(uint index)
+{
+	if (index >= GetVariableCount())
+		return nullptr;
+
+	return &m_variableInfos[index];
 }

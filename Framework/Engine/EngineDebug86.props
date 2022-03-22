@@ -3,18 +3,21 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>..\Reference\XmMathPlus\include\;..\Reference\PhysX\include\;..\Reference\FMod\include\;..\Reference\Effects11\include\;..\Reference\DirectXTex\include\;..\Reference\Assimp\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Reference\XmMathPlus\lib\DebugX86\;..\Reference\PhysX\lib\DebugX86\;..\Reference\FMod\lib\x86\;..\Reference\Effects11\lib\DebugX86\;..\Reference\DirectXTex\lib\DebugX86\;..\Reference\Assimp\lib\DebugX86\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Reference\XmMathPlus\include\;..\Reference\Json\include\;..\Reference\PhysX\include\;..\Reference\FMod\include\;..\Reference\Effects11\include\;..\Reference\DirectXTex\include\;..\Reference\Assimp\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Reference\XmMathPlus\lib\DebugX86\;..\Reference\Json\lib\DebugX86\;..\Reference\PhysX\lib\DebugX86\;..\Reference\FMod\lib\x86\;..\Reference\Effects11\lib\DebugX86\;..\Reference\DirectXTex\lib\DebugX86\;..\Reference\Assimp\lib\DebugX86\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>XmMathPlus.lib;d3d11.lib;dxguid.lib;DirectXTex.lib;Effects11.lib;assimp.lib;LowLevel_static_32.lib;LowLevelAABB_static_32.lib;LowLevelDynamics_static_32.lib;PhysX_32.lib;PhysXCharacterKinematic_static_32.lib;PhysXCommon_32.lib;PhysXCooking_32.lib;PhysXExtensions_static_32.lib;PhysXFoundation_32.lib;PhysXPvdSDK_static_32.lib;PhysXTask_static_32.lib;PhysXVehicle_static_32.lib;SceneQuery_static_32.lib;SimulationController_static_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XmMathPlus.lib;jsoncpp_static.lib;d3d11.lib;dxguid.lib;DirectXTex.lib;Effects11.lib;assimp.lib;LowLevel_static_32.lib;LowLevelAABB_static_32.lib;LowLevelDynamics_static_32.lib;PhysX_32.lib;PhysXCharacterKinematic_static_32.lib;PhysXCommon_32.lib;PhysXCooking_32.lib;PhysXExtensions_static_32.lib;PhysXFoundation_32.lib;PhysXPvdSDK_static_32.lib;PhysXTask_static_32.lib;PhysXVehicle_static_32.lib;SceneQuery_static_32.lib;SimulationController_static_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
       <ShaderType>Effect</ShaderType>
     </FxCompile>
+    <ClCompile>
+      <ConformanceMode>Default</ConformanceMode>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

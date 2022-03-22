@@ -22,7 +22,7 @@ public:
 
 	inline Ref<NodeTransform> GetParent() const { return m_parent; }
 
-	inline size_t GetChildCount() const { return m_childs.size(); }
+	inline uint GetChildCount() const { return uint(m_childs.size()); }
 
 	inline Ref<NodeTransform> GetChild(uint index) const { return m_childs[index]; }
 
@@ -43,7 +43,7 @@ public:
 	_declspec(property(get = IsRoot)) bool isRoot;
 	_declspec(property(get = GetRoot)) Ref<NodeTransform> root;
 	_declspec(property(get = GetParent)) Ref<NodeTransform> parernt;
-	_declspec(property(get = GetChildCount)) size_t childCount;
+	_declspec(property(get = GetChildCount)) uint childCount;
 	_declspec(property(get = GetNode)) const Node* node;
 	_declspec(property(get = GetOffsetMatrix)) const M4& offsetMatrix;
 	_declspec(property(get = GetTransformationMatrix)) const M4& transformationMatrix;

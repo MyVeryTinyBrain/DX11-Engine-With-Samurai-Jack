@@ -31,19 +31,6 @@ void Camera::Awake()
 	m_ssaoDesc.Power = 2.5f;
 	m_ssaoDesc.BlurPixelDistance = 1100.0f;
 
-	m_fogDesc.Enable = false;
-	m_fogDesc.Type = FogType::Distance;
-	m_fogDesc.MinZ = 30.0f;
-	m_fogDesc.RangeZ = 40.0f;
-	m_fogDesc.Color = Color::white();
-
-	m_bloomDesc.Enable = true;
-	m_bloomDesc.Type = BloomType::Add;
-	m_bloomDesc.BlurNumSamples = 8;
-	m_bloomDesc.Intensity = 1.5f;
-	m_bloomDesc.Threshold = 0.1f;
-	m_bloomDesc.BlurPixelDistance = 50.0f;
-
 	m_ssrDesc.Enable = true;
 	m_ssrDesc.BlurEnable = true;
 	m_ssrDesc.BlurType = BlurType::InvDepth;
@@ -60,12 +47,30 @@ void Camera::Awake()
 	m_ssrDesc.Bias = 0.04f;
 	m_ssrDesc.BlurPixelDistance = 1000.0f;
 
-	m_linearDofDesc.Enable = true;
-	m_linearDofDesc.BlurNumSamples = 8;
-	m_linearDofDesc.MinZ = 15.0f;
-	m_linearDofDesc.RangeZ = 5.0f;
-	m_linearDofDesc.Power = 1.0f;
-	m_linearDofDesc.BlurPixelDistance = 10.0f;
+	m_dofDesc.Enable = true;
+	m_dofDesc.BlurNumSamples = 8;
+	m_dofDesc.MinZ = 15.0f;
+	m_dofDesc.RangeZ = 5.0f;
+	m_dofDesc.Power = 1.0f;
+	m_dofDesc.BlurPixelDistance = 10.0f;
+
+	m_fogDesc.Enable = false;
+	m_fogDesc.Type = FogType::Distance;
+	m_fogDesc.MinZ = 30.0f;
+	m_fogDesc.RangeZ = 40.0f;
+	m_fogDesc.Color = Color::white();
+
+	m_bloomDesc.Enable = true;
+	m_bloomDesc.Type = BloomType::Add;
+	m_bloomDesc.BlurNumSamples = 8;
+	m_bloomDesc.Intensity = 1.5f;
+	m_bloomDesc.Threshold = 0.1f;
+	m_bloomDesc.BlurPixelDistance = 50.0f;
+
+	m_chromaticAberrationDesc.Enable = true;
+	m_chromaticAberrationDesc.Blend = V4::one();
+	m_chromaticAberrationDesc.Offset = V4::one() * 2.5f;
+	m_chromaticAberrationDesc.Angle = V4(0, 120, 240, 0);
 }
 
 void Camera::Render()

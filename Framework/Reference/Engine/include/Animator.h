@@ -32,7 +32,7 @@ public:
 
 	inline float GetSpeed() const { return m_speed; }
 
-	inline void SetSpeed(float value) { m_speed = Clamp(value, 0.0f, 1.0f); }
+	inline void SetSpeed(float value) { m_speed = Clamp01(value); }
 
 	inline bool IsPaused() const { return m_pause; }
 

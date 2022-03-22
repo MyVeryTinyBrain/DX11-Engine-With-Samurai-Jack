@@ -12,7 +12,7 @@ void AnimatorNode::Accumulate(float deltaTime)
 {
 	float duration = GetDurationImpl();
 	float normalizedDeltaTime = deltaTime / duration;
-	m_normalizedTime = Clamp(m_normalizedTime + normalizedDeltaTime, 0.0f, FLT_MAX);
+	m_normalizedTime = Saturate(m_normalizedTime + normalizedDeltaTime);
 	m_dt = deltaTime;
 }
 
@@ -26,5 +26,5 @@ bool AnimatorNode::Animate(
 
 void AnimatorNode::SetNormalizedTime(float value)
 {
-	m_normalizedTime = Clamp(value, 0.0f, FLT_MAX);
+	m_normalizedTime = Saturate(value);
 }

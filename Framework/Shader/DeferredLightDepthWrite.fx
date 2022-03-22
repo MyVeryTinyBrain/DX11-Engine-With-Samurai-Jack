@@ -2,26 +2,26 @@
 
 struct VS_IN_Skinned
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
-	uint4 blendIndices : BLENDINDICES;
-	float4 blendWeight : BLENDWEIGHT;
+	float3 Position : POSITION;
+	float2 UV : TEXCOORD;
+	uint4  BlendIndices : BLENDINDICES;
+	float4 BlendWeight : BLENDWEIGHT;
 };
 
 struct VS_IN_Instance
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
-	float4 right : INSTANCE_RIGHT;
-	float4 up : INSTANCE_UP;
-	float4 forward : INSTANCE_FORWARD;
-	float4 instance_position : INSTANCE_POSITION;
+	float3 Position : POSITION;
+	float2 UV : TEXCOORD;
+	float4 Right : INSTANCE_RIGHT;
+	float4 Up : INSTANCE_UP;
+	float4 Forward : INSTANCE_FORWARD;
+	float4 Instance_Position : INSTANCE_POSITION;
 };
 
 struct PS_IN
 {
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
+	float4 Screen : SV_POSITION;
+	float2 UV : TEXCOORD;
 };
 
 texture2D		_ShadowCutoffTexture;
@@ -40,20 +40,20 @@ PS_IN VS_MAIN_Instance(VS_IN_Instance In)
 {
 	PS_IN output = (PS_IN)0;
 
-	float4 position = float4(In.position, 1);
+	float4 position = float4(In.Position, 1);
 
 	float4x4 instanceWorldMatrix;
-	instanceWorldMatrix[0] = In.right;
-	instanceWorldMatrix[1] = In.up;
-	instanceWorldMatrix[2] = In.forward;
-	instanceWorldMatrix[3] = In.instance_position;
+	instanceWorldMatrix[0] = In.Right;
+	instanceWorldMatrix[1] = In.Up;
+	instanceWorldMatrix[2] = In.Forward;
+	instanceWorldMatrix[3] = In.Instance_Position;
 
 	float4 worldPosition = mul(position, instanceWorldMatrix);
 	half4 viewPosition = mul(worldPosition, _ViewMatrix);
 	half4 outputPosition = mul(viewPosition, _ProjectionMatrix);
 
-	output.position = outputPosition;
-	output.uv = In.uv;
+	output.Screen = outputPosition;
+	output.UV = In.UV;
 
 	return output;
 }
@@ -62,15 +62,15 @@ PS_IN VS_MAIN_Skinned(VS_IN_Skinned In)
 {
 	PS_IN output = (PS_IN)0;
 
-	float4 position = float4(In.position, 1);
+	float4 position = float4(In.Position, 1);
 
 	if (_BoneMatricesUsage.x > 0)
 	{
 		matrix		boneMatrix =
-			_BoneMatrices[In.blendIndices.x] * In.blendWeight.x +
-			_BoneMatrices[In.blendIndices.y] * In.blendWeight.y +
-			_BoneMatrices[In.blendIndices.z] * In.blendWeight.z +
-			_BoneMatrices[In.blendIndices.w] * In.blendWeight.w;
+			_BoneMatrices[In.BlendIndices.x] * In.BlendWeight.x +
+			_BoneMatrices[In.BlendIndices.y] * In.BlendWeight.y +
+			_BoneMatrices[In.BlendIndices.z] * In.BlendWeight.z +
+			_BoneMatrices[In.BlendIndices.w] * In.BlendWeight.w;
 
 		position = mul(position, boneMatrix);
 	}
@@ -79,8 +79,8 @@ PS_IN VS_MAIN_Skinned(VS_IN_Skinned In)
 	half4 viewPosition = mul(worldPosition, _ViewMatrix);
 	half4 outputPosition = mul(viewPosition, _ProjectionMatrix);
 
-	output.position = outputPosition;
-	output.uv = In.uv;
+	output.Screen = outputPosition;
+	output.UV = In.UV;
 
 	return output;
 }
@@ -92,7 +92,7 @@ void PS_MAIN(PS_IN In)
 
 void PS_MAIN_AlphaTest(PS_IN In)
 {
-	float alpha = _ShadowCutoffTexture.Sample(pointSampler, In.uv).a;
+	float alpha = _ShadowCutoffTexture.Sample(pointSampler, In.UV).a;
 	if (alpha < _ShadowCutoffAlpha)
 		discard;
 }
@@ -102,7 +102,7 @@ RasterizerState RasterizerState0
 	FillMode = Solid;
 	Cullmode = Back;
 	DepthClipEnable = TRUE;
-	DepthBias = 100; // DepthBias = 100 * ShadowSmoothness
+	DepthBias = 300; // DepthBias = 300 + 100 * ShadowSmoothness
 	DepthBiasClamp = 0.0f;
 	SlopeScaledDepthBias = 10.0f;
 };

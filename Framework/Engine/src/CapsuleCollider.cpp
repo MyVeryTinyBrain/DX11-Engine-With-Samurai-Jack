@@ -80,7 +80,7 @@ void CapsuleCollider::DebugRender()
 	if (!m_dbgMaterial || !m_dbgMaterial->isValid)
 		return;
 
-	size_t passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
+	uint passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
 	if (passCount == 0)
 		return;
 
@@ -228,7 +228,7 @@ void CapsuleCollider::ResetDebugShape()
 
 					float v = 1 - (vertices[vIndex].position.y + capsuleHalfHeight + capsuleRadius) / (2.0f * (capsuleHalfHeight + capsuleRadius));
 
-					vertices[vIndex].uv = V2(spinPercent, v);
+					vertices[vIndex].uvw = V2(spinPercent, v);
 					vertices[vIndex].normal = cartesian.normalized;
 					++vIndex;
 				}
@@ -238,11 +238,11 @@ void CapsuleCollider::ResetDebugShape()
 			uint bottomVertexIndex = vIndex + 1;
 
 			vertices[topVertexIndex].position = V3::up() * (capsuleRadius + capsuleHalfHeight);
-			vertices[topVertexIndex].uv = V2(0, 0);
+			vertices[topVertexIndex].uvw = V2(0, 0);
 			vertices[topVertexIndex].normal = V3(0, 1, 0);
 
 			vertices[bottomVertexIndex].position = V3::down() * (capsuleRadius + capsuleHalfHeight);
-			vertices[bottomVertexIndex].uv = V2(0, 1);
+			vertices[bottomVertexIndex].uvw = V2(0, 1);
 			vertices[bottomVertexIndex].normal = V3(0, -1, 0);
 		}
 

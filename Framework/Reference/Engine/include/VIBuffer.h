@@ -25,12 +25,15 @@ public:
 	HRESULT ApplyIndexBuffer(Com<ID3D11DeviceContext> deviceContext);
 
 	HRESULT DrawOnce(Com<ID3D11DeviceContext> deviceContext);
+	HRESULT DrawOnce(Com<ID3D11DeviceContext> deviceContext, uint primitiveCount);
 
 	HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, UINT index);
+	HRESULT DrawSubMesh(Com<ID3D11DeviceContext> deviceContext, UINT index, uint primitiveCount);
 
 	HRESULT ApplyVertexAndInstanceBuffer(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceBuffer);
 
-	HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, size_t subMeshIndex, uint instanceCount);
+	HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount);
+	HRESULT DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, uint subMeshIndex, uint instanceCount, uint primitiveCount);
 
 public:
 

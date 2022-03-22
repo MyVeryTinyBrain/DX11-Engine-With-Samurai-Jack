@@ -67,7 +67,15 @@ HRESULT Material::SetTexture(const string& name, ResourceRef<Texture> texture)
 	return m_shader->SetTexture(name, texture);
 }
 
-HRESULT Material::GetTechniqueCount(size_t& out_techniqueCount) const
+HRESULT Material::SetTextures(const string& name, ResourceRef<Texture>* textures, uint count)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	return m_shader->SetTextures(name, textures, count);
+}
+
+HRESULT Material::GetTechniqueCount(uint& out_techniqueCount) const
 {
 	if (!m_shader)
 		return E_FAIL;
@@ -75,7 +83,7 @@ HRESULT Material::GetTechniqueCount(size_t& out_techniqueCount) const
 	return m_shader->GetTechniqueCount(out_techniqueCount);
 }
 
-HRESULT Material::GetPassCount(size_t techniqueIndex, size_t& out_passCount) const
+HRESULT Material::GetPassCount(uint techniqueIndex, uint& out_passCount) const
 {
 	if (!m_shader)
 		return E_FAIL;
@@ -83,12 +91,12 @@ HRESULT Material::GetPassCount(size_t techniqueIndex, size_t& out_passCount) con
 	return m_shader->GetPassCount(techniqueIndex, out_passCount);
 }
 
-size_t Material::GetPassCountOfAppliedTechnique() const
+uint Material::GetPassCountOfAppliedTechnique() const
 {
 	if (!m_shader)
 		return 0;
 
-	size_t passCount = 0;
+	uint passCount = 0;
 	if (FAILED(m_shader->GetPassCount(m_techniqueIndex, passCount)))
 		return 0;
 
@@ -227,34 +235,12 @@ HRESULT Material::GetShadowCutoffAlphaOfAppliedTechnique(uint passIndex, float& 
 	return S_OK;
 }
 
-HRESULT Material::GetTransparentLightModeOfAppliedTechqniue(uint passIndex, TransparentLightMode& out_transparentLightMode) const
-{
-	if (!m_shader)
-		return E_FAIL;
-
-	CompiledShaderDesc* shaderDesc = m_shader->GetShaderDesc();
-	if (!shaderDesc)
-		return E_FAIL;
-
-	TechniqueDesc* techniqueDesc = shaderDesc->GetTechniqueDesc(m_techniqueIndex);
-	if (!techniqueDesc)
-		return E_FAIL;
-
-	PassDesc* passDesc = techniqueDesc->GetPassDesc(passIndex);
-	if (!passDesc)
-		return E_FAIL;
-
-	out_transparentLightMode = passDesc->GetTransparentLightMode();
-
-	return S_OK;
-}
-
 bool Material::IsValid() const
 {
 	if (!m_shader)
 		return false;
 
-	size_t techniqueCount = 0;
+	uint techniqueCount = 0;
 	
 	if (FAILED(GetTechniqueCount(techniqueCount)))
 		return false;
@@ -262,7 +248,7 @@ bool Material::IsValid() const
 	if (m_techniqueIndex >= techniqueCount)
 		return false;
 
-	size_t passCount = 0;
+	uint passCount = 0;
 
 	if (FAILED(GetPassCount(m_techniqueIndex, passCount)))
 		return false;
@@ -313,7 +299,7 @@ HRESULT Material::GetEffectDesc(Com<ID3DX11Effect>& out_effect) const
 	return S_OK;
 }
 
-HRESULT Material::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, size_t techniqueIndex, size_t passIndex)
+HRESULT Material::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
 {
 	if (!m_shader)
 		return E_FAIL;
@@ -321,7 +307,7 @@ HRESULT Material::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, size_t 
 	return m_shader->SetInputLayout(techniqueIndex, passIndex);
 }
 
-HRESULT Material::ApplyPass(Com<ID3D11DeviceContext> deviceContext, size_t techniqueIndex, size_t passIndex)
+HRESULT Material::ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
 {
 	if (!m_shader)
 		return E_FAIL;

@@ -17,9 +17,9 @@ void Renderer::SetMaterial(ResourceRef<Material> material)
         m_materials[0] = material;
 }
 
-void Renderer::SetMaterialByIndex(size_t index, ResourceRef<Material> material)
+void Renderer::SetMaterialByIndex(uint index, ResourceRef<Material> material)
 {
-    if (index >= m_materials.size())
+    if (index >= uint(m_materials.size()))
         return;
 
     m_materials[index] = material;
@@ -35,20 +35,20 @@ void Renderer::SetMaterials(const vector<ResourceRef<Material>>& materials)
     m_materials = materials;
 }
 
-ResourceRef<Material> Renderer::GetMaterialByIndex(size_t index) const
+ResourceRef<Material> Renderer::GetMaterialByIndex(uint index) const
 {
-    if (index >= m_materials.size())
+    if (index >= uint(m_materials.size()))
         return ResourceRef<Material>();
 
     return m_materials[index];
 }
 
-void Renderer::SetMaterialCount(size_t count)
+void Renderer::SetMaterialCount(uint count)
 {
     vector<ResourceRef<Material>> materials;
     materials.resize(count);
 
-    for (size_t i = 0; i < m_materials.size(); ++i)
+    for (uint i = 0; i < uint(m_materials.size()); ++i)
     {
         if (i >= count)
             break;
@@ -59,9 +59,9 @@ void Renderer::SetMaterialCount(size_t count)
     m_materials.swap(materials);
 }
 
-size_t Renderer::GetMaterialCount() const
+uint Renderer::GetMaterialCount() const
 {
-    return m_materials.size();
+    return uint(m_materials.size());
 }
 
 bool Renderer::IsValid() const

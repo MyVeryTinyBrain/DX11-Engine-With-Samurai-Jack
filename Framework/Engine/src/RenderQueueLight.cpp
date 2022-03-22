@@ -108,41 +108,11 @@ void RenderQueueLight::Render(ICamera* camera)
             
             LightDesc lightDesc = light->GetLightDesc(camera);
 
-            Render_LightAccumulate(camera, light, lightDesc, false);
+            Render_LightAccumulate(camera, light, lightDesc);
         }
     }
 
-    Render_LightBlend(camera, false);
-}
-
-void RenderQueueLight::RenderForward(ICamera* camera)
-{
-    DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-    drt->forwardLight->Clear(m_graphicSystem->deviceContext, Color::clear());
-    drt->forwardSpecular->Clear(m_graphicSystem->deviceContext, Color::clear());
-    drt->forwardLightBlend->Clear(m_graphicSystem->deviceContext, Color::clear());
-
-    LightManager* lightManager = m_graphicSystem->lightManager;
-
-    for (uint nLightType = 0; nLightType < (uint)LightType::Max; ++nLightType)
-    {
-        LightType lightType = (LightType)nLightType;
-        uint lightCount = lightManager->GetLightCount(lightType);
-
-        for (uint i = 0; i < lightCount; ++i)
-        {
-            ILight* light = lightManager->GetLight(lightType, i);
-
-            if (!IsValidLight(camera, light))
-                continue;
-
-            LightDesc lightDesc = light->GetLightDesc(camera);
-
-            Render_LightAccumulate(camera, light, lightDesc, true);
-        }
-    }
-
-    Render_LightBlend(camera, true);
+    Render_LightBlend(camera);
 }
 
 void RenderQueueLight::Clear()
@@ -260,10 +230,10 @@ void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const Light
     for (auto& pairByMesh : requests)
     {
         const vector<RenderRequest>& requests = pairByMesh.second;
-        size_t instanceRequestCount = requests.size();
+        uint instanceRequestCount = uint(requests.size());
         const RenderRequest& front = requests.front();
 
-        size_t drawCount = 0;
+        uint drawCount = 0;
         m_instanceBufferManager->BeginSetDatas(instanceRequestCount);
         {
             for (auto& request : requests)
@@ -277,7 +247,7 @@ void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const Light
                 data.forward = request.essential.worldMatrix.row[2];
                 data.position = request.essential.worldMatrix.row[3];
 
-                m_instanceBufferManager->SetData(uint(drawCount), &data);
+                m_instanceBufferManager->SetData(drawCount, &data);
                 ++drawCount;
             }
         }
@@ -298,7 +268,15 @@ void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const Light
 
             if (FAILED(front.essential.mesh->ApplyVertexAndInstanceBuffer(m_graphicSystem->deviceContext, m_instanceBufferManager->GetBuffer()))) continue;
             if (FAILED(front.essential.mesh->ApplyIndexBuffer(m_graphicSystem->deviceContext))) continue;
-            if (FAILED(front.essential.mesh->DrawInstanceSubMesh(m_graphicSystem->deviceContext, front.essential.subMeshIndex, uint(drawCount)))) continue;
+
+            if (front.customPrimitiveCount.usePrimitiveCount)
+            {
+                if (FAILED(front.essential.mesh->DrawInstanceSubMesh(m_graphicSystem->deviceContext, front.essential.subMeshIndex, uint(drawCount), front.customPrimitiveCount.primitiveCount))) continue;
+            }
+            else
+            {
+                if (FAILED(front.essential.mesh->DrawInstanceSubMesh(m_graphicSystem->deviceContext, front.essential.subMeshIndex, uint(drawCount)))) continue;
+            }
         }
         m_CBufferManager->EndApply();
     }
@@ -346,47 +324,35 @@ void RenderQueueLight::Render_DepthOfLight_Skinned(ICamera* camera, const LightD
 
             if (FAILED(request.essential.mesh->ApplyVertexBuffer(m_graphicSystem->deviceContext))) continue;
             if (FAILED(request.essential.mesh->ApplyIndexBuffer(m_graphicSystem->deviceContext))) continue;
-            if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex))) continue;
+
+            if (request.customPrimitiveCount.usePrimitiveCount)
+            {
+                if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex, request.customPrimitiveCount.primitiveCount))) continue;
+            }
+            else
+            {
+                if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex))) continue;
+            }
         }
         m_CBufferManager->EndApply();
     }
 }
 
-void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc, bool forward)
+void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc)
 {
     uint passIndex = (uint)lightDesc.Type;
 
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
-    RenderTarget* normal = nullptr;
-    RenderTarget* depth_Light_Occlusion_Shadow = nullptr;
-    RenderTarget* specular_Power = nullptr;
+    RenderTarget* normal = drt->normal;
+    RenderTarget* depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;;
+    RenderTarget* specular_Power = drt->specular_Power;
     DepthStencil* lightDepthes[6] = {};
-    if (forward == false)
-    {
-        normal = drt->normal;
-        depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;
-        specular_Power = drt->specular_Power;
-        light->GetDepthes(lightDepthes);
-    }
-    else
-    {
-        normal = drt->forwardNormal;
-        depth_Light_Occlusion_Shadow = drt->forwardDepth_Light_Occlusion_Shadow;
-        specular_Power = drt->forwardSpecular_Power;
-        light->GetDepthes(lightDepthes);
-    }
+    light->GetDepthes(lightDepthes);
 
     // Outputs
-    if (forward == false)
-    {
-        drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem);
-    }
-    else
-    {
-        drt->SetForwardLightAccumulateRenderTargets(m_graphicSystem);
-    }
+    drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem);
 
     {
         m_CBufferManager->BeginApply(m_shaderLighting->GetEffect());
@@ -399,7 +365,7 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
                 for (uint i = 0; i < light->GetProjectionCount(); ++i)
                     depthMapArray[i] = lightDepthes[i]->srv.Get();
             }
-            m_shaderLighting->SetTextureArray("_LightDepthMap", depthMapArray, light->GetProjectionCount());
+            m_shaderLighting->SetTextures("_LightDepthMap", depthMapArray, light->GetProjectionCount());
 
             lightDesc.ViewMatrix[0].Transpose();
             lightDesc.ViewMatrix[1].Transpose();
@@ -430,39 +396,18 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     m_graphicSystem->RollbackRenderTarget();
 }
 
-void RenderQueueLight::Render_LightBlend(ICamera* camera, bool forward)
+void RenderQueueLight::Render_LightBlend(ICamera* camera)
 {
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
-    RenderTarget* diffuse = nullptr;
-    RenderTarget* depth_Light_Occlusion_Shadow = nullptr;
-    RenderTarget* light = nullptr;
-    RenderTarget* specular = nullptr;
-    if (forward == false)
-    {
-        diffuse = drt->diffuse;
-        depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;
-        light = drt->light;
-        specular = drt->specular;
-    }
-    else
-    {
-        diffuse = drt->forwardDiffuse;
-        depth_Light_Occlusion_Shadow = drt->forwardDepth_Light_Occlusion_Shadow;
-        light = drt->forwardLight;
-        specular = drt->forwardSpecular;
-    }
+    RenderTarget* diffuse = drt->diffuse;
+    RenderTarget* depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;
+    RenderTarget* light = drt->light;
+    RenderTarget* specular = drt->specular;
 
     // Outputs
-    if (forward == false)
-    {
-        drt->SetDeferredLightBlendRenderTargets(m_graphicSystem);
-    }
-    else
-    {
-        drt->SetForwardLightBlendRenderTargets(m_graphicSystem);
-    }
+    drt->SetDeferredLightBlendRenderTargets(m_graphicSystem);
 
     {
         m_shaderLightBlending->SetTexture("_Diffuse", diffuse->srv);

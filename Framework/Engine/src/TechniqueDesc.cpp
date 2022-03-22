@@ -2,9 +2,8 @@
 #include "TechniqueDesc.h"
 #include "PassDesc.h"
 
-TechniqueDesc::TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes, bool isCompute)
+TechniqueDesc::TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes)
 {
-	m_isComputeTechnique = isCompute;
 	m_technique = technique;
 	m_passDescs = passes;
 }
@@ -18,24 +17,19 @@ TechniqueDesc::~TechniqueDesc()
 	SafeRelease(m_technique);
 }
 
-bool TechniqueDesc::IsComputeTechnique() const
-{
-	return m_isComputeTechnique;
-}
-
 Com<ID3DX11EffectTechnique> TechniqueDesc::GetTechnique() const
 {
 	return m_technique;
 }
 
-size_t TechniqueDesc::GetPassDescCount() const
+uint TechniqueDesc::GetPassDescCount() const
 {
-	return m_passDescs.size();
+	return uint(m_passDescs.size());
 }
 
-PassDesc* TechniqueDesc::GetPassDesc(size_t index) const
+PassDesc* TechniqueDesc::GetPassDesc(uint index) const
 {
-	if (index >= m_passDescs.size())
+	if (index >= uint(m_passDescs.size()))
 		return nullptr;
 
 	return m_passDescs[index];
@@ -85,8 +79,6 @@ TechniqueDesc* TechniqueDesc::CreateTechqniueDesc(Com<ID3D11Device> device, ID3D
 		passes.clear();
 	};
 
-	bool hasDefaultShader = false;
-	bool hasComputeShader = false;
 	for (uint32_t i = 0; i < techniqueDesc.Passes; ++i)
 	{
 		ID3DX11EffectPass* pass = technique->GetPassByIndex(i);
@@ -103,18 +95,7 @@ TechniqueDesc* TechniqueDesc::CreateTechqniueDesc(Com<ID3D11Device> device, ID3D
 			ReleaseVars();
 			return nullptr;
 		}
-
-		if (passDesc->IsComputePass())
-			hasComputeShader = true;
-		else
-			hasDefaultShader = true;
-		if (hasDefaultShader && hasComputeShader)
-		{
-			out_error = TEXT("Technique cannot have both a Compute Pass and a Default Pass at the same time.");
-			ReleaseVars();
-			return nullptr;
-		}
 	}
 
-	return new TechniqueDesc(technique, passes, hasComputeShader);
+	return new TechniqueDesc(technique, passes);
 }

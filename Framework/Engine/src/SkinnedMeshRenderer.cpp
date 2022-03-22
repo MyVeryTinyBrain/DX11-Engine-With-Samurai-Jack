@@ -37,7 +37,7 @@ void SkinnedMeshRenderer::Render()
 		if (!currentMaterial || !currentMaterial->isValid)
 			continue;
 
-		size_t passCount = currentMaterial->GetPassCountOfAppliedTechnique();
+		uint passCount = currentMaterial->GetPassCountOfAppliedTechnique();
 
 		for (uint j = 0; j < passCount; ++j)
 		{
@@ -46,8 +46,6 @@ void SkinnedMeshRenderer::Render()
 			bool drawShadowFlag;
 			bool shadowCutoffEnableFlag;
 			float shadowCutoffAlpha;
-
-			TransparentLightMode transparentLightMode;
 
 			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
 				continue;
@@ -60,22 +58,17 @@ void SkinnedMeshRenderer::Render()
 			if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha)))
 				continue;
 
-			if (FAILED(currentMaterial->GetTransparentLightModeOfAppliedTechqniue(j, transparentLightMode)))
-				continue;
-
 			RenderRequest input = {};
 			input.essential.worldMatrix = localToWorldMatrix;
 			input.essential.renderGroup = renderGroup;
 			input.essential.renderGroupOrder = renderGroupOrder;
 			input.essential.layerIndex = m_layerIndex;
 			input.essential.material = currentMaterial;
-			input.essential.techniqueIndex = m_techniqueIndex;
+			input.essential.techniqueIndex = currentMaterial->techniqueIndex;
 			input.essential.passIndex = j;
 			input.essential.mesh = m_mesh;
 			input.essential.subMeshIndex = i;
 			input.essential.instance = false;
-
-			input.sub.transparentLightMode = transparentLightMode;
 
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;
@@ -136,9 +129,9 @@ void SkinnedMeshRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 	SetupNodeTransforms();
 }
 
-size_t SkinnedMeshRenderer::GetNodeTransformCount() const
+uint SkinnedMeshRenderer::GetNodeTransformCount() const
 {
-	return m_nodeTransformsByIndex.size();
+	return uint(m_nodeTransformsByIndex.size());
 }
 
 Ref<NodeTransform> SkinnedMeshRenderer::GetNodeTransformByIndex(uint index) const

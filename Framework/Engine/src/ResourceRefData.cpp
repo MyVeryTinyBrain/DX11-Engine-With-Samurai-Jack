@@ -10,7 +10,7 @@ ResourceRefData::ResourceRefData(ResourceObject* vp)
     }
 
     m_obj = vp;
-    m_pRefCount = new size_t(0);
+    m_pRefCount = new uint(0);
     m_pIsDestroyed = new bool(false);
 }
 
@@ -58,7 +58,7 @@ bool ResourceRefData::operator!=(const ResourceRefData& other) const
     return m_obj != other.m_obj;
 }
 
-size_t ResourceRefData::GetReferenceCount() const
+uint ResourceRefData::GetReferenceCount() const
 {
     return *m_pRefCount;
 }

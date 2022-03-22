@@ -217,13 +217,13 @@ void GizmoRotation::SetupAxisMesh(uint edge)
 		vertices[i].position.x = Cos(rad);
 		vertices[i].position.y = Sin(rad);
 		vertices[i].position.z = 0.0f;
-		vertices[i].uv.x = vertices[i].position.x * 0.5f + 0.5f;
-		vertices[i].uv.y = vertices[i].position.y * 0.5f + 0.5f;
+		vertices[i].uvw.x = vertices[i].position.x * 0.5f + 0.5f;
+		vertices[i].uvw.y = vertices[i].position.y * 0.5f + 0.5f;
 		vertices[i].normal = V3::back();
 	}
 	uint centerIndex = edge;
 	vertices[centerIndex].position = V3::zero();
-	vertices[centerIndex].uv = V2::one() * 0.5f;
+	vertices[centerIndex].uvw = V2::one() * 0.5f;
 	vertices[centerIndex].normal = V3::back();
 
 	// Setup Triangles
@@ -269,8 +269,8 @@ void GizmoRotation::SetupAxisLineStripMesh(uint edge)
 		vertices[i].position.x = Cos(rad);
 		vertices[i].position.y = Sin(rad);
 		vertices[i].position.z = 0.0f;
-		vertices[i].uv.x = vertices[i].position.x * 0.5f + 0.5f;
-		vertices[i].uv.y = vertices[i].position.y * 0.5f + 0.5f;
+		vertices[i].uvw.x = vertices[i].position.x * 0.5f + 0.5f;
+		vertices[i].uvw.y = vertices[i].position.y * 0.5f + 0.5f;
 		vertices[i].normal = V3::back();
 	}
 
@@ -312,12 +312,12 @@ void GizmoRotation::SetupSliceLineMesh()
 	vertices[0].position.x = +0.0f;
 	vertices[0].position.y = +0.0f;
 	vertices[0].position.z = -0.5f;
-	vertices[0].uv.y = 1.0f;
+	vertices[0].uvw.y = 1.0f;
 
 	vertices[1].position.x = +0.0f;
 	vertices[1].position.y = +0.0f;
 	vertices[1].position.z = +0.5f;
-	vertices[1].uv.y = 0.0f;
+	vertices[1].uvw.y = 0.0f;
 
 	// Setup Indices
 	uint numIndices = 2;

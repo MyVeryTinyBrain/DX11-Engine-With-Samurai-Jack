@@ -166,7 +166,6 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="FreeCamera.h" />
-    <ClInclude Include="MaterialTransparent.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="JackAnimator.h" />
     <ClInclude Include="PlayerTestScene.h" />
@@ -179,7 +178,6 @@
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="FreeCamera.cpp" />
-    <ClCompile Include="MaterialTransparent.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="JackAnimator.cpp" />
     <ClCompile Include="PlayerTestScene.cpp" />
@@ -198,9 +196,6 @@
   <ItemGroup>
     <Image Include="Client.ico" />
     <Image Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Shader\Transparent.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

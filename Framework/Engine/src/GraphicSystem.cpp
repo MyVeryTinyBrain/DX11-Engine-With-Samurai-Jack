@@ -119,7 +119,7 @@ void GraphicSystem::Render()
 {
 	Color clearColorLerped = Color::Lerp(m_clearColor, Color::white(), 1 - m_clearColor.a);
 	
-	for (size_t i = 0; i < m_cameraManager->GetCameraCount(); ++i)
+	for (uint i = 0; i < m_cameraManager->GetCameraCount(); ++i)
 	{
 		ICamera* camera = m_cameraManager->GetCamera(i);
 

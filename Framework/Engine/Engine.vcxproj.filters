@@ -125,13 +125,7 @@
     <ClInclude Include="include\Shader.h">
       <Filter>Object\Resource\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="include\RenderTypes.h">
-      <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
-    </ClInclude>
     <ClInclude Include="include\CompiledShaderDesc.h">
-      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SementicDesc.h">
       <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
     </ClInclude>
     <ClInclude Include="include\PassDesc.h">
@@ -539,6 +533,10 @@
     <ClInclude Include="include\ComputeShader.h">
       <Filter>Object\Resource\ComputeShader</Filter>
     </ClInclude>
+    <ClInclude Include="include\TrailRenderer.h">
+      <Filter>Object\SceneObject\Component\Renderer\TrailRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShaderTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -658,13 +656,10 @@
     <ClCompile Include="src\Shader.cpp">
       <Filter>Object\Resource\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderTypes.cpp">
+    <ClCompile Include="src\ShaderTypes.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
     </ClCompile>
     <ClCompile Include="src\CompiledShaderDesc.cpp">
-      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SementicDesc.cpp">
       <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
     </ClCompile>
     <ClCompile Include="src\PassDesc.cpp">
@@ -1027,6 +1022,9 @@
     <ClCompile Include="src\ComputeShader.cpp">
       <Filter>Object\Resource\ComputeShader</Filter>
     </ClCompile>
+    <ClCompile Include="src\TrailRenderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\TrailRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1316,9 +1314,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\Test.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Shader\GizmoRotationNoHighlight.fx">
       <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>

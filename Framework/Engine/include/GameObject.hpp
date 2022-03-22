@@ -76,7 +76,7 @@ inline T * GameObject::GetComponentInChilds() const
 		if (component)
 			return component;
 
-		for (size_t i = 0; i < t->childCount; ++i)
+		for (uint i = 0; i < t->childCount; ++i)
 			s.push(t->GetChild(i));
 	}
 	return nullptr;
@@ -96,7 +96,7 @@ inline vector<T*> GameObject::GetComponentsInChilds() const
 		if (component)
 			components.push_back(component);
 
-		for (size_t i = 0; i < t->childCount; ++i)
+		for (uint i = 0; i < t->childCount; ++i)
 			s.push(t->GetChild(i));
 	}
 	return components;

@@ -3,18 +3,21 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>..\Reference\XmMathPlus\include\;..\Reference\PhysX\include\;..\Reference\FMod\include\;..\Reference\Effects11\include\;..\Reference\DirectXTex\include\;..\Reference\Assimp\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Reference\XmMathPlus\lib\ReleaseX64\;..\Reference\PhysX\lib\ReleaseX64\;..\Reference\FMod\lib\x64\;..\Reference\Effects11\lib\ReleaseX64\;..\Reference\DirectXTex\lib\ReleaseX64\;..\Reference\Assimp\lib\ReleaseX64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Reference\XmMathPlus\include\;..\Reference\Json\include\;..\Reference\PhysX\include\;..\Reference\FMod\include\;..\Reference\Effects11\include\;..\Reference\DirectXTex\include\;..\Reference\Assimp\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Reference\XmMathPlus\lib\ReleaseX64\;..\Reference\Json\lib\ReleaseX64\;..\Reference\PhysX\lib\ReleaseX64\;..\Reference\FMod\lib\x64\;..\Reference\Effects11\lib\ReleaseX64\;..\Reference\DirectXTex\lib\ReleaseX64\;..\Reference\Assimp\lib\ReleaseX64\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>XmMathPlus.lib;d3d11.lib;dxguid.lib;DirectXTex.lib;Effects11.lib;assimp.lib;LowLevel_static_64.lib;LowLevelAABB_static_64.lib;LowLevelDynamics_static_64.lib;PhysX_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;SceneQuery_static_64.lib;SimulationController_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>XmMathPlus.lib;jsoncpp_static.lib;d3d11.lib;dxguid.lib;DirectXTex.lib;Effects11.lib;assimp.lib;LowLevel_static_64.lib;LowLevelAABB_static_64.lib;LowLevelDynamics_static_64.lib;PhysX_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCommon_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXFoundation_64.lib;PhysXPvdSDK_static_64.lib;PhysXTask_static_64.lib;PhysXVehicle_static_64.lib;SceneQuery_static_64.lib;SimulationController_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
       <ShaderType>Effect</ShaderType>
     </FxCompile>
+    <ClCompile>
+      <ConformanceMode>Default</ConformanceMode>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

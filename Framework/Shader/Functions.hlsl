@@ -160,6 +160,7 @@ inline float3 DecomposeScale(float4x4 value)
 inline half3 UnpackNormalMap(half3 normalMap, half3 normal, half3 tangent, half3 binormal)
 {
     half3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);
+    //half3 unpackedNormalMap = (normalMap.x * binormal) + (normalMap.y * tangent) + (normalMap.z * normal);
     unpackedNormalMap = normalize(unpackedNormalMap);
     return unpackedNormalMap;
 }

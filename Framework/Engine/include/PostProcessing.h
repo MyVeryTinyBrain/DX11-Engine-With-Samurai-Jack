@@ -16,16 +16,18 @@ class ENGINE_API PostProcessing
 	{
 		SSAO_WirteOcclusion,
 		SSAO_ApplyOcclusion,
+		SSR_Write,
+		SSR_Apply,
+		DOF_WritePass0,
+		DOF_WritePass1,
+		DOF_Apply,
 		Fog_Apply_Z,
 		Fog_Apply_Distance,
 		Bloom_Extract,
 		Bloom_Apply_Add,
 		Bloom_Apply_Mix,
-		SSR_Write,
-		SSR_Apply,
-		LinearDOF_WritePass0,
-		LinearDOF_WritePass1,
-		LinearDOF_Apply,
+		ChromaticAberration_Write,
+		ChromaticAberration_Apply,
 		HorizontalBlur,
 		VerticalBlur,
 		HorizontalInvDepthBlur,
@@ -66,15 +68,17 @@ private:
 
 	void Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
 	void Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
+	void Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc);
+	void Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc);
+	void Render_DOF_Write(ICamera* camera, const DOFDesc& dofDesc);
+	void Render_DOF_Apply(ICamera* camera, const DOFDesc& dofDesc);
 	void Render_Fog_Apply(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Fog_Apply_Distance(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Fog_Apply_Z(ICamera* camera, const FogDesc& fogDesc);
 	void Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloomDesc);
 	void Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomDesc);
-	void Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc);
-	void Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc);
-	void Render_LinearDOF_Write(ICamera* camera, const LinearDOFDesc& dofDesc);
-	void Render_LinearDOF_Apply(ICamera* camera, const LinearDOFDesc& dofDesc);
+	void Render_ChromaticAberration_Write(ICamera* camera, const ChromaticAberrationDesc& chromaticAberrationDesc);
+	void Render_ChromaticAberration_Apply(ICamera* camera, const ChromaticAberrationDesc& chromaticAberrationDesc);
 	void Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
 
 private:

@@ -158,7 +158,7 @@
     <ClInclude Include="include\Ref.h" />
     <ClInclude Include="include\Ref.hpp" />
     <ClInclude Include="include\RefData.h" />
-    <ClInclude Include="include\RenderTypes.h" />
+    <ClInclude Include="include\ShaderTypes.h" />
     <ClInclude Include="include\RenderQueue.h" />
     <ClInclude Include="include\RenderRequestInput.h" />
     <ClInclude Include="include\RenderTexture2D.h" />
@@ -176,7 +176,6 @@
     <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\SceneManagement.h" />
     <ClInclude Include="include\SceneObject.h" />
-    <ClInclude Include="include\SementicDesc.h" />
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\RenderQueueLight.h" />
     <ClInclude Include="include\SkinnedMeshRenderer.h" />
@@ -192,6 +191,7 @@
     <ClInclude Include="include\Texture2D.h" />
     <ClInclude Include="include\Times.h" />
     <ClInclude Include="include\TimeElement.h" />
+    <ClInclude Include="include\TrailRenderer.h" />
     <ClInclude Include="include\Transform.h" />
     <ClInclude Include="include\TransformData.h" />
     <ClInclude Include="include\TransformUpdateArguments.h" />
@@ -337,7 +337,7 @@
     <ClCompile Include="src\PassDesc.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RefData.cpp" />
-    <ClCompile Include="src\RenderTypes.cpp" />
+    <ClCompile Include="src\ShaderTypes.cpp" />
     <ClCompile Include="src\RenderQueue.cpp" />
     <ClCompile Include="src\RenderRequestInput.cpp" />
     <ClCompile Include="src\RenderTexture2D.cpp" />
@@ -352,7 +352,6 @@
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManagement.cpp" />
     <ClCompile Include="src\SceneObject.cpp" />
-    <ClCompile Include="src\SementicDesc.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\RenderQueueLight.cpp" />
     <ClCompile Include="src\SkinnedMeshRenderer.cpp" />
@@ -366,6 +365,7 @@
     <ClCompile Include="src\Texture2D.cpp" />
     <ClCompile Include="src\Times.cpp" />
     <ClCompile Include="src\TimeElement.cpp" />
+    <ClCompile Include="src\TrailRenderer.cpp" />
     <ClCompile Include="src\Transform.cpp" />
     <ClCompile Include="src\TransformData.cpp" />
     <ClCompile Include="src\TransformUpdateArguments.cpp" />
@@ -390,12 +390,6 @@
     <FxCompile Include="..\Shader\PostProcessing.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />
-    <FxCompile Include="..\Shader\Test.fx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="include\Engine.natvis" />
@@ -477,7 +471,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -509,7 +503,7 @@ xcopy /y .\bin\DebugX86\*.dll			..\Reference\DLL\DebugX86\</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -541,7 +535,7 @@ xcopy /y .\bin\ReleaseX86\*.dll			..\Reference\DLL\ReleaseX86\</Command>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -573,7 +567,7 @@ xcopy /y .\bin\DebugX64\*.dll			..\Reference\DLL\DebugX64\</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);ENGINE</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>.\include\;.\header\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

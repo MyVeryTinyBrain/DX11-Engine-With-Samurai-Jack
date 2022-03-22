@@ -50,6 +50,8 @@ public:
 
 	void SetPrimitiveTopology(PrimitiveTopology value);
 
+	void SetBounds(const Bounds& value) { m_bounds = value; }
+
 public:
 
 	inline bool IsValid() const { return m_vertices && m_arrSubIndicesDesc; }
@@ -63,6 +65,8 @@ public:
 	inline PrimitiveTopology GetPrimitiveTopology() const { return m_primitive; }
 
 	inline D3D11_PRIMITIVE_TOPOLOGY GetPrimitiveTopologyAsD3DType() const { return (D3D11_PRIMITIVE_TOPOLOGY)m_primitive; }
+
+	inline UINT GetPrimitiveVertexCount() const { return m_primitiveVertexCount; }
 
 	inline UINT GetSubIndicesCount() const { return m_subIndecesCount; }
 

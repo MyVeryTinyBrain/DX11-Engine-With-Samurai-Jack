@@ -2,14 +2,14 @@
 
 struct VS_IN
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
+	float3 Position : POSITION;
+	float2 UV : TEXCOORD;
 };
 
 struct PS_IN
 {
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
+	float4 Screen : SV_POSITION;
+	float2 UV : TEXCOORD;
 };
 
 texture2D		_Diffuse;
@@ -28,8 +28,8 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	output.position = float4(In.position, 1.0f);
-	output.uv = In.uv;
+	output.Screen = float4(In.Position, 1.0f);
+	output.UV = In.UV;
 
 	return output;
 }
@@ -38,7 +38,7 @@ float4 PS_MAIN_NonBlend(PS_IN In) : SV_TARGET
 {
 	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(pointSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.UV);
 	if (color.a < 1.0f)
 		color = half4(color.xyz, 1.0f);
 
@@ -49,7 +49,7 @@ float4 PS_MAIN_Blend(PS_IN In) : SV_TARGET
 {
 	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(pointSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.UV);
 
 	return color;
 }
@@ -58,7 +58,7 @@ float4 PS_MAIN_AlphaTest(PS_IN In) : SV_TARGET
 {
 	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(pointSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.UV);
 
 	clip(color.a - 0.99f);
 
@@ -69,7 +69,7 @@ float4 PS_MAIN_PerspectiveDepthVisualize(PS_IN In) : SV_TARGET
 {
 	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(pointSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.UV);
 
 	const half const_near = 0.1f;
 	const half const_far = 50.0f;
@@ -81,7 +81,7 @@ float4 PS_MAIN_OrthoDepthVisualize(PS_IN In) : SV_TARGET
 {
 	half4 color = (half4)0;
 
-	color = _Diffuse.Sample(pointSampler, In.uv);
+	color = _Diffuse.Sample(pointSampler, In.UV);
 	half depth = pow(abs(color), 1.5f).r;
 	return half4(depth, depth, depth, 1.0f);
 }
@@ -92,9 +92,9 @@ float4 PS_MAIN_HorizontalBlur(PS_IN In) : SV_TARGET
 
 	float width, height;
 	_Diffuse.GetDimensions(width, height);
-	half2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
+	half2 pixelCoord = UVToTexPixelCoord(width, height, In.UV);
 
-	half4 horizontalColor = _Diffuse.Sample(pointSampler, In.uv);
+	half4 horizontalColor = _Diffuse.Sample(pointSampler, In.UV);
 	for (uint i = 0; i < _Blur; ++i)
 	{
 		horizontalColor += _Diffuse.Sample(pointSampler, TexPixelCoordToUV(width, height, pixelCoord - half2(i, 0)));
@@ -111,9 +111,9 @@ float4 PS_MAIN_VerticalBlur(PS_IN In) : SV_TARGET
 
 	half width, height;
 	_Diffuse.GetDimensions(width, height);
-	half2 pixelCoord = UVToTexPixelCoord(width, height, In.uv);
+	half2 pixelCoord = UVToTexPixelCoord(width, height, In.UV);
 
-	float4 verticalColor = _Diffuse.Sample(pointSampler, In.uv);
+	float4 verticalColor = _Diffuse.Sample(pointSampler, In.UV);
 	for (uint j = 0; j < _Blur; ++j)
 	{
 		verticalColor += _Diffuse.Sample(pointSampler, TexPixelCoordToUV(width, height, pixelCoord - half2(0, j)));

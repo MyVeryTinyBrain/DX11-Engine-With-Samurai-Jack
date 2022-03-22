@@ -150,14 +150,15 @@ void RenderQueue::Render(ICamera* camera)
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depth_Light_Occlusion_Shadow->srv, 200, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular_Power->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->reflection_ReflectMask->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->reflection_ReflectionBlur_ReflectMask->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 000, 100, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(
+		drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssao->srv, 000, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->bloom->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssr->srv, 200, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 300, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssr->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 200, 200, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->bloom->srv, 300, 200, 100, 100, DeferredScreenRender::Blend::None);
 	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->result->srv, 000, 300, 100, 100, DeferredScreenRender::Blend::None);
 }
 

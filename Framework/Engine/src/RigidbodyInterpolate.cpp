@@ -70,7 +70,7 @@ V3 RigidbodyInterpolate::CalcInterpolatePosition() const
 	float accumulated = m_time->GetFixedAccumulated() * m_time->GetFixedTimeScale();
 	float percent = accumulated / m_time->GetFixedInterval();
 
-	percent = Clamp(percent, 0.0f, 1.0f);
+	percent = Clamp01(percent);
 
 	return V3::Lerp(m_beforePosition, m_backupPosition, percent);
 }
@@ -80,7 +80,7 @@ Q RigidbodyInterpolate::CalcInterpolateRotation() const
 	float accumulated = m_time->GetFixedAccumulated() * m_time->GetFixedTimeScale();
 	float percent = accumulated / m_time->GetFixedInterval();
 
-	percent = Clamp(percent, 0.0f, 1.0f);
+	percent = Clamp01(percent);
 
 	return Q::SLerp(m_beforeRotation, m_backupRotation, percent);
 }

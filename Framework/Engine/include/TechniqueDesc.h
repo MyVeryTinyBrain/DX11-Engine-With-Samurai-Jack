@@ -6,7 +6,7 @@ class ENGINE_API TechniqueDesc
 {
 protected:
 
-	TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes, bool isCompute);
+	TechniqueDesc(ID3DX11EffectTechnique* technique, const vector<PassDesc*>& passes);
 
 public:
 
@@ -14,13 +14,11 @@ public:
 
 public:
 
-	bool IsComputeTechnique() const;
-
 	Com<ID3DX11EffectTechnique> GetTechnique() const;
 
-	size_t GetPassDescCount() const;
+	uint GetPassDescCount() const;
 
-	PassDesc* GetPassDesc(size_t index) const;
+	PassDesc* GetPassDesc(uint index) const;
 
 	HRESULT GetPassIndexByName(const string& name, uint& out_index) const;
 
@@ -30,7 +28,6 @@ public:
 
 private:
 
-	bool						m_isComputeTechnique = false;
 	ID3DX11EffectTechnique*		m_technique = nullptr;
 	vector<PassDesc*>			m_passDescs;
 };
