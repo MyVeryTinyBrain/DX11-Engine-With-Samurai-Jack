@@ -8,6 +8,7 @@
 #include "RenderTarget.h"
 #include "VIBuffer.h"
 #include "PrimitiveVI.h"
+#include "VI.h"
 
 PostProcessing::PostProcessing(GraphicSystem* graphicSystem, CBufferManager* cBufferManager, InstanceBufferManager* instanceBufferMaanger)
 {
@@ -18,6 +19,7 @@ PostProcessing::PostProcessing(GraphicSystem* graphicSystem, CBufferManager* cBu
 
 PostProcessing::~PostProcessing()
 {
+	SafeDelete(m_quad);
 	SafeDelete(m_normalizedQuad);
 	SafeDelete(m_shaderPostProcessing);
 }
@@ -47,12 +49,13 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 
 	m_CBufferManager->BeginApply(m_shaderPostProcessing->GetEffect());
 	{
-		m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
+		m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 
 		m_shaderPostProcessing->SetVector("_TextureSize", V2(float(drt->width), float(drt->height)));
 		m_shaderPostProcessing->SetTexture("_Diffuse", drt->diffuse->srv);
 		m_shaderPostProcessing->SetTexture("_Normal", drt->normal->srv);
-		m_shaderPostProcessing->SetTexture("_Depth_Light_Occlusion_Shadow", drt->depth_Light_Occlusion_Shadow->srv);
+		m_shaderPostProcessing->SetTexture("_Depth", drt->depth->srv);
+		m_shaderPostProcessing->SetTexture("_Light_Occlusion_Shadow", drt->light_Occlusion_Shadow->srv);
 		m_shaderPostProcessing->SetTexture("_Reflection_ReflectionBlur_ReflectMask", drt->reflection_ReflectionBlur_ReflectMask->srv);
 
 		m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
@@ -76,6 +79,42 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 void PostProcessing::Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out)
 {
 	Render_Blur(desc, in, bridge, out);
+}
+
+void PostProcessing::DrawToScreen(Com<ID3D11ShaderResourceView> src, uint2 pos, uint2 size, CopyType type)
+{
+	SetScreenQuad(pos.x, pos.y, size.x, size.y);
+
+	uint technique, pass;
+	GetCopyTechniqueAndPass(type, technique, pass);
+
+	m_shaderPostProcessing->SetTexture("_Sample", src);
+	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
+	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
+	m_quad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
+	m_quad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
+	m_quad->DrawOnce(m_graphicSystem->deviceContext);
+}
+
+void PostProcessing::DrawToTextrue(Com<ID3D11ShaderResourceView> src, Com<ID3D11RenderTargetView> dest, uint2 destSize, CopyType type)
+{
+	ID3D11RenderTargetView* arrRTV[8] = {};
+	arrRTV[0] = dest.Get();
+
+	uint technique, pass;
+	GetCopyTechniqueAndPass(type, technique, pass);
+
+	IGraphicSystem* iGraphicSystem = m_graphicSystem;
+	uint2 prevViewport = iGraphicSystem->GetViewport();
+
+	iGraphicSystem->SetViewport(destSize.x, destSize.y);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_shaderPostProcessing->SetTexture("_Sample", src.Get());
+	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
+	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
+	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+
+	iGraphicSystem->SetViewport(prevViewport.x, prevViewport.y);
 }
 
 void PostProcessing::PostProcess_Deferred(ICamera* camera)
@@ -212,10 +251,71 @@ void PostProcessing::GetTehcniqueAndPass(Type type, uint& out_technique, uint& o
 			technique = 1;
 			pass = 5;
 			break;
+		case Type::DefaultScreen:
+			technique = 2;
+			pass = 0;
+			break;
+		case Type::AlphatestScreen:
+			technique = 2;
+			pass = 1;
+			break;
+		case Type::AlphablendScreen:
+			technique = 2;
+			pass = 2;
+			break;
+		case Type::AlphaToDarkScreen:
+			technique = 2;
+			pass = 3;
+			break;
+		case Type::LinearDepthScreen:
+			technique = 2;
+			pass = 4;
+			break;
 	}
 
 	out_technique = technique;
 	out_pass = pass;
+}
+
+void PostProcessing::GetBlurTechniqueAndPass(BlurType type, uint out_technique[2], uint out_pass[2])
+{
+	switch (type)
+	{
+		case BlurType::Default:
+			GetTehcniqueAndPass(PostProcessing::Type::HorizontalBlur, out_technique[0], out_pass[0]);
+			GetTehcniqueAndPass(PostProcessing::Type::VerticalBlur, out_technique[1], out_pass[1]);
+			break;
+		case BlurType::InvDepth:
+			GetTehcniqueAndPass(PostProcessing::Type::HorizontalInvDepthBlur, out_technique[0], out_pass[0]);
+			GetTehcniqueAndPass(PostProcessing::Type::VerticalInvDepthBlur, out_technique[1], out_pass[1]);
+			break;
+		case BlurType::Depth:
+			GetTehcniqueAndPass(PostProcessing::Type::HorizontalDepthBlur, out_technique[0], out_pass[0]);
+			GetTehcniqueAndPass(PostProcessing::Type::VerticalDepthBlur, out_technique[1], out_pass[1]);
+			break;
+	}
+}
+
+void PostProcessing::GetCopyTechniqueAndPass(CopyType type, uint& out_technique, uint& out_pass)
+{
+	switch (type)
+	{
+		case CopyType::Default:
+			GetTehcniqueAndPass(PostProcessing::Type::DefaultScreen, out_technique, out_pass);
+			break;
+		case CopyType::Alphatest:
+			GetTehcniqueAndPass(PostProcessing::Type::AlphatestScreen, out_technique, out_pass);
+			break;
+		case CopyType::Alphablend:
+			GetTehcniqueAndPass(PostProcessing::Type::AlphablendScreen, out_technique, out_pass);
+			break;
+		case CopyType::AlphaToDark:
+			GetTehcniqueAndPass(PostProcessing::Type::AlphaToDarkScreen, out_technique, out_pass);
+			break;
+		case CopyType::LinearDepth:
+			GetTehcniqueAndPass(PostProcessing::Type::LinearDepthScreen, out_technique, out_pass);
+			break;
+	}
 }
 
 void PostProcessing::Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc)
@@ -510,21 +610,7 @@ void PostProcessing::Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderT
 	arrRTV[1][0] = out->rtv.Get();
 
 	uint technique[2], pass[2];
-	switch (desc.Type)
-	{
-		case BlurType::Default:
-			GetTehcniqueAndPass(PostProcessing::Type::HorizontalBlur, technique[0], pass[0]);
-			GetTehcniqueAndPass(PostProcessing::Type::VerticalBlur, technique[1], pass[1]);
-			break;
-		case BlurType::InvDepth:
-			GetTehcniqueAndPass(PostProcessing::Type::HorizontalInvDepthBlur, technique[0], pass[0]);
-			GetTehcniqueAndPass(PostProcessing::Type::VerticalInvDepthBlur, technique[1], pass[1]);
-			break;
-		case BlurType::Depth:
-			GetTehcniqueAndPass(PostProcessing::Type::HorizontalDepthBlur, technique[0], pass[0]);
-			GetTehcniqueAndPass(PostProcessing::Type::VerticalDepthBlur, technique[1], pass[1]);
-			break;
-	}
+	GetBlurTechniqueAndPass(desc.Type, technique, pass);
 
 	m_shaderPostProcessing->SetRawValue("_BlurDesc", &desc, sizeof(BlurDesc));
 
@@ -548,17 +634,51 @@ void PostProcessing::Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderT
 	iGraphicSystem->SetViewport(prevViewport.x, prevViewport.y);
 }
 
+HRESULT PostProcessing::SetScreenQuad(uint x, uint y, uint width, uint height)
+{
+	RECT rect = {};
+	GetClientRect(m_graphicSystem->windowHandle, &rect);
+	uint cw = rect.right;
+	uint ch = rect.bottom;
+	float dw = float(cw) * 0.5f;
+	float dh = float(ch) * 0.5f * -1.0f;
+
+	VI* vi = m_quad->GetVI();
+	Vertex* vertices = vi->GetVertices();
+	vertices[0].position = V3(float(x) / dw - 1.0f, float(y) / dh + 1.0f, 0.0f);
+	vertices[1].position = V3(float(x + width) / dw - 1.0f, float(y) / dh + 1.0f, 0.0f);
+	vertices[2].position = V3(float(x + width) / dw - 1.0f, float(y + height) / dh + 1.0f, 0.0f);
+	vertices[3].position = V3(float(x) / dw - 1.0f, float(y + height) / dh + 1.0f, 0.0f);
+	return m_quad->UpdateVertexBuffer();
+}
+
 HRESULT PostProcessing::SetupQuads()
 {
-	VI* vi = PrimitiveVI::CreateNormalizedQuad();
-	HRESULT hr = VIBuffer::CreateVIBufferNocopy(
-		m_graphicSystem->device, m_graphicSystem->deviceContext,
-		&vi,
-		D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
-		D3D11_USAGE_IMMUTABLE, 0, 0,
-		&m_normalizedQuad);
-	if (FAILED(hr))
-		RETURN_E_FAIL_ERROR_MESSAGE("ScreenRender::Initialize::Failed to create VIBuffer(Normalized Quad)");
+	// Setup Screen Quad
+	{
+		VI* vi = PrimitiveVI::CreateQuad();
+		HRESULT hr = VIBuffer::CreateVIBufferNocopy(
+			m_graphicSystem->device, m_graphicSystem->deviceContext,
+			&vi,
+			D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
+			D3D11_USAGE_IMMUTABLE, 0, 0,
+			&m_quad);
+		if (FAILED(hr))
+			RETURN_E_FAIL_ERROR_MESSAGE("PostProcessing::SetupQuads::Failed to create VIBuffer(Screen Quad)");
+	}
+
+	// Setup Normalized Quad
+	{
+		VI* vi = PrimitiveVI::CreateNormalizedQuad();
+		HRESULT hr = VIBuffer::CreateVIBufferNocopy(
+			m_graphicSystem->device, m_graphicSystem->deviceContext,
+			&vi,
+			D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
+			D3D11_USAGE_IMMUTABLE, 0, 0,
+			&m_normalizedQuad);
+		if (FAILED(hr))
+			RETURN_E_FAIL_ERROR_MESSAGE("PostProcessing::SetupQuads::Failed to create VIBuffer(Normalized Quad)");
+	}
 
 	return S_OK;
 }

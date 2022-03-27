@@ -7,7 +7,7 @@ PassDesc::PassDesc(
 	const string& name, const vector<string>& sementics, 
 	RenderGroup renderGroup, int renderGroupOrder,
 	bool instancingFlag, 
-	bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha)
+	bool drawShadowFlag, bool shadowPassFlag)
 {
 	m_pass = pass;
 	m_inputLayout = inputLayout;
@@ -17,8 +17,7 @@ PassDesc::PassDesc(
 	m_renderGroupOrder = renderGroupOrder;
 	m_isInstancing = instancingFlag;
 	m_isDrawingShadow = drawShadowFlag;
-	m_isShadowCutoffEnable = shadowCutoffEnable;
-	m_shadowCutoffAlpha = shadowCutoffAlpha;
+	m_isShadowPass = shadowPassFlag;
 }
 
 PassDesc::~PassDesc()
@@ -26,46 +25,6 @@ PassDesc::~PassDesc()
 	SafeRelease(m_inputLayout);
 
 	SafeRelease(m_pass);
-}
-
-Com<ID3DX11EffectPass> PassDesc::GetPass() const
-{
-	return m_pass;
-}
-
-Com<ID3D11InputLayout> PassDesc::GetInputLayout() const
-{
-	return m_inputLayout;
-}
-
-RenderGroup PassDesc::GetRenderGroup() const
-{
-	return m_renderGroup;
-}
-
-int PassDesc::GetRenderGroupOrder() const
-{
-	return m_renderGroupOrder;
-}
-
-bool PassDesc::IsInstancing() const
-{
-	return m_isInstancing;
-}
-
-bool PassDesc::IsDrawShadow() const
-{
-	return m_isDrawingShadow;
-}
-
-bool PassDesc::IsShadowCutoffEnable() const
-{
-	return m_isShadowCutoffEnable;
-}
-
-float PassDesc::GetShadowCutoffAlpha() const
-{
-	return m_shadowCutoffAlpha;
 }
 
 bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_DESC** out_arrElements, uint* out_count)
@@ -485,7 +444,7 @@ bool PassDesc::ExtractDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag)
 	return true;
 }
 
-bool PassDesc::ExtractShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag)
+bool PassDesc::ExtractShadowPassFlag(ID3DX11EffectPass* pass, bool* out_flag)
 {
 	if (!pass || !out_flag)
 		return false;
@@ -494,9 +453,9 @@ bool PassDesc::ExtractShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_
 	if (FAILED(pass->GetDesc(&passDesc)))
 		return false;
 
-	ID3DX11EffectScalarVariable* hShadowCutoffEnableFlag = nullptr;
+	ID3DX11EffectScalarVariable* hShadowPassFlag = nullptr;
 
-	// find annotation <bool drawshadow>
+	// find annotation <bool shadowpass>
 	for (uint32_t i = 0; i < passDesc.Annotations; ++i)
 	{
 		ID3DX11EffectVariable* annotation = pass->GetAnnotationByIndex(i);
@@ -510,73 +469,25 @@ bool PassDesc::ExtractShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_
 
 		string name = annotationDesc.Name;
 		std::transform(name.begin(), name.end(), name.begin(), std::tolower);
-		if (name == "shadowcutoffenable" && annotation->AsScalar()->IsValid())
+		if (name == "shadowpass" && annotation->AsScalar()->IsValid())
 		{
-			hShadowCutoffEnableFlag = annotation->AsScalar();
+			hShadowPassFlag = annotation->AsScalar();
 			break;
 		}
 
 		SafeRelease(annotation);
 	}
 
-	if (!hShadowCutoffEnableFlag)
+	if (!hShadowPassFlag)
 		return true;
 
 	bool flag = 0;
-	if (FAILED(hShadowCutoffEnableFlag->GetBool(&flag)))
+	if (FAILED(hShadowPassFlag->GetBool(&flag)))
 		return false;
 
 	*out_flag = flag;
 
-	SafeRelease(hShadowCutoffEnableFlag);
-
-	return true;
-}
-
-bool PassDesc::ExtractShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCutoffAlpha)
-{
-	if (!pass || !out_shadowCutoffAlpha)
-		return false;
-
-	D3DX11_PASS_DESC passDesc = {};
-	if (FAILED(pass->GetDesc(&passDesc)))
-		return false;
-
-	ID3DX11EffectScalarVariable* hShadowCutoffAlpha = nullptr;
-
-	// find annotation <bool drawshadow>
-	for (uint32_t i = 0; i < passDesc.Annotations; ++i)
-	{
-		ID3DX11EffectVariable* annotation = pass->GetAnnotationByIndex(i);
-
-		if (!annotation->IsValid())
-			continue;
-
-		D3DX11_EFFECT_VARIABLE_DESC annotationDesc = {};
-		if (FAILED(annotation->GetDesc(&annotationDesc)))
-			continue;
-
-		string name = annotationDesc.Name;
-		std::transform(name.begin(), name.end(), name.begin(), std::tolower);
-		if (name == "shadowcutoffalpha" && annotation->AsScalar()->IsValid())
-		{
-			hShadowCutoffAlpha = annotation->AsScalar();
-			break;
-		}
-
-		SafeRelease(annotation);
-	}
-
-	if (!hShadowCutoffAlpha)
-		return true;
-
-	float shadowCutoffAlpha = 1.0f;
-	if (FAILED(hShadowCutoffAlpha->GetFloat(&shadowCutoffAlpha)))
-		return false;
-
-	*out_shadowCutoffAlpha = shadowCutoffAlpha;
-
-	SafeRelease(hShadowCutoffAlpha);
+	SafeRelease(hShadowPassFlag);
 
 	return true;
 }
@@ -610,12 +521,8 @@ PassDesc* PassDesc::CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11Effec
 	if (!ExtractDrawShadowFlag(pass, &drawShadow))
 		return nullptr;
 
-	bool shadowCutoffEnable = false;
-	if (!ExtractShadowCutoffEnableFlag(pass, &shadowCutoffEnable))
-		return nullptr;
-
-	float shadowCutoffAlpha = renderGroup == RenderGroup::Standard ? 0.0f : 1.0f;
-	if (!ExtractShadowCutoffAlpha(pass, &shadowCutoffAlpha))
+	bool shadowPass = false;
+	if (!ExtractShadowPassFlag(pass, &shadowPass))
 		return nullptr;
 
 	string name;
@@ -629,5 +536,5 @@ PassDesc* PassDesc::CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11Effec
 		name, sementics, 
 		renderGroup, renderGroupOrder, 
 		instancingFlag, 
-		drawShadow, shadowCutoffEnable, shadowCutoffAlpha);
+		drawShadow, shadowPass);
 }

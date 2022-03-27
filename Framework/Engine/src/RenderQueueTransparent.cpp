@@ -3,7 +3,6 @@
 
 #include "RenderQueueLight.h"
 #include "DeferredRenderTarget.h"
-#include "DeferredScreenRender.h"
 #include "RenderTarget.h"
 
 RenderQueueTransparent::~RenderQueueTransparent()
@@ -13,7 +12,7 @@ RenderQueueTransparent::~RenderQueueTransparent()
 
 bool RenderQueueTransparent::IsValidInput(const RenderRequest& input) const
 {
-	return input.essential.IsValid() || !input.essential.instance;
+	return input.essential.IsValid() || !input.essential.instance || input.shadow.shadowPass;
 }
 
 bool RenderQueueTransparent::AddInput(const RenderRequest& input)
@@ -62,7 +61,7 @@ void RenderQueueTransparent::Render(ICamera* camera)
 					continue;
 
 				ApplyCameraBuffer(camera);
-				ApplyMaterial(deviceContext, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
+				ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
 				ApplyMesh(deviceContext, mesh, &prevMesh);
 				ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
 				ApplyWorldMatrix(request.essential.worldMatrix);
@@ -95,7 +94,7 @@ bool RenderQueueTransparent::CullOp(ICamera* camera, IRendererCullOp* cullOp) co
 	return cullOp->CullTest(camera);
 }
 
-void RenderQueueTransparent::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
+void RenderQueueTransparent::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
 {
 	HRESULT hr = S_OK;
 
@@ -108,7 +107,7 @@ void RenderQueueTransparent::ApplyMaterial(Com<ID3D11DeviceContext> deviceContex
 
 	*inout_prevMaterial = material;
 
-	material->SetMaterialValues();
+	material->ApplyMaterial(camera);
 
 	if (FAILED(hr = material->SetInputLayout(deviceContext, techniqueIndex, passIndex)))
 		return;
@@ -139,7 +138,7 @@ void RenderQueueTransparent::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, I
 
 void RenderQueueTransparent::ApplyCameraBuffer(ICamera* camera)
 {
-	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
+	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 }
 
 void RenderQueueTransparent::ApplyBoneMatrices(IRendererBoneOp* boneOp, uint subMeshIndex)

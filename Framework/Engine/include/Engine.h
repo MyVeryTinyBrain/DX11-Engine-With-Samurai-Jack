@@ -13,7 +13,6 @@
 #include "GraphicSystem.h"
 #include "CameraManager.h"
 #include "LightManager.h"
-#include "DeferredScreenRender.h"
 
 #include "ResourceObject.h"
 #include "ResourceRef.h"
@@ -45,13 +44,6 @@
 #include "Animator.h"
 #include "AnimatorSingleNode.h"
 #include "AnimatorBlendNode.h"
-
-#include "MaterialStandard.h"
-#include "MaterialColorLine.h"
-#include "MaterialGizmoTranslation.h"
-#include "MaterialGizmoRotationNoHighlight.h"
-#include "MaterialGizmoRotationHighlight.h"
-#include "MaterialGizmoRotationLine.h"
 
 #include "PhysicsSimulationCallbackType.h"
 #include "Rigidbody.h"

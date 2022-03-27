@@ -40,14 +40,10 @@ private:
 
 	bool CullOp(ICamera* camera, IRendererCullOp* cullOp) const;
 
-	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial);
-
+	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial);
 	void ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMesh* mesh, IMesh** inout_prevMesh);
-
 	void ApplyCameraBuffer(ICamera* camera);
-
 	void ApplyBoneMatrices(IRendererBoneOp* boneOp, uint subMeshIndex);
-
 	void ApplyWorldMatrix(const M4& worldMatrix);
 
 private:

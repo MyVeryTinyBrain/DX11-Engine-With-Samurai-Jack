@@ -12,9 +12,6 @@
 #include "ResourceFactory.h"
 #include "BuiltInResources.h"
 #include "GameObject.h"
-#include "MaterialGizmoRotationNoHighlight.h"
-#include "MaterialGizmoRotationHighlight.h"
-#include "MaterialGizmoRotationLine.h"
 #include "VI.h"
 #include "VIBuffer.h"
 #include "Texture2D.h"
@@ -374,56 +371,56 @@ void GizmoRotation::SetupResources()
 	{
 		m_lbTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
 	}
-	if (!m_rMat)
-	{
-		m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
-		m_rMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
-	}
-	if (!m_gMat)
-	{
-		m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
-		m_gMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
-	}
-	if (!m_bMat)
-	{
-		m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
-		m_bMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
-	}
-	if (!m_hrMat)
-	{
-		m_hrMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
-		m_hrMat->diffuseTexture = m_rTexture;
-	}
-	if (!m_hgMat)
-	{
-		m_hgMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
-		m_hgMat->diffuseTexture = m_gTexture;
-	}
-	if (!m_hbMat)
-	{
-		m_hbMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
-		m_hbMat->diffuseTexture = m_bTexture;
-	}
-	if (!m_lrMat)
-	{
-		m_lrMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-		m_lrMat->diffuseTexture = m_lrTexture;
-	}
-	if (!m_lgMat)
-	{
-		m_lgMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-		m_lgMat->diffuseTexture = m_lgTexture;
-	}
-	if (!m_lbMat)
-	{
-		m_lbMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-		m_lbMat->diffuseTexture = m_lbTexture;
-	}
-	if (!m_slMat)
-	{
-		m_slMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-		m_slMat->diffuseTexture = system->resourceManagement->builtInResources->whiteTexture;
-	}
+	//if (!m_rMat)
+	//{
+	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
+	//	m_rMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
+	//}
+	//if (!m_gMat)
+	//{
+	//	m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
+	//	m_gMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
+	//}
+	//if (!m_bMat)
+	//{
+	//	m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
+	//	m_bMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
+	//}
+	//if (!m_hrMat)
+	//{
+	//	m_hrMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
+	//	m_hrMat->diffuseTexture = m_rTexture;
+	//}
+	//if (!m_hgMat)
+	//{
+	//	m_hgMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
+	//	m_hgMat->diffuseTexture = m_gTexture;
+	//}
+	//if (!m_hbMat)
+	//{
+	//	m_hbMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
+	//	m_hbMat->diffuseTexture = m_bTexture;
+	//}
+	//if (!m_lrMat)
+	//{
+	//	m_lrMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
+	//	m_lrMat->diffuseTexture = m_lrTexture;
+	//}
+	//if (!m_lgMat)
+	//{
+	//	m_lgMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
+	//	m_lgMat->diffuseTexture = m_lgTexture;
+	//}
+	//if (!m_lbMat)
+	//{
+	//	m_lbMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
+	//	m_lbMat->diffuseTexture = m_lbTexture;
+	//}
+	//if (!m_slMat)
+	//{
+	//	m_slMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
+	//	m_slMat->diffuseTexture = system->resourceManagement->builtInResources->whiteTexture;
+	//}
 }
 
 void GizmoRotation::SetupObjects()

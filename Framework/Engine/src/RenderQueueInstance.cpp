@@ -3,7 +3,6 @@
 
 #include "RenderQueueLight.h"
 #include "DeferredRenderTarget.h"
-#include "DeferredScreenRender.h"
 #include "RenderTarget.h"
 
 RenderQueueInstance::RenderQueueInstance(RenderQueueLight* renderQueueLight, bool transparentQueue) :
@@ -20,7 +19,7 @@ RenderQueueInstance::~RenderQueueInstance()
 
 bool RenderQueueInstance::IsValidInput(const RenderRequest& input) const
 {
-	return input.essential.IsValid() || input.essential.instance;
+	return input.essential.IsValid() || input.essential.instance || input.shadow.shadowPass;
 }
 
 bool RenderQueueInstance::AddInput(const RenderRequest& input)
@@ -68,8 +67,6 @@ void RenderQueueInstance::Render(ICamera* camera)
 			Com<ID3DX11Effect> effect;
 			material->GetEffectDesc(effect);
 			m_CBufferManager->BeginApply(effect);
-
-			ApplyCameraBuffer(camera);
 
 			for (auto& pairByMesh : mapByMesh)
 			{
@@ -130,10 +127,10 @@ void RenderQueueInstance::Render(ICamera* camera)
 					m_CBufferManager->BeginApply(effect);
 					{
 						ApplyCameraBuffer(camera);
-						ApplyMaterial(deviceContext, material, front.essential.techniqueIndex, front.essential.passIndex, &prevMaterial);
-						ApplyMesh(deviceContext, m_instanceBufferManager->GetBuffer(), mesh, &prevMesh);
+						ApplyMaterial(deviceContext, camera, material, front.essential.techniqueIndex, front.essential.passIndex, &prevMaterial);
+						IApplyMesh(deviceContext, m_instanceBufferManager->GetBuffer(), mesh, &prevMesh);
 						ApplyWorldMatrix(front.essential.worldMatrix); // There's no meaning in this render queue
-						ApplyBoneMatricesUsage(); // It always set to false(0)
+						IApplyBoneMatricesUsage(); // It always set to false(0)
 						
 						if (front.customPrimitiveCount.usePrimitiveCount)
 						{
@@ -167,7 +164,7 @@ bool RenderQueueInstance::CullOp(ICamera* camera, IRendererCullOp* cullOp) const
 	return cullOp->CullTest(camera);
 }
 
-void RenderQueueInstance::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
+void RenderQueueInstance::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
 {
 	HRESULT hr = S_OK;
 
@@ -180,7 +177,7 @@ void RenderQueueInstance::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, 
 
 	*inout_prevMaterial = material;
 
-	material->SetMaterialValues();
+	material->ApplyMaterial(camera);
 
 	if (FAILED(hr = material->SetInputLayout(deviceContext, techniqueIndex, passIndex)))
 		return;
@@ -189,7 +186,7 @@ void RenderQueueInstance::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, 
 		return;
 }
 
-void RenderQueueInstance::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceDataBuffer, IMesh* mesh, IMesh** inout_prevMesh)
+void RenderQueueInstance::IApplyMesh(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceDataBuffer, IMesh* mesh, IMesh** inout_prevMesh)
 {
 	HRESULT hr = S_OK;
 
@@ -211,7 +208,7 @@ void RenderQueueInstance::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, Com<
 
 void RenderQueueInstance::ApplyCameraBuffer(ICamera* camera)
 {
-	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
+	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 }
 
 void RenderQueueInstance::ApplyWorldMatrix(const M4& worldMatrix)
@@ -220,7 +217,7 @@ void RenderQueueInstance::ApplyWorldMatrix(const M4& worldMatrix)
 	m_CBufferManager->ApplyWorldMatrixBuffer(worldMatrix);
 }
 
-void RenderQueueInstance::ApplyBoneMatricesUsage()
+void RenderQueueInstance::IApplyBoneMatricesUsage()
 {
 	m_CBufferManager->ApplyBoneMatricesUsageBuffer(false);
 }

@@ -43,9 +43,7 @@ struct ENGINE_API RenderRequestOp
 struct ENGINE_API RenderRequestShadow
 {
 	bool									draw;
-	bool									cutoffEnable;
-	float									cutoffAlpha;
-	ITexture*								cutoffTexture;
+	bool									shadowPass;
 };
 
 struct ENGINE_API RenderRequest

@@ -35,10 +35,10 @@ HRESULT RenderQueueLight::Initialize(GraphicSystem* graphicSystem, CBufferManage
 
 bool RenderQueueLight::IsValidInput(const RenderRequest& input) const
 {
-    if (!input.shadow.draw)
-        return false;
+    if (input.shadow.shadowPass)
+        return true;
 
-    if (input.shadow.cutoffEnable && input.shadow.cutoffTexture == nullptr)
+    if (!input.shadow.draw)
         return false;
 
 	return true;
@@ -49,22 +49,56 @@ bool RenderQueueLight::AddInput(const RenderRequest& input)
     if (!IsValidInput(input))
         return false;
 
-    if (input.op.boneOp == nullptr)
+    if (input.shadow.shadowPass && !input.essential.instance)
     {
-        if (input.shadow.cutoffEnable == false)
-            m_instanceRequets[input.essential.mesh].push_back(input);
-        else
-            m_instanceCutoffRequets[input.shadow.cutoffAlpha][input.essential.mesh].push_back(input);
+        // 재질에 따라 나눕니다.
+        Map_RenderRequestsByMesh& meshMap = m_shadowPassRequests[input.essential.material];
+
+        // 메쉬에 따라 나눕니다.
+        Vector_RenderRequests& requests = meshMap[input.essential.mesh];
+
+        requests.push_back(input);
+
+        return true;
     }
-    else
+    else if (input.shadow.shadowPass && input.essential.instance)
     {
-        if (input.shadow.cutoffEnable == false)
-            m_skinnedRequests.push_back(input);
-        else
-            m_skinnedCutoffRequests.push_back(input);
+        // 재질에 따라 나눕니다.
+        IMaterial* material = input.essential.material;
+        IMap_RenderRequestsByMesh& meshMap = m_shadowPassInstanceRequests[material];
+
+        // 메쉬에 따라 나눕니다.
+        IMesh* mesh = input.essential.mesh;
+        IMap_RenderRequestsBySubMeshIndex& subMeshIndexMap = meshMap[mesh];
+
+        // 서브메쉬 인덱스에 따라 나눕니다.
+        uint subMeshIndex = input.essential.subMeshIndex;
+        Vector_RenderRequests& requests = subMeshIndexMap[subMeshIndex];
+
+        requests.push_back(input);
+
+        return true;
+    }
+    else if (!input.op.boneOp)
+    {
+        // 메쉬에 따라 나눕니다.
+        Vector_RenderRequests& requests = m_staticRequets[input.essential.mesh];
+
+        requests.push_back(input);
+
+        return true;
+    }
+    else if (input.op.boneOp)
+    {
+        // 메쉬에 따라 나눕니다.
+        Vector_RenderRequests& requests = m_skinnedRequests[input.essential.mesh];
+
+        requests.push_back(input);
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 void RenderQueueLight::RenderDepthes(ICamera* camera)
@@ -117,17 +151,17 @@ void RenderQueueLight::Render(ICamera* camera)
 
 void RenderQueueLight::Clear()
 {
-    if (!m_instanceRequets.empty())
-        m_instanceRequets.clear();
-
-    if (!m_instanceCutoffRequets.empty())
-        m_instanceCutoffRequets.clear();
+    if (!m_staticRequets.empty())
+        m_staticRequets.clear();
 
     if (!m_skinnedRequests.empty())
         m_skinnedRequests.clear();
 
-    if (!m_skinnedCutoffRequests.empty())
-        m_skinnedCutoffRequests.clear();
+    if (!m_shadowPassRequests.empty())
+        m_shadowPassRequests.clear();
+
+    if (!m_shadowPassInstanceRequests.empty())
+        m_shadowPassInstanceRequests.clear();
 }
 
 bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest& request, const BoundingHolder& boundingHolder) const
@@ -138,7 +172,7 @@ bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest
     if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
         return false;
 
-    if (request.op.boundsOp && !boundingHolder.Intersects(request.op.boundsOp->GetBounds()))
+    if (!CullOp(request, boundingHolder))
         return false;
 
     return true;
@@ -146,16 +180,106 @@ bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest
 
 void RenderQueueLight::ApplyCBufferForLight(const RenderRequest& request, const LightDesc& lightDesc, uint projectionIndex)
 {
-    uint i = projectionIndex;
+    ApplyWorldMatrix(request.essential.worldMatrix);
+    ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
+    ApplyCameraBuffer(lightDesc, projectionIndex);
+}
 
-    m_CBufferManager->ApplyWorldMatrixBuffer(request.essential.worldMatrix);
-    m_CBufferManager->ApplyBoneMatricesUsageBuffer(request.op.boneOp != nullptr);
-    if (request.op.boneOp != nullptr)
-    {
-        request.op.boneOp->OnSetBoneMatricesCBuffer(request.essential.subMeshIndex, m_CBufferManager->GetBoneMatricesBufferData());
-        m_CBufferManager->ApplyBoneMatrices();
-    }
-    m_CBufferManager->ApplyCameraBuffer(lightDesc.Position, lightDesc.Direction, lightDesc.ViewMatrix[i], lightDesc.ProjectionMatrix[i], lightDesc.Near, lightDesc.Far);
+bool RenderQueueLight::CullOp(const RenderRequest& request, const BoundingHolder& boundingHolder) const
+{
+    if (request.op.boundsOp && !boundingHolder.Intersects(request.op.boundsOp->GetBounds()))
+        return false;
+
+    return true;
+}
+
+void RenderQueueLight::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
+{
+    HRESULT hr = S_OK;
+
+    if (!inout_prevMaterial)
+        return;
+
+    // 이미 적용된 재질이라면 적용하지 않습니다.
+    if (*inout_prevMaterial == material)
+        return;
+
+    *inout_prevMaterial = material;
+
+    material->ApplyMaterial(camera);
+
+    if (FAILED(hr = material->SetInputLayout(deviceContext, techniqueIndex, passIndex)))
+        return;
+
+    if (FAILED(hr = material->ApplyPass(deviceContext, techniqueIndex, passIndex)))
+        return;
+}
+
+void RenderQueueLight::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMesh* mesh, IMesh** inout_prevMesh)
+{
+    HRESULT hr = S_OK;
+
+    if (!inout_prevMesh)
+        return;
+
+    // 이미 적용된 메시라면 적용하지 않습니다.
+    if (*inout_prevMesh == mesh)
+        return;
+
+    *inout_prevMesh = mesh;
+
+    if (FAILED(hr = mesh->ApplyVertexBuffer(deviceContext)))
+        return;
+
+    if (FAILED(hr = mesh->ApplyIndexBuffer(deviceContext)))
+        return;
+}
+
+void RenderQueueLight::ApplyCameraBuffer(const LightDesc& lightDesc, uint projectionIndex)
+{
+    uint& i = projectionIndex;
+    m_CBufferManager->ApplyCameraBuffer(lightDesc.Position, lightDesc.Direction, lightDesc.ViewMatrix[i], lightDesc.ProjectionMatrix[i], uint2(lightDesc.DepthSize, lightDesc.DepthSize), lightDesc.Near, lightDesc.Far);
+}
+
+void RenderQueueLight::ApplyBoneMatrices(IRendererBoneOp* boneOp, uint subMeshIndex)
+{
+    m_CBufferManager->ApplyBoneMatricesUsageBuffer(boneOp != nullptr);
+
+    if (!boneOp)
+        return;
+
+    boneOp->OnSetBoneMatricesCBuffer(subMeshIndex, m_CBufferManager->GetBoneMatricesBufferData());
+    m_CBufferManager->ApplyBoneMatrices();
+}
+
+void RenderQueueLight::ApplyWorldMatrix(const M4& worldMatrix)
+{
+    m_CBufferManager->ApplyWorldMatrixBuffer(worldMatrix);
+}
+
+void RenderQueueLight::IApplyMesh(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceDataBuffer, IMesh* mesh, IMesh** inout_prevMesh)
+{
+    HRESULT hr = S_OK;
+
+    if (!inout_prevMesh)
+        return;
+
+    // 이미 적용된 메시라면 적용하지 않습니다.
+    if (*inout_prevMesh == mesh)
+        return;
+
+    *inout_prevMesh = mesh;
+
+    if (FAILED(hr = mesh->ApplyVertexAndInstanceBuffer(deviceContext, instanceDataBuffer)))
+        return;
+
+    if (FAILED(hr = mesh->ApplyIndexBuffer(deviceContext)))
+        return;
+}
+
+void RenderQueueLight::IApplyBoneMatricesUsage()
+{
+    m_CBufferManager->ApplyBoneMatricesUsageBuffer(false);
 }
 
 bool RenderQueueLight::IsValidLight(ICamera* camera, ILight* light) const
@@ -192,10 +316,10 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
         {
             m_graphicSystem->SetRenderTargetsWithDepthStencil(0, nullptr, lightDepthes[i]->dsv.Get());
 
-            Render_DepthOfLight_Instance_NonCutoff(camera, lightDesc, lightBounds, i);
-            Render_DepthOfLight_Instance_Cutoff(camera, lightDesc, lightBounds, i);
-            Render_DepthOfLight_Skinned_NonCutoff(camera, lightDesc, lightBounds, i);
-            Render_DepthOfLight_Skinned_Cutoff(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_Static(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_Skinned(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_ShadowPass(camera, lightDesc, lightBounds, i);
+            Render_DepthOfLight_ShadowPassInstance(camera, lightDesc, lightBounds, i);
         }
     }
     iGraphicSystem->SetViewport(prevViewport.x, prevViewport.y);
@@ -203,33 +327,16 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
     m_graphicSystem->RollbackRenderTarget();
 }
 
-void RenderQueueLight::Render_DepthOfLight_Instance_NonCutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+void RenderQueueLight::Render_DepthOfLight_Static(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
 {
-    m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
-    m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
+    m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE, LIGHT_DEPTH_SHADER_PASS_STATIC);
+    m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE, LIGHT_DEPTH_SHADER_PASS_STATIC);
 
-    Render_DepthOfLight_Instance(camera, lightDesc, boundings, projectionIndex, false, m_instanceRequets);
-}
-
-void RenderQueueLight::Render_DepthOfLight_Instance_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
-{
-    m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
-    m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_INSTANCE, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
-
-    for (auto& pairByCutoffAlpha : m_instanceCutoffRequets)
-    {
-        const InstanceRequets& requests = pairByCutoffAlpha.second;
-        Render_DepthOfLight_Instance(camera, lightDesc, boundings, projectionIndex, true, requests);
-    }
-}
-
-void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff, const InstanceRequets& requests)
-{
     uint i = projectionIndex;
 
-    for (auto& pairByMesh : requests)
+    for (auto& pairByMesh : m_staticRequets)
     {
-        const vector<RenderRequest>& requests = pairByMesh.second;
+        const Vector_RenderRequests& requests = pairByMesh.second;
         uint instanceRequestCount = uint(requests.size());
         const RenderRequest& front = requests.front();
 
@@ -260,12 +367,6 @@ void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const Light
         {
             ApplyCBufferForLight(front, lightDesc, i);
 
-            if (cutoff)
-            {
-                m_shaderLightDepthWrite->SetTexture("_ShadowCutoffTexture", front.shadow.cutoffTexture->GetSRV().Get());
-                m_shaderLightDepthWrite->SetFloat("_ShadowCutoffAlpha", front.shadow.cutoffAlpha);
-            }
-
             if (FAILED(front.essential.mesh->ApplyVertexAndInstanceBuffer(m_graphicSystem->deviceContext, m_instanceBufferManager->GetBuffer()))) continue;
             if (FAILED(front.essential.mesh->ApplyIndexBuffer(m_graphicSystem->deviceContext))) continue;
 
@@ -282,58 +383,178 @@ void RenderQueueLight::Render_DepthOfLight_Instance(ICamera* camera, const Light
     }
 }
 
-void RenderQueueLight::Render_DepthOfLight_Skinned_NonCutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+void RenderQueueLight::Render_DepthOfLight_Skinned(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
 {
-    m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
-    m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_NONCUTOFF);
+    m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE, LIGHT_DEPTH_SHADER_PASS_SKINNED);
+    m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE, LIGHT_DEPTH_SHADER_PASS_SKINNED);
 
-    Render_DepthOfLight_Skinned(camera, lightDesc, boundings, projectionIndex, false);
-}
-
-void RenderQueueLight::Render_DepthOfLight_Skinned_Cutoff(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
-{
-    m_shaderLightDepthWrite->SetInputLayout(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
-    m_shaderLightDepthWrite->ApplyPass(m_graphicSystem->deviceContext, LIGHT_DEPTH_SHADER_TECHNIQUE_SKINNED, LIGHT_DEPTH_SHADER_PASS_CUTOFF);
-
-    Render_DepthOfLight_Skinned(camera, lightDesc, boundings, projectionIndex, true);
-}
-
-void RenderQueueLight::Render_DepthOfLight_Skinned(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex, bool cutoff)
-{
     uint i = projectionIndex;
 
-    vector<RenderRequest>* pRequests = nullptr;
-    if (cutoff == false)            pRequests = &m_skinnedRequests;
-    else                            pRequests = &m_skinnedCutoffRequests;
-    const vector<RenderRequest>& requests = *pRequests;
-
-    for (auto& request : requests)
+    for (auto& pairByMesh : m_skinnedRequests)
     {
-        if (!IsValidShadowRequest(camera, request, boundings[i]))
-            continue;
+        const Vector_RenderRequests& requests = pairByMesh.second;
+        uint instanceRequestCount = uint(requests.size());
 
-        m_CBufferManager->BeginApply(m_shaderLightDepthWrite->GetEffect());
+        for (auto& request : requests)
         {
-            ApplyCBufferForLight(request, lightDesc, i);
+            if (!IsValidShadowRequest(camera, request, boundings[i]))
+                continue;
 
-            if (cutoff)
+            m_CBufferManager->BeginApply(m_shaderLightDepthWrite->GetEffect());
             {
-                m_shaderLightDepthWrite->SetTexture("_ShadowCutoffTexture", request.shadow.cutoffTexture->GetSRV().Get());
-                m_shaderLightDepthWrite->SetFloat("_ShadowCutoffAlpha", request.shadow.cutoffAlpha);
+                ApplyCBufferForLight(request, lightDesc, i);
+
+                if (FAILED(request.essential.mesh->ApplyVertexBuffer(m_graphicSystem->deviceContext))) continue;
+                if (FAILED(request.essential.mesh->ApplyIndexBuffer(m_graphicSystem->deviceContext))) continue;
+
+                if (request.customPrimitiveCount.usePrimitiveCount)
+                {
+                    if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex, request.customPrimitiveCount.primitiveCount))) continue;
+                }
+                else
+                {
+                    if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex))) continue;
+                }
             }
+            m_CBufferManager->EndApply();
+        }
+    }
+}
 
-            if (FAILED(request.essential.mesh->ApplyVertexBuffer(m_graphicSystem->deviceContext))) continue;
-            if (FAILED(request.essential.mesh->ApplyIndexBuffer(m_graphicSystem->deviceContext))) continue;
+void RenderQueueLight::Render_DepthOfLight_ShadowPass(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+{
+    Com<ID3D11Device> device = m_graphicSystem->device;
+    Com<ID3D11DeviceContext> deviceContext = m_graphicSystem->deviceContext;
 
-            if (request.customPrimitiveCount.usePrimitiveCount)
+    IMaterial* prevMaterial = nullptr;
+    IMesh* prevMesh = nullptr;
+
+    for (auto& pairByMaterial : m_shadowPassRequests)
+    {
+        Map_RenderRequestsByMesh& mapByMesh = pairByMaterial.second;
+        IMaterial* material = pairByMaterial.first;
+
+        Com<ID3DX11Effect> effect;
+        material->GetEffectDesc(effect);
+        m_CBufferManager->BeginApply(effect);
+        {
+            ApplyCameraBuffer(lightDesc, projectionIndex);
+
+            for (auto& pairByMesh : mapByMesh)
             {
-                if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex, request.customPrimitiveCount.primitiveCount))) continue;
-            }
-            else
-            {
-                if (FAILED(request.essential.mesh->DrawSubMesh(m_graphicSystem->deviceContext, request.essential.subMeshIndex))) continue;
+                Vector_RenderRequests& requests = pairByMesh.second;
+                IMesh* mesh = pairByMesh.first;
+
+                for (auto& request : requests)
+                {
+                    if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
+                        continue;
+
+                    if (!CullOp(request, boundings[projectionIndex]))
+                        continue;
+
+                    ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
+                    ApplyMesh(deviceContext, mesh, &prevMesh);
+                    ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
+                    ApplyWorldMatrix(request.essential.worldMatrix);
+
+                    if (request.customPrimitiveCount.usePrimitiveCount)
+                    {
+                        if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex, request.customPrimitiveCount.primitiveCount))) continue;
+                    }
+                    else
+                    {
+                        if (FAILED(mesh->DrawSubMesh(deviceContext, request.essential.subMeshIndex))) continue;
+                    }
+                }
             }
         }
+        m_CBufferManager->EndApply();
+    }
+}
+
+void RenderQueueLight::Render_DepthOfLight_ShadowPassInstance(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
+{
+    Com<ID3D11Device> device = m_graphicSystem->device;
+    Com<ID3D11DeviceContext> deviceContext = m_graphicSystem->deviceContext;
+
+    IMaterial* prevMaterial = nullptr;
+    IMesh* prevMesh = nullptr;
+
+    for (auto& pairByMaterial : m_shadowPassInstanceRequests)
+    {
+        IMap_RenderRequestsByMesh& mapByMesh = pairByMaterial.second;
+        IMaterial* material = pairByMaterial.first;
+
+        Com<ID3DX11Effect> effect;
+        material->GetEffectDesc(effect);
+        m_CBufferManager->BeginApply(effect);
+
+        for (auto& pairByMesh : mapByMesh)
+        {
+            IMap_RenderRequestsBySubMeshIndex& mapByMesh = pairByMesh.second;
+            IMesh* mesh = pairByMesh.first;
+
+            for (auto& pairBySubMeshIndex : mapByMesh)
+            {
+                Vector_RenderRequests& requests = pairBySubMeshIndex.second;
+                uint instanceRequestCount = uint(requests.size());
+                if (instanceRequestCount == 0)
+                    continue;
+
+                const RenderRequest& front = requests.front();
+
+                uint drawCount = 0;
+                m_instanceBufferManager->BeginSetDatas(instanceRequestCount);
+                {
+                    for (uint i = 0; i < instanceRequestCount; ++i)
+                    {
+                        const RenderRequest& request = requests[i];
+
+                        if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
+                            continue;
+
+                        if (!CullOp(request, boundings[projectionIndex]))
+                            continue;
+
+                        InstanceData data;
+                        data.right = request.essential.worldMatrix.row[0];
+                        data.up = request.essential.worldMatrix.row[1];
+                        data.forward = request.essential.worldMatrix.row[2];
+                        data.position = request.essential.worldMatrix.row[3];
+
+                        m_instanceBufferManager->SetData(uint(drawCount), &data);
+                        ++drawCount;
+                    }
+                }
+                m_instanceBufferManager->EndSetDatas();
+
+                if (drawCount == 0)
+                    continue;
+
+                Com<ID3DX11Effect> effect;
+                material->GetEffectDesc(effect);
+                m_CBufferManager->BeginApply(effect);
+                {
+                    ApplyCameraBuffer(lightDesc, projectionIndex);
+                    ApplyMaterial(deviceContext, camera, material, front.essential.techniqueIndex, front.essential.passIndex, &prevMaterial);
+                    IApplyMesh(deviceContext, m_instanceBufferManager->GetBuffer(), mesh, &prevMesh);
+                    ApplyWorldMatrix(front.essential.worldMatrix); // There's no meaning in this render queue
+                    IApplyBoneMatricesUsage(); // It always set to false(0)
+
+                    if (front.customPrimitiveCount.usePrimitiveCount)
+                    {
+                        if (FAILED(mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount), front.customPrimitiveCount.primitiveCount))) continue;
+                    }
+                    else
+                    {
+                        if (FAILED(mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount)))) continue;
+                    }
+                }
+                m_CBufferManager->EndApply();
+            }
+        }
+
         m_CBufferManager->EndApply();
     }
 }
@@ -346,7 +567,8 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
     // Inputs
     RenderTarget* normal = drt->normal;
-    RenderTarget* depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;;
+    RenderTarget* depth = drt->depth;
+    RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
     RenderTarget* specular_Power = drt->specular_Power;
     DepthStencil* lightDepthes[6] = {};
     light->GetDepthes(lightDepthes);
@@ -357,7 +579,7 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     {
         m_CBufferManager->BeginApply(m_shaderLighting->GetEffect());
         {
-            m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
+            m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
         
             ID3D11ShaderResourceView* depthMapArray[6] = {};
             if (light->IsDrawShadow())
@@ -382,7 +604,8 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
             m_shaderLighting->SetRawValue("_LightDesc", &lightDesc, sizeof(LightDesc));
             m_shaderLighting->SetTexture("_Normal", normal->srv);
-            m_shaderLighting->SetTexture("_Depth_Light_Occlusion_Shadow", depth_Light_Occlusion_Shadow->srv);
+            m_shaderLighting->SetTexture("_Depth", depth->srv);
+            m_shaderLighting->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
             m_shaderLighting->SetTexture("_Specular_Power", specular_Power->srv);
 
             m_shaderLighting->SetInputLayout(m_graphicSystem->deviceContext, 0, passIndex);
@@ -402,7 +625,8 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
 
     // Inputs
     RenderTarget* diffuse = drt->diffuse;
-    RenderTarget* depth_Light_Occlusion_Shadow = drt->depth_Light_Occlusion_Shadow;
+    RenderTarget* depth = drt->depth;
+    RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
     RenderTarget* light = drt->light;
     RenderTarget* specular = drt->specular;
 
@@ -411,7 +635,8 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
 
     {
         m_shaderLightBlending->SetTexture("_Diffuse", diffuse->srv);
-        m_shaderLightBlending->SetTexture("_Depth_Light_Occlusion_Shadow", depth_Light_Occlusion_Shadow->srv);
+        m_shaderLightBlending->SetTexture("_Depth", depth->srv);
+        m_shaderLightBlending->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
         m_shaderLightBlending->SetTexture("_Light", light->srv);
         m_shaderLightBlending->SetTexture("_Specular", specular->srv);
 

@@ -8,10 +8,11 @@
 #include "GraphicSystem.h"
 #include "ICamera.h"
 #include "Transform.h"
+#include "ResourceManagement.h"
 #include "BuiltInResources.h"
+#include "Material.h"
 #include "RenderQueue.h"
 #include "Texture.h"
-#include "MaterialStandard.h"
 #include "CameraManager.h"
 #include "Camera.h"
 #include "Times.h"
@@ -78,21 +79,13 @@ void TrailRenderer::Render()
 		int renderGroupOrder;
 		bool instancingFlag;
 		bool drawShadowFlag;
-		bool shadowCutoffEnableFlag;
-		float shadowCutoffAlpha;
+		bool shadowPassFlag;
 
-		if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
-			continue;
-		if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
-			continue;
-		if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
-			continue;
-		if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag)))
-			continue;
-		if (FAILED(currentMaterial->GetShadowCutoffEnableFlagOfAppliedTechnique(j, shadowCutoffEnableFlag)))
-			continue;
-		if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha)))
-			continue;
+		if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup))) continue;
+		if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder))) continue;
+		if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag))) continue;
+		if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag))) continue;
+		if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
 
 		RenderRequest input = {};
 		input.essential.worldMatrix = M4::identity();
@@ -111,9 +104,7 @@ void TrailRenderer::Render()
 
 		RenderRequestShadow shadow = {};
 		shadow.draw = drawShadowFlag;
-		shadow.cutoffEnable = shadowCutoffEnableFlag;
-		shadow.cutoffAlpha = shadowCutoffAlpha;
-		shadow.cutoffTexture = currentMaterial->diffuseTexture;
+		shadow.shadowPass = shadowPassFlag;
 		input.shadow = shadow;
 
 		input.op.boneOp = nullptr;

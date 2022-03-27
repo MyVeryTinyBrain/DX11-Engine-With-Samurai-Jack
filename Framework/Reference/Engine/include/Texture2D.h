@@ -24,6 +24,11 @@ public:
 	// Copy to unmanaged Texture2D
 	ResourceRef<Texture2D> Copy() const;
 
+	// Copy to the dest Texture2D of the same size.
+	// Fail to copy if their sizes are different.
+	// Fail to copy if destTex is D3D11_USAGE_IMMUTABLE.
+	bool CopyTo(ResourceRef<Texture2D> destTex);
+
 public:
 
 	virtual Com<ID3D11Resource> GetTexture() const override;

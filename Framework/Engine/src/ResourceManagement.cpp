@@ -1,8 +1,6 @@
 #include "EnginePCH.h"
 #include "ResourceManagement.h"
 #include "ResourceObject.h"
-#include "ResourceFactory.h"
-#include "BuiltInResources.h"
 
 ResourceManagement::ResourceManagement()
 {

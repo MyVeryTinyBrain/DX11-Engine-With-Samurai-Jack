@@ -90,23 +90,6 @@ void PS_MAIN(PS_IN In)
 	// Do nothing
 }
 
-void PS_MAIN_AlphaTest(PS_IN In)
-{
-	float alpha = _ShadowCutoffTexture.Sample(pointSampler, In.UV).a;
-	if (alpha < _ShadowCutoffAlpha)
-		discard;
-}
-
-RasterizerState RasterizerState0
-{
-	FillMode = Solid;
-	Cullmode = Back;
-	DepthClipEnable = TRUE;
-	DepthBias = 300; // DepthBias = 300 + 100 * ShadowSmoothness
-	DepthBiasClamp = 0.0f;
-	SlopeScaledDepthBias = 10.0f;
-};
-
 DepthStencilState DepthStencilState0
 {
 	DepthEnable = true;
@@ -119,42 +102,22 @@ BlendState BlendState0
 	BlendEnable[0] = false;
 };
 
-technique11 Instance
+technique11 Techniques
 {
-	pass Default
+	pass Static
 	{
-		SetRasterizerState(RasterizerState0);
+		SetRasterizerState(ShadowRasterizerState);
 		SetDepthStencilState(DepthStencilState0, 0);
 		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN_Instance();
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
-	pass AlphaTest
+	pass Skinned
 	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN_Instance();
-		PixelShader = compile ps_5_0 PS_MAIN_AlphaTest();
-	}
-}
-
-technique11 Skinned
-{
-	pass Default
-	{
-		SetRasterizerState(RasterizerState0);
+		SetRasterizerState(ShadowRasterizerState);
 		SetDepthStencilState(DepthStencilState0, 0);
 		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN_Skinned();
 		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-	pass AlphaTest
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN_Skinned();
-		PixelShader = compile ps_5_0 PS_MAIN_AlphaTest();
 	}
 }

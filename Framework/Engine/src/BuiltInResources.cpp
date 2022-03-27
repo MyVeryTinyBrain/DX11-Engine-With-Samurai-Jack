@@ -6,14 +6,12 @@
 #include "PrimitiveVI.h"
 #include "System.h"
 #include "GraphicSystem.h"
+#include "ResourceManagement.h"
 
 #include "Texture2D.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Material.h"
-
-#include "MaterialStandard.h"
-#include "MaterialColorLine.h"
 
 BuiltInResources::BuiltInResources()
 {
@@ -91,27 +89,14 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateShader(TEXT("../Shader/Standard.fx"), &m_standardShader)))
 		return hr;
 
-	if (FAILED(hr = CreateShader(TEXT("../Shader/ColorLine.fx"), &m_colorLineShader)))
+	if (FAILED(hr = CreateShader(TEXT("../Shader/Color.fx"), &m_colorShader)))
 		return hr;
 
-	if (FAILED(hr = CreateShader(TEXT("../Shader/GizmoTranslation.fx"), &m_gizmoTranslationShader)))
-		return hr;
-
-	if (FAILED(hr = CreateShader(TEXT("../Shader/GizmoRotationNoHighlight.fx"), &m_gizmoRotationNoHighlightShader)))
-		return hr;
-
-	if (FAILED(hr = CreateShader(TEXT("../Shader/GizmoRotationHighlight.fx"), &m_gizmoRotationHighlightShader)))
-		return hr;
-
-	if (FAILED(hr = CreateShader(TEXT("../Shader/GizmoRotationLine.fx"), &m_gizmoRotationLineShader)))
-		return hr;
-
-	if (nullptr == (m_standardMaterial = m_factory->CreateUnmanagedMaterial<MaterialStandard>()))
+	if (nullptr == (m_standardMaterial = m_factory->CreateUnmanagedMaterialByShader(m_standardShader->path)))
 		return E_FAIL;
 
-	if (nullptr == (m_greenColorLineMaterial = m_factory->CreateUnmanagedMaterial<MaterialColorLine>()))
+	if (nullptr == (m_wireframeMaterial = m_factory->CreateUnmanagedMaterialByShader(m_colorShader->path)))
 		return E_FAIL;
-	m_greenColorLineMaterial->color = Color::green();
 
 	return S_OK;
 }
@@ -145,13 +130,11 @@ void BuiltInResources::ReleaseBuiltInResources()
 	// Shader =============================================
 
 	m_standardShader = nullptr;
-
-	m_colorLineShader = nullptr;
+	m_colorShader = nullptr;
 
 	// Material ===========================================
 
-	//m_standardShader = nullptr;
-	//m_colorLineShader = nullptr;
+
 }
 
 const ResourceRef<Texture2D>& BuiltInResources::GetWhiteTexture() const
@@ -229,39 +212,19 @@ const ResourceRef<Shader>& BuiltInResources::GetStandardShader() const
 	return m_standardShader;
 }
 
-const ResourceRef<Shader>& BuiltInResources::GetColorLineShader() const
+const ResourceRef<Shader>& BuiltInResources::GetColorShader() const
 {
-	return m_colorLineShader;
+	return m_colorShader;
 }
 
-const ResourceRef<Shader>& BuiltInResources::GetGizmoTranslationShader() const
-{
-	return m_gizmoTranslationShader;
-}
-
-const ResourceRef<Shader>& BuiltInResources::GetGizmoRotationNoHighlightShader() const
-{
-	return m_gizmoRotationNoHighlightShader;
-}
-
-const ResourceRef<Shader>& BuiltInResources::GetGizmoRotationHighlightShader() const
-{
-	return m_gizmoRotationHighlightShader;
-}
-
-const ResourceRef<Shader>& BuiltInResources::GetGizmoRotationLineShader() const
-{
-	return m_gizmoRotationLineShader;
-}
-
-const ResourceRef<MaterialStandard>& BuiltInResources::GetStandardMaterial() const
+const ResourceRef<Material>& BuiltInResources::GetStandardMaterial() const
 {
 	return m_standardMaterial;
 }
 
-const ResourceRef<MaterialColorLine>& BuiltInResources::GetGreenColorLineMaterial() const
+const ResourceRef<Material>& BuiltInResources::GetWireframeMaterial() const
 {
-	return m_greenColorLineMaterial; 
+	return m_wireframeMaterial;
 }
 
 System* BuiltInResources::GetSystem() const

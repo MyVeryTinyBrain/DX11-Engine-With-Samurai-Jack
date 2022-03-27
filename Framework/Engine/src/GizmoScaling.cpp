@@ -12,7 +12,6 @@
 #include "ResourceFactory.h"
 #include "BuiltInResources.h"
 #include "GameObject.h"
-#include "MaterialGizmoTranslation.h"
 #include "Texture2D.h"
 
 GizmoBase::Axis GizmoScaling::PickTest() const
@@ -366,26 +365,26 @@ void GizmoScaling::SetupResources()
 	{
 		m_pTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::grey(), 16, 16);
 	}
-	if (!m_rMat)
-	{
-		m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_rMat->diffuseTexture = m_rTexture;
-	}
-	if (!m_gMat)
-	{
-		m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_gMat->diffuseTexture = m_gTexture;
-	}
-	if (!m_bMat)
-	{
-		m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_bMat->diffuseTexture = m_bTexture;
-	}
-	if (!m_pMat)
-	{
-		m_pMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_pMat->diffuseTexture = m_pTexture;
-	}
+	//if (!m_rMat)
+	//{
+	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_rMat->diffuseTexture = m_rTexture;
+	//}
+	//if (!m_gMat)
+	//{
+	//	m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_gMat->diffuseTexture = m_gTexture;
+	//}
+	//if (!m_bMat)
+	//{
+	//	m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_bMat->diffuseTexture = m_bTexture;
+	//}
+	//if (!m_pMat)
+	//{
+	//	m_pMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_pMat->diffuseTexture = m_pTexture;
+	//}
 }
 
 void GizmoScaling::SetupObjects()

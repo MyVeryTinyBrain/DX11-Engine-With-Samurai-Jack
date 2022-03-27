@@ -13,7 +13,8 @@ struct PS_IN
 };
 
 texture2D		_Diffuse;
-texture2D		_Depth_Light_Occlusion_Shadow;
+texture2D		_Depth;
+texture2D		_Light_Occlusion_Shadow;
 texture2D		_Light;
 texture2D		_Specular;
 SamplerState	pointSampler
@@ -41,9 +42,9 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	float4 color = (float4)0;
 
 	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
-	half lightMask = depthLightOcclusionShadow.g;
-	half occlusion = depthLightOcclusionShadow.b;
+	half4 lightOcclusionShadow = _Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
+	half lightMask = lightOcclusionShadow.r;
+	half occlusion = lightOcclusionShadow.g;
 	half4 light = _Light.Sample(pointSampler, In.UV);
 	half4 specular = _Specular.Sample(pointSampler, In.UV);
 

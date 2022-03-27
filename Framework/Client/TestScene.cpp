@@ -90,8 +90,9 @@ void TestScene::OnLoad()
                 texture = system->resourceManagement->Find(texturePath);
             }
 
-            ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialStandard>();
-            material->diffuseTexture = texture;
+            ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(system->resourceManagement->builtInResources->standardShader->path);
+            material->SetTexture("_DiffuseTexture", texture);
+
             skinnedMeshRenderer->SetMaterialByIndex(i, material);
         }
 
@@ -211,7 +212,7 @@ void TestScene::OnLoad()
 
         MeshRenderer* meshRenderer = goHandlingTest->AddComponent<MeshRenderer>();
         meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-        meshRenderer->material = system->resourceManagement->builtInResources->greenColorLineMaterial;
+        meshRenderer->material = system->resourceManagement->builtInResources->wireframeMaterial;
 
         GameObject* goGizmo = CreateGameObject();
         Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();

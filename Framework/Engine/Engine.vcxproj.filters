@@ -161,12 +161,6 @@
     <ClInclude Include="include\VI.h">
       <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
     </ClInclude>
-    <ClInclude Include="include\Material.hpp">
-      <Filter>Object\Resource\Material</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ResourceFactory.hpp">
-      <Filter>EngineWorld\System\ResourceManagement\ResourceFactory</Filter>
-    </ClInclude>
     <ClInclude Include="include\CBufferTypes.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferTypes</Filter>
     </ClInclude>
@@ -250,18 +244,6 @@
     </ClInclude>
     <ClInclude Include="include\AnimatorTypes.h">
       <Filter>Object\SceneObject\Component\Animator</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MaterialGizmoTranslation.h">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MaterialGizmoRotationNoHighlight.h">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MaterialGizmoRotationHighlight.h">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MaterialGizmoRotationLine.h">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
     </ClInclude>
     <ClInclude Include="include\InstanceBufferManager.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue\InstanceDataBufferManager</Filter>
@@ -389,9 +371,6 @@
     <ClInclude Include="include\PhysicsQuery.h">
       <Filter>EngineWorld\System\Physics\Query</Filter>
     </ClInclude>
-    <ClInclude Include="include\MaterialColorLine.h">
-      <Filter>Object\Resource\Material\Built-in Material</Filter>
-    </ClInclude>
     <ClInclude Include="include\GizmoScaling.h">
       <Filter>Object\SceneObject\Component\Gizmo</Filter>
     </ClInclude>
@@ -434,9 +413,6 @@
     <ClInclude Include="include\DepthStencil.h">
       <Filter>EngineWorld\System\Graphic\RenderTarget</Filter>
     </ClInclude>
-    <ClInclude Include="include\DeferredScreenRender.h">
-      <Filter>EngineWorld\System\Graphic\DeferredRender</Filter>
-    </ClInclude>
     <ClInclude Include="include\ILight.h">
       <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
     </ClInclude>
@@ -470,9 +446,6 @@
     <ClInclude Include="include\IPhysicsObject.h">
       <Filter>EngineWorld\System\Physics\PhysicsObject</Filter>
     </ClInclude>
-    <ClInclude Include="include\MaterialStandard.h">
-      <Filter>Object\Resource\Material\Built-in Material</Filter>
-    </ClInclude>
     <ClInclude Include="include\RenderQueueLight.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
     </ClInclude>
@@ -480,10 +453,10 @@
       <Filter>EngineWorld\System\Graphic\RenderQueue\ITexture</Filter>
     </ClInclude>
     <ClInclude Include="include\PostProcessing.h">
-      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+      <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClInclude>
     <ClInclude Include="include\PostProcessingTypes.h">
-      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+      <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClInclude>
     <ClInclude Include="include\RefData.h">
       <Filter>Object\Base</Filter>
@@ -536,7 +509,21 @@
     <ClInclude Include="include\TrailRenderer.h">
       <Filter>Object\SceneObject\Component\Renderer\TrailRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShaderTypes.h" />
+    <ClInclude Include="include\ShaderTypes.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISpecificShaderVariable.h">
+      <Filter>Object\Resource\Material\ShaderVariable</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpecificShaderVariables.h">
+      <Filter>Object\Resource\Material\ShaderVariable</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShaderVariableInfo.h">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShaderVariable.h">
+      <Filter>Object\Resource\Material\ShaderVariable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -773,18 +760,6 @@
     <ClCompile Include="src\Animator.cpp">
       <Filter>Object\SceneObject\Component\Animator</Filter>
     </ClCompile>
-    <ClCompile Include="src\MaterialGizmoTranslation.cpp">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MaterialGizmoRotationHighlight.cpp">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MaterialGizmoRotationNoHighlight.cpp">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MaterialGizmoRotationLine.cpp">
-      <Filter>Object\Resource\Material\Built-in Material\Gizmo</Filter>
-    </ClCompile>
     <ClCompile Include="src\InstanceBufferManager.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue\InstanceDataBufferManager</Filter>
     </ClCompile>
@@ -896,9 +871,6 @@
     <ClCompile Include="src\PhysicsQuery.cpp">
       <Filter>EngineWorld\System\Physics\Query</Filter>
     </ClCompile>
-    <ClCompile Include="src\MaterialColorLine.cpp">
-      <Filter>Object\Resource\Material\Built-in Material</Filter>
-    </ClCompile>
     <ClCompile Include="src\GizmoTranslation.cpp">
       <Filter>Object\SceneObject\Component\Gizmo</Filter>
     </ClCompile>
@@ -941,9 +913,6 @@
     <ClCompile Include="src\DepthStencil.cpp">
       <Filter>EngineWorld\System\Graphic\RenderTarget</Filter>
     </ClCompile>
-    <ClCompile Include="src\DeferredScreenRender.cpp">
-      <Filter>EngineWorld\System\Graphic\DeferredRender</Filter>
-    </ClCompile>
     <ClCompile Include="src\ILight.cpp">
       <Filter>EngineWorld\System\Graphic\DeferredRender\Light</Filter>
     </ClCompile>
@@ -977,9 +946,6 @@
     <ClCompile Include="src\IPhysicsObject.cpp">
       <Filter>EngineWorld\System\Physics\PhysicsObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\MaterialStandard.cpp">
-      <Filter>Object\Resource\Material\Built-in Material</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderQueueLight.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue\RenderQueues</Filter>
     </ClCompile>
@@ -987,10 +953,10 @@
       <Filter>EngineWorld\System\Graphic\RenderQueue\ITexture</Filter>
     </ClCompile>
     <ClCompile Include="src\PostProcessing.cpp">
-      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+      <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClCompile>
     <ClCompile Include="src\PostProcessingTypes.cpp">
-      <Filter>EngineWorld\System\Graphic\PostProcessing</Filter>
+      <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClCompile>
     <ClCompile Include="src\IObject.cpp">
       <Filter>Object\Base</Filter>
@@ -1024,6 +990,18 @@
     </ClCompile>
     <ClCompile Include="src\TrailRenderer.cpp">
       <Filter>Object\SceneObject\Component\Renderer\TrailRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISpecificShaderVariable.cpp">
+      <Filter>Object\Resource\Material\ShaderVariable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpecificShaderVariables.cpp">
+      <Filter>Object\Resource\Material\ShaderVariable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderVariableInfo.cpp">
+      <Filter>Object\Resource\Shader\CompiledShaderDesc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderVariable.cpp">
+      <Filter>Object\Resource\Material\ShaderVariable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1126,9 +1104,6 @@
     <Filter Include="EngineWorld\System\Graphic\VIBuffer\VI">
       <UniqueIdentifier>{885b7864-1d19-42ef-bc2e-ca4415322831}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Resource\Material\Built-in Material">
-      <UniqueIdentifier>{1d3a8d6a-cce4-4093-8c49-e659480ca2b1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\Resource\Shader\Built-in Shader">
       <UniqueIdentifier>{13a1f043-a69a-4e3d-8754-c642abeca2f9}</UniqueIdentifier>
     </Filter>
@@ -1185,9 +1160,6 @@
     </Filter>
     <Filter Include="Object\SceneObject\Component\Animator">
       <UniqueIdentifier>{5475c37f-b0bd-4d64-9094-fdab2b56ea1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Resource\Material\Built-in Material\Gizmo">
-      <UniqueIdentifier>{70da52c4-e71f-4f71-923f-e4c23e88b923}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\SceneObject\Component\Gizmo">
       <UniqueIdentifier>{de854411-8be0-46f2-8339-421d329fbefb}</UniqueIdentifier>
@@ -1279,9 +1251,6 @@
     <Filter Include="Object\Resource\Shader\Built-in Shader\Deferred Pipeline">
       <UniqueIdentifier>{ccff59ce-0461-4554-97f2-7ba87f8df2d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Resource\Shader\Built-in Shader\Deferred">
-      <UniqueIdentifier>{3e5a8942-0ae1-466d-8b1a-d716cb5d163d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\SceneObject\Component\Light\Directional">
       <UniqueIdentifier>{6fd04625-f3c7-406b-bfd3-5cd0045d3653}</UniqueIdentifier>
     </Filter>
@@ -1300,9 +1269,6 @@
     <Filter Include="EngineWorld\System\Graphic\RenderQueue\ITexture">
       <UniqueIdentifier>{e9d3bced-529a-46ab-bbdd-e3933d1857f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EngineWorld\System\Graphic\PostProcessing">
-      <UniqueIdentifier>{cae0b7cc-4420-4042-b49e-8e850089e379}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\Base">
       <UniqueIdentifier>{de30abd3-3857-40d7-a56c-b22f4132acae}</UniqueIdentifier>
     </Filter>
@@ -1312,21 +1278,15 @@
     <Filter Include="Object\Resource\ComputeShader">
       <UniqueIdentifier>{08f9705a-a00b-4026-938f-b9d04103b9d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EngineWorld\System\Graphic\DeferredRender\PostProcessing">
+      <UniqueIdentifier>{cae0b7cc-4420-4042-b49e-8e850089e379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Material\ShaderVariable">
+      <UniqueIdentifier>{9847d818-3da8-4c64-8347-9cf34597dfea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\GizmoRotationNoHighlight.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\GizmoTranslation.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\GizmoRotationHighlight.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\GizmoRotationLine.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\ColorLine.fx">
+    <FxCompile Include="..\Shader\Color.fx">
       <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\Macros.hlsl">
@@ -1338,12 +1298,6 @@
     <FxCompile Include="..\Shader\Functions.hlsl">
       <Filter>Object\Resource\Shader\Built-in Header</Filter>
     </FxCompile>
-    <FxCompile Include="..\Shader\DeferredScreen.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\Standard.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader\Deferred</Filter>
-    </FxCompile>
     <FxCompile Include="..\Shader\DeferredLighting.fx">
       <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
     </FxCompile>
@@ -1353,11 +1307,14 @@
     <FxCompile Include="..\Shader\DeferredLightDepthWrite.fx">
       <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
     </FxCompile>
-    <FxCompile Include="..\Shader\StandardInstancing.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader\Deferred</Filter>
-    </FxCompile>
     <FxCompile Include="..\Shader\PostProcessing.fx">
       <Filter>Object\Resource\Shader\Built-in Shader\Deferred Pipeline</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\StandardInstancing.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Standard.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

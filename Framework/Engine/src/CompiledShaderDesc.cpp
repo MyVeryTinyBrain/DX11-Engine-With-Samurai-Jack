@@ -2,8 +2,9 @@
 #include "CompiledShaderDesc.h"
 #include "TechniqueDesc.h"
 #include "PassDesc.h"
+#include "ShaderVariableInfo.h"
 
-CompiledShaderDesc::CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs, const vector<ShaderVariableInfo>& infos)
+CompiledShaderDesc::CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs, const vector<ShaderVariableInfo*>& infos)
 {
 	m_effect = effect;
 	m_techniqueDescs = techniqueDescs;
@@ -15,7 +16,11 @@ CompiledShaderDesc::~CompiledShaderDesc()
 	for (auto& technique : m_techniqueDescs)
 		SafeDelete(technique);
 	m_techniqueDescs.clear();
+
+	for (auto& var : m_variableInfos)
+		SafeDelete(var);
 	m_variableInfos.clear();
+	
 	SafeRelease(m_effect);
 }
 
@@ -330,7 +335,7 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShader(Com<ID3D11Device> d
 
 	ID3DX11Effect* effect = nullptr;
 	vector<TechniqueDesc*> techniqueDescs;
-	vector<ShaderVariableInfo> infos;
+	vector<ShaderVariableInfo*> infos;
 
 	auto ReleaseVars = [&]()
 	{
@@ -387,35 +392,14 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShader(Com<ID3D11Device> d
 	for (uint32_t i = 0; i < effectDesc.GlobalVariables; ++i)
 	{
 		ID3DX11EffectVariable* handle = effect->GetVariableByIndex(i);
-		ID3DX11EffectType* type = handle->GetType();
-		D3DX11_EFFECT_VARIABLE_DESC variableDesc;
-		D3DX11_EFFECT_TYPE_DESC typeDesc;
-		if (FAILED(hr = handle->GetDesc(&variableDesc)))
-		{
-			ReleaseVars();
-			return nullptr;
-		}
-		if (FAILED(hr = type->GetDesc(&typeDesc)))
-		{
-			ReleaseVars();
-			return nullptr;
-		}
-		if (variableDesc.Semantic && !strcmp(variableDesc.Semantic, "ENGINE"))
-		{
-			SafeRelease(handle);
-			SafeRelease(type);
-			continue;
-		}
-		
-		ShaderVariableInfo info;
-		info.Name = variableDesc.Name;
-		info.Semantic = variableDesc.Semantic != nullptr ? variableDesc.Semantic : "";
-		info.Type = TypeOf(typeDesc);
-		info.Size = typeDesc.Stride;
-		info.Elements = typeDesc.Elements;
-		info.Handle = handle;
 
-		SafeRelease(type);
+		ShaderVariableInfo* info = ShaderVariableInfo::Create(handle);
+
+		if (!info)
+		{
+			ReleaseVars();
+			return nullptr;
+		}
 
 		infos.push_back(info);
 	}
@@ -519,15 +503,15 @@ HRESULT CompiledShaderDesc::ApplyPass(Com<ID3D11DeviceContext> deviceContext, ui
 const ShaderVariableInfo* CompiledShaderDesc::FindVariableByName(const string& name)
 {
 	auto find_it = std::find_if(m_variableInfos.begin(), m_variableInfos.end(),
-		[&](const ShaderVariableInfo& e)
+		[&](const ShaderVariableInfo* e)
 		{
-			return e.Name == name;
+			return e->Name == name;
 		});
 
 	if (find_it == m_variableInfos.end())
 		return nullptr;
 	else
-		return find_it._Ptr;
+		return *find_it;
 }
 
 const ShaderVariableInfo* CompiledShaderDesc::FindVariableByIndex(uint index)
@@ -535,5 +519,5 @@ const ShaderVariableInfo* CompiledShaderDesc::FindVariableByIndex(uint index)
 	if (index >= GetVariableCount())
 		return nullptr;
 
-	return &m_variableInfos[index];
+	return m_variableInfos[index];
 }

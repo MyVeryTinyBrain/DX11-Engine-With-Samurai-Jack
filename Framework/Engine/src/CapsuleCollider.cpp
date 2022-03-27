@@ -16,7 +16,6 @@
 #include "VIBuffer.h"
 #include "VI.h"
 #include "Material.h"
-#include "MaterialColorLine.h"
 #include "GraphicSystem.h"
 #include "RenderQueue.h"
 #include "PrimitiveVI.h"
@@ -176,7 +175,7 @@ void CapsuleCollider::CreateDebugShape()
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		&viBuffer);
 	m_dbgMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
-	m_dbgMaterial = system->resourceManagement->builtInResources->greenColorLineMaterial;
+	m_dbgMaterial = system->resourceManagement->builtInResources->wireframeMaterial;
 }
 
 void CapsuleCollider::ResetDebugShape()

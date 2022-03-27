@@ -71,7 +71,7 @@ void CBufferManager::ApplyWorldMatrixBuffer(const M4& world)
         return;
 }
 
-void CBufferManager::ApplyCameraBuffer(const V3& position, const V3& direction, const M4& view, const M4& proj, float Near, float Far)
+void CBufferManager::ApplyCameraBuffer(const V3& position, const V3& direction, const M4& view, const M4& proj, uint2 size, float Near, float Far)
 {
     D3D11_MAPPED_SUBRESOURCE resource = {};
     if (FAILED(MapBuffer(m_cameraBuffer, &resource)))
@@ -85,6 +85,8 @@ void CBufferManager::ApplyCameraBuffer(const V3& position, const V3& direction, 
         // Transpose Matrix
         buffer->_ViewMatrix = view.transposed;
         buffer->_ProjectionMatrix = proj.transposed;
+
+        buffer->_Size = size;
 
         buffer->_Near = Near;
         buffer->_Far = Far;

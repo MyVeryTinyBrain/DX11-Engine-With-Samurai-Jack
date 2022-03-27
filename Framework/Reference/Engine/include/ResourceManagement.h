@@ -2,10 +2,11 @@
 
 #include "IResourceManagement.h"
 #include "ResourceRef.h"
+#include "ResourceFactory.h"
+#include "BuiltInResources.h"
 
 ENGINE_BEGIN
-class ResourceFactory;
-class BuiltInResources;
+
 class ENGINE_API ResourceManagement : public IResourceManagement
 {
 public:

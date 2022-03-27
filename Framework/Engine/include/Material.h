@@ -7,19 +7,21 @@
 ENGINE_BEGIN
 class Shader;
 class Texture;
-class ENGINE_API Material abstract : public ResourceObject, public IMaterial
+class ShaderVariable;
+class ISpecificShaderVariable;
+class ENGINE_API Material : public ResourceObject, public IMaterial
 {
 public:
 
-	Material();
+	Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, ResourceRef<Shader> shader);
 
 	virtual ~Material();
 
-	virtual tstring GetShaderPath() const = 0;
+	virtual tstring GetShaderPath() const;
 
-	virtual void OnCreated() = 0;
+	virtual void OnCreated() {};
 
-	virtual void OnSetMaterialValues() = 0;
+	virtual void ApplyMaterial(ICamera* camera) override;
 
 public:
 
@@ -44,8 +46,7 @@ public:
 	HRESULT GetRenderGroupOrderOfAppliedTechnique(uint passIndex, int& out_renderGroupOrder) const;
 	HRESULT GetInstancingFlagOfAppliedTechnique(uint passIndex, bool& out_instancingFlag) const;
 	HRESULT GetDrawShadowFlagOfAppliedTechnique(uint passIndex, bool& out_drawShadowFlag) const;
-	HRESULT GetShadowCutoffEnableFlagOfAppliedTechnique(uint passIndex, bool& out_shadowCutoffEnableFlag) const;
-	HRESULT GetShadowCutoffAlphaOfAppliedTechnique(uint passIndex, float& out_shadowCutoffAlpha) const;
+	HRESULT GetShadowPassFlagOfAppliedTechnique(uint passIndex, bool& out_shadowPassFlag) const;
 
 	bool IsValid() const;
 
@@ -56,40 +57,27 @@ public:
 
 	ResourceRef<Shader> GetShader() const;
 
-	ResourceRef<Texture> GetDiffuseTexture() const;
-
-	void SetDiffuseTexture(const ResourceRef<Texture>& texture);
-
-	_declspec(property(get = GetDiffuseTexture, put = SetDiffuseTexture)) ResourceRef<Texture> diffuseTexture;
-
 public:
 
-	template <class MaterialType>
-	static ResourceRef<MaterialType> CreateManagedMaterial(ResourceManagement* management, const tstring& resourceKey);
-
-	template <class MaterialType>
-	static ResourceRef<MaterialType> CreateManagedMaterial(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName);
-
-	template <class MaterialType>
-	static ResourceRef<MaterialType> CreateUnmanagedMaterial(ResourceManagement* management);
+	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath, const tstring& resourceKey);
+	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath, const tstring& resourceKey, const tstring& groupName);
+	static ResourceRef<Material> CreateUnmanagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath);
 
 private: 
 
-	virtual void SetMaterialValues() final override;
-
 	virtual HRESULT GetEffectDesc(Com<ID3DX11Effect>& out_effect) const final override;
-
 	virtual HRESULT SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex) final override;
-
 	virtual HRESULT ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex) final override;
 
 private:
 
-	bool Initialize(ResourceManagement* management, bool managed, const tstring& resourceKey, const tstring& groupName);
+	void ApplyVariables();
+	void ApplySpecificVariables(ICamera* camera);
 
-	bool SetupShader();
+private:
 
-	bool SetupDefaultDiffuseTexture();
+	void SetupShaderVariables();
+	void ApplyAnnotation(ShaderVariable* variable);
 
 private:
 
@@ -97,12 +85,8 @@ private:
 
 	uint m_techniqueIndex = 0;
 
-	// texture2D _DiffuseTexture
-	ResourceRef<Texture> m_diffuseTexture;
-
-
+	vector<ShaderVariable*> m_shaderVariables;
+	vector<ISpecificShaderVariable*> m_specificShaderVariables;
 };
 
 ENGINE_END
-
-#include "Material.hpp"

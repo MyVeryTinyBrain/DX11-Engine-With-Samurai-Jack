@@ -6,6 +6,8 @@ class RenderTarget;
 class DepthStencil;
 class ENGINE_API DeferredRenderTarget
 {
+	enum { COPYABLE = 2 };
+
 private:
 
 	DeferredRenderTarget(Com<ID3D11Device> device, uint width, uint height);
@@ -34,7 +36,8 @@ public:
 
 	inline RenderTarget* GetDiffuse() const { return m_Diffuse; }
 	inline RenderTarget* GetNormal() const { return m_Normal; }
-	inline RenderTarget* GetDepth_Light_Occlusion_Shadow() const { return m_Depth_Light_Occlusion_Shadow; }
+	inline RenderTarget* GetDepth() const { return m_Depth[0]; }
+	inline RenderTarget* GetLight_Occlusion_Shadow() const { return m_Light_Occlusion_Shadow; }
 	inline RenderTarget* GetSpecular_Power() const { return m_Specular_Power; }
 	inline RenderTarget* GetEmissive() const { return m_Emissive; }
 	inline RenderTarget* GetReflection_ReflectionBlur_ReflectMask() const { return m_Reflection_ReflectionBlur_ReflectMask; }
@@ -43,7 +46,7 @@ public:
 	inline RenderTarget* GetSpecular() const { return m_specular; }
 	inline RenderTarget* GetLightBlend() const { return m_lightBlend; }
 
-	inline RenderTarget* GetResult() const { return m_result; }
+	inline RenderTarget* GetResult() const { return m_result[0]; }
 
 	inline RenderTarget* GetBridge() const { return m_bridge; }
 	inline RenderTarget* GetBridgeHalf() const { return m_bridgeHalf; }
@@ -53,9 +56,13 @@ public:
 	inline RenderTarget* GetSSRBlur() const { return m_ssrBlur; }
 	inline RenderTarget* GetDOF() const { return m_dof; }
 
+	inline RenderTarget* GetCopyTargetDepth() const { return m_Depth[1]; }
+	inline RenderTarget* GetCopyTargetResult() const { return m_result[1]; }
+
 	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
-	_declspec(property(get = GetDepth_Light_Occlusion_Shadow)) RenderTarget* depth_Light_Occlusion_Shadow;
+	_declspec(property(get = GetDepth)) RenderTarget* depth;
+	_declspec(property(get = GetLight_Occlusion_Shadow)) RenderTarget* light_Occlusion_Shadow;
 	_declspec(property(get = GetSpecular_Power)) RenderTarget* specular_Power;
 	_declspec(property(get = GetEmissive)) RenderTarget* emissive;
 	_declspec(property(get = GetReflection_ReflectionBlur_ReflectMask)) RenderTarget* reflection_ReflectionBlur_ReflectMask;
@@ -74,6 +81,9 @@ public:
 	_declspec(property(get = GetSSRBlur)) RenderTarget* ssrBlur;
 	_declspec(property(get = GetDOF)) RenderTarget* dof;
 
+	_declspec(property(get = GetCopyTargetDepth)) RenderTarget* copyTargetDepth;
+	_declspec(property(get = GetCopyTargetResult)) RenderTarget* copyTargetResult;
+
 public:
 
 	inline uint GetWidth() const { return m_width; }
@@ -90,10 +100,12 @@ private:
 	using RenderTargets = vector<RenderTarget*>;
 	RenderTargets								m_renderTargets;
 	RenderTargets								m_postProcessingRenderTargets;
+	RenderTargets								m_copyTargets;
 
 	RenderTarget*								m_Diffuse = nullptr; // RGBA(Diffuse)
 	RenderTarget*								m_Normal = nullptr; // RGB(Normal)
-	RenderTarget*								m_Depth_Light_Occlusion_Shadow = nullptr; // R(Depth)G(LightMask)B(OcclusionMask)A(ShadowMask)
+	RenderTarget*								m_Depth[COPYABLE] = {}; // R=G=B(Depth)
+	RenderTarget*								m_Light_Occlusion_Shadow = nullptr; // R(LightMask)G(OcclusionMask)B(ShadowMask)
 	RenderTarget*								m_Specular_Power = nullptr; // RGB(SpecularMask)A(Power)
 	RenderTarget*								m_Emissive = nullptr; // RGBA(Emissive)
 	RenderTarget*								m_Reflection_ReflectionBlur_ReflectMask = nullptr; // R(Reflection)G(ReflectionBlur)B(ReflectMask)
@@ -102,7 +114,7 @@ private:
 	RenderTarget*								m_specular = nullptr;
 	RenderTarget*								m_lightBlend = nullptr;
 
-	RenderTarget*								m_result = nullptr;
+	RenderTarget*								m_result[COPYABLE] = {};
 
 	RenderTarget*								m_bridge = nullptr;
 	RenderTarget*								m_bridgeHalf = nullptr;

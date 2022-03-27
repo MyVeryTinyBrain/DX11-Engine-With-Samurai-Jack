@@ -7,9 +7,7 @@ ENGINE_BEGIN
 class Texture2D;
 class Mesh;
 class MeshRenderer;
-class MaterialGizmoRotationNoHighlight;
-class MaterialGizmoRotationHighlight;
-class MaterialGizmoRotationLine;
+class Material;
 class ENGINE_API GizmoRotation : public GizmoBase
 {
 private:
@@ -47,73 +45,73 @@ private:	// Setup Component Parameters
 private:
 
 	// Plane mesh
-	ResourceRef<Mesh>									m_axisMesh;
+	ResourceRef<Mesh>						m_axisMesh;
 	
 	// Line mesh
-	ResourceRef<Mesh>									m_axisLineMesh;
+	ResourceRef<Mesh>						m_axisLineMesh;
 
 	// Slice line mesh
-	ResourceRef<Mesh>									m_sliceLineMesh;
+	ResourceRef<Mesh>						m_sliceLineMesh;
 
 	// Transparent Textures
 	// For Rendering to highlighted mesh
 
-	ResourceRef<Texture2D>								m_rTexture;
-	ResourceRef<Texture2D>								m_gTexture;
-	ResourceRef<Texture2D>								m_bTexture;
+	ResourceRef<Texture2D>					m_rTexture;
+	ResourceRef<Texture2D>					m_gTexture;
+	ResourceRef<Texture2D>					m_bTexture;
 
 	// Regular Textures
 	// For Rendering to lines
 
-	ResourceRef<Texture2D>								m_lrTexture;
-	ResourceRef<Texture2D>								m_lgTexture;
-	ResourceRef<Texture2D>								m_lbTexture;
+	ResourceRef<Texture2D>					m_lrTexture;
+	ResourceRef<Texture2D>					m_lgTexture;
+	ResourceRef<Texture2D>					m_lbTexture;
 
 	// For Rendering to mesh
 
-	ResourceRef<MaterialGizmoRotationNoHighlight>		m_rMat;
-	ResourceRef<MaterialGizmoRotationNoHighlight>		m_gMat;
-	ResourceRef<MaterialGizmoRotationNoHighlight>		m_bMat;
+	ResourceRef<Material>					m_rMat;
+	ResourceRef<Material>					m_gMat;
+	ResourceRef<Material>					m_bMat;
 
-	ResourceRef<MaterialGizmoRotationHighlight>			m_hrMat;
-	ResourceRef<MaterialGizmoRotationHighlight>			m_hgMat;
-	ResourceRef<MaterialGizmoRotationHighlight>			m_hbMat;
+	ResourceRef<Material>					m_hrMat;
+	ResourceRef<Material>					m_hgMat;
+	ResourceRef<Material>					m_hbMat;
 
 	// For Rendering to line
 
-	ResourceRef<MaterialGizmoRotationLine>				m_lrMat;
-	ResourceRef<MaterialGizmoRotationLine>				m_lgMat;
-	ResourceRef<MaterialGizmoRotationLine>				m_lbMat;
+	ResourceRef<Material>					m_lrMat;
+	ResourceRef<Material>					m_lgMat;
+	ResourceRef<Material>					m_lbMat;
 
 	// For Rendering to slice line
 
-	ResourceRef<MaterialGizmoRotationLine>				m_slMat;
+	ResourceRef<Material>					m_slMat;
 
 	// For rendering to mesh
 
-	MeshRenderer*										m_xRenderer = nullptr;
-	MeshRenderer*										m_yRenderer = nullptr;
-	MeshRenderer*										m_zRenderer = nullptr;
+	MeshRenderer*							m_xRenderer = nullptr;
+	MeshRenderer*							m_yRenderer = nullptr;
+	MeshRenderer*							m_zRenderer = nullptr;
 
 	// For rendering to line
 
-	MeshRenderer*										m_lxRenderer = nullptr;
-	MeshRenderer*										m_lyRenderer = nullptr;
-	MeshRenderer*										m_lzRenderer = nullptr;
+	MeshRenderer*							m_lxRenderer = nullptr;
+	MeshRenderer*							m_lyRenderer = nullptr;
+	MeshRenderer*							m_lzRenderer = nullptr;
 
 	// For rendering to slice line
 
-	MeshRenderer*										m_slxRenderer = nullptr;
-	MeshRenderer*										m_slyRenderer = nullptr;
-	MeshRenderer*										m_slzRenderer = nullptr;
+	MeshRenderer*							m_slxRenderer = nullptr;
+	MeshRenderer*							m_slyRenderer = nullptr;
+	MeshRenderer*							m_slzRenderer = nullptr;
 
-	GizmoBase::Axis										m_highlightedAxis = GizmoBase::Axis::None;
-	GizmoBase::Axis										m_hitAxis = GizmoBase::Axis::None;
-	V3													m_hitNormal;
-	V3													m_hitCenter;
-	V3													m_hitPointOnAxis;
-	Q													m_hitGizmoRotation;
-	Q													m_hitHandleTransformRotation;
+	GizmoBase::Axis							m_highlightedAxis = GizmoBase::Axis::None;
+	GizmoBase::Axis							m_hitAxis = GizmoBase::Axis::None;
+	V3										m_hitNormal;
+	V3										m_hitCenter;
+	V3										m_hitPointOnAxis;
+	Q										m_hitGizmoRotation;
+	Q										m_hitHandleTransformRotation;
 };
 
 ENGINE_END

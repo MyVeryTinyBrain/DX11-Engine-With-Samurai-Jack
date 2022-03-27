@@ -7,7 +7,6 @@
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 #include "PostProcessing.h"
-#include "DeferredScreenRender.h"
 #include "LightManager.h"
 
 GraphicSystem::~GraphicSystem()
@@ -66,10 +65,6 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 	if (FAILED(m_postProcessing->Initialize()))
 		return false;
 
-	m_deferredScreenRender = new DeferredScreenRender(this, m_CBufferManager, m_instanceBufferManager);
-	if (FAILED(m_deferredScreenRender->Initialize()))
-		return false;
-
 	m_lightManager = new LightManager;
 
 	return true;
@@ -85,7 +80,6 @@ bool GraphicSystem::Release()
 
 	SafeDelete(m_lightManager);
 	SafeDelete(m_postProcessing);
-	SafeDelete(m_deferredScreenRender);
 	SafeDelete(m_cameraManager);
 	SafeDelete(m_renderQueue);
 	SafeDelete(m_instanceBufferManager);
@@ -221,11 +215,6 @@ CameraManager* GraphicSystem::GetCameraManager() const
 PostProcessing* GraphicSystem::GetPostProcessing() const
 {
 	return m_postProcessing;
-}
-
-DeferredScreenRender* GraphicSystem::GetDeferredScreenRender() const
-{
-	return m_deferredScreenRender;
 }
 
 LightManager* GraphicSystem::GetLightManager() const

@@ -102,7 +102,8 @@ float4					_TextureSize;
 texture2D				_Diffuse;
 texture2D				_Normal;
 texture2D				_WorldPosition;
-texture2D				_Depth_Light_Occlusion_Shadow;
+texture2D				_Depth;
+texture2D				_Light_Occlusion_Shadow;
 texture2D				_Reflection_ReflectionBlur_ReflectMask;
 texture2D				_Result;
 texture2D				_Sample; // For Temp Texture
@@ -165,9 +166,8 @@ half SSAORayMarch(float2 uv)
 
 	half3 normal = _Normal.Sample(pointSampler, uv, 0).xyz;
 
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv, 0);
-	float depth = depthLightOcclusionShadow.r;
-	half occlusionMask = depthLightOcclusionShadow.z;
+	half depth = _Depth.Sample(pointSampler, uv, 0).r;
+	half occlusionMask = _Light_Occlusion_Shadow.Sample(pointSampler, uv, 0).g;
 
 	[flatten] // Fast exit
 	if (depth == 1.0f) return 1.0f;
@@ -209,7 +209,7 @@ half SSAORayMarch(float2 uv)
 			continue;
 
 		// Must use Linear Sampler
-		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(linearSampler, sampleUV, 0).r;
+		half sampleDepth = _Depth.SampleLevel(linearSampler, sampleUV, 0).r;
 		half sampleVDepth = ToViewSpace(sampleUV, sampleDepth, invProjMatrix).z;
 
 		//float rangeCheck = abs(vPosition.z - sampleVDepth) < _SSAODesc.Radius ? 1.0f : 0.0f;
@@ -239,7 +239,7 @@ float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 {
 	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
-	half occlusionMask = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).b;
+	half occlusionMask = _Light_Occlusion_Shadow.Sample(pointSampler, In.UV).g;
 	half4 occlusion = 1.0f - _Sample.Sample(pointSampler, In.UV);
 	return half4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
 }
@@ -261,7 +261,7 @@ half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 		half3 sSamplePos = pSamplePos.xyz / pSamplePos.w;
 		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
 
-		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
+		half sampleDepth = _Depth.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
 
 		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
 
@@ -287,7 +287,7 @@ half2 SSRRayMarch(half2 uv)
 {
 	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv).r;
+	half depth = _Depth.Sample(pointSampler, uv).r;
 
 	[flatten] // Fast exit
 	if (depth >= 1.0f) return half2(0.0f, 0.0f);
@@ -313,7 +313,7 @@ half2 SSRRayMarch(half2 uv)
 		half3 sSamplePos = pSamplePos.xyz / pSamplePos.w;
 		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
 
-		half sampleDepth = _Depth_Light_Occlusion_Shadow.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
+		half sampleDepth = _Depth.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
 
 		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
 
@@ -432,7 +432,7 @@ half4 PS_MAIN_DOF_WritePass1(PS_IN In) : SV_TARGET
 
 	half4 color = _Result.Sample(pointSampler, In.UV);
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 
 	half percent = smoothstep(_DOFDesc.MinZ, _DOFDesc.MinZ + _DOFDesc.RangeZ, vPosition.z);
@@ -453,8 +453,7 @@ half4 PS_MAIN_DOF_Apply(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Fog_Apply_Distance(PS_IN In) : SV_TARGET
 {
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
-	half depth = depthLightOcclusionShadow.r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 
 	half d = length(vPosition.xyz - _ViewPosition.xyz);
@@ -469,8 +468,7 @@ half4 PS_MAIN_Fog_Apply_Distance(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
 {
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
-	half depth = depthLightOcclusionShadow.r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 	half vDepth = vPosition.z;
 
@@ -613,7 +611,7 @@ half4 PS_MAIN_HorizontalInvDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
@@ -636,7 +634,7 @@ half4 PS_MAIN_VerticalInvDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
@@ -659,7 +657,7 @@ half4 PS_MAIN_HorizontalDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
@@ -682,7 +680,7 @@ half4 PS_MAIN_VerticalDepthBlur(PS_IN In) : SV_TARGET
 	int size = _BlurDesc.NumSamples;
 	int numSamples = size * 2 + 1;
 
-	half depth = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV).r;
+	half depth = _Depth.Sample(pointSampler, In.UV).r;
 
 	[loop]
 	for (int i = -size; i <= size; ++i)
@@ -696,6 +694,38 @@ half4 PS_MAIN_VerticalDepthBlur(PS_IN In) : SV_TARGET
 
 	half4 color = accumulation / numSamples;
 	return color;
+}
+
+// Screen ==============================================================================================
+
+half4 PS_MAIN_Screen_Default(PS_IN In) : SV_TARGET
+{
+	return _Sample.Sample(pointSampler, In.UV);
+}
+
+half4 PS_MAIN_Screen_Alphatest(PS_IN In) : SV_TARGET
+{
+	half4 color = _Sample.Sample(pointSampler, In.UV);
+	if (color.a < 1.0f)
+		discard;
+	return color;
+}
+
+half4 PS_MAIN_Screen_AlphaToDark(PS_IN In) : SV_TARGET
+{
+	const static half4 DARK = half4(0.0f, 0.0f, 0.0f, 1.0f);
+	half4 color = _Sample.Sample(pointSampler, In.UV);
+	half4 result = color.a < 1.0f ? DARK : color;
+	return result;
+}
+
+half4 PS_MAIN_Screen_LinearDepth(PS_IN In) : SV_TARGET
+{
+	const static half CONST_NEAR = 0.1f;
+	const static half CONST_FAR = 50.0f;
+	half4 color = _Sample.Sample(pointSampler, In.UV);
+	half linearDepth = ToLinearDepth(CONST_NEAR, CONST_FAR, color.r);
+	return half4(linearDepth, linearDepth, linearDepth, 1.0f);
 }
 
 // =====================================================================================================
@@ -849,7 +879,7 @@ technique11 PostProcessing
 		PixelShader = compile ps_5_0 PS_MAIN_ChromaticAberration_Apply();
 	}
 }
-technique11 Common
+technique11 Blur
 {
 	pass HozizontalBlur
 	{
@@ -900,3 +930,46 @@ technique11 Common
 		PixelShader = compile ps_5_0 PS_MAIN_VerticalDepthBlur();
 	}
 };
+technique11 Screen
+{
+	pass Default
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Screen_Default();
+	}
+	pass Alphatest
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Screen_Alphatest();
+	}
+	pass Alphablend
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Screen_Default();
+	}
+	pass AlphaToDark
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Screen_AlphaToDark();
+	}
+	pass LinearDepth
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Screen_LinearDepth();
+	}
+}

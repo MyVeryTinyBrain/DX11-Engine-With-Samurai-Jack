@@ -42,6 +42,12 @@ ResourceRef<Texture2D> Texture2D::Copy() const
 		SafeRelease(destSRV);
 	};
 
+	if (FAILED(m_texture->QueryInterface<ID3D11Texture2D>(&src)))
+	{
+		ReleaseVars();
+		return nullptr;
+	}
+
 	if (!src)
 	{
 		ReleaseVars();
@@ -54,6 +60,10 @@ ResourceRef<Texture2D> Texture2D::Copy() const
 		return nullptr;
 	}
 
+	D3D11_TEXTURE2D_DESC desc = m_desc;
+	if (desc.Usage == D3D11_USAGE_IMMUTABLE)
+		desc.Usage = D3D11_USAGE_DEFAULT;
+
 	deviceContext->CopyResource(dest, src);
 
 	if (FAILED(device->CreateShaderResourceView(dest, nullptr, &destSRV)))
@@ -63,6 +73,22 @@ ResourceRef<Texture2D> Texture2D::Copy() const
 	}
 
 	return new Texture2D(management, false, path, TEXT(""), dest, destSRV, m_format, m_desc);
+}
+
+bool Texture2D::CopyTo(ResourceRef<Texture2D> destTex)
+{
+	if (width != destTex->width || height != destTex->height)
+		return false;
+
+	if (destTex->m_desc.Usage == D3D11_USAGE_IMMUTABLE)
+		return false;
+
+	auto deviceContext = system->graphicSystem->deviceContext;
+	ID3D11Resource* src = m_texture;
+	ID3D11Resource* dest = destTex->m_texture;
+	deviceContext->CopyResource(dest, src);
+
+	return true;
 }
 
 Com<ID3D11Resource> Texture2D::GetTexture() const

@@ -11,7 +11,6 @@
 #include "VIBuffer.h"
 #include "VI.h"
 #include "Material.h"
-#include "MaterialColorLine.h"
 #include "GraphicSystem.h"
 #include "RenderQueue.h"
 #include "ICamera.h"
@@ -35,7 +34,7 @@ void BoxCollider::Awake()
 	Collider::Awake();
 
 	m_dbgMesh = system->resourceManagement->builtInResources->boxMesh;
-	m_dbgMaterial = system->resourceManagement->builtInResources->greenColorLineMaterial;
+	m_dbgMaterial = system->resourceManagement->builtInResources->wireframeMaterial;
 }
 
 void BoxCollider::DebugRender()

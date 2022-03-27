@@ -65,14 +65,11 @@ public:
 
 	ResourceRef<Mesh> CreateManagedMeshFromFile(const tstring& path, bool withTextures = true);
 
-	template <class MaterialType>
-	ResourceRef<MaterialType> CreateManagedMaterial(const tstring& resourceKey);
-
-	template <class MaterialType>
-	ResourceRef<MaterialType> CreateManagedMaterial(const tstring& resourceKey, const tstring& groupName);
-
-	template <class MaterialType>
-	ResourceRef<MaterialType> CreateUnmanagedMaterial();
+	ResourceRef<Material> CreateManagedMaterialByShader(const tstring& shaderPath, const tstring& resourceKey);
+	
+	ResourceRef<Material> CreateManagedMaterialByShader(const tstring& shaderPath, const tstring& resourceKey, const tstring& groupName);
+	
+	ResourceRef<Material> CreateUnmanagedMaterialByShader(const tstring& shaderPath);
 
 public:
 
@@ -91,5 +88,3 @@ private:
 };
 
 ENGINE_END
-
-#include "ResourceFactory.hpp"

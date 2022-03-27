@@ -51,7 +51,8 @@ struct LightDesc
 LightDesc				_LightDesc;
 texture2D				_Normal;
 texture2D				_WorldPosition;
-texture2D				_Depth_Light_Occlusion_Shadow;
+texture2D				_Depth;
+texture2D				_Light_Occlusion_Shadow;
 texture2D				_Specular_Power;
 texture2D				_LightDepthMap[6];
 SamplerState			linearSampler
@@ -99,15 +100,17 @@ PS_IN VS_MAIN(VS_IN In)
 void UnpackGBuffersForLight(half2 uv,
 	out half3 normal,
 	out float4 worldPosition,
+	out half depth,
 	out half occlusionMask, out half shadowMask,
 	out half3 specularMask, out half specularPower)
 {
 	normal = _Normal.Sample(pointSampler, uv).xyz;
 
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, uv);
-	float depth = depthLightOcclusionShadow.r;
-	occlusionMask = depthLightOcclusionShadow.b;
-	shadowMask = depthLightOcclusionShadow.a;
+	depth = _Depth.Sample(pointSampler, uv);
+
+	half4 depthLightOcclusionShadow = _Light_Occlusion_Shadow.Sample(pointSampler, uv);
+	occlusionMask = depthLightOcclusionShadow.g;
+	shadowMask = depthLightOcclusionShadow.b;
 
 	half3 viewPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
 	worldPosition.xyz = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
@@ -338,12 +341,14 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 
 	half3 normal;
 	float4 worldPosition;
+	half depth;
 	half occlusionMask, shadowMask;
 	half3 specularMask;
 	half specular_Power;
 	UnpackGBuffersForLight(In.UV,
 		normal,
 		worldPosition,
+		depth,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
@@ -378,19 +383,17 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 
 	half3 normal;
 	float4 worldPosition;
+	half depth;
 	half occlusionMask, shadowMask;
 	half3 specularMask;
 	half specular_Power;
 	UnpackGBuffersForLight(In.UV,
 		normal,
 		worldPosition,
+		depth,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
-	half depth = depthLightOcclusionShadow.r;
-	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
-	worldPosition = mul(half4(vPosition, 1.0f), Inverse(_ViewMatrix));
 	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
 
 	half atten = ComputeDistanceAtten(lightToPixel);
@@ -426,19 +429,17 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 
 	half3 normal;
 	float4 worldPosition;
+	half depth;
 	half occlusionMask, shadowMask;
 	half3 specularMask;
 	half specular_Power;
 	UnpackGBuffersForLight(In.UV,
 		normal,
 		worldPosition,
+		depth,
 		occlusionMask, shadowMask,
 		specularMask, specular_Power);
 
-	half4 depthLightOcclusionShadow = _Depth_Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
-	half depth = depthLightOcclusionShadow.r;
-	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
-	worldPosition = mul(half4(vPosition, 1.0f), Inverse(_ViewMatrix));
 	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
 
 	half distAtten = ComputeDistanceAtten(lightToPixel);

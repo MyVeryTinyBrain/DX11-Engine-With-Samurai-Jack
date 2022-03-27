@@ -282,6 +282,11 @@ DeferredRenderTarget* Camera::GetDeferredRenderTarget() const
 	return m_deferredRenderTarget;
 }
 
+uint2 Camera::GetSize() const
+{
+	return uint2(m_deferredRenderTarget->width, m_deferredRenderTarget->height);
+}
+
 bool Camera::IsAutoFitToResolutionMode() const
 {
 	return m_autoFitToResolution;

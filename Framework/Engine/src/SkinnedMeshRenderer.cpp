@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "SkinnedMeshRenderer.h"
 #include "Mesh.h"
+#include "Shader.h"
 #include "Material.h"
 #include "Transform.h"
 #include "RenderRequestInput.h"
@@ -9,8 +10,8 @@
 #include "RenderQueue.h"
 #include "NodeTransform.h"
 #include "NodeSet.h"
+#include "ResourceManagement.h"
 #include "BuiltInResources.h"
-#include "MaterialStandard.h"
 #include "ResourceFactory.h"
 #include "Texture2D.h"
 
@@ -44,19 +45,12 @@ void SkinnedMeshRenderer::Render()
 			RenderGroup renderGroup;
 			int renderGroupOrder;
 			bool drawShadowFlag;
-			bool shadowCutoffEnableFlag;
-			float shadowCutoffAlpha;
+			bool shadowPassFlag;
 
-			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
-				continue;
-			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
-				continue;
-			if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag)))
-				continue;
-			if (FAILED(currentMaterial->GetShadowCutoffEnableFlagOfAppliedTechnique(j, shadowCutoffEnableFlag)))
-				continue;
-			if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha)))
-				continue;
+			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup))) continue;
+			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder))) continue;
+			if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag))) continue;
+			if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
 
 			RenderRequest input = {};
 			input.essential.worldMatrix = localToWorldMatrix;
@@ -72,9 +66,7 @@ void SkinnedMeshRenderer::Render()
 
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;
-			shadow.cutoffEnable = shadowCutoffEnableFlag;
-			shadow.cutoffAlpha = shadowCutoffAlpha;
-			shadow.cutoffTexture = currentMaterial->diffuseTexture;
+			shadow.shadowPass = shadowPassFlag;
 			input.shadow = shadow;
 
 			input.op.boneOp = this;
@@ -195,9 +187,8 @@ void SkinnedMeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 		else
 		{
 			tstring materialPath = texturePath + tstring(TEXT(".skinned.material"));
-			ResourceRef<MaterialStandard> material = system->resourceManagement->factory->CreateManagedMaterial<MaterialStandard>(materialPath);
-			material->diffuseTexture = texture;
-			material->specularTransparency = 0.0f;
+			ResourceRef<Material> material = system->resourceManagement->factory->CreateManagedMaterialByShader(system->resourceManagement->builtInResources->standardShader->path, materialPath);
+			material->SetTexture("_DiffuseTextrue", texture);
 			SetMaterialByIndex(i, material);
 		}
 	}

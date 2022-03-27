@@ -34,9 +34,23 @@ class ENGINE_API PostProcessing
 		VerticalInvDepthBlur,
 		HorizontalDepthBlur,
 		VerticalDepthBlur,
+		DefaultScreen,
+		AlphatestScreen,
+		AlphablendScreen,
+		AlphaToDarkScreen,
+		LinearDepthScreen,
 	};
 
 public:
+
+	enum class CopyType
+	{
+		Default,
+		Alphatest,
+		Alphablend,
+		AlphaToDark,
+		LinearDepth,
+	};
 
 	enum class Step 
 	{
@@ -56,6 +70,8 @@ public:
 
 	void PostProcess(ICamera* camera, PostProcessing::Step step);
 	void Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
+	void DrawToScreen(Com<ID3D11ShaderResourceView> src, uint2 pos, uint2 size, CopyType type);
+	void DrawToTextrue(Com<ID3D11ShaderResourceView> src, Com<ID3D11RenderTargetView> dest, uint2 destSize, CopyType type);
 
 private:
 
@@ -65,6 +81,8 @@ private:
 private:
 
 	void GetTehcniqueAndPass(Type type, uint& out_technique, uint& out_pass) const;
+	void GetBlurTechniqueAndPass(BlurType type, uint out_technique[2], uint out_pass[2]);
+	void GetCopyTechniqueAndPass(CopyType type, uint& out_technique, uint& out_pass);
 
 	void Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
 	void Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc);
@@ -83,18 +101,23 @@ private:
 
 private:
 
+	HRESULT SetScreenQuad(uint x, uint y, uint width, uint height);
+
+private:
+
 	HRESULT SetupQuads();
 	HRESULT SetupShaders();
 
 private:
 
-	GraphicSystem* m_graphicSystem = nullptr;
-	CBufferManager* m_CBufferManager = nullptr;
-	InstanceBufferManager* m_instanceBufferManager = nullptr;
+	GraphicSystem*				m_graphicSystem = nullptr;
+	CBufferManager*				m_CBufferManager = nullptr;
+	InstanceBufferManager*		m_instanceBufferManager = nullptr;
 
-	VIBuffer* m_normalizedQuad = nullptr;		// Immutable Vertices
+	VIBuffer*					m_normalizedQuad = nullptr;			// Immutable Vertices
+	VIBuffer*					m_quad = nullptr;					// Dynamic Vertices
 
-	CompiledShaderDesc* m_shaderPostProcessing = nullptr;
+	CompiledShaderDesc*			m_shaderPostProcessing = nullptr;
 };
 
 ENGINE_END

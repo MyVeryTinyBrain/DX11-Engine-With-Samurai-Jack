@@ -13,7 +13,7 @@ protected:
 		const string& name, const vector<string>& sementics, 
 		RenderGroup renderGroup, int renderGroupOrder,
 		bool instancingFlag, 
-		bool drawShadowFlag, bool shadowCutoffEnable, float shadowCutoffAlpha);
+		bool drawShadowFlag, bool shadowPassFlag);
 
 public:
 
@@ -21,39 +21,25 @@ public:
 
 public:
 
-	Com<ID3DX11EffectPass> GetPass() const;
+	inline Com<ID3DX11EffectPass> GetPass() const { return m_pass; }
+	inline Com<ID3D11InputLayout> GetInputLayout() const { return m_inputLayout; }
 
-	Com<ID3D11InputLayout> GetInputLayout() const;
-
-	RenderGroup GetRenderGroup() const;
-
-	int GetRenderGroupOrder() const;
-
-	bool IsInstancing() const;
-
-	bool IsDrawShadow() const;
-
-	bool IsShadowCutoffEnable() const;
-
-	float GetShadowCutoffAlpha() const;
+	inline RenderGroup GetRenderGroup() const { return m_renderGroup; }
+	inline int GetRenderGroupOrder() const { return m_renderGroupOrder; }
+	inline bool IsInstancing() const { return m_isInstancing; }
+	inline bool IsDrawShadow() const { return m_isDrawingShadow; }
+	inline bool IsShadowPass() const { return m_isShadowPass; }
 
 private:
 
 	static bool CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_DESC** out_arrElements, uint* out_count);
-
 	static ID3D11InputLayout* CreateInputLayout(Com<ID3D11Device> device, ID3DX11EffectPass* pass, string& out_name, vector<string>& out_sementics);
 
 	static bool ExtractRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGroup);
-
 	static bool ExtractRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroupOrder);
-
 	static bool ExtractInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag);
-
 	static bool ExtractDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag);
-
-	static bool ExtractShadowCutoffEnableFlag(ID3DX11EffectPass* pass, bool* out_flag);
-
-	static bool ExtractShadowCutoffAlpha(ID3DX11EffectPass* pass, float* out_shadowCutoffAlpha);
+	static bool ExtractShadowPassFlag(ID3DX11EffectPass* pass, bool* out_flag);
 
 public:
 
@@ -65,22 +51,21 @@ private:
 
 private:
 
-	ID3DX11EffectPass*		m_pass = nullptr;
-	ID3D11InputLayout*		m_inputLayout = nullptr;
+	ID3DX11EffectPass*	m_pass = nullptr;
+	ID3D11InputLayout*	m_inputLayout = nullptr;
 
-	string					m_name = "";
+	string				m_name = "";
 
-	vector<string>			m_sementics;
+	vector<string>		m_sementics;
 
-	RenderGroup				m_renderGroup = RenderGroup::Standard; // string RenderGroup {"Priority, Standard, Transparent, Overlay"}
+	RenderGroup			m_renderGroup = RenderGroup::Standard; // string RenderGroup {"Priority, Standard, Transparent, Overlay"}
 
-	int						m_renderGroupOrder = 0; // int RenderGroupOrder 
+	int					m_renderGroupOrder = 0; // int RenderGroupOrder 
 
-	bool					m_isInstancing = false; // bool instancing
+	bool				m_isInstancing = false; // bool instancing
 
-	bool					m_isDrawingShadow = true; // bool DrawShadow
-	bool					m_isShadowCutoffEnable = false; // bool ShadowCutoffEnable
-	float					m_shadowCutoffAlpha = 0.0f; // float ShadowCutoffAlpha
+	bool				m_isDrawingShadow = true; // bool DrawShadow
+	bool				m_isShadowPass = false; // bool ShadowPass
 
 };
 

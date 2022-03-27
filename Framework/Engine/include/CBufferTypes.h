@@ -13,9 +13,9 @@ struct CameraCBuffer
 	V4 _ViewDirection;
 	M4 _ViewMatrix;
 	M4 _ProjectionMatrix;
+	uint2 _Size;
 	float _Near;
 	float _Far;
-	float _CameraCBufferUnused[2];
 };
 
 struct BoneMatricesUsageCBuffer

@@ -5,11 +5,12 @@
 ENGINE_BEGIN
 class PassDesc;
 class TechniqueDesc;
+class ShaderVariableInfo;
 class ENGINE_API CompiledShaderDesc
 {
 protected:
 
-	CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs, const vector<ShaderVariableInfo>& infos);
+	CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs, const vector<ShaderVariableInfo*>& infos);
 
 public:
 
@@ -62,7 +63,7 @@ private:
 
 	vector<TechniqueDesc*>		m_techniqueDescs;
 
-	vector<ShaderVariableInfo>	m_variableInfos;
+	vector<ShaderVariableInfo*>	m_variableInfos;
 };
 
 ENGINE_END

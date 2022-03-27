@@ -8,7 +8,7 @@ RenderQueueStandard::~RenderQueueStandard()
 
 bool RenderQueueStandard::IsValidInput(const RenderRequest& input) const
 {
-	return input.essential.IsValid() || !input.essential.instance;
+	return input.essential.IsValid() || !input.essential.instance || input.shadow.shadowPass;
 }
 
 bool RenderQueueStandard::AddInput(const RenderRequest& input)
@@ -68,7 +68,7 @@ void RenderQueueStandard::Render(ICamera* camera)
 						if (!CullOp(camera, request.op.cullOp))
 							continue;
 
-						ApplyMaterial(deviceContext, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
+						ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
 						ApplyMesh(deviceContext, mesh, &prevMesh);
 						ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
 						ApplyWorldMatrix(request.essential.worldMatrix);
@@ -103,7 +103,7 @@ bool RenderQueueStandard::CullOp(ICamera* camera, IRendererCullOp* cullOp) const
 	return cullOp->CullTest(camera);
 }
 
-void RenderQueueStandard::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
+void RenderQueueStandard::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
 {
 	HRESULT hr = S_OK;
 
@@ -116,7 +116,7 @@ void RenderQueueStandard::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, 
 
 	*inout_prevMaterial = material;
 
-	material->SetMaterialValues();
+	material->ApplyMaterial(camera);
 
 	if (FAILED(hr = material->SetInputLayout(deviceContext, techniqueIndex, passIndex)))
 		return;
@@ -147,7 +147,7 @@ void RenderQueueStandard::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMes
 
 void RenderQueueStandard::ApplyCameraBuffer(ICamera* camera)
 {
-	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetNear(), camera->GetFar());
+	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 }
 
 void RenderQueueStandard::ApplyBoneMatrices(IRendererBoneOp* boneOp, uint subMeshIndex)

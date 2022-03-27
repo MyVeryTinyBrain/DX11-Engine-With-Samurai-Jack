@@ -7,7 +7,7 @@ ENGINE_BEGIN
 class Texture2D;
 class Mesh;
 class MeshRenderer;
-class MaterialGizmoTranslation;
+class Material;
 class ENGINE_API GizmoTranslation : public GizmoBase
 {
 private:
@@ -38,23 +38,23 @@ private:	// Setup Component Parameters
 
 private:
 
-	ResourceRef<Mesh>							m_axisMesh;
+	ResourceRef<Mesh>			m_axisMesh;
 
-	ResourceRef<Texture2D>						m_rTexture;
-	ResourceRef<Texture2D>						m_gTexture;
-	ResourceRef<Texture2D>						m_bTexture;
+	ResourceRef<Texture2D>		m_rTexture;
+	ResourceRef<Texture2D>		m_gTexture;
+	ResourceRef<Texture2D>		m_bTexture;
 
-	ResourceRef<MaterialGizmoTranslation>		m_rMat;
-	ResourceRef<MaterialGizmoTranslation>		m_gMat;
-	ResourceRef<MaterialGizmoTranslation>		m_bMat;
+	ResourceRef<Material>		m_rMat;
+	ResourceRef<Material>		m_gMat;
+	ResourceRef<Material>		m_bMat;
 
-	MeshRenderer*								m_xRenderer = nullptr;
-	MeshRenderer*								m_yRenderer = nullptr;
-	MeshRenderer*								m_zRenderer = nullptr;
+	MeshRenderer*				m_xRenderer = nullptr;
+	MeshRenderer*				m_yRenderer = nullptr;
+	MeshRenderer*				m_zRenderer = nullptr;
 
-	GizmoBase::Axis								m_hitAxis = GizmoBase::Axis::None;
-	V3											m_hitPointOnAxis;
-	V3											m_hitGizmoPosition;
+	GizmoBase::Axis				m_hitAxis = GizmoBase::Axis::None;
+	V3							m_hitPointOnAxis;
+	V3							m_hitGizmoPosition;
 };
 
 ENGINE_END

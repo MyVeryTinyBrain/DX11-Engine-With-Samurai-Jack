@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ICamera.h"
+
 ENGINE_BEGIN
 class PassDesc;
 class ENGINE_API IMaterial abstract
@@ -8,7 +10,7 @@ public:
 
 	virtual ~IMaterial() = default;
 
-	virtual void SetMaterialValues() = 0;
+	virtual void ApplyMaterial(ICamera* camera) = 0;
 
 	virtual HRESULT GetTechniqueCount(uint& out_techniqueCount) const = 0;
 

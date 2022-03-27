@@ -47,10 +47,10 @@
     <ClInclude Include="include\ILightManager.h" />
     <ClInclude Include="include\IPhysicsObject.h" />
     <ClInclude Include="include\IRendererBoundsOp.h" />
+    <ClInclude Include="include\ISpecificShaderVariable.h" />
     <ClInclude Include="include\ITexture.h" />
     <ClInclude Include="include\Light.h" />
     <ClInclude Include="include\LightManager.h" />
-    <ClInclude Include="include\MaterialStandard.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\PostProcessing.h" />
     <ClInclude Include="include\PostProcessingTypes.h" />
@@ -72,13 +72,8 @@
     <ClInclude Include="include\IPhysicsSystem.h" />
     <ClInclude Include="include\IRendererBoneOp.h" />
     <ClInclude Include="include\IRigidbody.h" />
-    <ClInclude Include="include\MaterialColorLine.h" />
     <ClInclude Include="include\PhysicsFilterShaderCallback.h" />
     <ClInclude Include="include\PhysicsLayerManager.h" />
-    <ClInclude Include="include\MaterialGizmoRotationHighlight.h" />
-    <ClInclude Include="include\MaterialGizmoRotationLine.h" />
-    <ClInclude Include="include\MaterialGizmoRotationNoHighlight.h" />
-    <ClInclude Include="include\MaterialGizmoTranslation.h" />
     <ClInclude Include="include\NodeDesc.h" />
     <ClInclude Include="include\Node.h" />
     <ClInclude Include="include\NodeSet.h" />
@@ -128,7 +123,6 @@
     <ClInclude Include="include\Input.h" />
     <ClInclude Include="include\IRendererCullOp.h" />
     <ClInclude Include="include\IResourceFactory.h" />
-    <ClInclude Include="include\Material.hpp" />
     <ClInclude Include="include\AssimpData.h" />
     <ClInclude Include="include\MeshRenderer.h" />
     <ClInclude Include="include\NodeTransform.h" />
@@ -137,7 +131,6 @@
     <ClInclude Include="include\PhysicsSimulationCallbackType.h" />
     <ClInclude Include="include\PhysicsSimulationEventCallback.h" />
     <ClInclude Include="include\PrimitiveVI.h" />
-    <ClInclude Include="include\DeferredScreenRender.h" />
     <ClInclude Include="include\Renderer.h" />
     <ClInclude Include="include\RenderQueueInstance.h" />
     <ClInclude Include="include\RenderQueueTransparent.h" />
@@ -163,7 +156,6 @@
     <ClInclude Include="include\RenderRequestInput.h" />
     <ClInclude Include="include\RenderTexture2D.h" />
     <ClInclude Include="include\ResourceFactory.h" />
-    <ClInclude Include="include\ResourceFactory.hpp" />
     <ClInclude Include="include\ResourceManagement.h" />
     <ClInclude Include="include\ResourceObject.h" />
     <ClInclude Include="include\ResourceRef.h" />
@@ -178,7 +170,10 @@
     <ClInclude Include="include\SceneObject.h" />
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\RenderQueueLight.h" />
+    <ClInclude Include="include\ShaderVariable.h" />
+    <ClInclude Include="include\ShaderVariableInfo.h" />
     <ClInclude Include="include\SkinnedMeshRenderer.h" />
+    <ClInclude Include="include\SpecificShaderVariables.h" />
     <ClInclude Include="include\SphereCollider.h" />
     <ClInclude Include="include\SpotLight.h" />
     <ClInclude Include="include\SubIndicesDesc.h" />
@@ -225,10 +220,10 @@
     <ClCompile Include="src\ILightManager.cpp" />
     <ClCompile Include="src\IPhysicsObject.cpp" />
     <ClCompile Include="src\IRendererBoundsOp.cpp" />
+    <ClCompile Include="src\ISpecificShaderVariable.cpp" />
     <ClCompile Include="src\ITexture.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
-    <ClCompile Include="src\MaterialStandard.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\PostProcessing.cpp" />
     <ClCompile Include="src\PostProcessingTypes.cpp" />
@@ -245,13 +240,8 @@
     <ClCompile Include="src\IPhysicsSystem.cpp" />
     <ClCompile Include="src\IRendererBoneOp.cpp" />
     <ClCompile Include="src\IRigidbody.cpp" />
-    <ClCompile Include="src\MaterialColorLine.cpp" />
     <ClCompile Include="src\PhysicsFilterShaderCallback.cpp" />
     <ClCompile Include="src\PhysicsLayerManager.cpp" />
-    <ClCompile Include="src\MaterialGizmoRotationHighlight.cpp" />
-    <ClCompile Include="src\MaterialGizmoRotationLine.cpp" />
-    <ClCompile Include="src\MaterialGizmoRotationNoHighlight.cpp" />
-    <ClCompile Include="src\MaterialGizmoTranslation.cpp" />
     <ClCompile Include="src\NodeDesc.cpp" />
     <ClCompile Include="src\Node.cpp" />
     <ClCompile Include="src\NodeSet.cpp" />
@@ -313,7 +303,6 @@
     <ClCompile Include="src\PhysicsSimulationCallbackType.cpp" />
     <ClCompile Include="src\PhysicsSimulationEventCallback.cpp" />
     <ClCompile Include="src\PrimitiveVI.cpp" />
-    <ClCompile Include="src\DeferredScreenRender.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\RenderQueueInstance.cpp" />
     <ClCompile Include="src\RenderQueueTransparent.cpp" />
@@ -354,7 +343,10 @@
     <ClCompile Include="src\SceneObject.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\RenderQueueLight.cpp" />
+    <ClCompile Include="src\ShaderVariable.cpp" />
+    <ClCompile Include="src\ShaderVariableInfo.cpp" />
     <ClCompile Include="src\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="src\SpecificShaderVariables.cpp" />
     <ClCompile Include="src\SphereCollider.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
     <ClCompile Include="src\SubIndicesDesc.cpp" />
@@ -375,18 +367,13 @@
     <ClCompile Include="src\VITypes.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\ColorLine.fx" />
     <FxCompile Include="..\Shader\DeferredLightBlending.fx" />
     <FxCompile Include="..\Shader\DeferredLighting.fx" />
     <FxCompile Include="..\Shader\DeferredLightDepthWrite.fx" />
     <FxCompile Include="..\Shader\Engine.hlsl" />
     <FxCompile Include="..\Shader\Functions.hlsl" />
-    <FxCompile Include="..\Shader\GizmoRotationHighlight.fx" />
-    <FxCompile Include="..\Shader\GizmoRotationLine.fx" />
-    <FxCompile Include="..\Shader\GizmoRotationNoHighlight.fx" />
-    <FxCompile Include="..\Shader\GizmoTranslation.fx" />
+    <FxCompile Include="..\Shader\Color.fx" />
     <FxCompile Include="..\Shader\Macros.hlsl" />
-    <FxCompile Include="..\Shader\DeferredScreen.fx" />
     <FxCompile Include="..\Shader\PostProcessing.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />

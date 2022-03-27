@@ -1,14 +1,15 @@
 #include "EnginePCH.h"
 #include "MeshRenderer.h"
 #include "Mesh.h"
+#include "Shader.h"
 #include "Material.h"
 #include "Transform.h"
 #include "RenderRequestInput.h"
 #include "System.h"
 #include "GraphicSystem.h"
 #include "RenderQueue.h"
+#include "ResourceManagement.h"
 #include "BuiltInResources.h"
-#include "MaterialStandard.h"
 #include "ResourceFactory.h"
 #include "Texture2D.h"
 
@@ -37,15 +38,13 @@ void MeshRenderer::Render()
 			int renderGroupOrder;
 			bool instancingFlag;
 			bool drawShadowFlag;
-			bool shadowCutoffEnableFlag;
-			float shadowCutoffAlpha;
+			bool shadowPassFlag;
 
 			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup))) continue;
 			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder))) continue;
 			if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag))) continue;
 			if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag))) continue;
-			if (FAILED(currentMaterial->GetShadowCutoffEnableFlagOfAppliedTechnique(j, shadowCutoffEnableFlag))) continue;
-			if (FAILED(currentMaterial->GetShadowCutoffAlphaOfAppliedTechnique(j, shadowCutoffAlpha))) continue;
+			if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
 
 			RenderRequest input = {};
 			input.essential.worldMatrix = localToWorldMatrix;
@@ -61,9 +60,7 @@ void MeshRenderer::Render()
 
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;
-			shadow.cutoffEnable = shadowCutoffEnableFlag;
-			shadow.cutoffAlpha = shadowCutoffAlpha;
-			shadow.cutoffTexture = currentMaterial->diffuseTexture;
+			shadow.shadowPass = shadowPassFlag;
 			input.shadow = shadow;
 
 			input.op.boneOp = nullptr;
@@ -145,9 +142,9 @@ void MeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 		else
 		{
 			tstring materialPath = texturePath + tstring(TEXT(".material"));
-			ResourceRef<MaterialStandard> material = system->resourceManagement->factory->CreateManagedMaterial<MaterialStandard>(materialPath);
-			material->diffuseTexture = texture;
-			material->normalMap = normal;
+			ResourceRef<Material> material = system->resourceManagement->factory->CreateManagedMaterialByShader(system->resourceManagement->builtInResources->standardShader->path, materialPath);
+			material->SetTexture("_DiffuseTextrue", texture);
+			material->SetTexture("_NormalMapTextrue", normal);
 			SetMaterialByIndex(i, material);
 		}
 	}

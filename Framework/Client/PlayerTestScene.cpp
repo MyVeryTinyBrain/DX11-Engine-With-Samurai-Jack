@@ -70,9 +70,8 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-			meshRenderer->material->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png"));
-			ResourceRef<MaterialStandard> mat = meshRenderer->material;
-			mat->reflection = system->resourceManagement->builtInResources->whiteTexture;
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_ReflectionTexture", system->resourceManagement->builtInResources->whiteTexture);
 		}
 
 		{
@@ -127,10 +126,10 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goPriorityRender->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-			meshRenderer->material->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png"));
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
 		}
 	}
-	//*/
+	/*/
 	
 	//*
 	{
@@ -181,9 +180,10 @@ void PlayerTestScene::OnLoad()
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
 
-			ResourceRef<MaterialStandard> standardMaterial = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialStandard>();
-			standardMaterial->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png"));
-			standardMaterial->reflection = system->resourceManagement->builtInResources->whiteTexture;
+			ResourceRef<Material> standardMaterial = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(system->resourceManagement->builtInResources->standardShader->path);
+			standardMaterial->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
+			standardMaterial->SetTexture("_ReflectionTexture", system->resourceManagement->builtInResources->whiteTexture);
+
 			meshRenderer->material = standardMaterial;
 
 			Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
@@ -199,9 +199,8 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-			meshRenderer->material->diffuseTexture = system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png"));
-			ResourceRef<MaterialStandard> standardMaterial = meshRenderer->material;
-			standardMaterial->normalMap = system->resourceManagement->Find(TEXT("../Resource/Dev/Normal.png"));
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_NormalMapTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Normal.png")));
 
 			goBox->AddComponent<Rigidbody>();
 			goBox->AddComponent<BoxCollider>();

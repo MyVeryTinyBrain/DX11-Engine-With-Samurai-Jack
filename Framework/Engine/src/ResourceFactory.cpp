@@ -4,6 +4,7 @@
 #include "RenderTexture2D.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "Material.h"
 
 ResourceFactory::ResourceFactory()
 {
@@ -125,6 +126,21 @@ ResourceRef<Mesh> ResourceFactory::CreateManagedMeshFromFile(const tstring& path
 	}
 
 	return mesh;
+}
+
+ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(const tstring& shaderPath, const tstring& resourceKey)
+{
+	return Material::CreateManagedMaterialByShader(m_management, shaderPath, resourceKey);
+}
+
+ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(const tstring& shaderPath, const tstring& resourceKey, const tstring& groupName)
+{
+	return Material::CreateManagedMaterialByShader(m_management, shaderPath, resourceKey, groupName);
+}
+
+ResourceRef<Material> ResourceFactory::CreateUnmanagedMaterialByShader(const tstring& shaderPath)
+{
+	return Material::CreateUnmanagedMaterialByShader(m_management, shaderPath);
 }
 
 ResourceManagement* ResourceFactory::GetManagement() const

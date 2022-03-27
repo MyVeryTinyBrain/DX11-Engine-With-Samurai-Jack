@@ -30,12 +30,14 @@ struct PS_OUT
 {
 	float4 Diffuse : SV_TARGET0;
 	float4 Normal : SV_TARGET1;
-	float4 Depth_Light_Occlusion_Shadow : SV_TARGET2;
-	float4 Specular_Power : SV_TARGET3;
-	float4 Emissive : SV_TARGET4;
-	float4 Reflection_ReflectionBlur_ReflectMask : SV_TARGET5;
+	float4 Depth : SV_TARGET2;
+	float4 Light_Occlusion_Shadow : SV_TARGET3;
+	float4 Specular_Power : SV_TARGET4;
+	float4 Emissive : SV_TARGET5;
+	float4 Reflection_ReflectionBlur_ReflectMask : SV_TARGET6;
 };
 
+texture2D		_DiffuseTexture;
 texture2D		_NormalMapTexture;
 texture2D		_LightMapTexture;
 texture2D		_OcclusionTexture;
@@ -109,10 +111,12 @@ PS_OUT PS_MAIN(PS_IN In)
 	output.Normal.w = 1;
 
 	half depth = In.ProjPosition.z / In.ProjPosition.w;
+	output.Depth = half4(depth, depth, depth, 1.0f);
+
 	half lightMask = _LightMapTexture.Sample(diffuseSampler, In.UV).r;
 	half shadowMask = _ShadowMapTexture.Sample(diffuseSampler, In.UV).r;
 	half occlusionMask = _OcclusionTexture.Sample(diffuseSampler, In.UV).r;
-	output.Depth_Light_Occlusion_Shadow = half4(depth, lightMask, occlusionMask, shadowMask);
+	output.Light_Occlusion_Shadow = half4(lightMask, occlusionMask, shadowMask, 1.0f);
 
 	half3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.UV).rgb;
 	output.Specular_Power = half4(specularMask * _SpecularTransparency, _SpecularPower);

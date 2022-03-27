@@ -9,9 +9,6 @@ class Mesh;
 class VI;
 class Shader;
 class Material;
-
-class MaterialStandard;
-class MaterialColorLine;
 class ENGINE_API BuiltInResources : public IBuiltInResources
 {
 public:
@@ -75,26 +72,14 @@ public:
 	const ResourceRef<Shader>& GetStandardShader() const;
 	_declspec(property(get = GetStandardShader)) const ResourceRef<Shader>& standardShader;
 
-	const ResourceRef<Shader>& GetColorLineShader() const;
-	_declspec(property(get = GetColorLineShader)) const ResourceRef<Shader>& colorLineShader;
+	const ResourceRef<Shader>& GetColorShader() const;
+	_declspec(property(get = GetColorShader)) const ResourceRef<Shader>& colorShader;
 
-	const ResourceRef<Shader>& GetGizmoTranslationShader() const;
-	_declspec(property(get = GetGizmoTranslationShader)) const ResourceRef<Shader>& gizmoTranslationShader;
+	const ResourceRef<Material>& GetStandardMaterial() const;
+	_declspec(property(get = GetStandardMaterial)) const ResourceRef<Material>& standardMaterial;
 
-	const ResourceRef<Shader>& GetGizmoRotationNoHighlightShader() const;
-	_declspec(property(get = GetGizmoRotationNoHighlightShader)) const ResourceRef<Shader>& gizmoRotationNoHighlightShader;
-
-	const ResourceRef<Shader>& GetGizmoRotationHighlightShader() const;
-	_declspec(property(get = GetGizmoRotationHighlightShader)) const ResourceRef<Shader>& gizmoRotationHighlightShader;
-
-	const ResourceRef<Shader>& GetGizmoRotationLineShader() const;
-	_declspec(property(get = GetGizmoRotationLineShader)) const ResourceRef<Shader>& gizmoRotationLineShader;
-
-	const ResourceRef<MaterialStandard>& GetStandardMaterial() const;
-	_declspec(property(get = GetStandardMaterial)) const ResourceRef<MaterialStandard>& standardMaterial;
-
-	const ResourceRef<MaterialColorLine>& GetGreenColorLineMaterial() const;
-	_declspec(property(get = GetGreenColorLineMaterial)) const ResourceRef<MaterialColorLine>& greenColorLineMaterial;
+	const ResourceRef<Material>& GetWireframeMaterial() const;
+	_declspec(property(get = GetWireframeMaterial)) const ResourceRef<Material>& wireframeMaterial;
 
 public:
 
@@ -147,21 +132,13 @@ private: // Built-In resources
 
 	ResourceRef<Shader> m_standardShader;
 
-	ResourceRef<Shader> m_colorLineShader;
-
-	ResourceRef<Shader> m_gizmoTranslationShader;
-
-	ResourceRef<Shader> m_gizmoRotationNoHighlightShader;
-
-	ResourceRef<Shader> m_gizmoRotationHighlightShader;
-
-	ResourceRef<Shader> m_gizmoRotationLineShader;
+	ResourceRef<Shader> m_colorShader;
 
 	// Material ===========================================
 
-	ResourceRef<MaterialStandard> m_standardMaterial;
+	ResourceRef<Material> m_standardMaterial;
 
-	ResourceRef<MaterialColorLine> m_greenColorLineMaterial;
+	ResourceRef<Material> m_wireframeMaterial;
 };
 
 ENGINE_END

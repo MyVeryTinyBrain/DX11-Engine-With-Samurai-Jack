@@ -22,7 +22,7 @@ public:
 
 	void ApplyWorldMatrixBuffer(const M4& world);
 
-	void ApplyCameraBuffer(const V3& position, const V3& direction, const M4& view, const M4& proj, float Near, float Far);
+	void ApplyCameraBuffer(const V3& position, const V3& direction, const M4& view, const M4& proj, uint2 size, float Near, float Far);
 
 	void ApplyBoneMatricesUsageBuffer(bool use);
 

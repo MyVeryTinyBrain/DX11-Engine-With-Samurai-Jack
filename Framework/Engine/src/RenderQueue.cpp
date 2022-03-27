@@ -12,7 +12,6 @@
 #include "DeferredRenderTarget.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
-#include "DeferredScreenRender.h"
 #include "LightManager.h"
 #include "ILight.h"
 
@@ -145,21 +144,21 @@ void RenderQueue::Render(ICamera* camera)
 
 	m_graphicSystem->RollbackRenderTarget();
 
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->diffuse->srv, 0, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->normal->srv, 100, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->depth_Light_Occlusion_Shadow->srv, 200, 0, 100, 100, DeferredScreenRender::Blend::PerspectiveDepthVisualize);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->specular_Power->srv, 300, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->emissive->srv, 400, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->reflection_ReflectionBlur_ReflectMask->srv, 500, 0, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->light->srv, 000, 100, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(
-		drt->specular->srv, 100, 100, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->lightBlend->srv, 200, 100, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssao->srv, 000, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->ssr->srv, 100, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->dof->srv, 200, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->bloom->srv, 300, 200, 100, 100, DeferredScreenRender::Blend::None);
-	m_graphicSystem->deferredScreenRender->DrawTextureInClient(drt->result->srv, 000, 300, 100, 100, DeferredScreenRender::Blend::None);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->diffuse->srv, uint2(0, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->normal->srv, uint2(100, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->depth->srv, uint2(200, 0), uint2(100, 100), PostProcessing::CopyType::LinearDepth);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->light_Occlusion_Shadow->srv, uint2(300, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->specular_Power->srv, uint2(400, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->emissive->srv, uint2(500, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->reflection_ReflectionBlur_ReflectMask->srv, uint2(600, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->light->srv, uint2(000, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->specular->srv, uint2(100, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->ssao->srv, uint2(000, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->ssr->srv, uint2(100, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->dof->srv, uint2(200, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->bloom->srv, uint2(300, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->result->srv, uint2(000, 300), uint2(100, 100), PostProcessing::CopyType::Default);
 }
 
 void RenderQueue::Clear()
@@ -192,8 +191,8 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 
 	m_light->Render(camera);
 
-	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->lightBlend->srv, drt->result->rtv, DeferredScreenRender::Blend::AlphaTest);
-	
+	m_graphicSystem->postProcessing->DrawToTextrue(drt->lightBlend->srv, drt->result->rtv, uint2(drt->result->width, drt->result->height), PostProcessing::CopyType::Alphatest);
+
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::Deferred);
 }
 
@@ -214,13 +213,13 @@ void RenderQueue::Render_Forward(ICamera* camera)
 void RenderQueue::Render_Emissive(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	
-	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->emissive->srv, drt->result->rtv, DeferredScreenRender::Blend::Blend);
+
+	m_graphicSystem->postProcessing->DrawToTextrue(drt->emissive->srv, drt->result->rtv, uint2(drt->result->width, drt->result->height), PostProcessing::CopyType::Alphablend);
 }
 
 void RenderQueue::Render_Result(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
-	m_graphicSystem->deferredScreenRender->DeferredDrawTexture(drt->result->srv, m_graphicSystem->backBufferRenderTargetView);
+	m_graphicSystem->postProcessing->DrawToTextrue(drt->result->srv, m_graphicSystem->backBufferRenderTargetView, uint2((uint)m_graphicSystem->width, (uint)m_graphicSystem->height), PostProcessing::CopyType::Default);
 }

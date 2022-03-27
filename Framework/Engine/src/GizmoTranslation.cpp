@@ -12,7 +12,6 @@
 #include "ResourceFactory.h"
 #include "BuiltInResources.h"
 #include "GameObject.h"
-#include "MaterialGizmoTranslation.h"
 #include "Texture2D.h"
 
 GizmoBase::Axis GizmoTranslation::PickTest() const
@@ -188,21 +187,21 @@ void GizmoTranslation::SetupResources()
 	{
 		m_bTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
 	}
-	if (!m_rMat)
-	{
-		m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_rMat->diffuseTexture = m_rTexture;
-	}
-	if (!m_gMat)
-	{
-		m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_gMat->diffuseTexture = m_gTexture;
-	}
-	if (!m_bMat)
-	{
-		m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-		m_bMat->diffuseTexture = m_bTexture;
-	}
+	//if (!m_rMat)
+	//{
+	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_rMat->diffuseTexture = m_rTexture;
+	//}
+	//if (!m_gMat)
+	//{
+	//	m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_gMat->diffuseTexture = m_gTexture;
+	//}
+	//if (!m_bMat)
+	//{
+	//	m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
+	//	m_bMat->diffuseTexture = m_bTexture;
+	//}
 }
 
 void GizmoTranslation::SetupObjects()
