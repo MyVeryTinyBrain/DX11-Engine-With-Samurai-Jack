@@ -128,19 +128,34 @@ ResourceRef<Mesh> ResourceFactory::CreateManagedMeshFromFile(const tstring& path
 	return mesh;
 }
 
-ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(const tstring& shaderPath, const tstring& resourceKey)
+ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(ResourceRef<Shader> shader, const tstring& resourceKey)
 {
-	return Material::CreateManagedMaterialByShader(m_management, shaderPath, resourceKey);
+	return Material::CreateManagedMaterialByShader(m_management, shader, resourceKey);
 }
 
-ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(const tstring& shaderPath, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName)
 {
-	return Material::CreateManagedMaterialByShader(m_management, shaderPath, resourceKey, groupName);
+	return Material::CreateManagedMaterialByShader(m_management, shader, resourceKey, groupName);
 }
 
-ResourceRef<Material> ResourceFactory::CreateUnmanagedMaterialByShader(const tstring& shaderPath)
+ResourceRef<Material> ResourceFactory::CreateUnmanagedMaterialByShader(ResourceRef<Shader> shader)
 {
-	return Material::CreateUnmanagedMaterialByShader(m_management, shaderPath);
+	return Material::CreateUnmanagedMaterialByShader(m_management, shader);
+}
+
+ResourceRef<Material> ResourceFactory::CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey)
+{
+	return Material::CopyManagedMaterial(m_management, material, resourceKey);
+}
+
+ResourceRef<Material> ResourceFactory::CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName)
+{
+	return Material::CopyManagedMaterial(m_management, material, resourceKey, groupName);
+}
+
+ResourceRef<Material> ResourceFactory::CopyUnmanagedMaterial(ResourceRef<Material> material)
+{
+	return Material::CopyUnmanagedMaterial(m_management, material);
 }
 
 ResourceManagement* ResourceFactory::GetManagement() const

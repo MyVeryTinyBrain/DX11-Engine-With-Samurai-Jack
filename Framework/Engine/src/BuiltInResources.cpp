@@ -44,28 +44,28 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 {
 	HRESULT hr = S_OK;
 
-	if (FAILED(hr = CreateTexture2D(Color::white(), 16, 16, &m_white)))
+	if (FAILED(hr = CreateTexture2D(Color::white(), 16, 16, TEXT("white"), &m_white)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color::black(), 16, 16, &m_black)))
+	if (FAILED(hr = CreateTexture2D(Color::black(), 16, 16, TEXT("black"), &m_black)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color::clear(), 16, 16, &m_clear)))
+	if (FAILED(hr = CreateTexture2D(Color::clear(), 16, 16, TEXT("clear"), &m_clear)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color::red(), 16, 16, &m_red)))
+	if (FAILED(hr = CreateTexture2D(Color::red(), 16, 16, TEXT("red"), &m_red)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color::green(), 16, 16, &m_green)))
+	if (FAILED(hr = CreateTexture2D(Color::green(), 16, 16, TEXT("green"), &m_green)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color::blue(), 16, 16, &m_blue)))
+	if (FAILED(hr = CreateTexture2D(Color::blue(), 16, 16, TEXT("blue"), &m_blue)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color(1, 1, 1, 0.5f), 16, 16, &m_whiteTransparent)))
+	if (FAILED(hr = CreateTexture2D(Color(1, 1, 1, 0.5f), 16, 16, TEXT("white_transparent"), &m_whiteTransparent)))
 		return hr;
 
-	if (FAILED(hr = CreateTexture2D(Color(0, 0, 0, 0.5f), 16, 16, &m_blackTransparent)))
+	if (FAILED(hr = CreateTexture2D(Color(0, 0, 0, 0.5f), 16, 16, TEXT("black_transparent"), &m_blackTransparent)))
 		return hr;
 
 	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateQuad(), &m_quad)))
@@ -92,10 +92,10 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateShader(TEXT("../Shader/Color.fx"), &m_colorShader)))
 		return hr;
 
-	if (nullptr == (m_standardMaterial = m_factory->CreateUnmanagedMaterialByShader(m_standardShader->path)))
+	if (nullptr == (m_standardMaterial = m_factory->CreateUnmanagedMaterialByShader(m_standardShader)))
 		return E_FAIL;
 
-	if (nullptr == (m_wireframeMaterial = m_factory->CreateUnmanagedMaterialByShader(m_colorShader->path)))
+	if (nullptr == (m_wireframeMaterial = m_factory->CreateUnmanagedMaterialByShader(m_colorShader)))
 		return E_FAIL;
 
 	return S_OK;
@@ -232,9 +232,9 @@ System* BuiltInResources::GetSystem() const
 	return m_factory->GetManagement()->GetSystem();
 }
 
-HRESULT BuiltInResources::CreateTexture2D(const Color& color, unsigned int width, unsigned int height, ResourceRef<Texture2D>* out_tex2D)
+HRESULT BuiltInResources::CreateTexture2D(const Color& color, unsigned int width, unsigned int height, tstring resourceKey, ResourceRef<Texture2D>* out_tex2D)
 {
-	if (nullptr == (*out_tex2D = m_factory->CreateUnmanagedTexture2D(color, width, height)))
+	if (nullptr == (*out_tex2D = m_factory->CreateManagedTexture2D(resourceKey, color, width, height)))
 		return E_FAIL;
 
 	return S_OK;

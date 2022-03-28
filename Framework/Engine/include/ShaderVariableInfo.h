@@ -36,8 +36,8 @@ public:
 	ShaderVariableInfo& operator=(const ShaderVariableInfo& rhs);
 	ShaderVariableInfo& operator=(ShaderVariableInfo&& rhs) noexcept;
 
-	bool IsSRV() const;
-	inline bool IsRawValue() const { return !IsSRV(); }
+	bool IsTexture() const;
+	inline bool IsRawValue() const { return !IsTexture(); }
 	inline bool IsArray() const { return (m_elements > 0); }
 
 public:
@@ -47,6 +47,7 @@ public:
 	const ShaderVariableType& GetType() const { return m_type; }
 	const size_t& GetSize() const { return m_size; }
 	const uint& GetElements() const { return m_elements; }
+	uint GetArrayCount() const { return Clamp(m_elements, 1u, UINT_MAX); }
 	ID3DX11EffectVariable* GetHandle() const { return m_handle; }
 	const uint GetAnnotationCount() const { return (uint)m_annotations.size(); }
 	const Annotation& GetAnnotation(uint index) const { return m_annotations[index]; }
@@ -56,6 +57,7 @@ public:
 	_declspec(property(get = GetType)) const ShaderVariableType& Type;
 	_declspec(property(get = GetSize)) const size_t& Size;
 	_declspec(property(get = GetElements)) const uint& Elements;
+	_declspec(property(get = GetArrayCount)) uint ArrayCount;
 	_declspec(property(get = GetHandle)) ID3DX11EffectVariable* Handle;
 	_declspec(property(get = GetAnnotationCount)) uint annotationCount;
 

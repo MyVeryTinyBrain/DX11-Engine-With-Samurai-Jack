@@ -14,12 +14,9 @@ class ENGINE_API Material : public ResourceObject, public IMaterial
 public:
 
 	Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, ResourceRef<Shader> shader);
+	Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, const Material& other);
 
 	virtual ~Material();
-
-	virtual tstring GetShaderPath() const;
-
-	virtual void OnCreated() {};
 
 	virtual void ApplyMaterial(ICamera* camera) override;
 
@@ -32,6 +29,14 @@ public:
 	HRESULT SetMatrix(const string& name, const M4& value);
 	HRESULT SetTexture(const string& name, ResourceRef<Texture> texture);
 	HRESULT SetTextures(const string& name, ResourceRef<Texture>* textures, uint count);
+
+	HRESULT GetRawValue(const string& name, void* out_data, size_t* inout_size);
+	HRESULT GetFloat(const string& name, float* out_value);
+	HRESULT GetVector(const string& name, V4* out_value);
+	HRESULT GetColor(const string& name, Color* out_value);
+	HRESULT GetMatrix(const string& name, M4* out_value);
+	HRESULT GetTexture(const string& name, ResourceRef<Texture>* out_texture);
+	HRESULT GetTextures(const string& name, ResourceRef<Texture>** out_textures, uint* out_count);
 
 public:
 
@@ -56,12 +61,26 @@ public:
 public:
 
 	ResourceRef<Shader> GetShader() const;
+	inline uint GetVariableCount() const { return (uint)m_shaderVariables.size(); }
+	inline uint GetSpecificVariableCount() const { return (uint)m_specificShaderVariables.size(); }
+	inline ShaderVariable* GetVariable(uint index) { return m_shaderVariables[index]; }
+	inline ISpecificShaderVariable* GetSpecificVariable(uint index) { return m_specificShaderVariables[index]; }
+
+	_declspec(property(get = GetShader)) ResourceRef<Shader> shader;
+	_declspec(property(get = GetVariableCount)) uint variableCount;
+	_declspec(property(get = GetSpecificVariableCount)) uint specificVariableCount;
 
 public:
 
-	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath, const tstring& resourceKey);
-	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath, const tstring& resourceKey, const tstring& groupName);
-	static ResourceRef<Material> CreateUnmanagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath);
+	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey);
+	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName);
+	static ResourceRef<Material> CreateUnmanagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader);
+
+	static ResourceRef<Material> CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey);
+	static ResourceRef<Material> CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName);
+	static ResourceRef<Material> CopyUnmanagedMaterial(ResourceManagement* management, ResourceRef<Material> material);
+
+	string ToJson() const;
 
 private: 
 

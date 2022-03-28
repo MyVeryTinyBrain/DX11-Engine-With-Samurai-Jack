@@ -49,6 +49,7 @@
     <ClInclude Include="include\IRendererBoundsOp.h" />
     <ClInclude Include="include\ISpecificShaderVariable.h" />
     <ClInclude Include="include\ITexture.h" />
+    <ClInclude Include="include\JsonUtility.h" />
     <ClInclude Include="include\Light.h" />
     <ClInclude Include="include\LightManager.h" />
     <ClInclude Include="include\PointLight.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="src\IRendererBoundsOp.cpp" />
     <ClCompile Include="src\ISpecificShaderVariable.cpp" />
     <ClCompile Include="src\ITexture.cpp" />
+    <ClCompile Include="src\JsonUtility.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
     <ClCompile Include="src\PointLight.cpp" />

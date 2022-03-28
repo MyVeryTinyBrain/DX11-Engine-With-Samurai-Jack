@@ -524,6 +524,9 @@
     <ClInclude Include="include\ShaderVariable.h">
       <Filter>Object\Resource\Material\ShaderVariable</Filter>
     </ClInclude>
+    <ClInclude Include="include\JsonUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1003,6 +1006,9 @@
     <ClCompile Include="src\ShaderVariable.cpp">
       <Filter>Object\Resource\Material\ShaderVariable</Filter>
     </ClCompile>
+    <ClCompile Include="src\JsonUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1283,6 +1289,9 @@
     </Filter>
     <Filter Include="Object\Resource\Material\ShaderVariable">
       <UniqueIdentifier>{9847d818-3da8-4c64-8347-9cf34597dfea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{6d0e5ac5-c2ba-4a51-b6e9-2955ce2316e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

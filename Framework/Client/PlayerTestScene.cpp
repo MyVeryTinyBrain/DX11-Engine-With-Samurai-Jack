@@ -180,7 +180,7 @@ void PlayerTestScene::OnLoad()
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
 
-			ResourceRef<Material> standardMaterial = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(system->resourceManagement->builtInResources->standardShader->path);
+			ResourceRef<Material> standardMaterial = system->resourceManagement->factory->CopyUnmanagedMaterial(system->resourceManagement->builtInResources->standardMaterial);
 			standardMaterial->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
 			standardMaterial->SetTexture("_ReflectionTexture", system->resourceManagement->builtInResources->whiteTexture);
 

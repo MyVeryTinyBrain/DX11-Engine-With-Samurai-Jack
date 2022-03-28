@@ -93,7 +93,7 @@ inline ResourceRef<T>::ResourceRef(const ResourceRef<U>& other) : ResourceRef()
 }
 
 template<class T>
-inline ResourceRef<T>::ResourceRef(ResourceRef&& other)
+inline ResourceRef<T>::ResourceRef(ResourceRef&& other) noexcept
 {
 	m_refData = other.m_refData;
 
@@ -102,7 +102,7 @@ inline ResourceRef<T>::ResourceRef(ResourceRef&& other)
 
 template<class T>
 template<class U>
-inline ResourceRef<T>::ResourceRef(ResourceRef<U>&& other)
+inline ResourceRef<T>::ResourceRef(ResourceRef<U>&& other) noexcept
 {
 	static_cast<T*>((U*)0);
 
@@ -169,7 +169,7 @@ inline ResourceRef<T>& ResourceRef<T>::operator=(const ResourceRef<U>& other)
 }
 
 template <class T>
-inline ResourceRef<T>& ResourceRef<T>::operator = (ResourceRef&& other)
+inline ResourceRef<T>& ResourceRef<T>::operator = (ResourceRef&& other) noexcept
 {
 	if ((void*)this == (void*)&other)
 		return *this;
@@ -185,7 +185,7 @@ inline ResourceRef<T>& ResourceRef<T>::operator = (ResourceRef&& other)
 
 template <class T>
 template <class U>
-inline ResourceRef<T>& ResourceRef<T>::operator = (ResourceRef<U>&& other)
+inline ResourceRef<T>& ResourceRef<T>::operator = (ResourceRef<U>&& other) noexcept
 {
 	static_cast<T*>((U*)0);
 

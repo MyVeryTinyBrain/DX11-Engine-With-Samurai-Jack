@@ -78,7 +78,7 @@ ShaderVariableInfo& ShaderVariableInfo::operator=(ShaderVariableInfo&& rhs) noex
 	return *this;
 }
 
-bool ShaderVariableInfo::IsSRV() const
+bool ShaderVariableInfo::IsTexture() const
 {
 	switch (m_type)
 	{

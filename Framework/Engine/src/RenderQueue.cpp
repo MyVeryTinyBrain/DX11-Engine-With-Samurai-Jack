@@ -139,7 +139,6 @@ void RenderQueue::Render(ICamera* camera)
 
 	Render_Deferred(camera);
 	Render_Forward(camera);
-	Render_Emissive(camera);
 	Render_Result(camera);
 
 	m_graphicSystem->RollbackRenderTarget();
@@ -204,7 +203,11 @@ void RenderQueue::Render_Forward(ICamera* camera)
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
 
+	Render_Emissive(camera);
+
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::After);
+
+	drt->SetForwardRenderTargets(m_graphicSystem);
 
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);

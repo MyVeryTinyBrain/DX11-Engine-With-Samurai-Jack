@@ -90,7 +90,7 @@ void TestScene::OnLoad()
                 texture = system->resourceManagement->Find(texturePath);
             }
 
-            ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(system->resourceManagement->builtInResources->standardShader->path);
+            ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(system->resourceManagement->builtInResources->standardShader);
             material->SetTexture("_DiffuseTexture", texture);
 
             skinnedMeshRenderer->SetMaterialByIndex(i, material);
@@ -309,7 +309,7 @@ void TestScene::OnUpdate()
             static char ReturnBuf[256] = {};
             if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), ImGuiInputTextFlags_EnterReturnsTrue))
             {
-                string str = STRING_FUNCTIONS::str_utf8_to_str_ansi(InputBuf);
+                string str = string_functions::str_utf8_to_str_ansi(InputBuf);
                 cout << str.c_str() << endl;
                 strcpy_s(ReturnBuf, InputBuf);
             }

@@ -29,10 +29,10 @@ public:
 	template <class U>
 	ResourceRef(const ResourceRef<U>& other);
 
-	ResourceRef(ResourceRef&& other);
+	ResourceRef(ResourceRef&& other) noexcept;
 
 	template <class U>
-	ResourceRef(ResourceRef<U>&& other);
+	ResourceRef(ResourceRef<U>&& other) noexcept;
 
 	// Destructor =============================================
 
@@ -45,10 +45,10 @@ public:
 	template <class U>
 	ResourceRef& operator = (const ResourceRef<U>& other);
 
-	ResourceRef& operator = (ResourceRef&& other);
+	ResourceRef& operator = (ResourceRef&& other) noexcept;
 
 	template <class U>
-	ResourceRef& operator = (ResourceRef<U>&& other);
+	ResourceRef& operator = (ResourceRef<U>&& other) noexcept;
 
 	bool operator == (const ResourceRef& other);
 

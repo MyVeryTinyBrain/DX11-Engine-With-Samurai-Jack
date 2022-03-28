@@ -13,6 +13,7 @@
 #include "ShaderVariableInfo.h"
 #include "SpecificShaderVariables.h"
 #include "ResourceManagement.h"
+#include "JsonUtility.h"
 
 Material::Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, ResourceRef<Shader> shader) :
 	ResourceObject(management, managed, path, groupName)
@@ -21,6 +22,22 @@ Material::Material(ResourceManagement* management, bool managed, const tstring& 
 
 	if (m_shader)
 		SetupShaderVariables();
+}
+
+Material::Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, const Material& other) :
+	ResourceObject(management, managed, path, groupName)
+{
+	m_shader = other.m_shader;
+	m_techniqueIndex = other.m_techniqueIndex;
+
+	if (m_shader)
+	{
+		for (auto& specificVariable : other.m_specificShaderVariables)
+			m_specificShaderVariables.emplace_back(specificVariable->Copy(this, *specificVariable));
+
+		for (auto& variable : other.m_shaderVariables)
+			m_shaderVariables.emplace_back(variable->Copy());
+	}
 }
 
 Material::~Material()
@@ -32,14 +49,6 @@ Material::~Material()
 	for (auto& var : m_specificShaderVariables)
 		SafeDelete(var);
 	m_specificShaderVariables.clear();
-}
-
-tstring Material::GetShaderPath() const
-{
-	if (!m_shader)
-		return TEXT("");
-
-	return m_shader->path;
 }
 
 void Material::ApplyMaterial(ICamera* camera)
@@ -148,7 +157,7 @@ HRESULT Material::SetTexture(const string& name, ResourceRef<Texture> texture)
 	if (find_it == m_shaderVariables.end())
 		return E_FAIL;
 
-	(*find_it)->SetSRV(texture->shaderResourceView);
+	(*find_it)->SetTexture(texture);
 
 	return S_OK;
 }
@@ -166,11 +175,135 @@ HRESULT Material::SetTextures(const string& name, ResourceRef<Texture>* textures
 	if (find_it == m_shaderVariables.end())
 		return E_FAIL;
 
-	Com<ID3D11ShaderResourceView> shaderResourceViews[32] = {};
-	for (uint i = 0; i < count; ++i)
-		shaderResourceViews[i] = textures[i]->shaderResourceView;
+	(*find_it)->SetTextures(textures, count);
 
-	(*find_it)->SetArrSRV(shaderResourceViews, count);
+	return S_OK;
+}
+
+HRESULT Material::GetRawValue(const string& name, void* out_data, size_t* inout_size)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_data, *inout_size);
+	*inout_size = (*find_it)->GetRawValueSize();
+
+	return S_OK;
+}
+
+HRESULT Material::GetFloat(const string& name, float* out_value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_value, sizeof(float));
+
+	return S_OK;
+}
+
+HRESULT Material::GetVector(const string& name, V4* out_value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_value, sizeof(V4));
+
+	return S_OK;
+}
+
+HRESULT Material::GetColor(const string& name, Color* out_value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_value, sizeof(Color));
+
+	return S_OK;
+}
+
+HRESULT Material::GetMatrix(const string& name, M4* out_value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_value, sizeof(M4));
+
+	return S_OK;
+}
+
+HRESULT Material::GetTexture(const string& name, ResourceRef<Texture>* out_texture)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	*out_texture = (*find_it)->GetTexture();
+
+	return S_OK;
+}
+
+HRESULT Material::GetTextures(const string& name, ResourceRef<Texture>** out_textures, uint* out_count)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	*out_textures = (*find_it)->GetTextures();
+	*out_count = (*find_it)->GetElementCount();
 
 	return S_OK;
 }
@@ -342,7 +475,7 @@ ResourceRef<Shader> Material::GetShader() const
 	return m_shader;
 }
 
-ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath, const tstring& resourceKey)
+ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey)
 {
 	if (!management)
 		return nullptr;
@@ -351,15 +484,13 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (find)
 		return find;
 
-	ResourceRef<Shader> shader = management->Find(shaderPath);
 	if (!shader)
 		return nullptr;
 
-	Material* material = new Material(management, false, TEXT(""), TEXT(""), shader);
-	return material;
+	return new Material(management, false, TEXT(""), TEXT(""), shader);
 }
 
-ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName)
 {
 	if (!management)
 		return nullptr;
@@ -368,25 +499,106 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (find)
 		return find;
 
-	ResourceRef<Shader> shader = management->Find(shaderPath);
 	if (!shader)
 		return nullptr;
 
-	Material* material = new Material(management, false, TEXT(""), TEXT(""), shader);
-	return ResourceRef<Material>(material);
+	return new Material(management, false, TEXT(""), TEXT(""), shader);
 }
 
-ResourceRef<Material> Material::CreateUnmanagedMaterialByShader(ResourceManagement* management, const tstring& shaderPath)
+ResourceRef<Material> Material::CreateUnmanagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader)
 {
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Shader> shader = management->Find(shaderPath);
 	if (!shader)
 		return nullptr;
 
-	Material* material = new Material(management, false, TEXT(""), TEXT(""), shader);
-	return ResourceRef<Material>(material);
+	return new Material(management, false, TEXT(""), TEXT(""), shader);
+}
+
+ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey)
+{
+	if (!management)
+		return nullptr;
+
+	if (!material)
+		return nullptr;
+
+	return new Material(management, false, resourceKey, TEXT(""), *material);
+}
+
+ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName)
+{
+	if (!management)
+		return nullptr;
+
+	if (!material)
+		return nullptr;
+
+	return new Material(management, false, resourceKey, groupName, *material);
+}
+
+ResourceRef<Material> Material::CopyUnmanagedMaterial(ResourceManagement* management, ResourceRef<Material> material)
+{
+	if (!management)
+		return nullptr;
+
+	if (!material)
+		return nullptr;
+
+	return new Material(management, false, TEXT(""), TEXT(""), *material);
+}
+
+string Material::ToJson() const
+{
+	Json::Value root;
+	root["shader"] = tstring_to_string(m_shader->path);
+
+	Json::Value variables;
+
+	for (uint i = 0; i < (uint)m_shaderVariables.size(); ++i)
+	{
+		auto& shaderVariable = m_shaderVariables[i];
+
+		Json::Value variable;
+		variable["name"] = shaderVariable->info->Name;
+		variable["semantic"] = shaderVariable->info->Semantic;
+		variable["arrayCount"] = shaderVariable->info->ArrayCount;
+		variable["array"] = shaderVariable->info->IsArray();
+		variable["type"] = (uint)shaderVariable->info->Type;
+		
+		Json::Value data;
+		for (uint j = 0; j < shaderVariable->info->ArrayCount; ++j)
+		{
+			switch (shaderVariable->info->Type)
+			{
+				case ShaderVariableType::String: data[j] = (const char*)(shaderVariable->constRawValuePointer); break;
+				case ShaderVariableType::Bool: data[j] = (const bool*)(shaderVariable->constRawValuePointer); break;
+				case ShaderVariableType::Int: data[j] = ((const int*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::UInt: data[j] = ((const uint*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Float: data[j] = ((const float*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Double: data[j] = ((const double*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Vector: data[j] = JsonUtility::Parse(((const V4*)(shaderVariable->constRawValuePointer))[j]); break;
+				case ShaderVariableType::Matrix: data[j] = JsonUtility::Parse(((const M4*)(shaderVariable->constRawValuePointer))[j]); break;
+				case ShaderVariableType::Texture1D:
+				case ShaderVariableType::Texture2D:
+				case ShaderVariableType::Texture3D:
+				case ShaderVariableType::Texture1DArray:
+				case ShaderVariableType::Texture2DArray:
+					data[j] = tstring_to_string(shaderVariable->textures[j]->path);
+					break;
+			}
+		}
+
+		variable["data"] = data;
+
+		variables[i] = variable;
+	}
+
+	root["variables"] = variables;
+
+	Json::StreamWriterBuilder builder;
+	return Json::writeString(builder, root);
 }
 
 HRESULT Material::GetEffectDesc(Com<ID3DX11Effect>& out_effect) const
@@ -449,18 +661,19 @@ void Material::SetupShaderVariables()
 			ShaderVariable* variable = new ShaderVariable(variableInfo);
 
 			// Default: White Texture
-			if (variable->isSRV)
+			if (variable->isTexture)
 			{
 				if (!variable->isArray)
 				{
-					variable->SetSRV(system->resourceManagement->builtInResources->whiteTexture->shaderResourceView);
+					variable->SetTexture(system->resourceManagement->builtInResources->whiteTexture);
 				}
 				else
 				{
-					Com<ID3D11ShaderResourceView> e[32] = {};
+					ResourceRef<Texture>* arr = new ResourceRef<Texture>[variable->elementCount]{};
 					for (uint i = 0; i < 32 && i < variable->elementCount; ++i)
-						e[i] = system->resourceManagement->builtInResources->whiteTexture->shaderResourceView;
-					variable->SetArrSRV(e, Clamp(variable->elementCount, 0u, 32u));
+						arr[i] = system->resourceManagement->builtInResources->whiteTexture;
+					variable->SetTextures(arr, variable->elementCount);
+					SafeDeleteArray(arr);
 				}
 			}
 
@@ -522,17 +735,17 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 					if (isTexture2D)
 					{
 						if (annotation.text == "white")
-							variable->SetSRV(system->resourceManagement->builtInResources->whiteTexture->shaderResourceView);
+							variable->SetTexture(system->resourceManagement->builtInResources->whiteTexture);
 						else if (annotation.text == "black")
-							variable->SetSRV(system->resourceManagement->builtInResources->blackTexture->shaderResourceView);
+							variable->SetTexture(system->resourceManagement->builtInResources->blackTexture);
 						else if (annotation.text == "red")
-							variable->SetSRV(system->resourceManagement->builtInResources->redTexture->shaderResourceView);
+							variable->SetTexture(system->resourceManagement->builtInResources->redTexture);
 						else if (annotation.text == "green")
-							variable->SetSRV(system->resourceManagement->builtInResources->greenTexture->shaderResourceView);
+							variable->SetTexture(system->resourceManagement->builtInResources->greenTexture);
 						else if (annotation.text == "blue")
-							variable->SetSRV(system->resourceManagement->builtInResources->blueTexture->shaderResourceView);
+							variable->SetTexture(system->resourceManagement->builtInResources->blueTexture);
 						else if (annotation.text == "clear")
-							variable->SetSRV(system->resourceManagement->builtInResources->clearTexture->shaderResourceView);
+							variable->SetTexture(system->resourceManagement->builtInResources->clearTexture);
 					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Vector:

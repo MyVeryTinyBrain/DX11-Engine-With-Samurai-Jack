@@ -13,10 +13,13 @@ class ENGINE_API ISpecificShaderVariable abstract
 public:
 
 	ISpecificShaderVariable(Material* material, const ShaderVariableInfo* shaderVariableInfo);
+	ISpecificShaderVariable(Material* material, const ISpecificShaderVariable& other);
 
 	virtual ~ISpecificShaderVariable() = default;
 
 	virtual void Apply(ICamera* camera) = 0;
+
+	virtual ISpecificShaderVariable* Copy(Material* material, const ISpecificShaderVariable& other) const = 0;
 
 protected:
 

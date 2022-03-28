@@ -12,10 +12,8 @@ typdef std::string tstring;
 #define tcout cout
 #endif
 
-class ENGINE_API STRING_FUNCTIONS
+struct ENGINE_API string_functions final
 {
-public:
-
 	static std::wstring str_ansi_to_wstr_utf16(const string& str_ansi);
 
 	static std::string wstr_utf16_to_str_utf8(const wstring& wstr_utf16);
@@ -63,7 +61,7 @@ public:
 	inline static std::string tstring_to_string(const tstring& tstr)
 	{
 #ifdef UNICODE
-		return STRING_FUNCTIONS::wstring_to_string(tstr);
+		return string_functions::wstring_to_string(tstr);
 #else
 		return tstr;
 #endif
@@ -74,28 +72,28 @@ public:
 #ifdef UNICODE
 		return tstr;
 #else
-		return TSTRING_FUNCTIONS::string_to_wstring(tstr);
+		return string_functions::string_to_wstring(tstr);
 #endif
 	}
 };
 
-#define tstring_to_string(tstr)			STRING_FUNCTIONS::tstring_to_string(tstr)
-#define tstring_to_wstring(tstr)		STRING_FUNCTIONS::tstring_to_wstring(tstr)
+#define tstring_to_string(tstr)			string_functions::tstring_to_string(tstr)
+#define tstring_to_wstring(tstr)		string_functions::tstring_to_wstring(tstr)
 
 #ifdef UNICODE
-#define tstring_format(format, ...)		STRING_FUNCTIONS::wstring_format(format, __VA_ARGS__)
+#define tstring_format(format, ...)		string_functions::wstring_format(format, __VA_ARGS__)
 #define to_tstring(value)				std::to_wstring(value)
 #define tcout	wcout
 #define wstring_to_tstring(wstr)		wstr
-#define string_to_tstring(str)			STRING_FUNCTIONS::string_to_wstring(str)
-#define tstring_to_str_utf8(tstr)		STRING_FUNCTIONS::wstr_utf16_to_str_utf8(tstr)
+#define string_to_tstring(str)			string_functions::string_to_wstring(str)
+#define tstring_to_str_utf8(tstr)		string_functions::wstr_utf16_to_str_utf8(tstr)
 #else
-#define tstring_format(format, ...)		STRING_FUNCTIONS::string_format(format, __VA_ARGS__)
+#define tstring_format(format, ...)		string_functions::string_format(format, __VA_ARGS__)
 #define tcout	cout
 #define to_tstring(value)				std::to_string(value)
-#define wstring_to_tstring(wstr)		STRING_FUNCTIONS::wstring_to_string(wstr)
+#define wstring_to_tstring(wstr)		string_functions::wstring_to_string(wstr)
 #define string_to_tstring(str)			str
-#define tstring_to_str_utf8(tstr)		STRING_FUNCTIONS::str_ansi_to_str_utf8(tstr)
+#define tstring_to_str_utf8(tstr)		string_functions::str_ansi_to_str_utf8(tstr)
 #endif
 
 ENGINE_END

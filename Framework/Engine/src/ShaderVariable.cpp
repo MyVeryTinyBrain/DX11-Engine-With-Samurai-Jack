@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "ShaderVariable.h"
 #include "ShaderVariableInfo.h"
+#include "Texture.h"
 
 ShaderVariable::ShaderVariable(const ShaderVariableInfo* info)
 {
@@ -11,17 +12,39 @@ ShaderVariable::ShaderVariable(const ShaderVariableInfo* info)
 	{
 		m_valueBytes = new Byte[info->Size]{};
 	}
-	else if (m_info->IsSRV() && m_info->IsArray())
+	else if (m_info->IsTexture())
 	{
-		m_arrSRV = new Com<ID3D11ShaderResourceView>[m_info->Elements]{};
-		m_arrSRVPtr = new ID3D11ShaderResourceView* [m_info->Elements]{};
+		uint arrCount = m_info->ArrayCount;
+		m_textures = new ResourceRef<Texture> [arrCount];
+		m_arrSRV = new ID3D11ShaderResourceView* [arrCount]{};
+	}
+}
+
+ShaderVariable::ShaderVariable(const ShaderVariable& other)
+{
+	m_info = other.info;
+	m_valueBytesSize = other.m_valueBytesSize;
+
+	if (other.isRawValue)
+	{
+		m_valueBytes = new Byte[m_valueBytesSize]{};
+		memcpy(m_valueBytes, other.m_valueBytes, m_valueBytesSize);
+	}
+	else
+	{
+		uint arrCount = other.arrayCount;
+		m_textures = new ResourceRef<Texture>[arrCount];
+		m_arrSRV = new ID3D11ShaderResourceView * [arrCount];
+		for (uint i = 0; i < arrCount; ++i)
+			m_textures[i] = other.m_textures[i];
+		memcpy(m_arrSRV, other.m_arrSRV, arrCount);
 	}
 }
 
 ShaderVariable::~ShaderVariable()
 {
+	SafeDeleteArray(m_textures);
 	SafeDeleteArray(m_arrSRV);
-	SafeDeleteArray(m_arrSRVPtr);
 	SafeDeleteArray(m_valueBytes);
 }
 
@@ -85,13 +108,13 @@ void ShaderVariable::Apply()
 			if (!hSRV->IsValid()) break;
 			if (!m_info->IsArray())
 			{
-				hSRV->SetResource(m_srv.Get());
+				hSRV->SetResource(m_textures[0]->shaderResourceView.Get());
 			}
 			else
 			{
 				for (uint i = 0; i < m_info->Elements; ++i)
-					m_arrSRVPtr[i] = m_arrSRV[i].Get();
-				hSRV->SetResourceArray(m_arrSRVPtr, 0, m_info->Elements);
+					m_arrSRV[i] = m_textures[i]->shaderResourceView.Get();
+				hSRV->SetResourceArray(m_arrSRV, 0, m_info->Elements);
 			}
 			break;
 		default:
@@ -99,20 +122,25 @@ void ShaderVariable::Apply()
 	}
 }
 
-void ShaderVariable::SetSRV(Com<ID3D11ShaderResourceView> srv)
+ShaderVariable* ShaderVariable::Copy() const
 {
-	m_srv = srv;
+	return new ShaderVariable(*this);
 }
 
-void ShaderVariable::SetSRVByIndex(Com<ID3D11ShaderResourceView> srv, uint index)
+void ShaderVariable::SetTexture(ResourceRef<Texture> texture)
 {
-	m_arrSRV[index] = srv;
+	m_textures[0] = texture;
 }
 
-void ShaderVariable::SetArrSRV(Com<ID3D11ShaderResourceView>* arrSRV, uint count)
+void ShaderVariable::SetTextureByIndex(ResourceRef<Texture> texture, uint index)
+{
+	m_textures[index] = texture;
+}
+
+void ShaderVariable::SetTextures(ResourceRef<Texture>* textures, uint count)
 {
 	for (uint i = 0; i < count; ++i)
-		m_arrSRV[i] = arrSRV[i];
+		m_textures[i] = textures[i];
 }
 
 void ShaderVariable::SetRawValue(const void* src, size_t size)
@@ -120,24 +148,29 @@ void ShaderVariable::SetRawValue(const void* src, size_t size)
 	memcpy(m_valueBytes, src, size);
 }
 
-Com<ID3D11ShaderResourceView> ShaderVariable::GetSRV() const
+ResourceRef<Texture> ShaderVariable::GetTexture() const
 {
-	return m_srv;
+	return m_textures[0];
 }
 
-Com<ID3D11ShaderResourceView> ShaderVariable::GetSRVByIndex(uint index) const
+ResourceRef<Texture> ShaderVariable::GetTextureByIndex(uint index) const
 {
-	return m_arrSRV[index];
+	return m_textures[index];
 }
 
-Com<ID3D11ShaderResourceView>* ShaderVariable::GetArrSRV() const
+ResourceRef<Texture>* ShaderVariable::GetTextures() const
 {
-	return m_arrSRV;
+	return m_textures;
 }
 
 void ShaderVariable::GetRawValue(void* out_ptr) const
 {
 	memcpy(out_ptr, m_valueBytes, m_valueBytesSize);
+}
+
+void ShaderVariable::GetRawValue(void* out_ptr, size_t size) const
+{
+	memcpy(out_ptr, m_valueBytes, Clamp((uint)size, 0u, (uint)m_valueBytesSize));
 }
 
 size_t ShaderVariable::GetRawValueSize() const
@@ -150,9 +183,14 @@ uint ShaderVariable::GetElementCount() const
 	return m_info->Elements;
 }
 
-bool ShaderVariable::IsSRV() const
+uint ShaderVariable::GetArrayCount() const
 {
-	return m_info->IsSRV();
+	return m_info->ArrayCount;
+}
+
+bool ShaderVariable::IsTexture() const
+{
+	return m_info->IsTexture();
 
 }
 

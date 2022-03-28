@@ -12,7 +12,7 @@ enum class RenderGroup
 	Max 
 };
 
-enum class ShaderVariableType
+enum class ShaderVariableType : uint
 {
 	Unknown,
 	Other,

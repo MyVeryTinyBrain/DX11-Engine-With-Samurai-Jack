@@ -89,7 +89,7 @@ public:
 
 private:
 
-	HRESULT CreateTexture2D(const Color& color, unsigned int width, unsigned int height, ResourceRef<Texture2D>* out_tex2D);
+	HRESULT CreateTexture2D(const Color& color, unsigned int width, unsigned int height, tstring resourceKey, ResourceRef<Texture2D>* out_tex2D);
 
 	HRESULT CreateMeshNocopyVI(VI* vi, ResourceRef<Mesh>* out_mesh);
 

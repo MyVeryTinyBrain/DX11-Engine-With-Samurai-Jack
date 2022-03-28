@@ -10,3 +10,11 @@ ISpecificShaderVariable::ISpecificShaderVariable(Material* material, const Shade
 	m_shader = material->GetShader();
 	m_variableInfo = shaderVariableInfo;
 }
+
+ISpecificShaderVariable::ISpecificShaderVariable(Material* material, const ISpecificShaderVariable& other)
+{
+	m_system = other.m_system;
+	m_material = material;
+	m_shader = material->GetShader();
+	m_variableInfo = other.m_variableInfo;
+}
