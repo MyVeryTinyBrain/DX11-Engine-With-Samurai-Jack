@@ -227,6 +227,18 @@ inline bool ResourceRef<T>::operator!=(const ResourceRef& other)
 }
 
 template<class T>
+inline bool ResourceRef<T>::operator==(const void* ptr)
+{
+	return GetResourceObject() == ptr;
+}
+
+template<class T>
+inline bool ResourceRef<T>::operator!=(const void* ptr)
+{
+	return GetResourceObject() != ptr;
+}
+
+template<class T>
 template<class U>
 inline bool ResourceRef<T>::operator==(const ResourceRef<U>& other)
 {

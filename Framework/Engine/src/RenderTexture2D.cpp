@@ -61,7 +61,7 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
 	if (!management)
 		return nullptr;
 
-	ResourceRef<RenderTexture2D> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -79,7 +79,7 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
 	if (!management)
 		return nullptr;
 
-	ResourceRef<RenderTexture2D> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 

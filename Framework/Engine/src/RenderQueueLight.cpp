@@ -61,7 +61,7 @@ bool RenderQueueLight::AddInput(const RenderRequest& input)
 
         return true;
     }
-    else if (input.shadow.shadowPass && input.essential.instance)
+    else if (input.shadow.shadowPass && input.essential.instance && !input.op.boneOp)
     {
         // 재질에 따라 나눕니다.
         IMaterial* material = input.essential.material;

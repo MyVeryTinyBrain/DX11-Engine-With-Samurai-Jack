@@ -116,7 +116,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2DFromFile(ResourceManagem
 	if(!management)
 		return nullptr;
 
-	ResourceRef<Texture2D> find = management->Find(path);
+	ResourceRef<ResourceObject> find = management->Find(path);
 	if (find)
 		return find;
 
@@ -143,7 +143,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2DFromFile(ResourceManagem
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Texture2D> find = management->Find(path);
+	ResourceRef<ResourceObject> find = management->Find(path);
 	if (find)
 		return find;
 
@@ -193,7 +193,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2D(ResourceManagement* man
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Texture2D> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -249,7 +249,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedDynamicTexture2D(ResourceManageme
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Texture2D> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -269,7 +269,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedDynamicTexture2D(ResourceManageme
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Texture2D> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 

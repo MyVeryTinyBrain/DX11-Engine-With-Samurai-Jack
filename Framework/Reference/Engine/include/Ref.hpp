@@ -225,6 +225,18 @@ inline bool Ref<T>::operator!=(const Ref& other)
 	return this->GetObject() != other.GetObject();
 }
 
+template<class T>
+inline bool Ref<T>::operator==(const void* ptr)
+{
+	return this->GetObject() == ptr;
+}
+
+template<class T>
+inline bool Ref<T>::operator!=(const void* ptr)
+{
+	return this->GetObject() != ptr;
+}
+
 template<class T> 
 template<class U>
 inline bool Ref<T>::operator==(const Ref<U>& other)

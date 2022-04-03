@@ -91,16 +91,14 @@ ResourceRef<Mesh> Mesh::CreateManagedMesh(ResourceManagement* management, const 
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Mesh> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
 	if(!viBuffer || !viBuffer->IsValid())
 		return nullptr;
 
-	Mesh* mesh = new Mesh(management, true, resourceKey, TEXT(""), viBuffer->Copy());
-
-	return ResourceRef<Mesh>(mesh);
+	return new Mesh(management, true, resourceKey, TEXT(""), viBuffer->Copy());
 }
 
 ResourceRef<Mesh> Mesh::CreateManagedMesh(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, const VIBuffer* viBuffer)
@@ -108,16 +106,14 @@ ResourceRef<Mesh> Mesh::CreateManagedMesh(ResourceManagement* management, const 
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Mesh> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
 	if (!viBuffer || !viBuffer->IsValid())
 		return nullptr;
 
-	Mesh* mesh = new Mesh(management, true, resourceKey, groupName, viBuffer->Copy());
-
-	return ResourceRef<Mesh>(mesh);
+	return new Mesh(management, true, resourceKey, groupName, viBuffer->Copy());
 }
 
 ResourceRef<Mesh> Mesh::CreateUnamanagedMesh(ResourceManagement* management, const VIBuffer* viBuffer)
@@ -128,9 +124,7 @@ ResourceRef<Mesh> Mesh::CreateUnamanagedMesh(ResourceManagement* management, con
 	if (!viBuffer || !viBuffer->IsValid())
 		return nullptr;
 
-	Mesh* mesh = new Mesh(management, false, TEXT(""), TEXT(""), viBuffer->Copy());
-
-	return ResourceRef<Mesh>(mesh);
+	return new Mesh(management, false, TEXT(""), TEXT(""), viBuffer->Copy());
 }
 
 ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, const tstring& resourceKey, VIBuffer** ppVIBuffer)
@@ -149,7 +143,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, 
 		return nullptr;
 	}
 
-	ResourceRef<Mesh> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -163,7 +157,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, 
 
 	*ppVIBuffer = nullptr;
 
-	return ResourceRef<Mesh>(mesh);
+	return mesh;
 }
 
 ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, VIBuffer** ppVIBuffer)
@@ -182,7 +176,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, 
 		return nullptr;
 	}
 
-	ResourceRef<Mesh> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -196,7 +190,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, 
 
 	*ppVIBuffer = nullptr;
 
-	return ResourceRef<Mesh>(mesh);
+	return mesh;
 }
 
 ResourceRef<Mesh> Mesh::CreateUnamanagedMeshNocopy(ResourceManagement* management, VIBuffer** ppViBuffer)
@@ -225,7 +219,7 @@ ResourceRef<Mesh> Mesh::CreateUnamanagedMeshNocopy(ResourceManagement* managemen
 
 	*ppViBuffer = nullptr;
 
-	return ResourceRef<Mesh>(mesh);
+	return mesh;
 }
 
 ResourceRef<Mesh> Mesh::CreateManagedMeshFromFile(ResourceManagement* management, const tstring& path)
@@ -249,7 +243,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshFromFile(ResourceManagement* management
 		return nullptr;
 	}
 
-	ResourceRef<Mesh> find = management->Find(path);
+	ResourceRef<ResourceObject> find = management->Find(path);
 	if (find)
 		return find;
 
@@ -321,7 +315,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshFromFile(ResourceManagement* management
 
 	SafeDelete(data);
 
-	return ResourceRef<Mesh>(mesh);
+	return mesh;
 }
 
 HRESULT Mesh::ApplyVertexBuffer(Com<ID3D11DeviceContext> deviceContext)

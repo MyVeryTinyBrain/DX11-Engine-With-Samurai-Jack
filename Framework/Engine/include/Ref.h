@@ -54,6 +54,10 @@ public:
 
 	bool operator != (const Ref& other);
 
+	bool operator == (const void* ptr);
+
+	bool operator != (const void* ptr);
+
 	template <class U>
 	bool operator == (const Ref<U>& other);
 

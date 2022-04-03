@@ -260,6 +260,18 @@ inline bool SubResourceRef<T>::operator!=(const SubResourceRef& other)
 }
 
 template<class T>
+inline bool SubResourceRef<T>::operator==(const void* ptr)
+{
+	return GetSubResourceObject() == ptr;
+}
+
+template<class T>
+inline bool SubResourceRef<T>::operator!=(const void* ptr)
+{
+	return GetSubResourceObject() != ptr;
+}
+
+template<class T>
 template<class U>
 inline bool SubResourceRef<T>::operator==(const SubResourceRef<U>& other)
 {

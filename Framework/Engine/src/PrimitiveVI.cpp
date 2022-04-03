@@ -295,7 +295,6 @@ VI* PrimitiveVI::CreateSphere(float radius, uint slice, uint step)
 		triangles[tIndex]._1 = t1;
 		triangles[tIndex]._2 = t2;
 
-
 		triangles[tIndex + 1]._0 = b0;
 		triangles[tIndex + 1]._1 = b1;
 		triangles[tIndex + 1]._2 = b2;

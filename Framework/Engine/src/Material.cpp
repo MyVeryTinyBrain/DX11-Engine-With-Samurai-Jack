@@ -480,7 +480,7 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Material> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -495,7 +495,7 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (!management)
 		return nullptr;
 
-	ResourceRef<Material> find = management->Find(resourceKey);
+	ResourceRef<ResourceObject> find = management->Find(resourceKey);
 	if (find)
 		return find;
 
@@ -524,6 +524,9 @@ ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* manageme
 	if (!material)
 		return nullptr;
 
+	if (management->Exist(resourceKey))
+		return nullptr;
+
 	return new Material(management, false, resourceKey, TEXT(""), *material);
 }
 
@@ -533,6 +536,9 @@ ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* manageme
 		return nullptr;
 
 	if (!material)
+		return nullptr;
+
+	if (management->Exist(resourceKey))
 		return nullptr;
 
 	return new Material(management, false, resourceKey, groupName, *material);

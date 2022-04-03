@@ -161,7 +161,7 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 	if(!management)
 		return ResourceRef<Shader>();
 
-	ResourceRef<Shader> find = management->Find(path);
+	ResourceRef<ResourceObject> find = management->Find(path);
 	if (find)
 		return find;
 
@@ -178,9 +178,7 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 		return ResourceRef<Shader>();
 	}
 
-	Shader* shader = new Shader(management, true, path, TEXT(""), compiledShaderDesc);
-
-	return ResourceRef<Shader>(shader);
+	return new Shader(management, true, path, TEXT(""), compiledShaderDesc);
 }
 
 ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName)
@@ -188,7 +186,7 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 	if (!management)
 		return ResourceRef<Shader>();
 
-	ResourceRef<Shader> find = management->Find(path);
+	ResourceRef<ResourceObject> find = management->Find(path);
 	if (find)
 		return find;
 
@@ -205,7 +203,5 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 		return ResourceRef<Shader>();
 	}
 
-	Shader* shader = new Shader(management, true, path, groupName, compiledShaderDesc);
-
-	return ResourceRef<Shader>(shader);
+	return new Shader(management, true, path, groupName, compiledShaderDesc);
 }

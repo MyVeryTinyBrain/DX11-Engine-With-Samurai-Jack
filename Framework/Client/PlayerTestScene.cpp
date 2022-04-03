@@ -139,6 +139,7 @@ void PlayerTestScene::OnLoad()
 			goCamera->transform->forward = (V3(0, 2, -9) - V3(0, 2, -10)).normalized;
 			FreeCamera* camera = goCamera->AddComponent<FreeCamera>();
 			camera->camera->fov = 45;
+			camera->camera->postProcessingState = false;
 		}
 
 		{
@@ -230,6 +231,12 @@ void PlayerTestScene::OnLoad()
 			m_rigidbody = m_sphere->AddComponent<Rigidbody>();
 			m_rigidbody->sleepThresholder = 1000;
 			m_sphere->AddComponent<SphereCollider>();
+
+			ResourceRef<Shader> shader = system->resourceManagement->factory->CreateManagedShaderFromFile(TEXT("../Shader/Trail.fx"));
+			ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(shader);
+			material->SetTexture("_NormalMapTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Normal.png")));
+
+			m_trailRenderer->material = material;
 
 			m_sphere->activeSelf = false;
 		}

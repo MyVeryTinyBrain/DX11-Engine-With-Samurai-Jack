@@ -54,6 +54,10 @@ public:
 
 	bool operator != (const SubResourceRef& other);
 
+	bool operator == (const void* ptr);
+
+	bool operator != (const void* ptr);
+
 	template <class U>
 	bool operator == (const SubResourceRef<U>& other);
 
