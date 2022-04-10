@@ -104,5 +104,11 @@
     <FxCompile Include="..\Shader\Trail.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shader\Priority.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Skybox.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

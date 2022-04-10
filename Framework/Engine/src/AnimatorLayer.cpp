@@ -13,8 +13,9 @@ AnimatorLayer::AnimatorLayer() :
 {
 }
 
-AnimatorLayer::AnimatorLayer(const tstring& name) :
-	Object(name)
+AnimatorLayer::AnimatorLayer(const tstring& name, AnimatorLayer::AnimateType type) :
+	Object(name),
+	m_type(type)
 {
 }
 
@@ -234,7 +235,7 @@ void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 			rotation = m_rootNode->defaultLocalRotation;
 		}
 
-		nodeTransform->SetLocalTransformation(position, rotation, scale);
+		AnimateNodeTransform(nodeTransform, position, rotation, scale);
 
 		++channelIndex;
 	}
@@ -280,9 +281,26 @@ void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 			lerpRotation = m_rootNode->defaultLocalRotation;
 		}
 
-		nodeTransform->SetLocalTransformation(lerpPosition, lerpRotation, lerpScale);
+		AnimateNodeTransform(nodeTransform, lerpPosition, lerpRotation, lerpScale);
 
 		++channelIndex;
+	}
+}
+
+void AnimatorLayer::AnimateNodeTransform(const Ref<NodeTransform>& nodeTransform, const V3& t, const Q& r, const V3& s)
+{
+	switch (m_type)
+	{
+		case AnimatorLayer::AnimateType::Override:
+			nodeTransform->SetLocalTransformation(t, r, s);
+			break;
+		case AnimatorLayer::AnimateType::Additive:
+			nodeTransform->SetLocalTransformation(
+				t + nodeTransform->localPosition, 
+				nodeTransform->localRotation * r, 
+				s + nodeTransform->localScale
+			);
+			break;
 	}
 }
 

@@ -9,7 +9,7 @@
 
 void Rigidbody::Awake()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxPhysics* physics = iPhysicsSystem->GetPhysics();
 	PxScene* pxScene = iPhysicsSystem->GetScene();
 
@@ -102,7 +102,7 @@ void Rigidbody::OnDisable()
 
 void Rigidbody::OnDestroyed()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	iPhysicsSystem->UnregistPhysicsObject(this);
 
 	DetachAll();
@@ -110,7 +110,7 @@ void Rigidbody::OnDestroyed()
 
 Rigidbody::~Rigidbody()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxScene* pxScene = iPhysicsSystem->GetScene();
 	pxScene->removeActor(*m_body);
 

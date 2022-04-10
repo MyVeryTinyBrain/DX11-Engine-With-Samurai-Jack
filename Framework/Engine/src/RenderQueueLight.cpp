@@ -172,7 +172,7 @@ bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest
     if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
         return false;
 
-    if (!CullOp(request, boundingHolder))
+    if (request.essential.cull && !CullOp(request, boundingHolder))
         return false;
 
     return true;
@@ -669,17 +669,17 @@ HRESULT RenderQueueLight::SetupShaders()
 {
     tstring error;
 
-    m_shaderLightDepthWrite = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightDepthWrite.fx"), error);
+    m_shaderLightDepthWrite = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLightDepthWrite.cso"), error);
     if (!m_shaderLightDepthWrite)
-        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLightDepthWrite.fx");
+        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load DeferredLightDepthWrite.cso");
 
-    m_shaderLighting = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLighting.fx"), error);
+    m_shaderLighting = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLighting.cso"), error);
     if (!m_shaderLighting)
-        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLighting.fx");
+        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load DeferredLighting.cso");
 
-    m_shaderLightBlending = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/DeferredLightBlending.fx"), error);
+    m_shaderLightBlending = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLightBlending.cso"), error);
     if (!m_shaderLightBlending)
-        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load ../Shader/DeferredLightBlending.fx");
+        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load DeferredLightBlending.cso");
 
     return S_OK;
 }

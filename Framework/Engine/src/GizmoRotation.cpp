@@ -241,7 +241,7 @@ void GizmoRotation::SetupAxisMesh(uint edge)
 	// Setup VIBuffer
 	VIBuffer* viBuffer = nullptr;
 	if (FAILED(VIBuffer::CreateVIBufferNocopy(
-		system->graphicSystem->device, system->graphicSystem->deviceContext,
+		system->graphic->device, system->graphic->deviceContext,
 		&vi,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
@@ -249,7 +249,7 @@ void GizmoRotation::SetupAxisMesh(uint edge)
 		return;
 
 	// Setup Mesh
-	m_axisMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_axisMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
 }
 
 void GizmoRotation::SetupAxisLineStripMesh(uint edge)
@@ -289,7 +289,7 @@ void GizmoRotation::SetupAxisLineStripMesh(uint edge)
 	// Setup VIBuffer
 	VIBuffer* viBuffer = nullptr;
 	if (FAILED(VIBuffer::CreateVIBufferNocopy(
-		system->graphicSystem->device, system->graphicSystem->deviceContext,
+		system->graphic->device, system->graphic->deviceContext,
 		&vi,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
@@ -297,7 +297,7 @@ void GizmoRotation::SetupAxisLineStripMesh(uint edge)
 		return;
 
 	// Setup Mesh
-	m_axisLineMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_axisLineMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
 }
 
 void GizmoRotation::SetupSliceLineMesh()
@@ -331,7 +331,7 @@ void GizmoRotation::SetupSliceLineMesh()
 	// Setup VIBuffer
 	VIBuffer* viBuffer = nullptr;
 	if (FAILED(VIBuffer::CreateVIBufferNocopy(
-		system->graphicSystem->device, system->graphicSystem->deviceContext,
+		system->graphic->device, system->graphic->deviceContext,
 		&vi,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
@@ -339,7 +339,7 @@ void GizmoRotation::SetupSliceLineMesh()
 		return;
 
 	// Setup Mesh
-	m_sliceLineMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_sliceLineMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
 }
 
 void GizmoRotation::SetupResources()
@@ -349,27 +349,27 @@ void GizmoRotation::SetupResources()
 	SetupSliceLineMesh();
 	if (!m_rTexture)
 	{
-		m_rTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 0, 0, 0.5f), 16, 16);
+		m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(1, 0, 0, 0.5f), 16, 16);
 	}
 	if (!m_gTexture)
 	{
-		m_gTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(0, 1, 0, 0.5f), 16, 16);
+		m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 1, 0, 0.5f), 16, 16);
 	}
 	if (!m_bTexture)
 	{
-		m_bTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(0, 0, 1, 0.5f), 16, 16);
+		m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 0, 1, 0.5f), 16, 16);
 	}
 	if (!m_lrTexture)
 	{
-		m_lrTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
+		m_lrTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
 	}
 	if (!m_lgTexture)
 	{
-		m_lgTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
+		m_lgTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
 	}
 	if (!m_lbTexture)
 	{
-		m_lbTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
+		m_lbTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
 	}
 	//if (!m_rMat)
 	//{

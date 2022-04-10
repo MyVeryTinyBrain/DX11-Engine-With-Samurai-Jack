@@ -29,7 +29,7 @@ ResourceRef<ComputeShader> ComputeShader::CreateManagedShaderFromFile(ResourceMa
 
 	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphicSystem->device, path, error);
+		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
 
 	if (!compiledShaderDesc)
 	{
@@ -56,7 +56,7 @@ ResourceRef<ComputeShader> ComputeShader::CreateManagedShaderFromFile(ResourceMa
 
 	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphicSystem->device, path, error);
+		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
 
 	if (!compiledShaderDesc)
 	{

@@ -1,0 +1,149 @@
+{
+	"shader" : "../shader/standard.fx",
+	"variables" : 
+	[
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				1.0
+			],
+			"name" : "_SpecularTransparency",
+			"semantic" : "",
+			"type" : 6
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				5.0
+			],
+			"name" : "_SpecularPower",
+			"semantic" : "",
+			"type" : 6
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				0.5
+			],
+			"name" : "_ReflectionTransparency",
+			"semantic" : "",
+			"type" : 6
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				1.0
+			],
+			"name" : "_ReflectionBlur",
+			"semantic" : "",
+			"type" : 6
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				1.0
+			],
+			"name" : "_ReflectMask",
+			"semantic" : "",
+			"type" : 6
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"white"
+			],
+			"name" : "_DiffuseTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"../resource/dev/normal.png"
+			],
+			"name" : "_NormalMapTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"white"
+			],
+			"name" : "_LightMapTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"white"
+			],
+			"name" : "_OcclusionTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"white"
+			],
+			"name" : "_ShadowMapTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"white"
+			],
+			"name" : "_SpecularMapTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"clear"
+			],
+			"name" : "_EmissiveTexture",
+			"semantic" : "",
+			"type" : 11
+		},
+		{
+			"array" : false,
+			"arrayCount" : 1,
+			"data" : 
+			[
+				"clear"
+			],
+			"name" : "_ReflectionTexture",
+			"semantic" : "",
+			"type" : 11
+		}
+	]
+}

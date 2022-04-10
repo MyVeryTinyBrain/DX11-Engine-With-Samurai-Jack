@@ -2,9 +2,15 @@
 #include "ShaderVariable.h"
 #include "ShaderVariableInfo.h"
 #include "Texture.h"
+#include "Texture2D.h"
+#include "Material.h"
+#include "System.h"
+#include "ResourceManagement.h"
+#include "BuiltInResources.h"
 
-ShaderVariable::ShaderVariable(const ShaderVariableInfo* info)
+ShaderVariable::ShaderVariable(Material* material, const ShaderVariableInfo* info)
 {
+	m_material = material;
 	m_info = info;
 	m_valueBytesSize = info->Size;
 
@@ -22,6 +28,7 @@ ShaderVariable::ShaderVariable(const ShaderVariableInfo* info)
 
 ShaderVariable::ShaderVariable(const ShaderVariable& other)
 {
+	m_material = other.m_material;
 	m_info = other.info;
 	m_valueBytesSize = other.m_valueBytesSize;
 
@@ -50,7 +57,6 @@ ShaderVariable::~ShaderVariable()
 
 void ShaderVariable::Apply()
 {
-	ID3DX11EffectStringVariable* hString = nullptr;
 	ID3DX11EffectScalarVariable* hScalar = nullptr;
 	ID3DX11EffectVectorVariable* hVector = nullptr;
 	ID3DX11EffectMatrixVariable* hMatrix = nullptr;
@@ -63,11 +69,6 @@ void ShaderVariable::Apply()
 			break;
 		case ShaderVariableType::Struct:
 			m_info->Handle->SetRawValue(m_valueBytes, 0, (uint32_t)m_valueBytesSize);
-			break;
-		case ShaderVariableType::String:
-			hString = m_info->Handle->AsString();
-			if (!hString->IsValid()) break;
-			hString->SetRawValue(m_valueBytes, 0, (uint32_t)m_valueBytesSize);
 			break;
 		case ShaderVariableType::Bool:
 			hScalar = m_info->Handle->AsScalar();
@@ -108,12 +109,18 @@ void ShaderVariable::Apply()
 			if (!hSRV->IsValid()) break;
 			if (!m_info->IsArray())
 			{
+				if (!m_textures[0])
+					m_textures[0] = m_material->system->resource->builtInResources->whiteTexture;
 				hSRV->SetResource(m_textures[0]->shaderResourceView.Get());
 			}
 			else
 			{
 				for (uint i = 0; i < m_info->Elements; ++i)
+				{
+					if (!m_textures[i])
+						m_textures[i] = m_material->system->resource->builtInResources->whiteTexture;
 					m_arrSRV[i] = m_textures[i]->shaderResourceView.Get();
+				}
 				hSRV->SetResourceArray(m_arrSRV, 0, m_info->Elements);
 			}
 			break;
@@ -146,6 +153,41 @@ void ShaderVariable::SetTextures(ResourceRef<Texture>* textures, uint count)
 void ShaderVariable::SetRawValue(const void* src, size_t size)
 {
 	memcpy(m_valueBytes, src, size);
+}
+
+void ShaderVariable::SetBool(bool value, uint index)
+{
+	((bool*)m_valueBytes)[index] = value;
+}
+
+void ShaderVariable::SetInt(int value, uint index)
+{
+	((int*)m_valueBytes)[index] = value;
+}
+
+void ShaderVariable::SetUInt(uint value, uint index)
+{
+	((uint*)m_valueBytes)[index] = value;
+}
+
+void ShaderVariable::SetFloat(float value, uint index)
+{
+	((float*)m_valueBytes)[index] = value;
+}
+
+void ShaderVariable::SetDouble(double value, uint index)
+{
+	((double*)m_valueBytes)[index] = value;
+}
+
+void ShaderVariable::SetVector(const V4& value, uint index)
+{
+	((V4*)m_valueBytes)[index] = value;
+}
+
+void ShaderVariable::SetMatrix(const M4& value, uint index)
+{
+	((M4*)m_valueBytes)[index] = value;
 }
 
 ResourceRef<Texture> ShaderVariable::GetTexture() const

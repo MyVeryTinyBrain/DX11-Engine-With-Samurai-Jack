@@ -27,10 +27,19 @@ public:
 
 public:
 
+	bool ReadyToDraw(Com<ID3D11DeviceContext> deviceContext);
 	void SetDeferredRenderTargets(GraphicSystem* graphicSystem);
 	void SetForwardRenderTargets(GraphicSystem* graphicSystem);
 	void SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem);
 	void SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem);
+
+public:
+
+	void ClearCopyTargets();
+	bool DepthWasCopied() const;
+	bool ResultWasCopied() const;
+	void CopyDepth(Com<ID3D11DeviceContext> deviceContext);
+	void CopyResult(Com<ID3D11DeviceContext> deviceContext);
 
 public:
 
@@ -115,6 +124,9 @@ private:
 	RenderTarget*								m_lightBlend = nullptr;
 
 	RenderTarget*								m_result[COPYABLE] = {};
+
+	bool										m_depthWasCopied = false;
+	bool										m_resultWasCopied = false;
 
 	RenderTarget*								m_bridge = nullptr;
 	RenderTarget*								m_bridgeHalf = nullptr;

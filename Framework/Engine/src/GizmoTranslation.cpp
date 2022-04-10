@@ -98,7 +98,7 @@ bool GizmoTranslation::VirtualPlane(GizmoBase::Axis axis, const V3& look, Plane&
 
 bool GizmoTranslation::MouseOnVirtualPlane(GizmoBase::Axis axis, V3& out_point) const
 {
-	if (Camera* mainCamera = dynamic_cast<Camera*>(system->graphicSystem->cameraManager->mainCamera))
+	if (Camera* mainCamera = dynamic_cast<Camera*>(system->graphic->cameraManager->mainCamera))
 	{
 		Plane virtualPlane;
 		if (VirtualPlane(axis, mainCamera->transform->forward, virtualPlane))
@@ -173,19 +173,19 @@ void GizmoTranslation::SetupResources()
 {
 	if (!m_axisMesh)
 	{
-		m_axisMesh = system->resourceManagement->builtInResources->boxMesh;
+		m_axisMesh = system->resource->builtInResources->boxMesh;
 	}
 	if (!m_rTexture)
 	{
-		m_rTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
+		m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
 	}
 	if (!m_gTexture)
 	{
-		m_gTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
+		m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
 	}
 	if (!m_bTexture)
 	{
-		m_bTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
+		m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
 	}
 	//if (!m_rMat)
 	//{

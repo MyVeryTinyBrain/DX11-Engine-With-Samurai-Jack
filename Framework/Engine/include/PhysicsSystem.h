@@ -37,9 +37,9 @@ private:
 
 	virtual bool Release() override;
 
-	void Simulate(unsigned int subStep, const vector<Component*>& executionBuffer) override;
+	void Simulate(unsigned int subStep, const map<uint, vector<Component*>>& executionBuffer) override;
 
-	void SimulateOnce(const vector<Component*>& executionBuffer);
+	void SimulateOnce(const map<uint, vector<Component*>>& executionBuffer);
 
 private:
 

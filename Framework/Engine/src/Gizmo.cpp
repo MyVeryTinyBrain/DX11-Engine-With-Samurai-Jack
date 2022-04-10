@@ -94,7 +94,7 @@ void Gizmo::AutoScaling()
 {
 	GizmoBase* gizmo = m_gizmos[m_currentGizmo];
 
-	if (Camera* mainCamera = dynamic_cast<Camera*>(system->graphicSystem->cameraManager->mainCamera))
+	if (Camera* mainCamera = dynamic_cast<Camera*>(system->graphic->cameraManager->mainCamera))
 	{
 		float distance = V3::Distance(gizmo->transform->position, mainCamera->position);
 		XM_CONSTEXPR float fixedScalingFactor = 0.17f;

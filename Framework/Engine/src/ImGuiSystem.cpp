@@ -43,8 +43,8 @@ bool ImGuiSystem::Initialize(System* system, GraphicSystem* graphicSystem)
 	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(m_system->graphicSystem->windowHandle);
-	ImGui_ImplDX11_Init(m_system->graphicSystem->device.Get(), m_system->graphicSystem->deviceContext.Get());
+	ImGui_ImplWin32_Init(m_system->graphic->windowHandle);
+	ImGui_ImplDX11_Init(m_system->graphic->device.Get(), m_system->graphic->deviceContext.Get());
 
 	return true;
 }

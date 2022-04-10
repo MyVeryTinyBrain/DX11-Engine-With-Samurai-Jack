@@ -12,7 +12,7 @@ protected:
 		ID3DX11EffectPass* pass, ID3D11InputLayout* inputLayout, 
 		const string& name, const vector<string>& sementics, 
 		RenderGroup renderGroup, int renderGroupOrder,
-		bool instancingFlag, 
+		bool cullingFlag, bool instancingFlag, 
 		bool drawShadowFlag, bool shadowPassFlag);
 
 public:
@@ -26,6 +26,7 @@ public:
 
 	inline RenderGroup GetRenderGroup() const { return m_renderGroup; }
 	inline int GetRenderGroupOrder() const { return m_renderGroupOrder; }
+	inline bool IsCulling() const { return m_isCulling; }
 	inline bool IsInstancing() const { return m_isInstancing; }
 	inline bool IsDrawShadow() const { return m_isDrawingShadow; }
 	inline bool IsShadowPass() const { return m_isShadowPass; }
@@ -37,6 +38,7 @@ private:
 
 	static bool ExtractRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_renderGroup);
 	static bool ExtractRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderGroupOrder);
+	static bool ExtractCullingFlag(ID3DX11EffectPass* pass, bool* out_flag);
 	static bool ExtractInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag);
 	static bool ExtractDrawShadowFlag(ID3DX11EffectPass* pass, bool* out_flag);
 	static bool ExtractShadowPassFlag(ID3DX11EffectPass* pass, bool* out_flag);
@@ -62,7 +64,8 @@ private:
 
 	int					m_renderGroupOrder = 0; // int RenderGroupOrder 
 
-	bool				m_isInstancing = false; // bool instancing
+	bool				m_isCulling = true; // bool Cull
+	bool				m_isInstancing = false; // bool Instancing
 
 	bool				m_isDrawingShadow = true; // bool DrawShadow
 	bool				m_isShadowPass = false; // bool ShadowPass

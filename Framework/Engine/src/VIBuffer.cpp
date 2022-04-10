@@ -294,7 +294,7 @@ HRESULT VIBuffer::CreateVertexBuffer(
 {
 	if (!device || !vertices || !out_buffer || !out_desc)
 		return E_FAIL;
-
+	
 	XM_CONSTEXPR UINT vertexSize = sizeof(Vertex);
 	D3D11_BUFFER_DESC desc = {};
 	desc.ByteWidth = vertexSize * vertexCount;

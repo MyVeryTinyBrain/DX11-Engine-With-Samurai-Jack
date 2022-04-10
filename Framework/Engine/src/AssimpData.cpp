@@ -192,6 +192,7 @@ Vertex* AssimpData::CreateVertices(uint& out_count) const
 			memcpy(&vertices[vertexCursor].normal, &mesh->mNormals[j], sizeof(aiVector3D));
 			memcpy(&vertices[vertexCursor].uvw, &mesh->mTextureCoords[0][j], sizeof(aiVector3D));
 			memcpy(&vertices[vertexCursor].tangent, &mesh->mTangents[j], sizeof(aiVector3D));
+			memcpy(&vertices[vertexCursor].biNormal, &mesh->mBitangents[j], sizeof(aiVector3D));
 
 			++vertexCursor;
 		}

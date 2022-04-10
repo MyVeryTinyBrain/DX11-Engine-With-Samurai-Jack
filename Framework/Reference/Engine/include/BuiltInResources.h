@@ -51,6 +51,9 @@ public:
 	const ResourceRef<Texture2D>& GetTransparentBlackTexture() const;
 	_declspec(property(get = GetTransparentBlackTexture)) const ResourceRef<Texture2D>& blackTransparentTexture;
 
+	const ResourceRef<Texture2D>& GetNormalTexture() const;
+	_declspec(property(get = GetNormalTexture)) const ResourceRef<Texture2D>& normalTexture;
+
 	const ResourceRef<Mesh>& GetQuadMesh() const;
 	_declspec(property(get = GetQuadMesh)) const ResourceRef<Mesh>& quadMesh;
 
@@ -59,6 +62,9 @@ public:
 
 	const ResourceRef<Mesh>& GetBoxMesh() const;
 	_declspec(property(get = GetBoxMesh)) const ResourceRef<Mesh>& boxMesh;
+
+	const ResourceRef<Mesh>& GetSkyBoxMesh() const;
+	_declspec(property(get = GetSkyBoxMesh)) const ResourceRef<Mesh>& skyboxMesh;
 
 	const ResourceRef<Mesh>& GetSphereMesh() const;
 	_declspec(property(get = GetSphereMesh)) const ResourceRef<Mesh>& sphereMesh;
@@ -111,6 +117,8 @@ private: // Built-In resources
 	ResourceRef<Texture2D> m_green;
 	ResourceRef<Texture2D> m_blue;
 
+	ResourceRef<Texture2D> m_normal;
+
 	ResourceRef<Texture2D> m_whiteTransparent;
 	ResourceRef<Texture2D> m_blackTransparent;
 
@@ -121,6 +129,8 @@ private: // Built-In resources
 	ResourceRef<Mesh> m_plane;
 
 	ResourceRef<Mesh> m_box;
+
+	ResourceRef<Mesh> m_skybox;
 
 	ResourceRef<Mesh> m_sphere;
 

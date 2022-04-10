@@ -38,10 +38,12 @@ bool ComponentManagement::UnregistComponent(Component* component)
 		erased = true;
 	}
 
-	auto find_from_components = std::find(m_components.begin(), m_components.end(), component);
-	if (find_from_components != m_components.end())
+	auto find_from_components_map = m_components.find(component->executionOrder);
+	auto find_from_components = std::find(find_from_components_map->second.begin(), find_from_components_map->second.end(), component);
+	if (find_from_components_map != m_components.end() &&					// execution order에 해당되는 맵 영역이 있는 경우
+		find_from_components != find_from_components_map->second.end())		// 해당 맵 영역에서 컴포넌트를 찾은 경우
 	{
-		m_components.erase(find_from_components);
+		find_from_components_map->second.erase(find_from_components);
 		erased = true;
 	}
 
@@ -51,26 +53,29 @@ bool ComponentManagement::UnregistComponent(Component* component)
 void ComponentManagement::DeleteAllComponents(bool deleteAll)
 {
 	// 유지할 컴포넌트가 담길 리스트입니다.
-	Components dontDestroyComponents;
+	ComponentsByExecutionOrder dontDestroyComponents;
 
 	while (!m_createdComponents.empty() || !m_components.empty())
 	{
 		// 생성된 컴포넌트를 실행하고 컴포넌트 리스트로 옮깁니다.
 		ReadyComponents();
 
-		Components copiedComponents = m_components;
+		ComponentsByExecutionOrder copiedComponents = m_components;
 		m_components.clear();
 
-		for (auto& component : copiedComponents)
+		for (auto& components : copiedComponents)
 		{
-			if (component->gameObject->dontDestroyOnLoad)
+			for (auto& component : components.second)
 			{
-				dontDestroyComponents.push_back(component);
-				continue;
-			}
+				if (component->gameObject->dontDestroyOnLoad)
+				{
+					dontDestroyComponents[component->executionOrder].push_back(component);
+					continue;
+				}
 
-			component->Destroy();
-			ToDestroyedComponent(component);
+				component->Destroy();
+				ToDestroyedComponent(component);
+			}
 		}
 	}
 
@@ -94,8 +99,18 @@ void ComponentManagement::ReadyComponents()
 		IComponent* iComponent = createdComponent;
 		iComponent->Start();
 
-		m_components.push_back(createdComponent);
+		m_components[createdComponent->executionOrder].push_back(createdComponent);
 	}
+}
+
+const ComponentManagement::Components& ComponentManagement::GetComponents(uint executionOrder) const
+{
+	const static ComponentManagement::Components emptyComponents = ComponentManagement::Components();
+	auto find_it = m_components.find(executionOrder);
+	if (find_it == m_components.end())
+		return emptyComponents;
+	else
+		return find_it->second;
 }
 
 void ComponentManagement::DeleteDestroyedComponents()
@@ -110,4 +125,17 @@ void ComponentManagement::DeleteDestroyedComponents()
 	}
 
 	m_destroyedComponents.clear();
+
+	for (auto it = m_components.begin(); it != m_components.end();)
+	{
+		Components& componentsVector = it->second;
+		if (componentsVector.empty())
+		{
+			it = m_components.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
 }

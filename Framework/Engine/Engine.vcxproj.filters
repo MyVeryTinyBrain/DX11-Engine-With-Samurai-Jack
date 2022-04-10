@@ -527,6 +527,12 @@
     <ClInclude Include="include\JsonUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="include\PhysicsQueryFilterCallback.h">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PhysicsQueryType.h">
+      <Filter>EngineWorld\System\Physics\Query</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1008,6 +1014,12 @@
     </ClCompile>
     <ClCompile Include="src\JsonUtility.cpp">
       <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsQueryFilterCallback.cpp">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsQueryType.cpp">
+      <Filter>EngineWorld\System\Physics\Query</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

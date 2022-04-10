@@ -110,13 +110,13 @@ bool EngineWorldBase::Step()
 		// 생성된 컴포넌트를 이동시키고 Start 함수를 호출합니다.
 		componentManagement->ReadyComponents();
 
-		const ComponentManagement::Components& components = componentManagement->GetComponents();
+		const ComponentManagement::ComponentsByExecutionOrder& componentsByExecutionOrder = componentManagement->GetComponentsByExecutionOrders();
 
 		// 고정 업데이트를 진행합니다.
 		if (fixedUpdate)
 		{
-			IPhysicsSystem* iPhysicsSystem = m_system->physicsSystem;
-			iPhysicsSystem->Simulate(fixedUpdate, components);
+			IPhysicsSystem* iPhysicsSystem = m_system->physics;
+			iPhysicsSystem->Simulate(fixedUpdate, componentsByExecutionOrder);
 
 			iScene->DeleteDestroyedObjects();
 		}
@@ -131,67 +131,85 @@ bool EngineWorldBase::Step()
 			iInput->SetEnable(!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 			iInput->Fetch();
 
-			for (auto& com : components)
+			for (auto& coms : componentsByExecutionOrder)
 			{
-				if (!com->active)
-					continue;
+				for (auto& com : coms.second)
+				{
+					if (!com->active)
+						continue;
 
-				IComponent* iCom = com;
-				iCom->PreUpdate();
+					IComponent* iCom = com;
+					iCom->PreUpdate();
+				}
 			}
 
-			for (auto& com : components)
+			for (auto& coms : componentsByExecutionOrder)
 			{
-				if (!com->active)
-					continue;
+				for (auto& com : coms.second)
+				{
+					if (!com->active)
+						continue;
 
-				IComponent* iCom = com;
-				iCom->Update();
+					IComponent* iCom = com;
+					iCom->Update();
+				}
 			}
 
 			iScene->OnUpdate();
 
-			for (auto& com : components)
+			for (auto& coms : componentsByExecutionOrder)
 			{
-				if (!com->active)
-					continue;
+				for (auto& com : coms.second)
+				{
+					if (!com->active)
+						continue;
 
-				IComponent* iCom = com;
-				iCom->AnimationUpdate();
+					IComponent* iCom = com;
+					iCom->AnimationUpdate();
+				}
 			}
 
-			for (auto& com : components)
+			for (auto& coms : componentsByExecutionOrder)
 			{
-				if (!com->active)
-					continue;
+				for (auto& com : coms.second)
+				{
+					if (!com->active)
+						continue;
 
-				IComponent* iCom = com;
-				iCom->LateUpdate();
+					IComponent* iCom = com;
+					iCom->LateUpdate();
+				}
 			}
 
 			iScene->OnLateUpdate();
 
-			for (auto& com : components)
+			for (auto& coms : componentsByExecutionOrder)
 			{
-				if (!com->active)
-					continue;
+				for (auto& com : coms.second)
+				{
+					if (!com->active)
+						continue;
 
-				IComponent* iCom = com;
-				iCom->PostUpdate();
+					IComponent* iCom = com;
+					iCom->PostUpdate();
+				}
 			}
 
-			for (auto& com : components)
+			for (auto& coms : componentsByExecutionOrder)
 			{
-				if (!com->active)
-					continue;
+				for (auto& com : coms.second)
+				{
+					if (!com->active)
+						continue;
 
-				IComponent* iCom = com;
-				iCom->Render();
+					IComponent* iCom = com;
+					iCom->Render();
+				}
 			}
 
 			iInput->End();
 
-			IGraphicSystem* iGraphicSystem = m_system->graphicSystem;
+			IGraphicSystem* iGraphicSystem = m_system->graphic;
 			iGraphicSystem->Render();
 
 			iImGuiSystem->EndRender();

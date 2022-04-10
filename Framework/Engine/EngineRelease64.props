@@ -5,6 +5,7 @@
   <PropertyGroup>
     <IncludePath>..\Reference\XmMathPlus\include\;..\Reference\Json\include\;..\Reference\PhysX\include\;..\Reference\FMod\include\;..\Reference\Effects11\include\;..\Reference\DirectXTex\include\;..\Reference\Assimp\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\Reference\XmMathPlus\lib\ReleaseX64\;..\Reference\Json\lib\ReleaseX64\;..\Reference\PhysX\lib\ReleaseX64\;..\Reference\FMod\lib\x64\;..\Reference\Effects11\lib\ReleaseX64\;..\Reference\DirectXTex\lib\ReleaseX64\;..\Reference\Assimp\lib\ReleaseX64\;$(LibraryPath)</LibraryPath>
+    <MultiProcFXC>true</MultiProcFXC>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
@@ -14,6 +15,9 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
       <ShaderType>Effect</ShaderType>
+      <ObjectFileOutput>..\BinaryShader\ReleaseX64\%(Filename).cso</ObjectFileOutput>
+      <DisableOptimizations>false</DisableOptimizations>
+      <AdditionalOptions>/O3 %(AdditionalOptions)</AdditionalOptions>
     </FxCompile>
     <ClCompile>
       <ConformanceMode>Default</ConformanceMode>

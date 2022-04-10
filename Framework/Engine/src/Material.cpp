@@ -380,6 +380,28 @@ HRESULT Material::GetRenderGroupOrderOfAppliedTechnique(uint passIndex, int& out
 	return S_OK;
 }
 
+HRESULT Material::GetCullingFlagOfAppliedTechnique(uint passIndex, bool& out_cullingFlag) const
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	CompiledShaderDesc* shaderDesc = m_shader->GetShaderDesc();
+	if (!shaderDesc)
+		return E_FAIL;
+
+	TechniqueDesc* techniqueDesc = shaderDesc->GetTechniqueDesc(m_techniqueIndex);
+	if (!techniqueDesc)
+		return E_FAIL;
+
+	PassDesc* passDesc = techniqueDesc->GetPassDesc(passIndex);
+	if (!passDesc)
+		return E_FAIL;
+
+	out_cullingFlag = passDesc->IsCulling();
+
+	return S_OK;
+}
+
 HRESULT Material::GetInstancingFlagOfAppliedTechnique(uint passIndex, bool& out_instancingFlag) const
 {
 	if (!m_shader)
@@ -555,6 +577,21 @@ ResourceRef<Material> Material::CopyUnmanagedMaterial(ResourceManagement* manage
 	return new Material(management, false, TEXT(""), TEXT(""), *material);
 }
 
+ResourceRef<Material> Material::CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath)
+{
+	return CreateMaterialFromJsonCommon(management, jsonPath, &jsonPath, nullptr);
+}
+
+ResourceRef<Material> Material::CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath, const tstring& groupName)
+{
+	return CreateMaterialFromJsonCommon(management, jsonPath, &jsonPath, &groupName);
+}
+
+ResourceRef<Material> Material::CreateUnmanagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath)
+{
+	return CreateMaterialFromJsonCommon(management, jsonPath, nullptr, nullptr);
+}
+
 string Material::ToJson() const
 {
 	Json::Value root;
@@ -578,14 +615,20 @@ string Material::ToJson() const
 		{
 			switch (shaderVariable->info->Type)
 			{
-				case ShaderVariableType::String: data[j] = (const char*)(shaderVariable->constRawValuePointer); break;
-				case ShaderVariableType::Bool: data[j] = (const bool*)(shaderVariable->constRawValuePointer); break;
-				case ShaderVariableType::Int: data[j] = ((const int*)(shaderVariable->constRawValuePointer))[j]; break;
-				case ShaderVariableType::UInt: data[j] = ((const uint*)(shaderVariable->constRawValuePointer))[j]; break;
-				case ShaderVariableType::Float: data[j] = ((const float*)(shaderVariable->constRawValuePointer))[j]; break;
-				case ShaderVariableType::Double: data[j] = ((const double*)(shaderVariable->constRawValuePointer))[j]; break;
-				case ShaderVariableType::Vector: data[j] = JsonUtility::Parse(((const V4*)(shaderVariable->constRawValuePointer))[j]); break;
-				case ShaderVariableType::Matrix: data[j] = JsonUtility::Parse(((const M4*)(shaderVariable->constRawValuePointer))[j]); break;
+				case ShaderVariableType::Bool: 
+					data[j] = ((const bool*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Int: 
+					data[j] = ((const int*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::UInt: 
+					data[j] = ((const uint*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Float: 
+					data[j] = ((const float*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Double: 
+					data[j] = ((const double*)(shaderVariable->constRawValuePointer))[j]; break;
+				case ShaderVariableType::Vector: 
+					data[j] = JsonUtility::Parse(((const V4*)(shaderVariable->constRawValuePointer))[j]); break;
+				case ShaderVariableType::Matrix: 
+					data[j] = JsonUtility::Parse(((const M4*)(shaderVariable->constRawValuePointer))[j]); break;
 				case ShaderVariableType::Texture1D:
 				case ShaderVariableType::Texture2D:
 				case ShaderVariableType::Texture3D:
@@ -600,11 +643,116 @@ string Material::ToJson() const
 
 		variables[i] = variable;
 	}
-
+	
 	root["variables"] = variables;
 
 	Json::StreamWriterBuilder builder;
 	return Json::writeString(builder, root);
+}
+
+ResourceRef<Material> Material::CreateMaterialFromJsonCommon(ResourceManagement* management, const tstring& jsonPath, const tstring* nullable_resourceKey, const tstring* nullable_groupName)
+{
+	if (!management)
+		return nullptr;
+
+	if (nullable_resourceKey && management->Exist(*nullable_resourceKey))
+		return nullptr;
+
+	string error;
+	std::ifstream ifs;
+	ifs.open(jsonPath, ios_base::in);
+	if (!ifs.is_open())
+		return nullptr;
+	std::stringstream buffer;
+	buffer << ifs.rdbuf();
+	string json = buffer.str();
+	ifs.close();
+	buffer.clear();
+
+	Json::Value root;
+	Json::CharReaderBuilder builder;
+	unique_ptr<Json::CharReader> reader(builder.newCharReader());
+	if (!reader->parse(json.c_str(), json.c_str() + json.length(), &root, &error))
+		return nullptr;
+
+	const string& shaderPath = root["shader"].asString();
+	ResourceRef<Shader> shader = management->Find(string_to_tstring(shaderPath));
+	if (!shader)
+		return nullptr;
+
+	bool isManagement = nullable_resourceKey != nullptr;
+	tstring resourceKey = nullable_resourceKey ? *nullable_resourceKey : jsonPath;
+	tstring groupName = nullable_groupName ? *nullable_groupName : TEXT("");
+	Material* material = new Material(management, isManagement, resourceKey, groupName, shader);
+	const Json::Value& variables = root["variables"];
+
+	for (uint i = 0; i < variables.size(); ++i)
+	{
+		const Json::Value& variable = variables[i];
+
+		for (auto& shaderVariable : material->m_shaderVariables)
+		{
+			if (shaderVariable->info->Name == variable["name"].asString() &&
+				shaderVariable->info->Semantic == variable["semantic"].asString() &&
+				shaderVariable->info->ArrayCount == variable["arrayCount"].asUInt() &&
+				shaderVariable->info->IsArray() == variable["array"].asBool() &&
+				shaderVariable->info->Type == (ShaderVariableType)variable["type"].asUInt())
+			{
+				V4 vector;
+				M4 matrix;
+				ResourceRef<Texture> texture;
+
+				for (uint j = 0; j < variable["data"].size(); ++j)
+				{
+					switch (shaderVariable->info->Type)
+					{
+						case ShaderVariableType::Bool:
+							shaderVariable->SetBool(variable["data"][j].asBool(), j); break;
+						case ShaderVariableType::Int:
+							shaderVariable->SetInt(variable["data"][j].asInt(), j); break;
+						case ShaderVariableType::UInt:
+							shaderVariable->SetUInt(variable["data"][j].asUInt(), j); break;
+						case ShaderVariableType::Float:
+							shaderVariable->SetFloat(variable["data"][j].asFloat(), j); break;
+						case ShaderVariableType::Double:
+							shaderVariable->SetDouble(variable["data"][j].asDouble(), j); break;
+						case ShaderVariableType::Vector:
+							if (!JsonUtility::ToVector4(variable["data"][j].asString(), vector)) break;
+							shaderVariable->SetVector(vector, j); break;
+						case ShaderVariableType::Matrix:
+							if (!JsonUtility::ToMatrix4x4(variable["data"][j].asString(), matrix)) break;
+							shaderVariable->SetMatrix(matrix, j); break;
+						case ShaderVariableType::Texture1D:
+						case ShaderVariableType::Texture2D:
+						case ShaderVariableType::Texture3D:
+						case ShaderVariableType::Texture1DArray:
+						case ShaderVariableType::Texture2DArray:
+							string texturePath = variable["data"][j].asString();
+							if (texturePath == "white")
+								texture = management->builtInResources->whiteTexture;
+							else if (texturePath == "black")
+								texture = management->builtInResources->blackTexture;
+							else if (texturePath == "red")
+								texture = management->builtInResources->redTexture;
+							else if (texturePath == "green")
+								texture = management->builtInResources->greenTexture;
+							else if (texturePath == "blue")
+								texture = management->builtInResources->blueTexture;
+							else if (texturePath == "clear")
+								texture = management->builtInResources->clearTexture;
+							else if (texturePath == "normal")
+								texture = management->builtInResources->normalTexture;
+							else
+								texture = management->Find(string_to_tstring(texturePath));
+							shaderVariable->SetTextureByIndex(texture, j); break;
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	return material;
 }
 
 HRESULT Material::GetEffectDesc(Com<ID3DX11Effect>& out_effect) const
@@ -664,24 +812,24 @@ void Material::SetupShaderVariables()
 
 		if (variableInfo->Semantic == "")
 		{
-			ShaderVariable* variable = new ShaderVariable(variableInfo);
+			ShaderVariable* variable = new ShaderVariable(this, variableInfo);
 
-			// Default: White Texture
-			if (variable->isTexture)
-			{
-				if (!variable->isArray)
-				{
-					variable->SetTexture(system->resourceManagement->builtInResources->whiteTexture);
-				}
-				else
-				{
-					ResourceRef<Texture>* arr = new ResourceRef<Texture>[variable->elementCount]{};
-					for (uint i = 0; i < 32 && i < variable->elementCount; ++i)
-						arr[i] = system->resourceManagement->builtInResources->whiteTexture;
-					variable->SetTextures(arr, variable->elementCount);
-					SafeDeleteArray(arr);
-				}
-			}
+			//// Default: White Texture
+			//if (variable->isTexture)
+			//{
+			//	if (!variable->isArray)
+			//	{
+			//		variable->SetTexture(system->resourceManagement->builtInResources->whiteTexture);
+			//	}
+			//	else
+			//	{
+			//		ResourceRef<Texture>* arr = new ResourceRef<Texture>[variable->elementCount]{};
+			//		for (uint i = 0; i < 32 && i < variable->elementCount; ++i)
+			//			arr[i] = system->resourceManagement->builtInResources->whiteTexture;
+			//		variable->SetTextures(arr, variable->elementCount);
+			//		SafeDeleteArray(arr);
+			//	}
+			//}
 
 			ApplyAnnotation(variable);
 
@@ -741,17 +889,19 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 					if (isTexture2D)
 					{
 						if (annotation.text == "white")
-							variable->SetTexture(system->resourceManagement->builtInResources->whiteTexture);
+							variable->SetTexture(system->resource->builtInResources->whiteTexture);
 						else if (annotation.text == "black")
-							variable->SetTexture(system->resourceManagement->builtInResources->blackTexture);
+							variable->SetTexture(system->resource->builtInResources->blackTexture);
 						else if (annotation.text == "red")
-							variable->SetTexture(system->resourceManagement->builtInResources->redTexture);
+							variable->SetTexture(system->resource->builtInResources->redTexture);
 						else if (annotation.text == "green")
-							variable->SetTexture(system->resourceManagement->builtInResources->greenTexture);
+							variable->SetTexture(system->resource->builtInResources->greenTexture);
 						else if (annotation.text == "blue")
-							variable->SetTexture(system->resourceManagement->builtInResources->blueTexture);
+							variable->SetTexture(system->resource->builtInResources->blueTexture);
 						else if (annotation.text == "clear")
-							variable->SetTexture(system->resourceManagement->builtInResources->clearTexture);
+							variable->SetTexture(system->resource->builtInResources->clearTexture);
+						else if (annotation.text == "normal")
+							variable->SetTexture(system->resource->builtInResources->normalTexture);
 					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Vector:

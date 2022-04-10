@@ -22,6 +22,7 @@ struct ENGINE_API RenderRequestEssential
 	uint									passIndex;
 	IMesh*									mesh;
 	uint									subMeshIndex;
+	bool									cull;
 	bool									instance;
 
 	bool IsValid() const;

@@ -124,7 +124,7 @@ void Player::SetupTPSCamera()
 	m_goTPSCamera = CreateGameObject();
     m_tpsCamera = m_goTPSCamera->AddComponent<TPSCamera>();
 	m_tpsCamera->target = transform;
-	system->graphicSystem->cameraManager->mainCamera = m_tpsCamera->camera;
+	system->graphic->cameraManager->mainCamera = m_tpsCamera->camera;
 }
 
 void Player::SetupCharacterRenderers()
@@ -132,14 +132,16 @@ void Player::SetupCharacterRenderers()
 	m_goCharacterRender = CreateGameObjectToChild(transform);
 	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
-	m_characterRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+	m_characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+	//for (auto& m : m_characterRenderer->materials)
+	//	m->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
 	m_rightHandWeaponCntNode = m_characterRenderer->GetNodeTransformByName(TEXT("R_Hand_Weapon_cnt_tr"));
 	m_scabbardCntNode = m_characterRenderer->GetNodeTransformByName(TEXT("Scabbard_cnt_tr"));
 
 	m_goKatanaSheathRenderer = CreateGameObjectToChild(transform);
 	m_katanaSheathRenderer = m_goKatanaSheathRenderer->AddComponent<MeshRenderer>();
-	m_katanaSheathRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+	m_katanaSheathRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
 }
 
 void Player::SetupAnimator()
@@ -171,7 +173,7 @@ void Player::SetupWeapons()
 
 	m_goKatanaRenderer = CreateGameObjectToChild(m_goKatana->transform);
 	m_katanaRenderer = m_goKatanaRenderer->AddComponent<MeshRenderer>();
-	m_katanaRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+	m_katanaRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
 }
 
 void Player::UpdateAttachmentObjects()

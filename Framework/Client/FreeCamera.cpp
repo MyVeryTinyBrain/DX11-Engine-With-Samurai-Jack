@@ -56,21 +56,21 @@ void FreeCamera::Update()
             {
                 BoxCollider* boxCollider = go->AddComponent<BoxCollider>();
                 boxCollider->restitution = 0.1f;
-                go->AddComponent<MeshRenderer>()->mesh = system->resourceManagement->builtInResources->boxMesh;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->boxMesh;
             }
             break;
             case 1:
             {
                 CapsuleCollider* capsuleCollider = go->AddComponent<CapsuleCollider>();
                 capsuleCollider->restitution = 0.1f;
-                go->AddComponent<MeshRenderer>()->mesh = system->resourceManagement->builtInResources->capsuleMesh;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->capsuleMesh;
             }
             break;
             case 2:
             {
                 SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
                 sphereCollider->restitution = 0.1f;
-                go->AddComponent<MeshRenderer>()->mesh = system->resourceManagement->builtInResources->sphereMesh;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->sphereMesh;
             }
             break;
         }
@@ -115,7 +115,7 @@ void FreeCamera::UpdateRotation()
 
 V2 FreeCamera::DeltaCursor() const
 {
-    HWND hWnd = system->graphicSystem->windowHandle;
+    HWND hWnd = system->graphic->windowHandle;
 
     RECT rect = {};
     GetClientRect(hWnd, &rect);
@@ -135,7 +135,7 @@ V2 FreeCamera::DeltaCursor() const
 
 void FreeCamera::SetCursorToCenter()
 {
-    HWND hWnd = system->graphicSystem->windowHandle;
+    HWND hWnd = system->graphic->windowHandle;
 
     RECT rect = {};
     GetClientRect(hWnd, &rect);

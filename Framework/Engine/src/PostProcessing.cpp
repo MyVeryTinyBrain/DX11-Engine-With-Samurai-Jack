@@ -39,9 +39,6 @@ HRESULT PostProcessing::Initialize()
 
 void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 {
-	if (camera->GetPostProcessingState() == false)
-		return;
-
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
@@ -61,14 +58,17 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 		m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
 		m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
 
-		switch (step)
+		if (camera->GetPostProcessingState() == true)
 		{
-			case PostProcessing::Step::Deferred:
-				PostProcess_Deferred(camera);
-			break;
-			case PostProcessing::Step::After:
-				PostProcess_After(camera);
-			break;
+			switch (step)
+			{
+				case PostProcessing::Step::Deferred:
+					PostProcess_Deferred(camera);
+					break;
+				case PostProcessing::Step::After:
+					PostProcess_After(camera);
+					break;
+			}
 		}
 	}
 	m_CBufferManager->EndApply();
@@ -686,9 +686,9 @@ HRESULT PostProcessing::SetupQuads()
 HRESULT PostProcessing::SetupShaders()
 {
 	tstring error;
-	m_shaderPostProcessing = CompiledShaderDesc::CreateCompiledShaderFromFile(m_graphicSystem->device, TEXT("../Shader/PostProcessing.fx"), error);
+	m_shaderPostProcessing = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("PostProcessing.cso"), error);
 	if (!m_shaderPostProcessing)
-		RETURN_E_FAIL_ERROR_MESSAGE("ScreenRender::Initialize::Failed to load ../Shader/PostProcessing.fx");
+		RETURN_E_FAIL_ERROR_MESSAGE("ScreenRender::Initialize::Failed to load PostProcessing.cso");
 
 	return S_OK;
 }

@@ -7,7 +7,7 @@
 
 void Light::Awake()
 {
-	ILightManager* iLightManager = system->graphicSystem->lightManager;
+	ILightManager* iLightManager = system->graphic->lightManager;
 	iLightManager->AddLight(this);
 }
 
@@ -15,7 +15,7 @@ void Light::OnDestroyed()
 {
 	DeleteDepthes();
 
-	ILightManager* iLightManager = system->graphicSystem->lightManager;
+	ILightManager* iLightManager = system->graphic->lightManager;
 	iLightManager->RemoveLight(this);
 }
 
@@ -31,7 +31,7 @@ void Light::SetDrawShadowMode(bool value)
 		{
 			HRESULT hr = S_OK;
 			hr = DepthStencil::Create(
-				system->graphicSystem->device,
+				system->graphic->device,
 				m_depthSize, m_depthSize,
 				false, DepthStencil::Type::SRV_DEPTH,
 				&m_depthes[i]);
@@ -67,7 +67,7 @@ void Light::ClearDepthes()
 		if (m_depthes[i] == nullptr)
 			continue;
 
-		m_depthes[i]->Clear(system->graphicSystem->deviceContext);
+		m_depthes[i]->Clear(system->graphic->deviceContext);
 	}
 }
 
@@ -92,7 +92,7 @@ void Light::ResizeDepthes(uint size)
 	{
 		HRESULT hr = S_OK;
 		hr = DepthStencil::Create(
-			system->graphicSystem->device,
+			system->graphic->device,
 			m_depthSize, m_depthSize,
 			false, DepthStencil::Type::SRV_DEPTH,
 			&m_depthes[i]);

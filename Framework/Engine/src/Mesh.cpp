@@ -268,7 +268,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshFromFile(ResourceManagement* management
 
 	viBufferLoaded = nullptr;
 	VIBuffer::CreateVIBufferNocopy(
-		management->system->graphicSystem->device, management->system->graphicSystem->deviceContext,
+		management->system->graphic->device, management->system->graphic->deviceContext,
 		&viLoaded,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,

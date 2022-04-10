@@ -11,17 +11,42 @@ Scene* PlayerTestScene::Clone()
 
 void PlayerTestScene::OnLoad()
 {
-	system->resourceManagement->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
-	system->resourceManagement->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Normal.png"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Normal.png"));
+
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Base Color.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Ambient Occlusion.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Normal.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Specular Level.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Roughness.jpg"));
+
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Roughness.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg"));
+
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_ambient_occlusion.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_basecolor.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_normal.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_glossiness_1.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_roughness.jpg"));
+
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_glossiness.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
+	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
+
 
 	/*
 	{
 		thread t0(
 			[&]
 			{
-				system->resourceManagement->factory->CreateManagedMeshFromFile(TEXT("../Resource/Character/Jack/Jack.FBX"));
-				system->resourceManagement->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
-				system->resourceManagement->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+				system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Character/Jack/Jack.FBX"));
+				system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+				system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
 			});
 		if (t0.joinable())
 			t0.join();
@@ -42,7 +67,7 @@ void PlayerTestScene::OnLoad()
 				GameObject* goCharacterRender = CreateGameObjectToChild(goJack->transform);
 				goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
 				SkinnedMeshRenderer* characterRenderer = goCharacterRender->AddComponent<SkinnedMeshRenderer>();
-				characterRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+				characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
 				goCharacterRender->AddComponent<JackAnimator>();
 
 				Rigidbody* rigidbody = goJack->AddComponent<Rigidbody>();
@@ -69,9 +94,9 @@ void PlayerTestScene::OnLoad()
 			boxCollider->restitution = 1.0f;
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
-			meshRenderer->material->SetTexture("_ReflectionTexture", system->resourceManagement->builtInResources->whiteTexture);
+			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
 		}
 
 		{
@@ -110,7 +135,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(0, 1.0f, 0);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 		}
 
 		{
@@ -125,8 +150,8 @@ void PlayerTestScene::OnLoad()
 			boxCollider->friction = 100.0f;
 
 			MeshRenderer* meshRenderer = goPriorityRender->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 		}
 	}
 	/*/
@@ -173,17 +198,79 @@ void PlayerTestScene::OnLoad()
 			spotLight->enable = true;
 		}
 
+		//{
+		//	ResourceRef<Texture> texture[6];
+		//	texture[0] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/top.png"));
+		//	texture[1] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/bottom.png"));
+		//	texture[2] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/left.png"));
+		//	texture[3] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/right.png"));
+		//	texture[4] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/forward.png"));
+		//	texture[5] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/back.png"));
+
+		//	ResourceRef<Shader> priority = system->resourceManagement->factory->CreateManagedShaderFromBinaryFolder(TEXT("Priority.cso"));
+		//	ResourceRef<Material> material[6];
+		//	for (uint i = 0; i < 6; ++i)
+		//	{
+		//		material[i] = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(priority);
+		//		material[i]->SetTexture("_Texture", texture[i]);
+		//	}
+
+		//	GameObject* goSky[6];
+		//	for (uint i = 0; i < 6; ++i)
+		//	{
+		//		goSky[i] = CreateGameObject();
+		//		MeshRenderer* mr = goSky[i]->AddComponent<MeshRenderer>();
+		//		mr->mesh = system->resourceManagement->builtInResources->quadMesh;
+		//		mr->material = material[i];
+		//	}
+
+		//	goSky[0]->transform->position = 0.25f * V3::up();
+		//	goSky[1]->transform->position = 0.25f * V3::down();
+		//	goSky[2]->transform->position = 0.25f * V3::left();
+		//	goSky[3]->transform->position = 0.25f * V3::right();
+		//	goSky[4]->transform->position = 0.25f * V3::forward();
+		//	goSky[5]->transform->position = 0.25f * V3::back();
+
+		//	goSky[0]->transform->forward = -V3::up();
+		//	goSky[1]->transform->forward = -V3::down();
+		//	goSky[2]->transform->forward = -V3::left();
+		//	goSky[3]->transform->forward = -V3::right();
+		//	goSky[4]->transform->forward = -V3::forward();
+		//	goSky[5]->transform->forward = -V3::back();
+		//}
+
+		{
+			ResourceRef<Texture> texture = system->resource->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/skybox.png"));
+
+			//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
+			ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Skybox.cso"));
+			ResourceRef<Material> material;
+			material = system->resource->factory->CreateUnmanagedMaterialByShader(skybox);
+			material->SetTexture("_Texture", texture);
+
+			GameObject* goSky;
+			goSky = CreateGameObject();
+			MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
+			mr->mesh = system->resource->builtInResources->skyboxMesh;
+			mr->material = material;
+		}
+
 		{
 			GameObject* goGround = CreateGameObject();
 			goGround->transform->position = V3(0.0f, 0.5f, 0.0f);
 			goGround->transform->localScale = V3(40, 1, 40);
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
+			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
 
-			ResourceRef<Material> standardMaterial = system->resourceManagement->factory->CopyUnmanagedMaterial(system->resourceManagement->builtInResources->standardMaterial);
-			standardMaterial->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
-			standardMaterial->SetTexture("_ReflectionTexture", system->resourceManagement->builtInResources->whiteTexture);
+			ResourceRef<Material> standardMaterial = system->resource->factory->CopyUnmanagedMaterial(system->resource->builtInResources->standardMaterial);
+			standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
+			standardMaterial->SetTexture("_ReflectionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
+			standardMaterial->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
+			standardMaterial->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg")));
+			standardMaterial->SetFloat("_ReflectionTransparency", 0.0f);
+			standardMaterial->SetFloat("_SpecularTransparency", 0.5f);
+			standardMaterial->SetFloat("_SpecularPower", 20.0f); 
 
 			meshRenderer->material = standardMaterial;
 
@@ -199,9 +286,19 @@ void PlayerTestScene::OnLoad()
 			goBox->transform->position = V3(-2.0f, 1.5f, 0.0f);
 
 			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Dev.png")));
-			meshRenderer->material->SetTexture("_NormalMapTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Normal.png")));
+			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
+
+			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg")));
+			meshRenderer->material->SetTexture("_SpecularMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg")));
+			meshRenderer->material->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg")));
+			meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg")));
+			meshRenderer->material->SetFloat("_SpecularTransparency", 0.5f);
+			meshRenderer->material->SetFloat("_SpecularPower", 20.0f);
+
+			//ResourceRef<Material> m = Material::CreateUnmanagedMaterialFromJson(system->resourceManagement, TEXT("../Resource/test.material"));
+			//meshRenderer->material = m;
 
 			goBox->AddComponent<Rigidbody>();
 			goBox->AddComponent<BoxCollider>();
@@ -212,41 +309,60 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(2.0f, 1.5f, 0.0f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
 		}
 
-		{
-			m_sphere = CreateGameObject(TEXT("Sphere"));
-			m_sphere->transform->position = V3(2.0f, 1.5f, 0.0f);
-			m_sphere->transform->localScale = V3::one();
+		//{
+		//	m_sphere[0] = CreateGameObject(TEXT("Sphere"));
 
-			MeshRenderer* meshRenderer = m_sphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+		//	MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
+		//	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
-			m_trailRenderer = m_sphere->AddComponent<TrailRenderer>();
+		//	m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
 
-			m_rigidbody = m_sphere->AddComponent<Rigidbody>();
-			m_rigidbody->sleepThresholder = 1000;
-			m_sphere->AddComponent<SphereCollider>();
+		//	m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
+		//	m_rigidbody->sleepThresholder = 1000;
+		//	m_sphere[0]->AddComponent<SphereCollider>();
 
-			ResourceRef<Shader> shader = system->resourceManagement->factory->CreateManagedShaderFromFile(TEXT("../Shader/Trail.fx"));
-			ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(shader);
-			material->SetTexture("_NormalMapTexture", system->resourceManagement->Find(TEXT("../Resource/Dev/Normal.png")));
+		//	ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
+		//	ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
+		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-			m_trailRenderer->material = material;
+		//	m_trailRenderer[0]->material = material;
 
-			m_sphere->activeSelf = false;
-		}
+		//	m_sphere[0]->activeSelf = true;
+		//}
+
+		//{
+		//	m_sphere[1] = CreateGameObject(TEXT("Sphere"));
+
+		//	MeshRenderer* meshRenderer = m_sphere[1]->AddComponent<MeshRenderer>();
+		//	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+
+		//	m_trailRenderer[1] = m_sphere[1]->AddComponent<TrailRenderer>();
+
+		//	m_rigidbody = m_sphere[1]->AddComponent<Rigidbody>();
+		//	m_rigidbody->sleepThresholder = 1000;
+		//	m_sphere[1]->AddComponent<SphereCollider>();
+
+		//	ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
+		//	ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
+		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
+
+		//	m_trailRenderer[1]->material = material;
+
+		//	m_sphere[1]->activeSelf = true;
+		//}
 
 		{
 			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
 			goSphere->transform->position = V3(-4.5f, 1.5f, +4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -257,7 +373,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(+4.5f, 1.5f, +4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -268,7 +384,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(+4.5f, 1.5f, -4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -279,7 +395,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(-4.5f, 1.5f, -4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -294,18 +410,24 @@ void PlayerTestScene::OnUnload()
 
 void PlayerTestScene::OnUpdate()
 {
-	if (m_sphere)
+	if (m_sphere[0])
 	{
 		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
-		m_sphere->transform->position = V3::up() * 2.0f + spin * 6.0f;
-		m_trailRenderer->AddPosition(m_sphere->transform->position);
+		m_sphere[0]->transform->position = V3::up() * 2.0f + spin * 6.0f;
+		m_trailRenderer[0]->AddPosition(m_sphere[0]->transform->position);
 	}
 
+	if (m_sphere[1])
+	{
+		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
+		m_sphere[1]->transform->position = V3::up() * 2.0f + spin * 6.0f + V3(0, 0, -8.0f);
+		m_trailRenderer[1]->AddPosition(m_sphere[1]->transform->position);
+	}
 
 	{
 		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 
-		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphicSystem->GetWidth()), int(system->graphicSystem->GetHeight()));
+		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphic->GetWidth()), int(system->graphic->GetHeight()));
 		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -313,7 +435,7 @@ void PlayerTestScene::OnUpdate()
 		ImGui::End();
 	}
 
-	Camera* camera = (Camera*)system->graphicSystem->cameraManager->mainCamera;
+	Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
 	ImGui::Begin("Camera");
 	if (ImGui::CollapsingHeader("Camera"))
 	{

@@ -65,7 +65,7 @@ void RenderQueueStandard::Render(ICamera* camera)
 						if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
 							continue;
 
-						if (!CullOp(camera, request.op.cullOp))
+						if (request.essential.cull && !CullOp(camera, request.op.cullOp))
 							continue;
 
 						ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);

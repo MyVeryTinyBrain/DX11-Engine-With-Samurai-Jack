@@ -4,13 +4,14 @@
 #include "ResourceRef.h"
 
 ENGINE_BEGIN
+class Material;
 class ShaderVariableInfo;
 class Texture;
 class ShaderVariable
 {
 public:
 
-	ShaderVariable(const ShaderVariableInfo* info);
+	ShaderVariable(Material* material, const ShaderVariableInfo* info);
 	ShaderVariable(const ShaderVariable& other);
 	~ShaderVariable();
 
@@ -25,6 +26,13 @@ public:
 	void SetTextureByIndex(ResourceRef<Texture> texture, uint index);
 	void SetTextures(ResourceRef<Texture>* textures, uint count);
 	void SetRawValue(const void* src, size_t size);
+	void SetBool(bool value, uint index);
+	void SetInt(int value, uint index);
+	void SetUInt(uint value, uint index);
+	void SetFloat(float value, uint index);
+	void SetDouble(double value, uint index);
+	void SetVector(const V4& value, uint index);
+	void SetMatrix(const M4& value, uint index);
 
 	ResourceRef<Texture> GetTexture() const;
 	ResourceRef<Texture> GetTextureByIndex(uint index) const;
@@ -59,6 +67,7 @@ public:
 
 private:
 
+	Material*					m_material = nullptr;
 	const ShaderVariableInfo*	m_info = nullptr;
 	ResourceRef<Texture>*		m_textures = {};
 	ID3D11ShaderResourceView**	m_arrSRV = {};

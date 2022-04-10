@@ -39,6 +39,8 @@ public:
 
 	ResourceRef<Shader> CreateManagedShaderFromFile(const tstring& path); 
 	ResourceRef<Shader> CreateManagedShaderFromFile(const tstring& path, const tstring& groupName);
+	ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(const tstring& path);
+	ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(const tstring& path, const tstring& groupName);
 
 	ResourceRef<Mesh> CreateManagedMesh(const tstring& resourceKey, const VIBuffer* viBuffer);
 	ResourceRef<Mesh> CreateManagedMesh(const tstring& resourceKey, const tstring& groupName, const VIBuffer* viBuffer);
@@ -54,6 +56,9 @@ public:
 	ResourceRef<Material> CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey);
 	ResourceRef<Material> CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName);
 	ResourceRef<Material> CopyUnmanagedMaterial(ResourceRef<Material> material);
+	ResourceRef<Material> CreateManagedMaterialFromJson(const tstring& jsonPath);
+	ResourceRef<Material> CreateManagedMaterialFromJson(const tstring& jsonPath, const tstring& groupName);
+	ResourceRef<Material> CreateUnmanagedMaterialFromJson(const tstring& jsonPath);
 
 public:
 

@@ -17,7 +17,6 @@ enum class ShaderVariableType : uint
 	Unknown,
 	Other,
 	Struct,
-	String,
 	Bool,
 	Int,
 	UInt,

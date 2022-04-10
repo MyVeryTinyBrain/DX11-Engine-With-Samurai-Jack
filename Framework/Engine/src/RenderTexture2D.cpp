@@ -21,7 +21,7 @@ RenderTexture2D::~RenderTexture2D()
 
 bool RenderTexture2D::Resize(unsigned int width, unsigned int height)
 {
-	return m_renderTarget->Resize(system->graphicSystem->device, width, height);
+	return m_renderTarget->Resize(system->graphic->device, width, height);
 }
 
 Com<ID3D11Resource> RenderTexture2D::GetTexture() const
@@ -66,7 +66,7 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
 		return find;
 
 	RenderTarget* renderTarget = nullptr;
-	if (FAILED(RenderTarget::Create(management->system->graphicSystem->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
+	if (FAILED(RenderTarget::Create(management->system->graphic->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
 		return nullptr;
 
 	return new RenderTexture2D(management, true, resourceKey, TEXT(""), renderTarget);
@@ -84,7 +84,7 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
 		return find;
 
 	RenderTarget* renderTarget = nullptr;
-	if (FAILED(RenderTarget::Create(management->system->graphicSystem->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
+	if (FAILED(RenderTarget::Create(management->system->graphic->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
 		return nullptr;
 
 	return new RenderTexture2D(management, true, resourceKey, groupName, renderTarget);
@@ -98,7 +98,7 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateUnmanagedRenderTexture2D(
 		return nullptr;
 
 	RenderTarget* renderTarget = nullptr;
-	if (FAILED(RenderTarget::Create(management->system->graphicSystem->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
+	if (FAILED(RenderTarget::Create(management->system->graphic->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
 		return nullptr;
 
 	return new RenderTexture2D(management, false, TEXT(""), TEXT(""), renderTarget);

@@ -159,10 +159,16 @@ inline float3 DecomposeScale(float4x4 value)
 
 inline half3 UnpackNormalMap(half3 normalMap, half3 normal, half3 tangent, half3 binormal)
 {
-    half3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);
+    //half3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);
+
     //half3 unpackedNormalMap = (normalMap.x * binormal) + (normalMap.y * tangent) + (normalMap.z * normal);
-    unpackedNormalMap = normalize(unpackedNormalMap);
-    return unpackedNormalMap;
+    //unpackedNormalMap = normalize(unpackedNormalMap);
+    //return unpackedNormalMap;
+
+    half3 nm = normalMap * 2.0f - 1.0f;
+    half3x3 TBN = half3x3(tangent, binormal, normal);
+    //TBN = transpose(TBN);
+    return normalize(mul(nm, TBN));
 }
 
 inline half2 UVToTexPixelCoord(half width, half height, half2 uv)
@@ -285,4 +291,20 @@ inline bool IsSaturated(float4 f)
 {
     float4 v = Saturate(f);
     return f.x == v.x && f.y == v.y && f.z == v.z && f.w == v.w;
+}
+
+inline float4x4 NormalizeTransformationMatrix(float4x4 m)
+{
+    m[0].xyz = normalize(m[0].xyz);
+    m[1].xyz = normalize(m[1].xyz);
+    m[2].xyz = normalize(m[2].xyz);
+    return m;
+}
+
+inline half4x4 NormalizeTransformationMatrix(half4x4 m)
+{
+    m[0].xyz = normalize(m[0].xyz);
+    m[1].xyz = normalize(m[1].xyz);
+    m[2].xyz = normalize(m[2].xyz);
+    return m;
 }

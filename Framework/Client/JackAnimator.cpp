@@ -26,7 +26,7 @@ bool JackAnimator::Initialize()
 
 bool JackAnimator::FindJackMesh()
 {
-	m_jackMesh = system->resourceManagement->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+	m_jackMesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
 	return nullptr != m_jackMesh;
 }
 

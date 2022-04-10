@@ -57,6 +57,7 @@ using namespace DirectX::PackedVector;
 #include <unordered_map>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <string>
 #include <tchar.h>

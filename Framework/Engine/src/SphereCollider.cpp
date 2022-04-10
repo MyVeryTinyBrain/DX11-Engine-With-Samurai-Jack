@@ -33,8 +33,8 @@ void SphereCollider::Awake()
 {
 	Collider::Awake();
 
-	m_dbgMesh = system->resourceManagement->builtInResources->sphereMesh;
-	m_dbgMaterial = system->resourceManagement->builtInResources->wireframeMaterial;
+	m_dbgMesh = system->resource->builtInResources->sphereMesh;
+	m_dbgMaterial = system->resource->builtInResources->wireframeMaterial;
 }
 
 void SphereCollider::DebugRender()
@@ -78,7 +78,7 @@ void SphereCollider::DebugRender()
 	input.essential.subMeshIndex = 0;
 	input.essential.instance = instancingFlag;
 
-	system->graphicSystem->renderQueue->Add(input);
+	system->graphic->renderQueue->Add(input);
 }
 
 bool SphereCollider::CullTest(ICamera* camera) const

@@ -6,7 +6,7 @@ PassDesc::PassDesc(
 	ID3DX11EffectPass* pass, ID3D11InputLayout* inputLayout, 
 	const string& name, const vector<string>& sementics, 
 	RenderGroup renderGroup, int renderGroupOrder,
-	bool instancingFlag, 
+	bool cullingFlag, bool instancingFlag, 
 	bool drawShadowFlag, bool shadowPassFlag)
 {
 	m_pass = pass;
@@ -15,6 +15,7 @@ PassDesc::PassDesc(
 	m_sementics = sementics;
 	m_renderGroup = renderGroup;
 	m_renderGroupOrder = renderGroupOrder;
+	m_isCulling = cullingFlag;
 	m_isInstancing = instancingFlag;
 	m_isDrawingShadow = drawShadowFlag;
 	m_isShadowPass = shadowPassFlag;
@@ -346,6 +347,56 @@ bool PassDesc::ExtractRenderGroupOrder(ID3DX11EffectPass* pass, int* out_renderG
 	return true;
 }
 
+bool PassDesc::ExtractCullingFlag(ID3DX11EffectPass* pass, bool* out_flag)
+{
+	if (!pass || !out_flag)
+		return false;
+
+	*out_flag = false;
+
+	D3DX11_PASS_DESC passDesc = {};
+	if (FAILED(pass->GetDesc(&passDesc)))
+		return false;
+
+	ID3DX11EffectScalarVariable* hCullingFlag = nullptr;
+
+	// find annotation <bool instancing>
+	for (uint32_t i = 0; i < passDesc.Annotations; ++i)
+	{
+		ID3DX11EffectVariable* annotation = pass->GetAnnotationByIndex(i);
+
+		if (!annotation->IsValid())
+			continue;
+
+		D3DX11_EFFECT_VARIABLE_DESC annotationDesc = {};
+		if (FAILED(annotation->GetDesc(&annotationDesc)))
+			continue;
+
+		string name = annotationDesc.Name;
+		std::transform(name.begin(), name.end(), name.begin(), std::tolower);
+		if (name == "cull" && annotation->AsScalar()->IsValid())
+		{
+			hCullingFlag = annotation->AsScalar();
+			break;
+		}
+
+		SafeRelease(annotation);
+	}
+
+	if (!hCullingFlag)
+		return true;
+
+	bool flag = 0;
+	if (FAILED(hCullingFlag->GetBool(&flag)))
+		return false;
+
+	*out_flag = flag;
+
+	SafeRelease(hCullingFlag);
+
+	return true;
+}
+
 bool PassDesc::ExtractInstancingFlag(ID3DX11EffectPass* pass, bool* out_flag)
 {
 	if (!pass || !out_flag)
@@ -513,6 +564,10 @@ PassDesc* PassDesc::CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11Effec
 	if (!ExtractRenderGroupOrder(pass, &renderGroupOrder))
 		return nullptr;
 
+	bool cullingFlag = true;
+	if (!ExtractCullingFlag(pass, &cullingFlag))
+		return nullptr;
+
 	bool instancingFlag = false;
 	if (!ExtractInstancingFlag(pass, &instancingFlag))
 		return nullptr;
@@ -535,6 +590,6 @@ PassDesc* PassDesc::CreateDefaultPassDesc(Com<ID3D11Device> device, ID3DX11Effec
 		pass, inputLayout, 
 		name, sementics, 
 		renderGroup, renderGroupOrder, 
-		instancingFlag, 
+		cullingFlag, instancingFlag, 
 		drawShadow, shadowPass);
 }

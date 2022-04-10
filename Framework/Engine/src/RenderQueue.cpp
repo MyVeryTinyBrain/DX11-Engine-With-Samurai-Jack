@@ -132,8 +132,7 @@ void RenderQueue::Render(ICamera* camera)
 		return;
 
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->Clear(m_graphicSystem->deviceContext);
-	drt->ClearPostProcessings(m_graphicSystem->deviceContext);
+	drt->ReadyToDraw(m_graphicSystem->deviceContext);
 
 	m_light->RenderDepthes(camera);
 

@@ -119,7 +119,7 @@ bool PhysicsSystem::Release()
 	return true;
 }
 
-void PhysicsSystem::Simulate(unsigned int subStep, const vector<Component*>& executionBuffer)
+void PhysicsSystem::Simulate(unsigned int subStep, const map<uint, vector<Component*>>& executionBuffer)
 {
 	subStep = subStep < m_subStepLimit ? subStep : m_subStepLimit;
 
@@ -129,7 +129,7 @@ void PhysicsSystem::Simulate(unsigned int subStep, const vector<Component*>& exe
 	}
 }
 
-void PhysicsSystem::SimulateOnce(const vector<Component*>& executionBuffer)
+void PhysicsSystem::SimulateOnce(const map<uint, vector<Component*>>& executionBuffer)
 {
 	if (!m_scene)
 		return;
@@ -153,22 +153,28 @@ void PhysicsSystem::SimulateOnce(const vector<Component*>& executionBuffer)
 		physicsObj->AfterPhysicsSimulation();
 	}
 
-	for (auto& com : executionBuffer)
+	for (auto& coms : executionBuffer)
 	{
-		if (!com->active)
-			continue;
+		for (auto& com : coms.second)
+		{
+			if (!com->active)
+				continue;
 
-		IComponent* iCom = com;
-		iCom->FixedUpdate();
+			IComponent* iCom = com;
+			iCom->FixedUpdate();
+		}
 	}
 
-	for (auto& com : executionBuffer)
+	for (auto& coms : executionBuffer)
 	{
-		if (!com->active)
-			continue;
+		for (auto& com : coms.second)
+		{
+			if (!com->active)
+				continue;
 
-		IComponent* iCom = com;
-		iCom->PostFixedUpdate();
+			IComponent* iCom = com;
+			iCom->PostFixedUpdate();
+		}
 	}
 
 	m_physicsSimulationEventCallback->ExecuteNotify();

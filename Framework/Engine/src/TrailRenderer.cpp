@@ -77,12 +77,14 @@ void TrailRenderer::Render()
 	{
 		RenderGroup renderGroup;
 		int renderGroupOrder;
+		bool cullingFlag;
 		bool instancingFlag;
 		bool drawShadowFlag;
 		bool shadowPassFlag;
 
 		if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup))) continue;
 		if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder))) continue;
+		if (FAILED(currentMaterial->GetCullingFlagOfAppliedTechnique(j, cullingFlag))) continue;
 		if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag))) continue;
 		if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag))) continue;
 		if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
@@ -97,6 +99,7 @@ void TrailRenderer::Render()
 		input.essential.passIndex = j;
 		input.essential.mesh = m_mesh;
 		input.essential.subMeshIndex = 0;
+		input.essential.cull = cullingFlag;
 		input.essential.instance = instancingFlag;
 
 		input.customPrimitiveCount.usePrimitiveCount = true;
@@ -111,7 +114,7 @@ void TrailRenderer::Render()
 		input.op.cullOp = this;
 		input.op.boundsOp = this;
 
-		system->graphicSystem->renderQueue->Add(input);
+		system->graphic->renderQueue->Add(input);
 	}
 }
 
@@ -224,13 +227,13 @@ void TrailRenderer::SetupMesh(uint numRect)
 	{
 		VIBuffer* viBuffer = nullptr;
 		VIBuffer::CreateVIBufferNocopy(
-			system->graphicSystem->device, system->graphicSystem->deviceContext,
+			system->graphic->device, system->graphic->deviceContext,
 			&vi,
 			D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
 			D3D11_USAGE_IMMUTABLE, 0, 0,
 			&viBuffer);
 
-		m_mesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+		m_mesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
 	}
 	else
 	{
@@ -380,7 +383,7 @@ void TrailRenderer::SetupVerticexPair(
 
 void TrailRenderer::ApplyVertices()
 {
-	Camera* mainCamera = (Camera*)system->graphicSystem->cameraManager->mainCamera;
+	Camera* mainCamera = (Camera*)system->graphic->cameraManager->mainCamera;
 	V3 camDir = mainCamera->transform->forward;
 
 	V3 minV = V3(FLT_MAX, FLT_MAX, FLT_MAX);
@@ -408,5 +411,5 @@ void TrailRenderer::ApplyVertices()
 
 void TrailRenderer::SetupDefaultMaterial()
 {
-	SetMaterial(system->resourceManagement->builtInResources->standardMaterial);
+	SetMaterial(system->resource->builtInResources->standardMaterial);
 }

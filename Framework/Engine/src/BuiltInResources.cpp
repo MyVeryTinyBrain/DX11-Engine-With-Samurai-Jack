@@ -68,6 +68,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateTexture2D(Color(0, 0, 0, 0.5f), 16, 16, TEXT("black_transparent"), &m_blackTransparent)))
 		return hr;
 
+	if (FAILED(hr = CreateTexture2D(Color(0.5f, 0.5f, 1.0f, 1.0f), 16, 16, TEXT("normal"), &m_normal)))
+		return hr;
+
 	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateQuad(), &m_quad)))
 		return hr;
 
@@ -75,6 +78,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 		return hr;
 
 	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateBox(), &m_box)))
+		return hr;
+
+	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateSkyBox(), &m_skybox)))
 		return hr;
 
 	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateSphere(), &m_sphere)))
@@ -86,10 +92,10 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateCylinder(), &m_cylinder)))
 		return hr;
 
-	if (FAILED(hr = CreateShader(TEXT("../Shader/Standard.fx"), &m_standardShader)))
+	if (FAILED(hr = CreateShader(TEXT("Standard.cso"), &m_standardShader)))
 		return hr;
 
-	if (FAILED(hr = CreateShader(TEXT("../Shader/Color.fx"), &m_colorShader)))
+	if (FAILED(hr = CreateShader(TEXT("Color.cso"), &m_colorShader)))
 		return hr;
 
 	if (nullptr == (m_standardMaterial = m_factory->CreateUnmanagedMaterialByShader(m_standardShader)))
@@ -103,38 +109,6 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 
 void BuiltInResources::ReleaseBuiltInResources()
 {
-	// Texture2D ==========================================
-
-	m_white = nullptr;
-
-	m_black = nullptr;
-
-	m_whiteTransparent = nullptr;
-
-	m_blackTransparent = nullptr;
-
-	// Mesh ===============================================
-
-	m_quad = nullptr;
-
-	m_plane = nullptr;
-
-	m_box = nullptr;
-
-	m_sphere = nullptr;
-
-	m_capsule = nullptr;
-
-	m_cylinder = nullptr;
-
-	// Shader =============================================
-
-	m_standardShader = nullptr;
-	m_colorShader = nullptr;
-
-	// Material ===========================================
-
-
 }
 
 const ResourceRef<Texture2D>& BuiltInResources::GetWhiteTexture() const
@@ -177,6 +151,11 @@ const ResourceRef<Texture2D>& BuiltInResources::GetTransparentBlackTexture() con
 	return m_blackTransparent;
 }
 
+const ResourceRef<Texture2D>& BuiltInResources::GetNormalTexture() const
+{
+	return m_normal;
+}
+
 const ResourceRef<Mesh>& BuiltInResources::GetQuadMesh() const
 {
 	return m_quad;
@@ -190,6 +169,11 @@ const ResourceRef<Mesh>& BuiltInResources::GetPlaneMesh() const
 const ResourceRef<Mesh>& BuiltInResources::GetBoxMesh() const
 {
 	return m_box;
+}
+
+const ResourceRef<Mesh>& BuiltInResources::GetSkyBoxMesh() const
+{
+	return m_skybox;
 }
 
 const ResourceRef<Mesh>& BuiltInResources::GetSphereMesh() const
@@ -250,7 +234,7 @@ HRESULT BuiltInResources::CreateMeshNocopyVI(VI* vi, ResourceRef<Mesh>* out_mesh
 	HRESULT hr = S_OK;
 
 	if (FAILED(hr = VIBuffer::CreateVIBufferNocopy(
-		system->graphicSystem->device, system->graphicSystem->deviceContext,
+		system->graphic->device, system->graphic->deviceContext,
 		&vi,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
@@ -271,7 +255,7 @@ HRESULT BuiltInResources::CreateMeshNocopyVI(VI* vi, ResourceRef<Mesh>* out_mesh
 
 HRESULT BuiltInResources::CreateShader(const tstring& shaderPath, ResourceRef<Shader>* out_shader)
 {
-	if (nullptr == (*out_shader = m_factory->CreateManagedShaderFromFile(shaderPath)))
+	if (nullptr == (*out_shader = m_factory->CreateManagedShaderFromBinaryFolder(shaderPath)))
 		return E_FAIL;
 
 	return S_OK;

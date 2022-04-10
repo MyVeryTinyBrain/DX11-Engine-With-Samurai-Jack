@@ -13,14 +13,14 @@ void Camera::Awake()
 	ResetAspect();
 	ResetProjectionMatrix();
 
-	ICameraManager* iCameraManager = system->graphicSystem->cameraManager;
+	ICameraManager* iCameraManager = system->graphic->cameraManager;
 	iCameraManager->AddCamera(this);
 
 	m_deferredRenderTarget =
 		DeferredRenderTarget::Create(
-			system->graphicSystem->device,
-			uint(system->graphicSystem->width),
-			uint(system->graphicSystem->height));
+			system->graphic->device,
+			uint(system->graphic->width),
+			uint(system->graphic->height));
 
 	m_ssaoDesc.Enable = true;
 	m_ssaoDesc.NumSamples = 4;
@@ -94,7 +94,7 @@ void Camera::Render()
 
 inline void Camera::OnDestroyed()
 {
-	ICameraManager* iCameraManager = system->graphicSystem->cameraManager;
+	ICameraManager* iCameraManager = system->graphic->cameraManager;
 	iCameraManager->RemoveCamera(this);
 
 	SafeDelete(m_depthStencil);
@@ -159,7 +159,7 @@ M4 Camera::GetViewMatrix() const
 
 M4 Camera::GetProjectionMatrix(float nearPercent, float farPercent) const
 {
-	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphicSystem->aspect;
+	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
 
 	float deltaPercent = farPercent - nearPercent;
 	float deltaDist = m_far - m_near;
@@ -252,7 +252,7 @@ void Camera::SetOrder(int value)
 {
 	m_order = value;
 
-	ICameraManager* iCameraManager = system->graphicSystem->cameraManager;
+	ICameraManager* iCameraManager = system->graphic->cameraManager;
 	iCameraManager->SortByOrder();
 }
 
@@ -318,7 +318,7 @@ void Camera::SetAspect(float value)
 
 void Camera::ResetAspect()
 {
-	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphicSystem->aspect;
+	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
 	SetAspect(asp);
 }
 
@@ -417,7 +417,7 @@ bool Camera::Intersects(const BoundingHolder& boundingHolder) const
 
 void Camera::ResetProjectionMatrix()
 {
-	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphicSystem->aspect;
+	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
 
 	switch (m_projection)
 	{
@@ -437,14 +437,14 @@ void Camera::FitDepthStencilToRenderTexture()
 
 	if (!m_depthStencil)
 	{
-		DepthStencil::Create(system->graphicSystem->device, m_renderTexture->width, m_renderTexture->height, false, DepthStencil::Type::WRITEONLY_DEPTH_STENCIL, &m_depthStencil);
+		DepthStencil::Create(system->graphic->device, m_renderTexture->width, m_renderTexture->height, false, DepthStencil::Type::WRITEONLY_DEPTH_STENCIL, &m_depthStencil);
 	}
 	
 	bool diffWidth = m_depthStencil->width != m_renderTexture->width;
 	bool diffHeight = m_depthStencil->height != m_renderTexture->height;
 	if (diffWidth || diffHeight)
 	{
-		m_depthStencil->Resize(system->graphicSystem->device, m_renderTexture->width, m_renderTexture->height);
+		m_depthStencil->Resize(system->graphic->device, m_renderTexture->width, m_renderTexture->height);
 	}
 }
 
@@ -458,11 +458,11 @@ void Camera::FitDeferredRenderTargetToRenderTexture()
 
 	if (diffWidth || diffHeight)
 	{
-		m_deferredRenderTarget->Resize(system->graphicSystem->device, m_renderTexture->width, m_renderTexture->height);
+		m_deferredRenderTarget->Resize(system->graphic->device, m_renderTexture->width, m_renderTexture->height);
 	}
 }
 
 void Camera::FitDeferredRenderTargetToResolution(uint width, uint height)
 {
-	m_deferredRenderTarget->Resize(system->graphicSystem->device, width, height);
+	m_deferredRenderTarget->Resize(system->graphic->device, width, height);
 }

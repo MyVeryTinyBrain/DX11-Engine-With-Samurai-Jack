@@ -4,6 +4,10 @@
 #include "PassDesc.h"
 #include "ShaderVariableInfo.h"
 
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 CompiledShaderDesc::CompiledShaderDesc(ID3DX11Effect* effect, const vector<TechniqueDesc*>& techniqueDescs, const vector<ShaderVariableInfo*>& infos)
 {
 	m_effect = effect;
@@ -273,27 +277,78 @@ HRESULT CompiledShaderDesc::SetTextures(const string& name, ID3D11ShaderResource
 
 CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
 {
-	ID3DBlob* compileShader = nullptr;
-	ID3DBlob* compileShaderErrorMessage = nullptr;
+	ID3DBlob* compiledShader = nullptr;
+	ID3DBlob* compiledShaderErrorMessage = nullptr;
 
 	auto ReleaseVars = [&]()
 	{
-		SafeRelease(compileShaderErrorMessage);
-		SafeRelease(compileShader);
+		SafeRelease(compiledShaderErrorMessage);
+		SafeRelease(compiledShader);
 	};
 
 	HRESULT hr = S_OK;
 
-	if(FAILED(hr = CompileShader(path, &compileShader, &compileShaderErrorMessage)))
+	if(FAILED(hr = CompileShader(path, &compiledShader, &compiledShaderErrorMessage)))
 	{
 		ReleaseVars();
 		return nullptr;
 	}
 
-	CompiledShaderDesc* shader = CreateCompiledShader(device, compileShader, out_error);
+	CompiledShaderDesc* shader = CreateCompiledShader(device, compiledShader, out_error);
 
 	ReleaseVars();
 	return shader;
+}
+
+CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
+{
+	ID3DBlob* compiledShader = nullptr;
+
+	tstring binaryShaderPath = CompiledShaderDesc::ParseToBinaryShaderPath(path);
+	
+	auto ReleaseVars = [&]()
+	{
+		SafeRelease(compiledShader);
+	};
+
+	HRESULT hr = S_OK;
+
+	if (!fs::exists(binaryShaderPath))
+	{
+		out_error = TEXT("File is not exists.");
+		ReleaseVars();
+		return nullptr;
+	}
+
+	if (FAILED(hr = D3DReadFileToBlob(binaryShaderPath.c_str(), &compiledShader)))
+	{
+		ReleaseVars();
+		return nullptr;
+	}
+
+	CompiledShaderDesc* shader = CreateCompiledShader(device, compiledShader, out_error);
+
+	ReleaseVars();
+	return shader;
+}
+
+tstring CompiledShaderDesc::ParseToBinaryShaderPath(const tstring& path)
+{
+	// path -> ../BinaryShader/(Debug/Release)X(86/64)/path
+
+#ifdef _DEBUG
+#ifdef _WIN64
+	return TEXT("../BinaryShader/DebugX64/") + path;
+#else
+	return TEXT("../BinaryShader/DebugX86/") + path;
+#endif
+#else
+#ifdef _WIN64
+	return TEXT("../BinaryShader/ReleaseX64/") + path;
+#else
+	return TEXT("../BinaryShader/ReleaseX86/") + path;
+#endif
+#endif
 }
 
 HRESULT CompiledShaderDesc::CompileShader(const tstring& path, ID3DBlob** out_memory, ID3DBlob** out_errorMsg)
@@ -432,8 +487,6 @@ ShaderVariableType CompiledShaderDesc::TypeOf(const D3DX11_EFFECT_TYPE_DESC& typ
 			return ShaderVariableType::UInt;
 		case D3D_SVT_FLOAT:
 			return ShaderVariableType::Float;
-		case D3D_SVT_STRING:
-			return ShaderVariableType::String;
 		case D3D_SVT_TEXTURE1D:
 			return ShaderVariableType::Texture1D;
 		case D3D_SVT_TEXTURE2D:

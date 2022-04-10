@@ -44,7 +44,7 @@ void SSVGrabTexture::Apply(ICamera* camera)
 	}
 
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	m_system->graphicSystem->deviceContext->CopyResource(drt->copyTargetResult->texture.Get(), drt->result->texture.Get());
+	m_system->graphic->deviceContext->CopyResource(drt->copyTargetResult->texture.Get(), drt->result->texture.Get());
 	hValue->SetResource(drt->copyTargetResult->srv.Get());
 
 	SafeRelease(hValue);
@@ -60,7 +60,7 @@ void SSVDepthTexture::Apply(ICamera* camera)
 	}
 
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	m_system->graphicSystem->deviceContext->CopyResource(drt->copyTargetDepth->texture.Get(), drt->depth->texture.Get());
+	m_system->graphic->deviceContext->CopyResource(drt->copyTargetDepth->texture.Get(), drt->depth->texture.Get());
 	hValue->SetResource(drt->copyTargetDepth->srv.Get());
 
 	SafeRelease(hValue);

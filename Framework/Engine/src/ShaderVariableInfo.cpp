@@ -209,8 +209,6 @@ ShaderVariableType ShaderVariableInfo::TypeOf(const D3DX11_EFFECT_TYPE_DESC& typ
 			return ShaderVariableType::Float;
 		case D3D_SVT_DOUBLE:
 			return ShaderVariableType::Double;
-		case D3D_SVT_STRING:
-			return ShaderVariableType::String;
 		case D3D_SVT_TEXTURE1D:
 			return ShaderVariableType::Texture1D;
 		case D3D_SVT_TEXTURE2D:

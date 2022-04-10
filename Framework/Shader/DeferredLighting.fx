@@ -106,7 +106,7 @@ void UnpackGBuffersForLight(half2 uv,
 {
 	normal = _Normal.Sample(pointSampler, uv).xyz;
 
-	depth = _Depth.Sample(pointSampler, uv);
+	depth = _Depth.Sample(pointSampler, uv).r;
 
 	half4 depthLightOcclusionShadow = _Light_Occlusion_Shadow.Sample(pointSampler, uv);
 	occlusionMask = depthLightOcclusionShadow.g;

@@ -106,7 +106,7 @@ void CapsuleCollider::DebugRender()
 	input.essential.subMeshIndex = 0;
 	input.essential.instance = instancingFlag;
 
-	system->graphicSystem->renderQueue->Add(input);
+	system->graphic->renderQueue->Add(input);
 }
 
 bool CapsuleCollider::CullTest(ICamera* camera) const
@@ -168,14 +168,14 @@ void CapsuleCollider::CreateDebugShape()
 	VI* vi = PrimitiveVI::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_INIT_SLICE, CAPSULE_INIT_STEP);
 	VIBuffer* viBuffer = nullptr;
 	VIBuffer::CreateVIBufferNocopy(
-		system->graphicSystem->device,
-		system->graphicSystem->deviceContext,
+		system->graphic->device,
+		system->graphic->deviceContext,
 		&vi,
 		D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		&viBuffer);
-	m_dbgMesh = system->resourceManagement->factory->CreateUnamanagedMeshNocopy(&viBuffer);
-	m_dbgMaterial = system->resourceManagement->builtInResources->wireframeMaterial;
+	m_dbgMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_dbgMaterial = system->resource->builtInResources->wireframeMaterial;
 }
 
 void CapsuleCollider::ResetDebugShape()

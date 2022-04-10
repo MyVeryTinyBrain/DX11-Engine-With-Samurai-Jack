@@ -34,14 +34,14 @@ Scene* TestScene::Clone()
 void TestScene::OnLoad()
 {
     // 스레드 내부에서 호출하려는 경우에는 미리 한 번 호출해줘야 합니다.
-    system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/TEMP/TEMP.png"));
+    system->resource->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/TEMP/TEMP.png"));
     thread t0(
         [&]
         {
-            system->resourceManagement->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
-            system->resourceManagement->factory->CreateManagedMeshFromFile(TEXT("../Resource/Character/Jack/Jack.FBX"));
-            system->resourceManagement->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
-            system->resourceManagement->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+            system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
+            system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Character/Jack/Jack.FBX"));
+            system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+            system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
         });
     if (t0.joinable())
         t0.join();
@@ -73,7 +73,7 @@ void TestScene::OnLoad()
         goJack->transform->position = V3(0, 0, 0);
         goJack->transform->localEulerAngles = V3(90, 0, 0);
         SkinnedMeshRenderer* skinnedMeshRenderer = goJack->AddComponent<SkinnedMeshRenderer>();
-        skinnedMeshRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+        skinnedMeshRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
 
         const vector<ModelMaterialDesc>& materials = skinnedMeshRenderer->mesh->materialDescs;
         const vector<uint>& materialIndices = skinnedMeshRenderer->mesh->materialIndices;
@@ -87,10 +87,10 @@ void TestScene::OnLoad()
             if (i < materialIndices.size())
             {
                 texturePath = materials[materialIndices[i]].diffuse;
-                texture = system->resourceManagement->Find(texturePath);
+                texture = system->resource->Find(texturePath);
             }
 
-            ResourceRef<Material> material = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(system->resourceManagement->builtInResources->standardShader);
+            ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(system->resource->builtInResources->standardShader);
             material->SetTexture("_DiffuseTexture", texture);
 
             skinnedMeshRenderer->SetMaterialByIndex(i, material);
@@ -174,7 +174,7 @@ void TestScene::OnLoad()
         goKatana->transform->position = V3(0, 0, 0);
         MeshRenderer* meshRenderer = goKatana->AddComponent<MeshRenderer>();
         meshRenderer->name = TEXT("KatanaRenderer");
-        meshRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+        meshRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
 
         GameObject* goGizmo = CreateGameObject();
         Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
@@ -186,7 +186,7 @@ void TestScene::OnLoad()
         GameObject* goKatanaScabbard = CreateGameObject(TEXT("KatanaSheath"));
         goKatanaScabbard->transform->position = V3(0, 0, 0);
         MeshRenderer* meshRenderer = goKatanaScabbard->AddComponent<MeshRenderer>();
-        meshRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+        meshRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
 
         GameObject* goGizmo = CreateGameObject();
         Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
@@ -211,8 +211,8 @@ void TestScene::OnLoad()
         goHandlingTest->transform->position = V3(3, 3, 0);
 
         MeshRenderer* meshRenderer = goHandlingTest->AddComponent<MeshRenderer>();
-        meshRenderer->mesh = system->resourceManagement->builtInResources->boxMesh;
-        meshRenderer->material = system->resourceManagement->builtInResources->wireframeMaterial;
+        meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+        meshRenderer->material = system->resource->builtInResources->wireframeMaterial;
 
         GameObject* goGizmo = CreateGameObject();
         Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
@@ -298,7 +298,7 @@ void TestScene::OnUpdate()
             ImGui::Begin("Test Window", 0, ImGuiWindowFlags_AlwaysAutoResize);        
 
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);       
-            ImGui::ColorEdit4("clear color", (float*)&system->graphicSystem->clearColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+            ImGui::ColorEdit4("clear color", (float*)&system->graphic->clearColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 
             if (ImGui::Button("Button"))  
                 counter++;
@@ -322,7 +322,7 @@ void TestScene::OnUpdate()
         {
             ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 
-            tstring resolutionTxt = tstring_format(TEXT("resolution: %f x %f"), system->graphicSystem->GetWidth(), system->graphicSystem->GetHeight());
+            tstring resolutionTxt = tstring_format(TEXT("resolution: %f x %f"), system->graphic->GetWidth(), system->graphic->GetHeight());
             ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

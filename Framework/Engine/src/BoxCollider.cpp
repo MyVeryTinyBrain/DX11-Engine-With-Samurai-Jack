@@ -33,8 +33,8 @@ void BoxCollider::Awake()
 {
 	Collider::Awake();
 
-	m_dbgMesh = system->resourceManagement->builtInResources->boxMesh;
-	m_dbgMaterial = system->resourceManagement->builtInResources->wireframeMaterial;
+	m_dbgMesh = system->resource->builtInResources->boxMesh;
+	m_dbgMaterial = system->resource->builtInResources->wireframeMaterial;
 }
 
 void BoxCollider::DebugRender()
@@ -80,7 +80,7 @@ void BoxCollider::DebugRender()
 
 	input.op.cullOp = this;
 
-	system->graphicSystem->renderQueue->Add(input);
+	system->graphic->renderQueue->Add(input);
 }
 
 bool BoxCollider::CullTest(ICamera* camera) const

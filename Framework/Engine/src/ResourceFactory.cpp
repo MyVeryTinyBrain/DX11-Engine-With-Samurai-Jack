@@ -84,6 +84,16 @@ ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromFile(const tstring& 
 	return Shader::CreateManagedShaderFromFile(m_management, path, groupName);
 }
 
+ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromBinaryFolder(const tstring& path)
+{
+	return Shader::CreateManagedShaderFromBinaryFolder(m_management, path);
+}
+
+ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromBinaryFolder(const tstring& path, const tstring& groupName)
+{
+	return Shader::CreateManagedShaderFromBinaryFolder(m_management, path, groupName);
+}
+
 ResourceRef<Mesh> ResourceFactory::CreateManagedMesh(const tstring& resourceKey, const VIBuffer* viBuffer)
 {
 	return Mesh::CreateManagedMesh(m_management, resourceKey, viBuffer);
@@ -156,6 +166,21 @@ ResourceRef<Material> ResourceFactory::CopyManagedMaterial(ResourceRef<Material>
 ResourceRef<Material> ResourceFactory::CopyUnmanagedMaterial(ResourceRef<Material> material)
 {
 	return Material::CopyUnmanagedMaterial(m_management, material);
+}
+
+ResourceRef<Material> ResourceFactory::CreateManagedMaterialFromJson(const tstring& jsonPath)
+{
+	return Material::CreateManagedMaterialFromJson(m_management, jsonPath);
+}
+
+ResourceRef<Material> ResourceFactory::CreateManagedMaterialFromJson(const tstring& jsonPath, const tstring& groupName)
+{
+	return Material::CreateManagedMaterialFromJson(m_management, jsonPath, groupName);
+}
+
+ResourceRef<Material> ResourceFactory::CreateUnmanagedMaterialFromJson(const tstring& jsonPath)
+{
+	return Material::CreateUnmanagedMaterialFromJson(m_management, jsonPath);
 }
 
 ResourceManagement* ResourceFactory::GetManagement() const

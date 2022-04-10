@@ -48,6 +48,8 @@ public:
 
 	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path);
 	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName);
+	static ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(ResourceManagement* management, const tstring& path);
+	static ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(ResourceManagement* management, const tstring& path, const tstring& groupName);
 
 private:
 

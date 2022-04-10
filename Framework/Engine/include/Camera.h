@@ -62,7 +62,6 @@ private:
 public:
 
 	virtual class DeferredRenderTarget* GetDeferredRenderTarget() const override;
-
 	virtual uint2 GetSize() const override;
 
 public:

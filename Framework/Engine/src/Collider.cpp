@@ -9,7 +9,7 @@
 
 void Collider::Awake()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxPhysics* physics = iPhysicsSystem->GetPhysics();
 
 	iPhysicsSystem->RegistPhysicsObject(this);
@@ -64,7 +64,7 @@ void Collider::OnDisable()
 
 void Collider::OnDestroyed()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	iPhysicsSystem->UnregistPhysicsObject(this);
 
 	PxActor* actor = m_shape->getActor();
@@ -153,7 +153,7 @@ Rigidbody* Collider::GetRigidbody() const
 
 void Collider::ResetShape()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxPhysics* physics = iPhysicsSystem->GetPhysics();
 
 	bool invalid = false;
@@ -299,18 +299,18 @@ void Collider::ApplyScale(bool unconditionally)
 
 void Collider::ApplyLayer()
 {
-	IPhysicsSystem* iPhysicsSystem = system->physicsSystem;
+	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxPhysics* physics = iPhysicsSystem->GetPhysics();
 
 	PxFilterData simulationFilterData = {};					// 시뮬레이션에 사용되는 필터 데이터입니다.
 	simulationFilterData.word0 = (1 << m_layerIndex);		// 이 콜라이더의 레이어 비트입니다.
 	simulationFilterData.word1 = ~m_ignoreLayerBits;		// 이 콜라이더의 충돌 가능한 레이어 비트들입니다.
 
-	PxFilterData queryFilterData = {};						// 쿼리에 사용되는 필터 데이터입니다.
-	queryFilterData.word0 = (1 << m_layerIndex);			// 이 콜라이더의 레이어 비트입니다.
+	//PxFilterData queryFilterData = {};						// 쿼리에 사용되는 필터 데이터입니다.
+	//queryFilterData.word0 = (1 << m_layerIndex);			// 이 콜라이더의 레이어 비트입니다.
 	
 	m_shape->setSimulationFilterData(simulationFilterData);
-	m_shape->setQueryFilterData(queryFilterData);
+	//m_shape->setQueryFilterData(queryFilterData);
 }
 
 bool Collider::IsWorking()

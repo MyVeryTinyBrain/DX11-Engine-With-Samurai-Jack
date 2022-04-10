@@ -16,15 +16,16 @@ struct PS_IN
 	float3 Normal : NORMAL;
 	float3 Tangent : TANGENT;
 	float3 Binormal : BINORMAL;
+	float4 WorldPosition : TEXCOORD1;
 };
 
 float4			_Color < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 texture2D		_NormalMapTexture < string Default = "blue"; > ;
 texture2D		_Grab : GRAB_TEXTURE;
-SamplerState	diffuseSampler
+SamplerState	linearSampler
 {
-	AddressU = wrap;
-	AddressV = wrap;
+	AddressU = Wrap;
+	AddressV = Wrap;
 };
 
 PS_IN VS_MAIN(VS_IN In)
@@ -41,23 +42,25 @@ PS_IN VS_MAIN(VS_IN In)
 	output.Normal = In.Normal;
 	output.Tangent = In.Tangent;
 	output.Binormal = In.Binormal;
+	output.WorldPosition = worldPosition;
 
 	return output;
 }
 
 float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
-	float3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.UV).rgb;
+	const static float power = 0.25f;
+
+	float3 packedNormalMap = _NormalMapTexture.Sample(linearSampler, In.UV).rgb;
 	float3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
 	float4 wNormal = mul(float4(unpackedNormalMap, 0.0f), _WorldMatrix);
-	float4 vNormal = mul(wNormal, _ViewMatrix);
-	vNormal = normalize(vNormal);
-	float4 NDCNormal = mul(vNormal, _ProjectionMatrix);
-	NDCNormal /= NDCNormal.w;
+	float4 worldPosition = In.WorldPosition + wNormal * power;
+	float4 vPosition = mul(float4(worldPosition.xyz, 1), _ViewMatrix);
+	float4 ndcPosition = mul(vPosition, _ProjectionMatrix);
+	ndcPosition /= ndcPosition.w;
+	float2 sPosition = ndcPosition.xy * float2(1.0f, -1.0f) * 0.5f + 0.5f;
 
-	half2 screenUV = In.Screen.xy / _Size + NDCNormal.xy * 0.05f;
-
-	half4 grab = _Grab.Sample(diffuseSampler, screenUV);
+	half4 grab = _Grab.Sample(linearSampler, sPosition);
 	return grab * _Color;
 }
 
@@ -76,7 +79,7 @@ DepthStencilState DepthStencilState0
 
 BlendState BlendState0
 {
-	BlendEnable[0] = false;
+	BlendEnable[0] = true;
 	SrcBlend[0] = Src_Alpha;
 	DestBlend[0] = Inv_Src_Alpha;
 	BlendOp[0] = Add;

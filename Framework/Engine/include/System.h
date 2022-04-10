@@ -37,10 +37,10 @@ public:
 
 	_declspec(property(get = GetInput)) Input* input;
 	_declspec(property(get = GetSceneManagement)) SceneManagement* sceneManagement;
-	_declspec(property(get = GetPhysicsSystem)) PhysicsSystem* physicsSystem;
+	_declspec(property(get = GetPhysicsSystem)) PhysicsSystem* physics;
 	_declspec(property(get = GetTime)) Times* time;
-	_declspec(property(get = GetResourceManagement)) ResourceManagement* resourceManagement;
-	_declspec(property(get = GetGraphicSystem)) GraphicSystem* graphicSystem;
+	_declspec(property(get = GetResourceManagement)) ResourceManagement* resource;
+	_declspec(property(get = GetGraphicSystem)) GraphicSystem* graphic;
 	_declspec(property(get = GetImGuiSystem)) ImGuiSystem* imguiSystem;
 
 private:

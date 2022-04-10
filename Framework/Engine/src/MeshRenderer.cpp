@@ -36,12 +36,14 @@ void MeshRenderer::Render()
 		{
 			RenderGroup renderGroup;
 			int renderGroupOrder;
+			bool cullingFlag;
 			bool instancingFlag;
 			bool drawShadowFlag;
 			bool shadowPassFlag;
 
 			if (FAILED(currentMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup))) continue;
 			if (FAILED(currentMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder))) continue;
+			if (FAILED(currentMaterial->GetCullingFlagOfAppliedTechnique(j, cullingFlag))) continue;
 			if (FAILED(currentMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag))) continue;
 			if (FAILED(currentMaterial->GetDrawShadowFlagOfAppliedTechnique(j, drawShadowFlag))) continue;
 			if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
@@ -56,6 +58,7 @@ void MeshRenderer::Render()
 			input.essential.passIndex = j;
 			input.essential.mesh = m_mesh;
 			input.essential.subMeshIndex = i;
+			input.essential.cull = cullingFlag;
 			input.essential.instance = instancingFlag;
 
 			RenderRequestShadow shadow = {};
@@ -67,7 +70,7 @@ void MeshRenderer::Render()
 			input.op.cullOp = this;
 			input.op.boundsOp = this;
 
-			system->graphicSystem->renderQueue->Add(input);
+			system->graphic->renderQueue->Add(input);
 		}
 	}
 }
@@ -129,20 +132,20 @@ void MeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 		if (i < materialIndices.size())
 		{
 			texturePath = materials[materialIndices[i]].diffuse;
-			texture = system->resourceManagement->Find(texturePath);
+			texture = system->resource->Find(texturePath);
 
 			texturePath = materials[materialIndices[i]].normals;
-			normal = system->resourceManagement->Find(texturePath);
+			normal = system->resource->Find(texturePath);
 		}
 
 		if (!texture)
 		{
-			SetMaterialByIndex(i, system->resourceManagement->builtInResources->standardMaterial);
+			SetMaterialByIndex(i, system->resource->builtInResources->standardMaterial);
 		}
 		else
 		{
 			tstring materialPath = texturePath + tstring(TEXT(".material"));
-			ResourceRef<Material> material = system->resourceManagement->factory->CreateManagedMaterialByShader(system->resourceManagement->builtInResources->standardShader, materialPath);
+			ResourceRef<Material> material = system->resource->factory->CreateManagedMaterialByShader(system->resource->builtInResources->standardShader, materialPath);
 			material->SetTexture("_DiffuseTextrue", texture);
 			material->SetTexture("_NormalMapTextrue", normal);
 			SetMaterialByIndex(i, material);

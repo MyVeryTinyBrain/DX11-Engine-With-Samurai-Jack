@@ -68,7 +68,7 @@ void Input::End()
 
 void Input::Fetch()
 {
-	HWND hWnd = m_system->graphicSystem->GetWindowHandle();
+	HWND hWnd = m_system->graphic->GetWindowHandle();
 	if (!hWnd)
 		return;
 
@@ -106,7 +106,7 @@ const float& Input::GetMouseWheelDelta()
 
 V3 Input::GetMousePositionInScreen() const
 {
-	HWND hWnd = m_system->graphicSystem->GetWindowHandle();
+	HWND hWnd = m_system->graphic->GetWindowHandle();
 	if (!hWnd)
 		return V3::zero();
 
@@ -119,7 +119,7 @@ V3 Input::GetMousePositionInScreen() const
 
 V3 Input::GetMousePositionInViewport() const
 {
-	HWND hWnd = m_system->graphicSystem->GetWindowHandle();
+	HWND hWnd = m_system->graphic->GetWindowHandle();
 	if (!hWnd)
 		return V3::zero();
 
@@ -133,7 +133,7 @@ V3 Input::GetMousePositionInViewport() const
 
 V3 Input::GetMousePositionInNDC() const
 {
-	HWND hWnd = m_system->graphicSystem->GetWindowHandle();
+	HWND hWnd = m_system->graphic->GetWindowHandle();
 	if (!hWnd)
 		return V3::zero();
 
@@ -153,7 +153,7 @@ V3 Input::GetMousePositionInNDC() const
 
 V3 Input::GetMousePositionInViewSpace() const
 {
-	ICamera* iMainCamera = m_system->graphicSystem->cameraManager->GetMainCamera();
+	ICamera* iMainCamera = m_system->graphic->cameraManager->GetMainCamera();
 	Camera* mainCamera = dynamic_cast<Camera*>(iMainCamera);
 
 	if (!mainCamera)
@@ -171,7 +171,7 @@ V3 Input::GetMousePositionInViewSpace() const
 
 Ray Input::GetRayInWorldSpace() const
 {
-	ICamera* iMainCamera = m_system->graphicSystem->cameraManager->GetMainCamera();
+	ICamera* iMainCamera = m_system->graphic->cameraManager->GetMainCamera();
 	Camera* mainCamera = dynamic_cast<Camera*>(iMainCamera);
 
 	if (!mainCamera)

@@ -13,6 +13,8 @@
 #include "GraphicSystem.h"
 #include "CameraManager.h"
 #include "LightManager.h"
+#include "PhysicsSystem.h"
+#include "PhysicsQuery.h"
 
 #include "ResourceObject.h"
 #include "ResourceRef.h"

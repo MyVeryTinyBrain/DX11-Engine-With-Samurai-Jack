@@ -26,11 +26,11 @@ Texture2D::~Texture2D()
 
 ResourceRef<Texture2D> Texture2D::Copy() const
 {
-	if (!system || !system->graphicSystem || !system->graphicSystem->device || !system->graphicSystem->deviceContext)
+	if (!system || !system->graphic || !system->graphic->device || !system->graphic->deviceContext)
 		return nullptr;
 
-	auto device = system->graphicSystem->device;
-	auto deviceContext = system->graphicSystem->deviceContext;
+	auto device = system->graphic->device;
+	auto deviceContext = system->graphic->deviceContext;
 
 	ID3D11Texture2D* src = nullptr;
 	ID3D11Texture2D* dest = nullptr;
@@ -83,7 +83,7 @@ bool Texture2D::CopyTo(ResourceRef<Texture2D> destTex)
 	if (destTex->m_desc.Usage == D3D11_USAGE_IMMUTABLE)
 		return false;
 
-	auto deviceContext = system->graphicSystem->deviceContext;
+	auto deviceContext = system->graphic->deviceContext;
 	ID3D11Resource* src = m_texture;
 	ID3D11Resource* dest = destTex->m_texture;
 	deviceContext->CopyResource(dest, src);
@@ -125,7 +125,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2DFromFile(ResourceManagem
 	Format format = Format::WIC;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(LoadTexture2DFromFile(management->GetSystem()->graphicSystem->device, path, &texture, &srv, &format, &desc)))
+	if (FAILED(LoadTexture2DFromFile(management->GetSystem()->graphic->device, path, &texture, &srv, &format, &desc)))
 	{
 		if (warning)
 		{
@@ -152,7 +152,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2DFromFile(ResourceManagem
 	Format format = Format::WIC;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(LoadTexture2DFromFile(management->GetSystem()->graphicSystem->device, path, &texture, &srv, &format, &desc)))
+	if (FAILED(LoadTexture2DFromFile(management->GetSystem()->graphic->device, path, &texture, &srv, &format, &desc)))
 	{
 		if (warning)
 		{
@@ -175,7 +175,7 @@ ResourceRef<Texture2D> Texture2D::CreateUnmanagedTexture2DFromFile(ResourceManag
 	Format format = Format::WIC;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(LoadTexture2DFromFile(management->GetSystem()->graphicSystem->device, path, &texture, &srv, &format, &desc)))
+	if (FAILED(LoadTexture2DFromFile(management->GetSystem()->graphic->device, path, &texture, &srv, &format, &desc)))
 	{
 		if (warning)
 		{
@@ -202,7 +202,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2D(ResourceManagement* man
 	Format format = Format::DDS;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(CreateTexture2D(management->GetSystem()->graphicSystem->device, color, width, height, false, &texture, &srv, &format, &desc)))
+	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, false, &texture, &srv, &format, &desc)))
 		return nullptr;
 
 	return new Texture2D(management, true, resourceKey, TEXT(""), texture, srv, format, desc);
@@ -222,7 +222,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2D(ResourceManagement* man
 	Format format = Format::DDS;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(CreateTexture2D(management->GetSystem()->graphicSystem->device, color, width, height, false, &texture, &srv, &format, &desc)))
+	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, false, &texture, &srv, &format, &desc)))
 		return nullptr;
 
 	return new Texture2D(management, true, resourceKey, groupName, texture, srv, format, desc);
@@ -238,7 +238,7 @@ ResourceRef<Texture2D> Texture2D::CreateUnmanagedTexture2D(ResourceManagement* m
 	Format format = Format::DDS;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(CreateTexture2D(management->GetSystem()->graphicSystem->device, color, width, height, false, &texture, &srv, &format, &desc)))
+	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, false, &texture, &srv, &format, &desc)))
 		return ResourceRef<Texture2D>();
 
 	return new Texture2D(management, false, TEXT(""), TEXT(""), texture, srv, format, desc);
@@ -258,7 +258,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedDynamicTexture2D(ResourceManageme
 	Format format = Format::DDS;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(CreateTexture2D(management->GetSystem()->graphicSystem->device, color, width, height, true, &texture, &srv, &format, &desc)))
+	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, true, &texture, &srv, &format, &desc)))
 		return nullptr;
 
 	return new Texture2D(management, true, resourceKey, TEXT(""), texture, srv, format, desc);
@@ -278,7 +278,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedDynamicTexture2D(ResourceManageme
 	Format format = Format::DDS;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(CreateTexture2D(management->GetSystem()->graphicSystem->device, color, width, height, true, &texture, &srv, &format, &desc)))
+	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, true, &texture, &srv, &format, &desc)))
 		return nullptr;
 
 	return new Texture2D(management, true, resourceKey, groupName, texture, srv, format, desc);
@@ -294,7 +294,7 @@ ResourceRef<Texture2D> Texture2D::CreateUnmanagedDynamicTexture2D(ResourceManage
 	Format format = Format::DDS;
 	D3D11_TEXTURE2D_DESC desc = {};
 
-	if (FAILED(CreateTexture2D(management->GetSystem()->graphicSystem->device, color, width, height, true, &texture, &srv, &format, &desc)))
+	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, true, &texture, &srv, &format, &desc)))
 		return nullptr;
 
 	return new Texture2D(management, false, TEXT(""), TEXT(""), texture, srv, format, desc);

@@ -8,6 +8,7 @@ class ComponentManagement final
 public: 
 
 	using Components = vector<Component*>;
+	using ComponentsByExecutionOrder = map<uint, Components>;
 
 public:
 
@@ -33,18 +34,19 @@ public:
 
 	void ReadyComponents();
 
-	inline const Components& GetComponents() { return m_components; }
+	const ComponentsByExecutionOrder& GetComponentsByExecutionOrders() const { return m_components; }
+	const Components& GetComponents(uint executionOrder) const;
 
 	void DeleteDestroyedComponents();
 
 private:
 
-	Scene*				m_scene = nullptr;
+	Scene*						m_scene = nullptr;
 
-	Components			m_createdComponents;
-	Components			m_destroyedComponents;
+	Components					m_createdComponents;
+	Components					m_destroyedComponents;
 
-	Components			m_components;
+	ComponentsByExecutionOrder	m_components;
 };
 
 ENGINE_END

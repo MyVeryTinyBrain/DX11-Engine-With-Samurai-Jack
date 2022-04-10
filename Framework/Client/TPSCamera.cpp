@@ -70,7 +70,7 @@ void TPSCamera::UpdatePosition()
 
 V2 TPSCamera::DeltaCursor() const
 {
-    HWND hWnd = system->graphicSystem->windowHandle;
+    HWND hWnd = system->graphic->windowHandle;
 
     RECT rect = {};
     GetClientRect(hWnd, &rect);
@@ -90,7 +90,7 @@ V2 TPSCamera::DeltaCursor() const
 
 void TPSCamera::SetCursorToCenter()
 {
-    HWND hWnd = system->graphicSystem->windowHandle;
+    HWND hWnd = system->graphic->windowHandle;
 
     RECT rect = {};
     GetClientRect(hWnd, &rect);

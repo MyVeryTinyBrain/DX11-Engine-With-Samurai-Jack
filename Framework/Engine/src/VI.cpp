@@ -1,4 +1,4 @@
-#include "EnginePCH.h"
+Ôªø#include "EnginePCH.h"
 #include "VI.h"
 
 VI::VI()
@@ -126,7 +126,7 @@ HRESULT VI::SetSubIndices(const Index* indices, UINT count, UINT index)
 
 	SafeDelete(m_arrSubIndicesDesc[index]);
 
-	// ¿Œµ¶Ω∫ πËø≠¿ª ∫πªÁ«œø© ¿˙¡§«’¥œ¥Ÿ.
+	// Ïù∏Îç±Ïä§ Î∞∞Ïó¥ÏùÑ Î≥µÏÇ¨ÌïòÏó¨ Ï†ÄÏ†ïÌï©ÎãàÎã§.
 	m_arrSubIndicesDesc[index] = new SubIndicesDesc(indices, count);
 	m_indexCount += count;
 
@@ -162,7 +162,7 @@ HRESULT VI::SetSubIndicesNocopy(Index** ppIndices, UINT count, UINT index)
 
 	SafeDelete(m_arrSubIndicesDesc[index]);
 
-	// ¿Œµ¶Ω∫ πËø≠¿ª ∫πªÁ«œ¡ˆ æ ∞Ì ¡÷º“∏¶ ¿˙¿Â«’¥œ¥Ÿ.
+	// Ïù∏Îç±Ïä§ Î∞∞Ïó¥ÏùÑ Î≥µÏÇ¨ÌïòÏßÄ ÏïäÍ≥† Ï£ºÏÜåÎ•º Ï†ÄÏû•Ìï©ÎãàÎã§.
 	m_arrSubIndicesDesc[index] = new SubIndicesDesc(*ppIndices, count);
 	m_indexCount += count;
 
@@ -316,6 +316,13 @@ HRESULT VI::RecalculateTangentsBinormals()
 	if (!m_vertices || !m_arrSubIndicesDesc)
 		return E_FAIL;
 
+	// Clear tangent, binormal
+	for (uint32_t i = 0; i < m_vertexCount; ++i)
+	{
+		Vertex& vertex = m_vertices[i];
+		vertex.tangent = vertex.biNormal = V3::zero();
+	}
+
 	for (UINT i = 0; i < m_subIndecesCount; ++i)
 	{
 		TriangleIndex* triangles = (TriangleIndex*)m_arrSubIndicesDesc[i]->SubIncides;
@@ -327,34 +334,63 @@ HRESULT VI::RecalculateTangentsBinormals()
 			Vertex& v1 = m_vertices[triangles[j]._1];
 			Vertex& v2 = m_vertices[triangles[j]._2];
 
-			V3 delta0 = v1.position - v0.position;
-			V3 delta1 = v2.position - v0.position;
+			const V3& p0 = v0.position;
+			const V3& p1 = v1.position;
+			const V3& p2 = v2.position;
 
-			V2 tu = v1.uvw - v0.uvw;
-			V2 tv = v2.uvw - v0.uvw;
+			const V3& w0 = v0.uvw;
+			const V3& w1 = v1.uvw;
+			const V3& w2 = v2.uvw;
 
-			float cross = (tu.x * tv.y - tu.y * tv.x);
-			if (cross == 0)
-				cross = 1.0f;
-			float deno = 1.0f / cross;
+			V3 e1 = p1 - p0, e2 = p2 - p0;
+			float x1 = w1.x - w0.x, x2 = w2.x - w0.x;
+			float y1 = w1.y - w0.y, y2 = w2.y - w0.y;
+			float r = 1.0F / (x1 * y2 - x2 * y1);
+			V3 t = (e1 * y2 - e2 * y1) * r;
+			V3 b = (e2 * x1 - e1 * x2) * r;
+			v0.tangent += t;
+			v1.tangent += t;
+			v2.tangent += t;
+			v0.biNormal += b;
+			v1.biNormal += b;
+			v2.biNormal += b;
 
-			V3 tangent;
-			tangent.x = (tv.y * delta0.x - tv.x * delta1.x) * deno;
-			tangent.y = (tv.y * delta0.y - tv.x * delta1.y) * deno;
-			tangent.z = (tv.y * delta0.z - tv.x * delta1.z) * deno;
+			//V3 delta0 = v1.position - v0.position;
+			//V3 delta1 = v2.position - v0.position;
 
-			V3 binormal;
-			binormal.x = (tu.x * delta1.x - tu.y * delta0.x) * deno;
-			binormal.y = (tu.x * delta1.y - tu.y * delta0.y) * deno;
-			binormal.z = (tu.x * delta1.z - tu.y * delta0.z) * deno;
+			//V2 tu = v1.uvw - v0.uvw;
+			//V2 tv = v2.uvw - v0.uvw;
 
-			tangent.Normalize();
-			binormal.Normalize();
+			//float cross = (tu.x * tv.y - tu.y * tv.x);
+			//if (cross == 0)
+			//	cross = 1.0f;
+			//float deno = 1.0f / cross;
 
-			v0.biNormal = v1.biNormal = v2.biNormal = binormal;
-			v0.tangent = v1.tangent = v2.tangent = tangent;
+			//V3 tangent;
+			//tangent.x = (tv.y * delta0.x - tv.x * delta1.x) * deno;
+			//tangent.y = (tv.y * delta0.y - tv.x * delta1.y) * deno;
+			//tangent.z = (tv.y * delta0.z - tv.x * delta1.z) * deno;
+
+			//V3 binormal;
+			//binormal.x = (tu.x * delta1.x - tu.y * delta0.x) * deno;
+			//binormal.y = (tu.x * delta1.y - tu.y * delta0.y) * deno;
+			//binormal.z = (tu.x * delta1.z - tu.y * delta0.z) * deno;
+
+			//tangent.Normalize();
+			//binormal.Normalize();
+
+			//v0.biNormal = v1.biNormal = v2.biNormal = binormal;
+			//v0.tangent = v1.tangent = v2.tangent = tangent;
 
 		}
+	}
+
+	for (uint32_t i = 0; i < m_vertexCount; ++i)
+	{
+		Vertex& vertex = m_vertices[i];
+		// Reject(t, n)
+		vertex.tangent = vertex.tangent.normalized;
+		vertex.biNormal = V3::Cross(vertex.tangent, vertex.normal).normalized;
 	}
 
 	return S_OK;

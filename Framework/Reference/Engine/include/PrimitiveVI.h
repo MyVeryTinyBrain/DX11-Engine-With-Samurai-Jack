@@ -16,11 +16,13 @@ public:
 
 	static VI* CreateBox(V3 extents = V3::one() * 0.5f);
 
-	static VI* CreateSphere(float radius = 0.5f, uint slice = 16, uint step = 16);
+	static VI* CreateSkyBox();
 
-	static VI* CreateCapsule(float radius = 0.5f, float halfHeight = 0.5f, uint slice = 16, uint capStep = 16);
+	static VI* CreateSphere(float radius = 0.5f, uint numV = 16, uint numH = 16);
 
-	static VI* CreateCylinder(float radius = 0.5f, float halfHeight = 1.0f, uint slice = 16);
+	static VI* CreateCapsule(float radius = 0.5f, float halfHeight = 0.5f, uint numV = 16, uint numCapH = 16);
+
+	static VI* CreateCylinder(float radius = 0.5f, float halfHeight = 1.0f, uint numV = 16);
 
 private:
 

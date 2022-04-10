@@ -49,6 +49,7 @@ public:
 	uint GetPassCountOfAppliedTechnique() const;
 	HRESULT GetRenderGroupOfAppliedTechnique(uint passIndex, RenderGroup& out_renderGroup) const;
 	HRESULT GetRenderGroupOrderOfAppliedTechnique(uint passIndex, int& out_renderGroupOrder) const;
+	HRESULT GetCullingFlagOfAppliedTechnique(uint passIndex, bool& out_cullingFlag) const;
 	HRESULT GetInstancingFlagOfAppliedTechnique(uint passIndex, bool& out_instancingFlag) const;
 	HRESULT GetDrawShadowFlagOfAppliedTechnique(uint passIndex, bool& out_drawShadowFlag) const;
 	HRESULT GetShadowPassFlagOfAppliedTechnique(uint passIndex, bool& out_shadowPassFlag) const;
@@ -80,7 +81,15 @@ public:
 	static ResourceRef<Material> CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName);
 	static ResourceRef<Material> CopyUnmanagedMaterial(ResourceManagement* management, ResourceRef<Material> material);
 
+	static ResourceRef<Material> CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath);
+	static ResourceRef<Material> CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath, const tstring& groupName);
+	static ResourceRef<Material> CreateUnmanagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath);
+
 	string ToJson() const;
+
+private:
+
+	static ResourceRef<Material> CreateMaterialFromJsonCommon(ResourceManagement* management, const tstring& jsonPath, const tstring* nullable_resourceKey, const tstring* nullable_groupName);
 
 private: 
 

@@ -157,6 +157,18 @@ void DeferredRenderTarget::ClearPostProcessings(Com<ID3D11DeviceContext> deviceC
 	}
 }
 
+bool DeferredRenderTarget::ReadyToDraw(Com<ID3D11DeviceContext> deviceContext)
+{
+	if (!deviceContext)
+		return false;
+
+	Clear(deviceContext);
+	ClearPostProcessings(deviceContext);
+	ClearCopyTargets();
+
+	return true;
+}
+
 void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
@@ -206,4 +218,32 @@ void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* gra
 	arrRTV[0] = m_lightBlend->rtv.Get();
 
 	graphicSystem->SetRenderTargets(1, arrRTV);
+}
+
+void DeferredRenderTarget::ClearCopyTargets()
+{
+	m_depthWasCopied = false;
+	m_resultWasCopied = false;
+}
+
+bool DeferredRenderTarget::DepthWasCopied() const
+{
+	return m_depthWasCopied;
+}
+
+bool DeferredRenderTarget::ResultWasCopied() const
+{
+	return m_resultWasCopied;
+}
+
+void DeferredRenderTarget::CopyDepth(Com<ID3D11DeviceContext> deviceContext)
+{
+	deviceContext->CopyResource(m_Depth[0]->texture.Get(), m_Depth[1]->texture.Get());
+	m_depthWasCopied = true;
+}
+
+void DeferredRenderTarget::CopyResult(Com<ID3D11DeviceContext> deviceContext)
+{
+	deviceContext->CopyResource(m_result[0]->texture.Get(), m_result[1]->texture.Get());
+	m_resultWasCopied = true;
 }

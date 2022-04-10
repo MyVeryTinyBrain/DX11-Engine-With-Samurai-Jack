@@ -52,6 +52,8 @@
     <ClInclude Include="include\JsonUtility.h" />
     <ClInclude Include="include\Light.h" />
     <ClInclude Include="include\LightManager.h" />
+    <ClInclude Include="include\PhysicsQueryFilterCallback.h" />
+    <ClInclude Include="include\PhysicsQueryType.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\PostProcessing.h" />
     <ClInclude Include="include\PostProcessingTypes.h" />
@@ -226,6 +228,8 @@
     <ClCompile Include="src\JsonUtility.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
+    <ClCompile Include="src\PhysicsQueryFilterCallback.cpp" />
+    <ClCompile Include="src\PhysicsQueryType.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\PostProcessing.cpp" />
     <ClCompile Include="src\PostProcessingTypes.cpp" />
@@ -372,10 +376,25 @@
     <FxCompile Include="..\Shader\DeferredLightBlending.fx" />
     <FxCompile Include="..\Shader\DeferredLighting.fx" />
     <FxCompile Include="..\Shader\DeferredLightDepthWrite.fx" />
-    <FxCompile Include="..\Shader\Engine.hlsl" />
-    <FxCompile Include="..\Shader\Functions.hlsl" />
+    <FxCompile Include="..\Shader\Engine.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Functions.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\Shader\Color.fx" />
-    <FxCompile Include="..\Shader\Macros.hlsl" />
+    <FxCompile Include="..\Shader\Macros.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\Shader\PostProcessing.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />

@@ -241,6 +241,7 @@ float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
 	half occlusionMask = _Light_Occlusion_Shadow.Sample(pointSampler, In.UV).g;
 	half4 occlusion = 1.0f - _Sample.Sample(pointSampler, In.UV);
+	occlusion = sin(PI / 2.0f * occlusion); // Adjust
 	return half4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
 }
 
@@ -489,8 +490,8 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 	half brightness = Brightness(sampleColor.rgb);
 
-	//half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
-	half percent = step(1.0f - _BloomDesc.Threshold, brightness);
+	half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	//half percent = step(1.0f - _BloomDesc.Threshold, brightness);
 	half4 brightedColor = normalize(sampleColor);
 
 	return lerp(BLACK, brightedColor, percent);
