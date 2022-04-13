@@ -18,6 +18,18 @@ void ComponentManagement::RegistComponent(Component* component)
 	m_createdComponents.push_back(component);
 }
 
+void ComponentManagement::ReregistComponent(Component* component, uint beforeExecutionOrder)
+{
+	auto find_from_components_map = m_components.find(beforeExecutionOrder);
+	auto find_from_components = std::find(find_from_components_map->second.begin(), find_from_components_map->second.end(), component);
+	if (find_from_components_map != m_components.end() &&					// execution order에 해당되는 맵 영역이 있는 경우
+		find_from_components != find_from_components_map->second.end())		// 해당 맵 영역에서 컴포넌트를 찾은 경우
+	{
+		find_from_components_map->second.erase(find_from_components);
+		m_components[component->executionOrder].push_back(component);
+	}
+}
+
 void ComponentManagement::ToDestroyedComponent(Component* component)
 {
 	auto find_it = std::find(m_destroyedComponents.begin(), m_destroyedComponents.end(), component);

@@ -33,7 +33,7 @@ public:
 	// Component ====================================================================================
 
 	virtual void RegistComponent(Component* component) = 0;
-
+	virtual void ReregistComponent(Component* component, uint beforeExecutionOrder) = 0;
 	virtual void ToDestoryedComponent(Component* component) = 0;
 
 	virtual ComponentManagement* GetComponentManagement() const = 0;

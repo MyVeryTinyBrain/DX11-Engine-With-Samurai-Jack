@@ -19,7 +19,7 @@ public:
 public:
 
 	void RegistComponent(Component* component);
-
+	void ReregistComponent(Component* component, uint beforeExecutionOrder);
 	void ToDestroyedComponent(Component* component);
 
 private:

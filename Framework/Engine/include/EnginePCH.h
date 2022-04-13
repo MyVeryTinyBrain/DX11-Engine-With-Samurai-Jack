@@ -55,6 +55,8 @@ using namespace DirectX::PackedVector;
 #include <list>
 #include <map>
 #include <unordered_map>
+#include <set>
+#include <unordered_set>
 #include <algorithm>
 #include <iostream>
 #include <fstream>

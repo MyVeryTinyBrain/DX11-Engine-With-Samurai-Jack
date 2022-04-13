@@ -79,6 +79,11 @@ void Scene::RegistComponent(Component* component)
 	m_componentManagement->RegistComponent(component);
 }
 
+void Scene::ReregistComponent(Component* component, uint beforeExecutionOrder)
+{
+	m_componentManagement->ReregistComponent(component, beforeExecutionOrder);
+}
+
 void Scene::ToDestoryedComponent(Component* component)
 {
 	m_componentManagement->ToDestroyedComponent(component);

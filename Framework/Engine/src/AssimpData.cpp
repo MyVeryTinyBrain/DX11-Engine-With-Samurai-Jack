@@ -455,7 +455,9 @@ AnimationSet* AssimpData::CreateAnimationSet() const
 			return nullptr;
 		}
 
-		channels.clear();
+		vector<Channel*> temp;
+		channels.swap(temp);
+		channels.resize(m_nodeDescsByIndex.size());
 
 		for (uint j = 0; j < AIAnimation->mNumChannels; ++j)
 		{
@@ -513,7 +515,7 @@ AnimationSet* AssimpData::CreateAnimationSet() const
 			}
 
 			Channel* channel = new Channel(nodeDesc->name, nodeDesc->index, std::move(keyframes));
-			channels.push_back(channel);
+			channels[nodeDesc->index] = channel;
 		}
 
 		tstring animName = string_to_tstring(AIAnimation->mName.data);

@@ -59,7 +59,7 @@ private:
 private:
 
 	virtual void RegistComponent(Component* component) override;
-
+	virtual void ReregistComponent(Component* component, uint beforeExecutionOrder) override;
 	virtual void ToDestoryedComponent(Component* component) override;
 
 	inline virtual ComponentManagement* GetComponentManagement() const override { return m_componentManagement; }

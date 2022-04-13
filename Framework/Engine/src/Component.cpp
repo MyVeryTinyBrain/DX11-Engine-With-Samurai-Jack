@@ -36,7 +36,13 @@ int Component::GetExecutionOrder() const
 
 void Component::SetExecutionOrder(int order)
 {
+	if (order == m_executionOrder)
+		return;
+
+	uint beforeExecutionOrder = m_executionOrder;
 	m_executionOrder = order;
+	IScene* iScene = m_gameObject->regionScene;
+	iScene->ReregistComponent(this, beforeExecutionOrder);
 }
 
 System* Component::GetSystem() const

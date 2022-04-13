@@ -35,6 +35,7 @@ public:
 	Ref<NodeTransform> GetNodeTransformByName(const tstring& name) const;
 
 	_declspec(property(get = GetMesh, put = SetMesh)) const ResourceRef<Mesh>& mesh;
+	_declspec(property(get = GetNodeTransformCount)) uint nodeTransformCount;
 
 private:
 

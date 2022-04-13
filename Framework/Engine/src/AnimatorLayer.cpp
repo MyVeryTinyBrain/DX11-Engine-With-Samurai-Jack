@@ -207,11 +207,10 @@ Q AnimatorLayer::GetDeltaRotation() const
 
 void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
 {
-	uint channelIndex = 0;
-
 	m_deltaPosition = V3::zero();
 	m_deltaRotation = Q::identity();
-	while (1)
+
+	for (uint channelIndex = 0; channelIndex < skinnedMeshRenderer->nodeTransformCount; ++channelIndex)
 	{
 		uint nodeIndex;
 		V3 position;
@@ -220,11 +219,11 @@ void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 		V3 deltaPosition;
 		Q  deltaRotation;
 		if (!m_currentNode->Animate(channelIndex, nodeIndex, position, rotation, scale, deltaPosition, deltaRotation))
-			break;
+			continue;
 
 		const Ref<NodeTransform>& nodeTransform = skinnedMeshRenderer->GetNodeTransformByIndex(nodeIndex);
 		if (!nodeTransform)
-			break;
+			continue;
 
 		if (m_rootNode && nodeTransform->node->index == m_rootNode->node->index)
 		{
@@ -236,18 +235,15 @@ void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 		}
 
 		AnimateNodeTransform(nodeTransform, position, rotation, scale);
-
-		++channelIndex;
 	}
 }
 
 void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
 {
-	uint channelIndex = 0;
-
 	m_deltaPosition = V3::zero();
 	m_deltaRotation = Q::identity();
-	while (1)
+
+	for (uint channelIndex = 0; channelIndex < skinnedMeshRenderer->nodeTransformCount; ++channelIndex)
 	{
 		uint nodeIndex;
 		V3 position[2];
@@ -257,13 +253,13 @@ void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 		Q  deltaRotation[2];
 
 		if (!m_currentNode->Animate(channelIndex, nodeIndex, position[0], rotation[0], scale[0], deltaPosition[0], deltaRotation[0]))
-			break;
+			continue;
 		if (!m_blendNode->Animate(channelIndex, nodeIndex, position[1], rotation[1], scale[1], deltaPosition[1], deltaRotation[1]))
-			break;
+			continue;
 
 		const Ref<NodeTransform>& nodeTransform = skinnedMeshRenderer->GetNodeTransformByIndex(nodeIndex);
 		if (!nodeTransform)
-			break;
+			continue;
 
 		V3 lerpPosition = V3::Lerp(position[0], position[1], m_blendPercent);
 		Q  lerpRotation = Q::SLerp(rotation[0], rotation[1], m_blendPercent);
@@ -282,8 +278,6 @@ void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 		}
 
 		AnimateNodeTransform(nodeTransform, lerpPosition, lerpRotation, lerpScale);
-
-		++channelIndex;
 	}
 }
 

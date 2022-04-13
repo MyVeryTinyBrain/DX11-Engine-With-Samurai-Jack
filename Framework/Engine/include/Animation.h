@@ -26,11 +26,14 @@ public:
 
 	const Channel* GetChannel(uint index) const;
 
+	const vector<Channel*>& GetChannels() const { return m_channels; }
+
 	_declspec(property(get = GetName)) const tstring& name;
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = GetTickPerSecond)) float tickPerSecond;
 	_declspec(property(get = GetRealtimeDuration)) float realtimeDuration;
 	_declspec(property(get = GetChannelCount)) uint channelCount;
+	_declspec(property(get = GetChannels)) vector<Channel*>& channels;
 
 private:
 
