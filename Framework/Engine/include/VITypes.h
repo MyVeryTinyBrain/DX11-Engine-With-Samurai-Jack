@@ -15,7 +15,7 @@ struct ENGINE_API Vertex
 {
 	XM_CONSTEXPR inline static D3D11_INPUT_CLASSIFICATION InputSlotClass() { return D3D11_INPUT_PER_VERTEX_DATA; }
 	XM_CONSTEXPR inline static uint InputSlot() { return 0u; }
-	XM_CONSTEXPR inline static uint InstanceDataStepRate() { return 0u; }
+	XM_CONSTEXPR inline static BOOL InstanceDataStepRate() { return FALSE; }
 
 	V3 position;			// float3			POSITION
 	XM_CONSTEXPR inline static uint32_t			PositionPosition() { return 0; }
@@ -70,7 +70,7 @@ struct ENGINE_API InstanceData
 {
 	XM_CONSTEXPR inline static D3D11_INPUT_CLASSIFICATION InputSlotClass() { return D3D11_INPUT_PER_INSTANCE_DATA; }
 	XM_CONSTEXPR inline static uint InputSlot() { return 1u; }
-	XM_CONSTEXPR inline static uint InstanceDataStepRate() { return 1u; }
+	XM_CONSTEXPR inline static BOOL InstanceDataStepRate() { return TRUE; }
 
 	V4 right;				// float4			INSTANCE_RIGHT
 	XM_CONSTEXPR inline static uint32_t			RightPosition() { return 0; }

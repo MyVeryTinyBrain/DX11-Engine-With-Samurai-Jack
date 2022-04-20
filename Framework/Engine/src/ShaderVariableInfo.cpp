@@ -21,7 +21,7 @@ ShaderVariableInfo* ShaderVariableInfo::Create(ID3DX11EffectVariable* handle)
 	ID3DX11EffectType* type = handle->GetType();
 	D3DX11_EFFECT_VARIABLE_DESC variableDesc;
 	D3DX11_EFFECT_TYPE_DESC typeDesc;
-
+	
 	HRESULT hr = S_OK;
 
 	if (!type)

@@ -243,7 +243,7 @@ HRESULT CompiledShaderDesc::SetTexture(const string& name, Com<ID3D11ShaderResou
 		SafeRelease(hValue);
 		return hr;
 	}
-
+	
 	SafeRelease(hValue);
 	return S_OK;
 }
@@ -549,7 +549,7 @@ HRESULT CompiledShaderDesc::ApplyPass(Com<ID3D11DeviceContext> deviceContext, ui
 	
 	if (FAILED(hr = pass->Apply(0, deviceContext.Get())))
 		return hr;
-
+	
 	return S_OK;
 }
 

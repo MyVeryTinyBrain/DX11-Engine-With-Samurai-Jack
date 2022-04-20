@@ -39,7 +39,7 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
 
 
-	//*
+	/*
 	{
 		thread t0(
 			[&]

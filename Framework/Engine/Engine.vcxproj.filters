@@ -533,6 +533,9 @@
     <ClInclude Include="include\PhysicsQueryType.h">
       <Filter>EngineWorld\System\Physics\Query</Filter>
     </ClInclude>
+    <ClInclude Include="include\VTFTexture.h">
+      <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1020,6 +1023,9 @@
     </ClCompile>
     <ClCompile Include="src\PhysicsQueryType.cpp">
       <Filter>EngineWorld\System\Physics\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VTFTexture.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -197,6 +197,7 @@
     <ClInclude Include="include\VI.h" />
     <ClInclude Include="include\VIBuffer.h" />
     <ClInclude Include="include\VITypes.h" />
+    <ClInclude Include="include\VTFTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
@@ -371,6 +372,7 @@
     <ClCompile Include="src\VI.cpp" />
     <ClCompile Include="src\VIBuffer.cpp" />
     <ClCompile Include="src\VITypes.cpp" />
+    <ClCompile Include="src\VTFTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\DeferredLightBlending.fx" />

@@ -52,6 +52,7 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	half3 unlighttedColor = saturate(diffuse.rgb);
 
 	color.rgb = lerp(unlighttedColor, lightedColor, lightMask);
+	//color.rgb = min(color.rgb, half3(1, 1, 1));
 	color.a = diffuse.a;
 	return color;
 }

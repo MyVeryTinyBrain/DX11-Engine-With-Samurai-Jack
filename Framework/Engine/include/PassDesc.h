@@ -60,15 +60,12 @@ private:
 
 	vector<string>		m_sementics;
 
-	RenderGroup			m_renderGroup = RenderGroup::Standard; // string RenderGroup {"Priority, Standard, Transparent, Overlay"}
-
-	int					m_renderGroupOrder = 0; // int RenderGroupOrder 
-
-	bool				m_isCulling = true; // bool Cull
-	bool				m_isInstancing = false; // bool Instancing
-
-	bool				m_isDrawingShadow = true; // bool DrawShadow
-	bool				m_isShadowPass = false; // bool ShadowPass
+	RenderGroup			m_renderGroup = RenderGroup::Standard;	// string RenderGroup {"Priority, Standard, Transparent, Overlay"}
+	int					m_renderGroupOrder = 0;					// int RenderGroupOrder 
+	bool				m_isCulling = true;						// bool Cull
+	bool				m_isInstancing = false;					// bool Instancing
+	bool				m_isDrawingShadow = true;				// bool DrawShadow
+	bool				m_isShadowPass = false;					// bool ShadowPass
 
 };
 

@@ -353,7 +353,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 		specularMask, specular_Power);
 
 	half lightIntensity = ComputeLightIntensity(_LightDesc.Direction.xyz, normal);
-	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity);
+	lightIntensity = (lightIntensity * _LightDesc.Intensity);
 
 	half ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity);
 
@@ -369,7 +369,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 
 	half3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
 	half3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
-	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
+	specularIntensity = (specularIntensity * (lightIntensity + ambientBrightness));
 
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
@@ -399,7 +399,7 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	half atten = ComputeDistanceAtten(lightToPixel);
 
 	half lightIntensity = ComputeLightIntensity(lightToPixel, normal);
-	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity * atten);
+	lightIntensity = (lightIntensity * _LightDesc.Intensity * atten);
 
 	half ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * atten);
 
@@ -415,7 +415,7 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 
 	half3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
 	half3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
-	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
+	specularIntensity = (specularIntensity * (lightIntensity + ambientBrightness));
 
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
@@ -447,7 +447,7 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	half atten = distAtten * angleAtten;
 
 	half lightIntensity = ComputeLightIntensity(lightToPixel, normal);
-	lightIntensity = saturate(lightIntensity * _LightDesc.Intensity * atten);
+	lightIntensity = (lightIntensity * _LightDesc.Intensity * atten);
 
 	half ambientBrightness = Brightness(_LightDesc.Ambient * _LightDesc.Intensity * atten);
 
@@ -463,7 +463,7 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 
 	half3 viewToPixel = worldPosition.xyz - _ViewPosition.xyz;
 	half3 specularIntensity = ComputeSpecular(viewToPixel, normal, specular_Power);
-	specularIntensity = saturate(specularIntensity * (lightIntensity + ambientBrightness));
+	specularIntensity = (specularIntensity * (lightIntensity + ambientBrightness));
 
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
@@ -495,11 +495,6 @@ BlendState BlendState0
 	SrcBlend[1] = One;
 	DestBlend[1] = One;
 	BlendOp[1] = Add;
-
-	BlendEnable[2] = true;
-	SrcBlend[2] = One;
-	DestBlend[2] = One;
-	BlendOp[2] = Add;
 };
 
 technique11 Technique0

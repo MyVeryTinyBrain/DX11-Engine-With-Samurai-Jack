@@ -231,7 +231,7 @@ ResourceRef<Texture2D> Texture2D::CreateManagedTexture2D(ResourceManagement* man
 ResourceRef<Texture2D> Texture2D::CreateUnmanagedTexture2D(ResourceManagement* management, const Color& color, unsigned int width, unsigned int height)
 {
 	if (!management)
-		return ResourceRef<Texture2D>();
+		return nullptr;
 
 	ID3D11Resource* texture = nullptr;
 	ID3D11ShaderResourceView* srv = nullptr;
@@ -239,7 +239,7 @@ ResourceRef<Texture2D> Texture2D::CreateUnmanagedTexture2D(ResourceManagement* m
 	D3D11_TEXTURE2D_DESC desc = {};
 
 	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, color, width, height, false, &texture, &srv, &format, &desc)))
-		return ResourceRef<Texture2D>();
+		return nullptr;
 
 	return new Texture2D(management, false, TEXT(""), TEXT(""), texture, srv, format, desc);
 }
