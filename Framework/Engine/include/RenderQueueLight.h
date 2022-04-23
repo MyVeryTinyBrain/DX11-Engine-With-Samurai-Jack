@@ -61,6 +61,7 @@ public:
 	void RenderDepthes(ICamera* camera);
 
 	virtual void Render(ICamera* camera) override;
+	virtual void PostProcessing(ICamera* camera);
 
 	virtual void Clear() override;
 
@@ -89,9 +90,10 @@ private:
 	void Render_DepthOfLight_ShadowPass(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
 	void Render_DepthOfLight_ShadowPassInstance(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex);
 
-	void Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc);
+	void Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc, const VolumetricDesc& volumetricDesc);
 
 	void Render_LightBlend(ICamera* camera);
+	void Render_Volumetric(ICamera* camera);
 
 private:
 

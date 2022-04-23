@@ -16,6 +16,7 @@ struct PS_OUT
 {
 	float4	light : SV_TARGET0;
 	float4	specular : SV_TARGET1;
+	float4	volumetric : SV_TARGET2;
 };
 
 struct ShadowDesc
@@ -48,7 +49,16 @@ struct LightDesc
 	matrix		ProjectionMatrix[6];
 };
 
+struct VolumetricDesc
+{
+	bool		DrawVolumetric;
+	uint		NumSamples;
+	float		Intensity;
+	float		Power;
+};
+
 LightDesc				_LightDesc;
+VolumetricDesc			_VolumetricDesc;
 texture2D				_Normal;
 texture2D				_WorldPosition;
 texture2D				_Depth;
@@ -177,7 +187,7 @@ inline half SampleShadow(uint index, half2 texCoord, half depth)
 	}
 }
 
-ShadowDesc ComputeShadowCommon(uint index, float4 worldPosition)
+ShadowDesc ComputeShadowCommon(uint index, half shadowWhiteness, float4 worldPosition)
 {
 	ShadowDesc shadowDesc = (ShadowDesc)0;
 
@@ -208,7 +218,7 @@ ShadowDesc ComputeShadowCommon(uint index, float4 worldPosition)
 		}
 		else
 		{
-			shadowDesc.Value += _LightDesc.ShadowWhiteness;
+			shadowDesc.Value += shadowWhiteness;
 		}
 	}
 	else
@@ -220,7 +230,7 @@ ShadowDesc ComputeShadowCommon(uint index, float4 worldPosition)
 	return shadowDesc;
 }
 
-ShadowDesc ComputeShadowCommonPCF3X3(uint index, float4 worldPosition)
+ShadowDesc ComputeShadowCommonPCF3X3(uint index, half shadowWhiteness, float4 worldPosition)
 {
 	ShadowDesc shadowDesc = (ShadowDesc)0;
 
@@ -240,7 +250,7 @@ ShadowDesc ComputeShadowCommonPCF3X3(uint index, float4 worldPosition)
 	static const int NUM_SAMPLES = 3;
 	const half delta = 1.0f / _LightDesc.DepthSize;
 	int numInShadowMap = 1;
-	
+
 	[flatten]
 	if (IsSaturated(projectTexCoord))
 	{
@@ -267,7 +277,7 @@ ShadowDesc ComputeShadowCommonPCF3X3(uint index, float4 worldPosition)
 		}
 		else
 		{
-			shadowDesc.Value += _LightDesc.ShadowWhiteness;
+			shadowDesc.Value += shadowWhiteness;
 		}
 	}
 
@@ -275,14 +285,14 @@ ShadowDesc ComputeShadowCommonPCF3X3(uint index, float4 worldPosition)
 	return shadowDesc;
 }
 
-half ComputeShadow_Directional(float4 worldPosition)
+half ComputeShadow_Directional(half shadowWhiteness, float4 worldPosition)
 {
 	// 가까운 쉐도우맵부터 순회합니다.
 	// 픽셀의 월드 위치가 i번째 쉐도우맵에 포함되어 있다면 i번째 쉐도우맵에 대하여 연산합니다.
 	[unroll]
 	for (uint i = 0; i < 3; ++i)
 	{
-		ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(i, worldPosition);
+		ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(i, shadowWhiteness, worldPosition);
 
 		[flatten]
 		if (shadowDesc.InShadowMap)
@@ -293,7 +303,7 @@ half ComputeShadow_Directional(float4 worldPosition)
 	return 1.0f;
 }
 
-half ComputeShadow_Point(half3 lightToPixel, float4 worldPosition)
+half ComputeShadow_Point(half3 lightToPixel, half shadowWhiteness, float4 worldPosition)
 {
 	// PointLight.h에 정의된 뷰 행렬의 순서입니다.
 	// const V3	m_arrDirection[6] = { V3::right(),V3::left(),V3::forward(),V3::back(),V3::up(),V3::down(), };
@@ -325,14 +335,161 @@ half ComputeShadow_Point(half3 lightToPixel, float4 worldPosition)
 		}
 	}
 
-	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(shadowmapIndex, worldPosition);
+	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(shadowmapIndex, shadowWhiteness, worldPosition);
 	return shadowDesc.Value;
 }
 
-half ComputeShadow_Spot(float4 worldPosition)
+half ComputeShadow_Spot(half shadowWhiteness, float4 worldPosition)
 {
-	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(0, worldPosition);
+	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(0, shadowWhiteness, worldPosition);
 	return shadowDesc.Value;
+}
+
+int RaycastSphere(float3 rayPoint, half3 rayDir, float3 spherePoint, float radius, out float3 intersects[2])
+{
+	float3 o_minus_c = rayPoint - spherePoint;
+
+	float p = dot(rayDir, o_minus_c);
+	float q = dot(o_minus_c, o_minus_c) - (radius * radius);
+
+	float discriminant = (p * p) - q;
+
+	[flatten]
+	if (discriminant < 0.0f)
+	{
+		return 0.0f;
+	}
+	else
+	{
+		float dRoot = sqrt(discriminant);
+		float dist0 = -p - abs(dRoot);
+		float dist1 = -p + abs(dRoot);
+
+		intersects[0] = rayPoint + rayDir * dist0;
+		intersects[1] = rayPoint + rayDir * dist1;
+
+		return (discriminant > 1e-7) ? 2 : 1;
+	}
+}
+
+half4 ComputeVolumetric_Point(float3 worldPosition)
+{
+	float3 viewToPixel = worldPosition - _ViewPosition.xyz;
+	float3 intersects[2];
+	int numPoints = RaycastSphere(_ViewPosition.xyz, normalize(viewToPixel), _LightDesc.Position.xyz, _LightDesc.Range, intersects);
+
+	float3 start, end;
+
+	[flatten]
+	if (numPoints == 0)
+	{
+		return half4(0, 0, 0, 0);
+	}
+	else if (numPoints == 1 || length(_LightDesc.Position.xyz - _ViewPosition.xyz) < _LightDesc.Range)
+	{
+		start = _ViewPosition.xyz;
+		end = intersects[1];
+	}
+	else
+	{
+		start = intersects[0];
+		end = intersects[1];
+	}
+
+	float3 delta = end - start;
+	float deltaDistance = length(delta);
+	half3 dir = delta / deltaDistance;
+	half endVDepth = mul(float4(worldPosition, 1.0f), _ViewMatrix).z;
+
+	uint numStep = _VolumetricDesc.NumSamples;
+	half step = deltaDistance / numStep;
+	uint numSampled = 0;
+
+	half shaft = 0.0f;
+	[loop]
+	for (uint i = 0; i < numStep; ++i)
+	{
+		half distance = step * i;
+		float4 wp;
+		wp.xyz = start + dir * distance;
+		wp.w = 1.0f;
+
+		half sampleVDepth = mul(wp, _ViewMatrix).z;
+		if (sampleVDepth > endVDepth)
+			break;
+
+		half3 lightToWP = (wp.xyz - _LightDesc.Position.xyz);
+		half da = ComputeDistanceAtten(lightToWP);
+		half aa = ComputeAngleAtten(lightToWP);
+		half a = da * aa;
+		half wpShaft = ComputeShadow_Spot(0, wp) * a;
+		shaft += wpShaft;
+		++numSampled;
+	}
+	shaft /= numSampled;
+	shaft = pow(shaft * _VolumetricDesc.Intensity, _VolumetricDesc.Power);
+	return half4(_LightDesc.Diffuse.rgb * shaft, 1.0f);
+}
+
+half4 ComputeVolumetric_Spot(float3 worldPosition)
+{
+	float3 viewToPixel = worldPosition - _ViewPosition.xyz;
+	float coneSideLength = _LightDesc.Range / cos(_LightDesc.Angle * Deg2Rad);
+	float3 coneCenter = (_LightDesc.Position.xyz + _LightDesc.Position.xyz + _LightDesc.Direction.xyz * _LightDesc.Range * 0.5f) * 0.5f;
+	float3 intersects[2];
+	int numPoints = RaycastSphere(_ViewPosition.xyz, normalize(viewToPixel), coneCenter, coneSideLength * 0.5f, intersects);
+
+	float3 start, end;
+
+	[flatten]
+	if (numPoints == 0)
+	{
+		return half4(0, 0, 0, 0);
+	}
+	else if (numPoints == 1 || length(coneCenter - _ViewPosition.xyz) < coneSideLength * 0.5f)
+	{
+		start = _ViewPosition.xyz;
+		end = intersects[1];
+	}
+	else
+	{
+		start = intersects[0];
+		end = intersects[1];
+	}
+
+	float3 delta = end - start;
+	float deltaDistance = length(delta);
+	half3 dir = delta / deltaDistance;
+	half endVDepth = mul(float4(worldPosition, 1.0f), _ViewMatrix).z;
+
+	uint numStep = _VolumetricDesc.NumSamples;
+	half step = deltaDistance / numStep;
+	uint numSampled = 0;
+
+	half shaft = 0.0f;
+	[loop]
+	for (uint i = 0; i < numStep; ++i)
+	{
+		half distance = step * i;
+		float4 wp;
+		wp.xyz = start + dir * distance;
+		wp.w = 1.0f;
+
+		half sampleVDepth = mul(wp, _ViewMatrix).z;
+		if (sampleVDepth > endVDepth)
+			break;
+
+		half3 lightToWP = (wp.xyz - _LightDesc.Position.xyz);
+		half da = ComputeDistanceAtten(lightToWP);
+		half aa = ComputeAngleAtten(lightToWP);
+		half a = da * aa;
+		half wpShaft = ComputeShadow_Spot(0, wp) * a;
+		shaft += wpShaft;
+		++numSampled;
+	}
+	shaft /= numSampled;
+	shaft = pow(shaft * _VolumetricDesc.Intensity, _VolumetricDesc.Power);
+	return half4(_LightDesc.Diffuse.rgb * shaft, 1.0f);
 }
 
 PS_OUT PS_MAIN_Directional(PS_IN In)
@@ -361,7 +518,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow_Directional(worldPosition);
+		shadow = ComputeShadow_Directional(_LightDesc.ShadowWhiteness, worldPosition);
 		shadow = lerp(1.0f, shadow, shadowMask);
 	}
 
@@ -373,6 +530,8 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
+
+	output.volumetric = half4(0, 0, 0, 0);
 
 	return output;
 }
@@ -407,7 +566,7 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow_Point(lightToPixel, worldPosition);
+		shadow = ComputeShadow_Point(lightToPixel, _LightDesc.ShadowWhiteness, worldPosition);
 		shadow = lerp(1.0f, shadow, shadowMask);
 	}
 
@@ -419,6 +578,14 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
+
+	half4 volumetric = half4(0, 0, 0, 0);
+	[branch]
+	if (_VolumetricDesc.DrawVolumetric)
+	{
+		volumetric = ComputeVolumetric_Point(worldPosition.xyz);
+	}
+	output.volumetric = volumetric;
 
 	return output;
 }
@@ -455,7 +622,7 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	[branch]
 	if (_LightDesc.DrawShadow)
 	{
-		shadow = ComputeShadow_Spot(worldPosition);
+		shadow = ComputeShadow_Spot(_LightDesc.ShadowWhiteness, worldPosition);
 		shadow = lerp(1.0f, shadow, shadowMask);
 	}
 
@@ -467,6 +634,14 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
+
+	half4 volumetric = half4(0, 0, 0, 0);
+	[branch]
+	if (_VolumetricDesc.DrawVolumetric)
+	{
+		volumetric = ComputeVolumetric_Spot(worldPosition.xyz);
+	}
+	output.volumetric = volumetric;
 
 	return output;
 }
@@ -495,6 +670,11 @@ BlendState BlendState0
 	SrcBlend[1] = One;
 	DestBlend[1] = One;
 	BlendOp[1] = Add;
+
+	BlendEnable[2] = true;
+	SrcBlend[2] = One;
+	DestBlend[2] = One;
+	BlendOp[2] = Add;
 };
 
 technique11 Technique0

@@ -32,6 +32,7 @@ public:
 	void SetForwardRenderTargets(GraphicSystem* graphicSystem);
 	void SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem);
 	void SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem);
+	void SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem);
 
 public:
 
@@ -53,6 +54,7 @@ public:
 
 	inline RenderTarget* GetLight() const { return m_light; }
 	inline RenderTarget* GetSpecular() const { return m_specular; }
+	inline RenderTarget* GetVolumetric() const { return m_volumetric; }
 	inline RenderTarget* GetLightBlend() const { return m_lightBlend; }
 
 	inline RenderTarget* GetResult() const { return m_result[0]; }
@@ -78,6 +80,7 @@ public:
 
 	_declspec(property(get = GetLight)) RenderTarget* light;
 	_declspec(property(get = GetSpecular)) RenderTarget* specular;
+	_declspec(property(get = GetVolumetric)) RenderTarget* volumetric;
 	_declspec(property(get = GetLightBlend)) RenderTarget* lightBlend;
 
 	_declspec(property(get = GetResult)) RenderTarget* result;
@@ -121,6 +124,7 @@ private:
 
 	RenderTarget*								m_light = nullptr;
 	RenderTarget*								m_specular = nullptr;
+	RenderTarget*								m_volumetric = nullptr;
 	RenderTarget*								m_lightBlend = nullptr;
 
 	RenderTarget*								m_result[COPYABLE] = {};

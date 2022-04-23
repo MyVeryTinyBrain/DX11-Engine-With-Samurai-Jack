@@ -32,6 +32,10 @@ public:
 
 private:
 
+	virtual VolumetricDesc GetVolumetricDesc() const override;
+
+private:
+
 	// For Shadow
 
 	float	m_orthoWidth = 20;

@@ -82,6 +82,17 @@ bool PointLight::ContainsInCamera(ICamera* camera) const
     return camera->Intersects(sphere);
 }
 
+VolumetricDesc PointLight::GetVolumetricDesc() const
+{
+    VolumetricDesc desc;
+    desc.DrawVolumetric = volumetricLightState;
+    desc.NumSamples = volumetricLightNumSamples;
+    desc.Intensity = volumetricLightIntensity;
+    desc.Power = volumetricLightPower;
+
+    return desc;
+}
+
 bool PointLight::IsWorking() const
 {
     if (!Light::IsWorking())

@@ -431,6 +431,12 @@ void PlayerTestScene::OnUpdate()
 		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		
+#ifdef _DEBUG
+		ImGui::Text("Debug Mode");
+#else
+		ImGui::Text("Release Mode");
+#endif
 
 		ImGui::End();
 	}
@@ -745,6 +751,22 @@ void PlayerTestScene::OnUpdate()
 		ImGui::Checkbox("Draw Shadow", &drawShadow);
 		light->drawShadow = drawShadow;
 
+		bool drawVolumetric = light->volumetricLightState;
+		ImGui::Checkbox("Draw Volumetric", &drawVolumetric);
+		light->volumetricLightState = drawVolumetric;
+
+		int volumetricLightNumSamples = light->volumetricLightNumSamples;
+		ImGui::SliderInt("Volumetric Num Samples", &volumetricLightNumSamples, 0, 200);
+		light->volumetricLightNumSamples = volumetricLightNumSamples;
+
+		float volumetricLightIntensity = light->volumetricLightIntensity;
+		ImGui::SliderFloat("Volumetric Intensity", &volumetricLightIntensity, 0.0f, 5.0f);
+		light->volumetricLightIntensity = volumetricLightIntensity;
+
+		float volumetricLightPower = light->volumetricLightPower;
+		ImGui::SliderFloat("Volumetric Power", &volumetricLightPower, 0.0f, 5.0f);
+		light->volumetricLightPower = volumetricLightPower;
+
 		Color color = light->diffuse;
 		ImGui::ColorPicker3("Color", (float*)&color);
 		light->diffuse = color;
@@ -783,6 +805,22 @@ void PlayerTestScene::OnUpdate()
 		bool drawShadow = light->drawShadow;
 		ImGui::Checkbox("Draw Shadow", &drawShadow);
 		light->drawShadow = drawShadow;
+
+		bool drawVolumetric = light->volumetricLightState;
+		ImGui::Checkbox("Draw Volumetric", &drawVolumetric);
+		light->volumetricLightState = drawVolumetric;
+
+		int volumetricLightNumSamples = light->volumetricLightNumSamples;
+		ImGui::SliderInt("Volumetric Num Samples", &volumetricLightNumSamples, 0, 200);
+		light->volumetricLightNumSamples = volumetricLightNumSamples;
+
+		float volumetricLightIntensity = light->volumetricLightIntensity;
+		ImGui::SliderFloat("Volumetric Intensity", &volumetricLightIntensity, 0.0f, 5.0f);
+		light->volumetricLightIntensity = volumetricLightIntensity;
+
+		float volumetricLightPower = light->volumetricLightPower;
+		ImGui::SliderFloat("Volumetric Power", &volumetricLightPower, 0.0f, 5.0f);
+		light->volumetricLightPower = volumetricLightPower;
 
 		Color color = light->diffuse;
 		ImGui::ColorPicker3("Color", (float*)&color);

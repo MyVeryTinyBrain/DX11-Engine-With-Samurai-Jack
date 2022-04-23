@@ -51,6 +51,17 @@ bool SpotLight::ContainsInCamera(ICamera* camera) const
     return camera->Intersects(frustum);
 }
 
+VolumetricDesc SpotLight::GetVolumetricDesc() const
+{
+    VolumetricDesc desc;
+    desc.DrawVolumetric = volumetricLightState;
+    desc.NumSamples = volumetricLightNumSamples;
+    desc.Intensity = volumetricLightIntensity;
+    desc.Power = volumetricLightPower;
+
+    return desc;
+}
+
 bool SpotLight::IsWorking() const
 {
     if (!Light::IsWorking())

@@ -17,6 +17,7 @@ texture2D		_Depth;
 texture2D		_Light_Occlusion_Shadow;
 texture2D		_Light;
 texture2D		_Specular;
+texture2D		_Volumetric;
 SamplerState	pointSampler
 {
 	AddressU = Clamp;
@@ -54,7 +55,13 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	color.rgb = lerp(unlighttedColor, lightedColor, lightMask);
 	//color.rgb = min(color.rgb, half3(1, 1, 1));
 	color.a = diffuse.a;
+
 	return color;
+}
+
+float4 PS_MAIN_Volumetric(PS_IN In) : SV_TARGET
+{
+	return _Volumetric.Sample(pointSampler, In.UV);
 }
 
 RasterizerState RasterizerState0
@@ -87,5 +94,13 @@ technique11 Technique0
 		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+	pass Volumetric
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN_Volumetric();
 	}
 }

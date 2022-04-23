@@ -151,7 +151,8 @@ void RenderQueue::Render(ICamera* camera)
 	m_graphicSystem->postProcessing->DrawToScreen(drt->reflection_ReflectionBlur_ReflectMask->srv, uint2(600, 0), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->light->srv, uint2(000, 100), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->specular->srv, uint2(100, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->volumetric->srv, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, uint2(300, 100), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->ssao->srv, uint2(000, 200), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->ssr->srv, uint2(100, 200), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->dof->srv, uint2(200, 200), uint2(100, 100), PostProcessing::CopyType::Default);
@@ -192,6 +193,8 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 	m_graphicSystem->postProcessing->DrawToTextrue(drt->lightBlend->srv, drt->result->rtv, uint2(drt->result->width, drt->result->height), PostProcessing::CopyType::Alphatest);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::Deferred);
+
+	m_light->PostProcessing(camera);
 }
 
 void RenderQueue::Render_Forward(ICamera* camera)

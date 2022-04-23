@@ -33,6 +33,10 @@ public:
 
 private:
 
+	virtual VolumetricDesc GetVolumetricDesc() const override;
+
+private:
+
 	virtual bool IsWorking() const override;
 
 private:

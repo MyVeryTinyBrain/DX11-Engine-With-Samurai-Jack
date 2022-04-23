@@ -33,6 +33,14 @@ struct LightDesc
 	M4			ProjectionMatrix[6];
 };
 
+struct VolumetricDesc
+{
+	BOOL		DrawVolumetric;
+	uint		NumSamples;
+	float		Intensity;
+	float		Power;
+};
+
 class ENGINE_API ILight abstract
 {
 public:
@@ -62,6 +70,8 @@ public:
 	virtual void GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const = 0;
 
 	virtual LightDesc GetLightDesc(ICamera* camera) const = 0;
+
+	virtual VolumetricDesc GetVolumetricDesc() const = 0;
 
 	virtual bool ContainsInCamera(ICamera* camera) const = 0;
 

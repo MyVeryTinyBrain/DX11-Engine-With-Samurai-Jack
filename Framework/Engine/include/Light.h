@@ -43,6 +43,25 @@ public:
 	_declspec(property(get = GetShadowBias, put = SetShadowBias)) float shadowBias;
 	_declspec(property(get = GetDepthSize)) uint depthSize;
 
+public:
+
+	bool GetVolumetricState() const { return m_volumetricLightState; }
+	void SetVolumetricState(bool value) { m_volumetricLightState = value; }
+
+	uint GetVolumetricNumSamples() const { return m_volumetricNumSamples; }
+	void SetVolumetricNumSamples(uint value) { m_volumetricNumSamples = value; }
+
+	float GetVolumetricIntensity() const { return m_volumetricIntensity; }
+	void SetVolumetricIntensity(float value) { m_volumetricIntensity = value; }
+
+	float GetVolumetricPower() const { return m_volumetricPower; }
+	void SetVolumetricPower(float value) { m_volumetricPower = value; }
+
+	_declspec(property(get = GetVolumetricState, put = SetVolumetricState)) bool volumetricLightState;
+	_declspec(property(get = GetVolumetricNumSamples, put = SetVolumetricNumSamples)) uint volumetricLightNumSamples;
+	_declspec(property(get = GetVolumetricIntensity, put = SetVolumetricIntensity)) float volumetricLightIntensity;
+	_declspec(property(get = GetVolumetricPower, put = SetVolumetricPower)) float volumetricLightPower;
+
 protected:
 
 	virtual bool IsWorking() const override;
@@ -65,7 +84,10 @@ private:
 	float					m_shadowWhiteness = 0.5f;
 	float					m_shadowBias = 0.0001f;
 
-	bool					m_isVolumetricLight = false;
+	bool					m_volumetricLightState = false;
+	uint					m_volumetricNumSamples = 100;
+	float					m_volumetricIntensity = 2.5f;
+	float					m_volumetricPower = 2.0f;
 
 	uint					m_depthSize = 2048;
 	DepthStencil*			m_depthes[6] = {};

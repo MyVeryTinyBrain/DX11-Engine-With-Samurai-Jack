@@ -489,9 +489,11 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 	half brightness = Brightness(sampleColor.rgb);
+	//half brightness = saturate(length(sampleColor.rgb));
 
-	half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
-	//half percent = step(1.0f - _BloomDesc.Threshold, brightness);
+	//half percent = _BloomDesc.Threshold * brightness;
+	//half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	half percent = step(1.0f - _BloomDesc.Threshold, brightness);
 	half4 brightedColor = normalize(sampleColor);
 
 	return lerp(BLACK, brightedColor, percent);

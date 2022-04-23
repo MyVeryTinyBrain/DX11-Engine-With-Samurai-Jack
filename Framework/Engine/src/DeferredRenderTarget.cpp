@@ -38,6 +38,9 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_specular);
 	m_renderTargets.push_back(m_specular);
 
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_volumetric);
+	m_renderTargets.push_back(m_volumetric);
+
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_lightBlend);
 	m_renderTargets.push_back(m_lightBlend);
 
@@ -139,6 +142,8 @@ void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> deviceContext)
 	{
 		if (renderTarget == m_Depth[0])
 			renderTarget->Clear(deviceContext, Color::white());
+		else if (renderTarget == m_volumetric)
+			renderTarget->Clear(deviceContext, Color::clear());
 		else
 			renderTarget->Clear(deviceContext, clearColor);
 	}
@@ -207,8 +212,9 @@ void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem
 
 	arrRTV[0] = m_light->rtv.Get();
 	arrRTV[1] = m_specular->rtv.Get();
+	arrRTV[2] = m_volumetric->rtv.Get();
 
-	graphicSystem->SetRenderTargets(2, arrRTV);
+	graphicSystem->SetRenderTargets(3, arrRTV);
 }
 
 void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem)
@@ -216,6 +222,15 @@ void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* gra
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_lightBlend->rtv.Get();
+
+	graphicSystem->SetRenderTargets(1, arrRTV);
+}
+
+void DeferredRenderTarget::SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem)
+{
+	ID3D11RenderTargetView* arrRTV[8] = {};
+
+	arrRTV[0] = m_result[0]->rtv.Get();
 
 	graphicSystem->SetRenderTargets(1, arrRTV);
 }

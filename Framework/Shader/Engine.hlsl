@@ -120,7 +120,7 @@ RasterizerState ShadowRasterizerState
 	DepthClipEnable = TRUE;
 	DepthBias = 300; // DepthBias = 300 + 100 * ShadowSmoothness
 	DepthBiasClamp = 0.0f;
-	SlopeScaledDepthBias = 10.0f;
+	SlopeScaledDepthBias = 15.0f;
 };
 
 /*

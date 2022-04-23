@@ -138,3 +138,10 @@ bool DirectionalLight::ContainsInCamera(ICamera* camera) const
 {
 	return true;
 }
+
+VolumetricDesc DirectionalLight::GetVolumetricDesc() const
+{
+	VolumetricDesc desc;
+	desc.DrawVolumetric = false;
+	return desc;
+}

@@ -142,11 +142,22 @@ void RenderQueueLight::Render(ICamera* camera)
             
             LightDesc lightDesc = light->GetLightDesc(camera);
 
-            Render_LightAccumulate(camera, light, lightDesc);
+            Render_LightAccumulate(camera, light, lightDesc, light->GetVolumetricDesc());
         }
     }
 
     Render_LightBlend(camera);
+}
+
+void RenderQueueLight::PostProcessing(ICamera* camera)
+{
+    //BlurDesc blurDesc;
+    //blurDesc.NumSamples = 8;
+    //blurDesc.PixelDistance = 25;
+    //blurDesc.Type = BlurType::Default;
+    //m_graphicSystem->postProcessing->Blur(blurDesc, camera->GetDeferredRenderTarget()->volumetric, camera->GetDeferredRenderTarget()->bridgeHalf, camera->GetDeferredRenderTarget()->volumetric);
+
+    Render_Volumetric(camera);
 }
 
 void RenderQueueLight::Clear()
@@ -559,7 +570,7 @@ void RenderQueueLight::Render_DepthOfLight_ShadowPassInstance(ICamera* camera, c
     }
 }
 
-void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc)
+void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, LightDesc lightDesc, const VolumetricDesc& volumetricDesc)
 {
     uint passIndex = (uint)lightDesc.Type;
 
@@ -603,6 +614,7 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
             lightDesc.ProjectionMatrix[5].Transpose();
 
             m_shaderLighting->SetRawValue("_LightDesc", &lightDesc, sizeof(LightDesc));
+            m_shaderLighting->SetRawValue("_VolumetricDesc", &volumetricDesc, sizeof(VolumetricDesc));
             m_shaderLighting->SetTexture("_Normal", normal->srv);
             m_shaderLighting->SetTexture("_Depth", depth->srv);
             m_shaderLighting->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
@@ -629,6 +641,7 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
     RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
     RenderTarget* light = drt->light;
     RenderTarget* specular = drt->specular;
+    RenderTarget* volumetric = drt->volumetric;
 
     // Outputs
     drt->SetDeferredLightBlendRenderTargets(m_graphicSystem);
@@ -642,6 +655,39 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
 
         m_shaderLightBlending->SetInputLayout(m_graphicSystem->deviceContext, 0, 0);
         m_shaderLightBlending->ApplyPass(m_graphicSystem->deviceContext, 0, 0);
+        m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
+        m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
+        m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+    }
+
+    m_graphicSystem->RollbackRenderTarget();
+}
+
+void RenderQueueLight::Render_Volumetric(ICamera* camera)
+{
+    DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+
+    // Inputs
+    RenderTarget* diffuse = drt->diffuse;
+    RenderTarget* depth = drt->depth;
+    RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
+    RenderTarget* light = drt->light;
+    RenderTarget* specular = drt->specular;
+    RenderTarget* volumetric = drt->volumetric;
+
+    // Outputs
+    drt->SetDeferredVolumetricLightBlendTargets(m_graphicSystem);
+
+    {
+        m_shaderLightBlending->SetTexture("_Diffuse", diffuse->srv);
+        m_shaderLightBlending->SetTexture("_Depth", depth->srv);
+        m_shaderLightBlending->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
+        m_shaderLightBlending->SetTexture("_Light", light->srv);
+        m_shaderLightBlending->SetTexture("_Specular", specular->srv);
+        m_shaderLightBlending->SetTexture("_Volumetric", volumetric->srv);
+
+        m_shaderLightBlending->SetInputLayout(m_graphicSystem->deviceContext, 0, 1);
+        m_shaderLightBlending->ApplyPass(m_graphicSystem->deviceContext, 0, 1);
         m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
         m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
         m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
