@@ -239,21 +239,21 @@ void PlayerTestScene::OnLoad()
 		//	goSky[5]->transform->forward = -V3::back();
 		//}
 
-		{
-			ResourceRef<Texture> texture = system->resource->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/skybox.png"));
+		//{
+		//	ResourceRef<Texture> texture = system->resource->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/skybox.png"));
 
-			//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
-			ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Skybox.cso"));
-			ResourceRef<Material> material;
-			material = system->resource->factory->CreateUnmanagedMaterialByShader(skybox);
-			material->SetTexture("_Texture", texture);
+		//	//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
+		//	ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Skybox.cso"));
+		//	ResourceRef<Material> material;
+		//	material = system->resource->factory->CreateUnmanagedMaterialByShader(skybox);
+		//	material->SetTexture("_Texture", texture);
 
-			GameObject* goSky;
-			goSky = CreateGameObject();
-			MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
-			mr->mesh = system->resource->builtInResources->skyboxMesh;
-			mr->material = material;
-		}
+		//	GameObject* goSky;
+		//	goSky = CreateGameObject();
+		//	MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
+		//	mr->mesh = system->resource->builtInResources->skyboxMesh;
+		//	mr->material = material;
+		//}
 
 		{
 			GameObject* goGround = CreateGameObject();

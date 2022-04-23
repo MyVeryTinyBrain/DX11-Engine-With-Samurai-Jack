@@ -151,11 +151,11 @@ void RenderQueueLight::Render(ICamera* camera)
 
 void RenderQueueLight::PostProcessing(ICamera* camera)
 {
-    //BlurDesc blurDesc;
-    //blurDesc.NumSamples = 8;
-    //blurDesc.PixelDistance = 25;
-    //blurDesc.Type = BlurType::Default;
-    //m_graphicSystem->postProcessing->Blur(blurDesc, camera->GetDeferredRenderTarget()->volumetric, camera->GetDeferredRenderTarget()->bridgeHalf, camera->GetDeferredRenderTarget()->volumetric);
+    BlurDesc blurDesc;
+    blurDesc.NumSamples = 8;
+    blurDesc.PixelDistance = 25;
+    blurDesc.Type = BlurType::Default;
+    m_graphicSystem->postProcessing->Blur(blurDesc, camera->GetDeferredRenderTarget()->volumetric, camera->GetDeferredRenderTarget()->bridgeHalf, camera->GetDeferredRenderTarget()->volumetric);
 
     Render_Volumetric(camera);
 }

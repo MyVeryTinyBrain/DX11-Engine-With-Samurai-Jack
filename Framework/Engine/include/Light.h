@@ -86,8 +86,8 @@ private:
 
 	bool					m_volumetricLightState = false;
 	uint					m_volumetricNumSamples = 100;
-	float					m_volumetricIntensity = 2.5f;
-	float					m_volumetricPower = 2.0f;
+	float					m_volumetricIntensity = 1.5f;
+	float					m_volumetricPower = 1.5f;
 
 	uint					m_depthSize = 2048;
 	DepthStencil*			m_depthes[6] = {};
