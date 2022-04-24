@@ -12,7 +12,7 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Diffuse);
 	m_renderTargets.push_back(m_Diffuse);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Normal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Normal);
 	m_renderTargets.push_back(m_Normal);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Depth[0]);
@@ -174,7 +174,7 @@ bool DeferredRenderTarget::ReadyToDraw(Com<ID3D11DeviceContext> deviceContext)
 	return true;
 }
 
-void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem)
+void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
@@ -187,10 +187,10 @@ void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem
 	arrRTV[5] = m_Emissive->rtv.Get();
 	arrRTV[6] = m_Reflection_ReflectionBlur_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(7, arrRTV);
+	graphicSystem->SetRenderTargets(deviceContext, 7, arrRTV);
 }
 
-void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem)
+void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
@@ -203,10 +203,10 @@ void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem)
 	arrRTV[5] = m_Emissive->rtv.Get();
 	arrRTV[6] = m_Reflection_ReflectionBlur_ReflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(7, arrRTV);
+	graphicSystem->SetRenderTargets(deviceContext, 7, arrRTV);
 }
 
-void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem)
+void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
@@ -214,25 +214,25 @@ void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem
 	arrRTV[1] = m_specular->rtv.Get();
 	arrRTV[2] = m_volumetric->rtv.Get();
 
-	graphicSystem->SetRenderTargets(3, arrRTV);
+	graphicSystem->SetRenderTargets(deviceContext, 3, arrRTV);
 }
 
-void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem)
+void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_lightBlend->rtv.Get();
 
-	graphicSystem->SetRenderTargets(1, arrRTV);
+	graphicSystem->SetRenderTargets(deviceContext, 1, arrRTV);
 }
 
-void DeferredRenderTarget::SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem)
+void DeferredRenderTarget::SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_result[0]->rtv.Get();
 
-	graphicSystem->SetRenderTargets(1, arrRTV);
+	graphicSystem->SetRenderTargets(deviceContext, 1, arrRTV);
 }
 
 void DeferredRenderTarget::ClearCopyTargets()

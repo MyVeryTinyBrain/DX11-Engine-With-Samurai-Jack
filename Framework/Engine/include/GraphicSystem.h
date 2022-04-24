@@ -81,13 +81,10 @@ public:
 
 public:
 
-	void ResetShaderResource();
-
-	void RollbackRenderTarget();
-
-	void SetRenderTargets(uint count, ID3D11RenderTargetView* const* arrRTV);
-
-	void SetRenderTargetsWithDepthStencil(uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv);
+	void ResetShaderResource(Com<ID3D11DeviceContext> deviceContext);
+	void RollbackRenderTarget(Com<ID3D11DeviceContext> deviceContext);
+	void SetRenderTargets(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV);
+	void SetRenderTargetsWithDepthStencil(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv);
 
 public:
 
@@ -116,11 +113,11 @@ private:
 		ID3D11DepthStencilView * *out_depthStencilRTV);
 
 	virtual HRESULT SetViewport
-	(unsigned int width, unsigned int height) override;
+	(Com<ID3D11DeviceContext> deviceContext, unsigned int width, unsigned int height) override;
 
-	virtual uint2 GetViewport() const override;
+	virtual uint2 GetViewport(Com<ID3D11DeviceContext> deviceContext) const override;
 
-	virtual HRESULT RollbackViewport() override;
+	virtual HRESULT RollbackViewport(Com<ID3D11DeviceContext> deviceContext) override;
 
 private:
 

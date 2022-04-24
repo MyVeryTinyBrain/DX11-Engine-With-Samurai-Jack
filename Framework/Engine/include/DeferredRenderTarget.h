@@ -28,11 +28,11 @@ public:
 public:
 
 	bool ReadyToDraw(Com<ID3D11DeviceContext> deviceContext);
-	void SetDeferredRenderTargets(GraphicSystem* graphicSystem);
-	void SetForwardRenderTargets(GraphicSystem* graphicSystem);
-	void SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem);
-	void SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem);
-	void SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem);
+	void SetDeferredRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
+	void SetForwardRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
+	void SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
+	void SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
+	void SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
 
 public:
 

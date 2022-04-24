@@ -40,11 +40,11 @@ public:
 public:
 
 	virtual HRESULT SetViewport
-	(unsigned int width, unsigned int height) = 0;
+	(Com<ID3D11DeviceContext> deviceContext, unsigned int width, unsigned int height) = 0;
 
-	virtual uint2 GetViewport() const = 0;
+	virtual uint2 GetViewport(Com<ID3D11DeviceContext> deviceContext) const = 0;
 
-	virtual HRESULT RollbackViewport() = 0;
+	virtual HRESULT RollbackViewport(Com<ID3D11DeviceContext> deviceContext) = 0;
 
 };
 

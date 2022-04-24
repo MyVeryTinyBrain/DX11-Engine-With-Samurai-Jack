@@ -345,9 +345,15 @@ HRESULT VI::RecalculateTangentsBinormals()
 			V3 e1 = p1 - p0, e2 = p2 - p0;
 			float x1 = w1.x - w0.x, x2 = w2.x - w0.x;
 			float y1 = w1.y - w0.y, y2 = w2.y - w0.y;
-			float r = 1.0F / (x1 * y2 - x2 * y1);
+
+			float rdiv = (x1 * y2 - x2 * y1);
+			float r = 1.0F / rdiv;
+
+			r = (rdiv == 0) ? 0.0f : r;
+
 			V3 t = (e1 * y2 - e2 * y1) * r;
 			V3 b = (e2 * x1 - e1 * x2) * r;
+
 			v0.tangent += t;
 			v1.tangent += t;
 			v2.tangent += t;

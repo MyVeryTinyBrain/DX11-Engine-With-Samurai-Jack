@@ -42,7 +42,7 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	m_CBufferManager->BeginApply(m_shaderPostProcessing->GetEffect());
 	{
@@ -73,7 +73,7 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 	}
 	m_CBufferManager->EndApply();
 
-	m_graphicSystem->RollbackRenderTarget();
+	m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
 }
 
 void PostProcessing::Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out)
@@ -105,16 +105,16 @@ void PostProcessing::DrawToTextrue(Com<ID3D11ShaderResourceView> src, Com<ID3D11
 	GetCopyTechniqueAndPass(type, technique, pass);
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	uint2 prevViewport = iGraphicSystem->GetViewport();
+	uint2 prevViewport = iGraphicSystem->GetViewport(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(destSize.x, destSize.y);
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, destSize.x, destSize.y);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 	m_shaderPostProcessing->SetTexture("_Sample", src.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(prevViewport.x, prevViewport.y);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, prevViewport.x, prevViewport.y);
 }
 
 void PostProcessing::PostProcess_Deferred(ICamera* camera)
@@ -323,10 +323,10 @@ void PostProcessing::Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc&
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->ssao->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	iGraphicSystem->SetViewport(drt->ssao->width, drt->ssao->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->ssao->width, drt->ssao->height);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::SSAO_WirteOcclusion, technique, pass);
@@ -342,7 +342,7 @@ void PostProcessing::Render_SSAO_WriteOcclusion(ICamera* camera, const SSAODesc&
 	blurDesc.PixelDistance = ssaoDesc.BlurPixelDistance;
 	Render_Blur(blurDesc, drt->ssao, drt->bridgeHalf, drt->ssao);
 
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
 }
 
 void PostProcessing::Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc& ssaoDesc)
@@ -350,7 +350,7 @@ void PostProcessing::Render_SSAO_ApplyOcclusion(ICamera* camera, const SSAODesc&
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::SSAO_ApplyOcclusion, technique, pass);
@@ -380,7 +380,7 @@ void PostProcessing::Render_Fog_Apply_Distance(ICamera* camera, const FogDesc& f
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::Fog_Apply_Distance, technique, pass);
@@ -396,7 +396,7 @@ void PostProcessing::Render_Fog_Apply_Z(ICamera* camera, const FogDesc& fogDesc)
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::Fog_Apply_Z, technique, pass);
@@ -412,10 +412,10 @@ void PostProcessing::Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloo
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->bloom->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	iGraphicSystem->SetViewport(drt->bloom->width, drt->bloom->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->bloom->width, drt->bloom->height);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::Bloom_Extract, technique, pass);
@@ -432,7 +432,7 @@ void PostProcessing::Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloo
 	blurDesc.PixelDistance = bloomDesc.BlurPixelDistance;
 	Render_Blur(blurDesc, drt->bloom, drt->bridgeHalf, drt->bloom);
 
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
 }
 
 void PostProcessing::Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomDesc)
@@ -451,7 +451,7 @@ void PostProcessing::Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomD
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(bloomType, technique, pass);
@@ -468,10 +468,10 @@ void PostProcessing::Render_ChromaticAberration_Write(ICamera* camera, const Chr
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->bridge->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	iGraphicSystem->SetViewport(drt->bridge->width, drt->bridge->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->bridge->width, drt->bridge->height);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::ChromaticAberration_Write, technique, pass);
@@ -482,7 +482,7 @@ void PostProcessing::Render_ChromaticAberration_Write(ICamera* camera, const Chr
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
 }
 
 void PostProcessing::Render_ChromaticAberration_Apply(ICamera* camera, const ChromaticAberrationDesc& chromaticAberrationDesc)
@@ -490,7 +490,7 @@ void PostProcessing::Render_ChromaticAberration_Apply(ICamera* camera, const Chr
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::ChromaticAberration_Apply, technique, pass);
@@ -507,10 +507,10 @@ void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->ssr->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	iGraphicSystem->SetViewport(drt->ssr->width, drt->ssr->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->ssr->width, drt->ssr->height);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::SSR_Write, technique, pass);
@@ -530,7 +530,7 @@ void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
 		Render_Blur(blurDesc, drt->ssr, drt->bridgeHalf, drt->ssrBlur);
 	}
 
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
 }
 
 void PostProcessing::Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc)
@@ -538,7 +538,7 @@ void PostProcessing::Render_SSR_Apply(ICamera* camera, const SSRDesc& ssrDesc)
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::SSR_Apply, technique, pass);
@@ -567,23 +567,23 @@ void PostProcessing::Render_DOF_Write(ICamera* camera, const DOFDesc& dofDesc)
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
 
-	iGraphicSystem->SetViewport(drt->bridgeHalf->width, drt->bridgeHalf->height);
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV[0], nullptr);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->bridgeHalf->width, drt->bridgeHalf->height);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV[0], nullptr);
 	m_shaderPostProcessing->SetTexture("_Sample", drt->result->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique[0], pass[0]);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique[0], pass[0]);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV[1], nullptr);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV[1], nullptr);
 	m_shaderPostProcessing->SetTexture("_Sample", drt->bridgeHalf->srv.Get());
 	m_shaderPostProcessing->SetTexture("_Result", drt->result->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique[1], pass[1]);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique[1], pass[1]);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
-	iGraphicSystem->SetViewport(drt->result->width, drt->result->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, drt->result->width, drt->result->height);
 }
 
 void PostProcessing::Render_DOF_Apply(ICamera* camera, const DOFDesc& linearDOFDesc)
@@ -591,7 +591,7 @@ void PostProcessing::Render_DOF_Apply(ICamera* camera, const DOFDesc& linearDOFD
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV, nullptr);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
 	GetTehcniqueAndPass(PostProcessing::Type::DOF_Apply, technique, pass);
@@ -615,23 +615,23 @@ void PostProcessing::Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderT
 	m_shaderPostProcessing->SetRawValue("_BlurDesc", &desc, sizeof(BlurDesc));
 
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	uint2 prevViewport = iGraphicSystem->GetViewport();
+	uint2 prevViewport = iGraphicSystem->GetViewport(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(bridge->width, bridge->height);
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV[0], nullptr);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, bridge->width, bridge->height);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV[0], nullptr);
 	m_shaderPostProcessing->SetTexture("_Sample", in->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique[0], pass[0]);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique[0], pass[0]);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(out->width, out->height);
-	m_graphicSystem->SetRenderTargetsWithDepthStencil(1, arrRTV[1], nullptr);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, out->width, out->height);
+	m_graphicSystem->SetRenderTargetsWithDepthStencil(m_graphicSystem->deviceContext, 1, arrRTV[1], nullptr);
 	m_shaderPostProcessing->SetTexture("_Sample", bridge->srv.Get());
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique[1], pass[1]);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique[1], pass[1]);
 	m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
 
-	iGraphicSystem->SetViewport(prevViewport.x, prevViewport.y);
+	iGraphicSystem->SetViewport(m_graphicSystem->deviceContext, prevViewport.x, prevViewport.y);
 }
 
 HRESULT PostProcessing::SetScreenQuad(uint x, uint y, uint width, uint height)

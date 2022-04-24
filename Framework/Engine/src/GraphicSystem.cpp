@@ -44,7 +44,7 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 
 	m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_dsv);
 
-	if (FAILED(SetViewport(width, height)))
+	if (FAILED(SetViewport(m_deviceContext, width, height)))
 		return false;
 
 	m_CBufferManager = new CBufferManager(this);
@@ -127,7 +127,7 @@ void GraphicSystem::Render()
 		{
 			camRTV = cameraRenderTarget->rtv.Get();
 			camDSV = cameraDepthStencil->dsv.Get();
-			SetViewport(cameraRenderTarget->width, cameraRenderTarget->height);
+			SetViewport(m_deviceContext, cameraRenderTarget->width, cameraRenderTarget->height);
 		}
 
 		if (camRTV && camDSV)
@@ -152,7 +152,7 @@ void GraphicSystem::Render()
 			SafeRelease(currentRTV);
 			SafeRelease(currentDSV);
 
-			RollbackViewport();
+			RollbackViewport(m_deviceContext);
 		}
 	}
 
@@ -274,7 +274,7 @@ bool GraphicSystem::SetResolution(uint width, uint height)
 		RETURN_FALSE_ERROR_MESSAGE("GraphicSystem::SetResolution::CreateDepthStencilBufferView");
 	}
 
-	if (FAILED(SetViewport(width, height)))
+	if (FAILED(SetViewport(m_deviceContext, width, height)))
 	{
 		ReleaseVars();
 		RETURN_FALSE_ERROR_MESSAGE("GraphicSystem::SetResolution::SetViewport");
@@ -301,29 +301,29 @@ bool GraphicSystem::SetResolution(uint width, uint height)
 	return true;
 }
 
-void GraphicSystem::ResetShaderResource()
+void GraphicSystem::ResetShaderResource(Com<ID3D11DeviceContext> deviceContext)
 {
 	ID3D11ShaderResourceView* nullSRV[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = {};
-	m_deviceContext->VSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, nullSRV);
-	m_deviceContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, nullSRV);
+	deviceContext->VSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, nullSRV);
+	deviceContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, nullSRV);
 }
 
-void GraphicSystem::RollbackRenderTarget()
+void GraphicSystem::RollbackRenderTarget(Com<ID3D11DeviceContext> deviceContext)
 {
-	ResetShaderResource();
-	m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_dsv);
+	ResetShaderResource(deviceContext);
+	deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_dsv);
 }
 
-void GraphicSystem::SetRenderTargets(uint count, ID3D11RenderTargetView* const* arrRTV)
+void GraphicSystem::SetRenderTargets(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV)
 {
-	ResetShaderResource();
-	m_deviceContext->OMSetRenderTargets(count, arrRTV, m_dsv);
+	ResetShaderResource(deviceContext);
+	deviceContext->OMSetRenderTargets(count, arrRTV, m_dsv);
 }
 
-void GraphicSystem::SetRenderTargetsWithDepthStencil(uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv)
+void GraphicSystem::SetRenderTargetsWithDepthStencil(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv)
 {
-	ResetShaderResource();
-	m_deviceContext->OMSetRenderTargets(count, arrRTV, dsv);
+	ResetShaderResource(deviceContext);
+	deviceContext->OMSetRenderTargets(count, arrRTV, dsv);
 }
 
 const Color& GraphicSystem::GetClearColor() const
@@ -485,7 +485,7 @@ HRESULT GraphicSystem::CreateDepthStencilView(ID3D11Device* device, unsigned int
 	return S_OK;
 }
 
-HRESULT GraphicSystem::SetViewport(unsigned int width, unsigned int height)
+HRESULT GraphicSystem::SetViewport(Com<ID3D11DeviceContext> deviceContext, unsigned int width, unsigned int height)
 {
 	D3D11_VIEWPORT viewportDesc = {};
 	viewportDesc.Width = float(width);
@@ -494,21 +494,21 @@ HRESULT GraphicSystem::SetViewport(unsigned int width, unsigned int height)
 	viewportDesc.MinDepth = 0.0f;
 	viewportDesc.MaxDepth = 1.0f;
 
-	m_deviceContext->RSSetViewports(1, &viewportDesc);
+	deviceContext->RSSetViewports(1, &viewportDesc);
 
 	return S_OK;
 }
 
-uint2 GraphicSystem::GetViewport() const
+uint2 GraphicSystem::GetViewport(Com<ID3D11DeviceContext> deviceContext) const
 {
 	uint num = 1;
 	D3D11_VIEWPORT viewport;
-	m_deviceContext->RSGetViewports(&num, &viewport);
+	deviceContext->RSGetViewports(&num, &viewport);
 
 	return uint2(uint(viewport.Width), uint(viewport.Height));
 }
 
-HRESULT GraphicSystem::RollbackViewport()
+HRESULT GraphicSystem::RollbackViewport(Com<ID3D11DeviceContext> deviceContext)
 {
-	return SetViewport(m_width, m_height);
+	return SetViewport(deviceContext, m_width, m_height);
 }

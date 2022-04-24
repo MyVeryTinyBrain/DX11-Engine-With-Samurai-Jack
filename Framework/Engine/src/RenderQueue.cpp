@@ -140,7 +140,7 @@ void RenderQueue::Render(ICamera* camera)
 	Render_Forward(camera);
 	Render_Result(camera);
 
-	m_graphicSystem->RollbackRenderTarget();
+	m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
 
 	m_graphicSystem->postProcessing->DrawToScreen(drt->diffuse->srv, uint2(0, 0), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->normal->srv, uint2(100, 0), uint2(100, 100), PostProcessing::CopyType::Default);
@@ -179,7 +179,7 @@ void RenderQueue::Clear()
 void RenderQueue::Render_Deferred(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->SetDeferredRenderTargets(m_graphicSystem);
+	drt->SetDeferredRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
 
 	m_priority->Render(camera);
 	m_priorityInstance->Render(camera);
@@ -200,7 +200,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 void RenderQueue::Render_Forward(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->SetForwardRenderTargets(m_graphicSystem);
+	drt->SetForwardRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
 
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
@@ -209,7 +209,7 @@ void RenderQueue::Render_Forward(ICamera* camera)
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::After);
 
-	drt->SetForwardRenderTargets(m_graphicSystem);
+	drt->SetForwardRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
 
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);

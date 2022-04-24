@@ -62,6 +62,8 @@ PS_IN VS_MAIN(VS_IN In)
 
 	float4 position = float4(In.Position, 1);
 	half4 normal = half4(In.Normal, 0);
+	half4 tangent = half4(In.Tangent, 0);
+	half4 binormal = half4(In.Binormal, 0);
 
 	if (_BoneMatricesUsage.x > 0)
 	{
@@ -72,7 +74,9 @@ PS_IN VS_MAIN(VS_IN In)
 			_BoneMatrices[In.BlendIndices.w] * In.BlendWeight.w;
 
 		position = mul(position, boneMatrix);
-		normal = mul(normal, boneMatrix);
+		normal = normalize(mul(normal, boneMatrix));
+		tangent = normalize(mul(tangent, boneMatrix));
+		binormal = normalize(mul(binormal, boneMatrix));
 	}
 
 	float4x4 instanceWorldMatrix;
@@ -81,17 +85,15 @@ PS_IN VS_MAIN(VS_IN In)
 	instanceWorldMatrix[2] = In.Forward;
 	instanceWorldMatrix[3] = In.Instance_Position;
 
-	float4 worldPosition = mul(position, instanceWorldMatrix);
+	float4 worldPosition = mul(position, _WorldMatrix);
 	half4 vPosition = mul(worldPosition, _ViewMatrix);
 	half4 outputPosition = mul(vPosition, _ProjectionMatrix);
 
-	half4 outputNormal = mul(normal, _WorldMatrix);
-
 	output.Screen = outputPosition;
 	output.UV = In.UV;
-	output.Normal = In.Normal;
-	output.Tangent = In.Tangent;
-	output.Binormal = In.Binormal;
+	output.Normal.xyz = normal.xyz;
+	output.Tangent.xyz = tangent.xyz;
+	output.Binormal.xyz = binormal.xyz;
 	output.WorldPosition = worldPosition;
 	output.ProjPosition = outputPosition;
 
@@ -106,9 +108,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	half3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.UV).rgb;
 	half3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
-	output.Normal.xyz = mul(half4(unpackedNormalMap, 0.0f), _WorldMatrix).xyz;
-	output.Normal.xyz = normalize(output.Normal.xyz);
-	output.Normal.w = 1;
+	half3 normal = mul(half4(unpackedNormalMap, 0.0f), NormalizeTransformationMatrix(_WorldMatrix)).xyz;
+	normal = normalize(normal);
+	output.Normal = PackNormal(normal);
 
 	half depth = In.ProjPosition.z / In.ProjPosition.w;
 	output.Depth = half4(depth, depth, depth, 1.0f);

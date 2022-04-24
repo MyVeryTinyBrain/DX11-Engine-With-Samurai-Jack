@@ -157,6 +157,21 @@ inline float3 DecomposeScale(float4x4 value)
     return float3(xs, ys, zs);
 }
 
+inline half4 PackNormal(half3 normal)
+{
+    return half4(normal * 0.5f + 0.5f, 0.0f);
+}
+
+inline half3 UnpackNormal(half4 packedNormal)
+{
+    return half3(packedNormal.xyz * 2.0f - 1.0f);
+}
+
+inline half3 UnpackNormal(texture2D gbuffer, sampler normalSampler, half2 uv)
+{
+    return UnpackNormal(gbuffer.Sample(normalSampler, uv, 0));
+}
+
 inline half3 UnpackNormalMap(half3 normalMap, half3 normal, half3 tangent, half3 binormal)
 {
     //half3 unpackedNormalMap = (normalMap.x * tangent) + (normalMap.y * binormal) + (normalMap.z * normal);

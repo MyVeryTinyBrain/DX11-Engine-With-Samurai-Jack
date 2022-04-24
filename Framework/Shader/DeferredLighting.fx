@@ -114,7 +114,7 @@ void UnpackGBuffersForLight(half2 uv,
 	out half occlusionMask, out half shadowMask,
 	out half3 specularMask, out half specularPower)
 {
-	normal = _Normal.Sample(pointSampler, uv).xyz;
+	normal = UnpackNormal(_Normal, pointSampler, uv);
 
 	depth = _Depth.Sample(pointSampler, uv).r;
 
@@ -396,14 +396,15 @@ half4 ComputeVolumetric_Point(float3 worldPosition)
 		end = intersects[1];
 	}
 
+	half useIntersectEndPoint = length(_ViewPosition.xyz - worldPosition) > length(_ViewPosition.xyz - end);
+	end = lerp(worldPosition, end, useIntersectEndPoint);
+
 	float3 delta = end - start;
 	float deltaDistance = length(delta);
 	half3 dir = delta / deltaDistance;
-	half endVDepth = mul(float4(worldPosition, 1.0f), _ViewMatrix).z;
 
 	uint numStep = _VolumetricDesc.NumSamples;
 	half step = deltaDistance / numStep;
-	uint numSampled = 0;
 
 	half shaft = 0.0f;
 	[loop]
@@ -414,19 +415,12 @@ half4 ComputeVolumetric_Point(float3 worldPosition)
 		wp.xyz = start + dir * distance;
 		wp.w = 1.0f;
 
-		half sampleVDepth = mul(wp, _ViewMatrix).z;
-		if (sampleVDepth > endVDepth)
-			break;
-
 		half3 lightToWP = (wp.xyz - _LightDesc.Position.xyz);
 		half da = ComputeDistanceAtten(lightToWP);
-		half aa = ComputeAngleAtten(lightToWP);
-		half a = da * aa;
-		half wpShaft = ComputeShadow_Spot(0, wp) * a;
+		half wpShaft = ComputeShadow_Point(lightToWP, 0, wp) * da;
 		shaft += wpShaft;
-		++numSampled;
 	}
-	shaft /= numSampled;
+	shaft /= numStep;
 	shaft = pow(shaft * _VolumetricDesc.Intensity, _VolumetricDesc.Power);
 	return half4(_LightDesc.Diffuse.rgb * shaft, 1.0f);
 }
@@ -457,14 +451,15 @@ half4 ComputeVolumetric_Spot(float3 worldPosition)
 		end = intersects[1];
 	}
 
+	half useIntersectEndPoint = length(_ViewPosition.xyz - worldPosition) > length(_ViewPosition.xyz - end);
+	end = lerp(worldPosition, end, useIntersectEndPoint);
+
 	float3 delta = end - start;
 	float deltaDistance = length(delta);
 	half3 dir = delta / deltaDistance;
-	half endVDepth = mul(float4(worldPosition, 1.0f), _ViewMatrix).z;
 
 	uint numStep = _VolumetricDesc.NumSamples;
 	half step = deltaDistance / numStep;
-	uint numSampled = 0;
 
 	half shaft = 0.0f;
 	[loop]
@@ -475,19 +470,14 @@ half4 ComputeVolumetric_Spot(float3 worldPosition)
 		wp.xyz = start + dir * distance;
 		wp.w = 1.0f;
 
-		half sampleVDepth = mul(wp, _ViewMatrix).z;
-		if (sampleVDepth > endVDepth)
-			break;
-
 		half3 lightToWP = (wp.xyz - _LightDesc.Position.xyz);
 		half da = ComputeDistanceAtten(lightToWP);
 		half aa = ComputeAngleAtten(lightToWP);
 		half a = da * aa;
 		half wpShaft = ComputeShadow_Spot(0, wp) * a;
 		shaft += wpShaft;
-		++numSampled;
 	}
-	shaft /= numSampled;
+	shaft /= numStep;
 	shaft = pow(shaft * _VolumetricDesc.Intensity, _VolumetricDesc.Power);
 	return half4(_LightDesc.Diffuse.rgb * shaft, 1.0f);
 }

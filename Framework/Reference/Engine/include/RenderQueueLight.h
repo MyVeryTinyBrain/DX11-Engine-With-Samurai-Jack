@@ -114,6 +114,8 @@ private:
 	Map_RenderRequestsByMesh		m_skinnedRequests;
 	Map_RenderRequestsByMaterial	m_shadowPassRequests;
 	IMap_RenderRequestsByMaterial	m_shadowPassInstanceRequests;
+
+	Com<ID3D11DeviceContext>		m_deferredDeviceContext;
 };
 
 ENGINE_END

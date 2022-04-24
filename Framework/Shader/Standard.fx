@@ -107,9 +107,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	half3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.UV).rgb;
 	half3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
-	output.Normal.xyz = mul(half4(unpackedNormalMap, 0.0f), NormalizeTransformationMatrix(_WorldMatrix)).xyz;
-	output.Normal.xyz = normalize(output.Normal.xyz);
-	output.Normal.w = 1;
+	half3 normal = mul(half4(unpackedNormalMap, 0.0f), NormalizeTransformationMatrix(_WorldMatrix)).xyz;
+	normal = normalize(normal);
+	output.Normal = PackNormal(normal);
 
 	half depth = In.ProjPosition.z / In.ProjPosition.w;
 	output.Depth = half4(depth, depth, depth, 1.0f);

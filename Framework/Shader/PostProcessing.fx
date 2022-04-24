@@ -164,7 +164,7 @@ half SSAORayMarch(float2 uv)
 
 	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
 
-	half3 normal = _Normal.Sample(pointSampler, uv, 0).xyz;
+	half3 normal = UnpackNormal(_Normal, pointSampler, uv);
 
 	half depth = _Depth.Sample(pointSampler, uv, 0).r;
 	half occlusionMask = _Light_Occlusion_Shadow.Sample(pointSampler, uv, 0).g;
@@ -296,7 +296,7 @@ half2 SSRRayMarch(half2 uv)
 	half3 vPos = ToViewSpace(uv, depth, invProjMatrix);
 	half3 vPixelDir = normalize(vPos);
 
-	half3 normal = _Normal.Sample(pointSampler, uv).rgb;
+	half3 normal = UnpackNormal(_Normal, pointSampler, uv);
 	half3 vNormal = mul(half4(normal, 0.0f), _ViewMatrix).xyz;
 	vNormal = normalize(vNormal);
 	half3 vDir = reflect(vPixelDir, vNormal);
