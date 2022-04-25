@@ -11,13 +11,13 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Diffuse);
 	m_renderTargets.push_back(m_Diffuse);
-
+	
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Normal);
 	m_renderTargets.push_back(m_Normal);
-
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Depth[0]);
+	
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_Depth[0]);
 	m_renderTargets.push_back(m_Depth[0]);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Depth[1]);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_Depth[1]);
 	m_copyTargets.push_back(m_Depth[1]);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Light_Occlusion_Shadow);
@@ -53,7 +53,7 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_postProcessingRenderTargets.push_back(m_bridge);
 	RenderTarget::Create(device, width / 2, height / 2, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bridgeHalf);
 	m_postProcessingRenderTargets.push_back(m_bridgeHalf);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_ssao);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8_UNORM, &m_ssao);
 	m_postProcessingRenderTargets.push_back(m_ssao);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bloom);
 	m_postProcessingRenderTargets.push_back(m_bloom);

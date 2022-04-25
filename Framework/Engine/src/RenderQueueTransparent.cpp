@@ -107,7 +107,7 @@ void RenderQueueTransparent::ApplyMaterial(Com<ID3D11DeviceContext> deviceContex
 
 	*inout_prevMaterial = material;
 
-	material->ApplyMaterial(camera);
+	material->ApplyMaterial(deviceContext, camera);
 
 	if (FAILED(hr = material->SetInputLayout(deviceContext, techniqueIndex, passIndex)))
 		return;
@@ -138,21 +138,21 @@ void RenderQueueTransparent::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, I
 
 void RenderQueueTransparent::ApplyCameraBuffer(ICamera* camera)
 {
-	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
+	m_CBufferManager->ApplyCameraBuffer(m_graphicSystem->deviceContext, camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 }
 
 void RenderQueueTransparent::ApplyBoneMatrices(IRendererBoneOp* boneOp, uint subMeshIndex)
 {
-	m_CBufferManager->ApplyBoneMatricesUsageBuffer(boneOp != nullptr);
+	m_CBufferManager->ApplyBoneMatricesUsageBuffer(m_graphicSystem->deviceContext, boneOp != nullptr);
 
 	if (!boneOp)
 		return;
 
 	boneOp->OnSetBoneMatricesCBuffer(subMeshIndex, m_CBufferManager->GetBoneMatricesBufferData());
-	m_CBufferManager->ApplyBoneMatrices();
+	m_CBufferManager->ApplyBoneMatrices(m_graphicSystem->deviceContext);
 }
 
 void RenderQueueTransparent::ApplyWorldMatrix(const M4& worldMatrix)
 {
-	m_CBufferManager->ApplyWorldMatrixBuffer(worldMatrix);
+	m_CBufferManager->ApplyWorldMatrixBuffer(m_graphicSystem->deviceContext, worldMatrix);
 }

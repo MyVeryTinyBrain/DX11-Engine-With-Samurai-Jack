@@ -86,6 +86,9 @@ public:
 	void SetRenderTargets(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV);
 	void SetRenderTargetsWithDepthStencil(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv);
 
+	void SyncronizeDeferredContext(Com<ID3D11DeviceContext> dc);
+	void ExecuteDeferredContext(Com<ID3D11DeviceContext> dc);
+
 public:
 
 	const Color& GetClearColor() const;

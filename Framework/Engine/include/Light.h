@@ -69,7 +69,7 @@ protected:
 private:
 
 	virtual inline void GetDepthes(DepthStencil** out_depthes) const override { memcpy(out_depthes, m_depthes, sizeof(m_depthes)); }
-	virtual void ClearDepthes() override;
+	virtual void ClearDepthes(Com<ID3D11DeviceContext> deviceContext) override;
 	void DeleteDepthes();
 	void ResizeDepthes(uint size);
 

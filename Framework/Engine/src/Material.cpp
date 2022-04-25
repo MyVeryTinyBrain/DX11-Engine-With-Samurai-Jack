@@ -51,10 +51,10 @@ Material::~Material()
 	m_specificShaderVariables.clear();
 }
 
-void Material::ApplyMaterial(ICamera* camera)
+void Material::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
 	ApplyVariables();
-	ApplySpecificVariables(camera);
+	ApplySpecificVariables(deviceContext, camera);
 }
 
 HRESULT Material::SetRawValue(const string& name, const void* data, size_t size)
@@ -774,7 +774,7 @@ HRESULT Material::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint te
 	if (!m_shader)
 		return E_FAIL;
 
-	return m_shader->SetInputLayout(techniqueIndex, passIndex);
+	return m_shader->SetInputLayout(deviceContext, techniqueIndex, passIndex);
 }
 
 HRESULT Material::ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
@@ -782,7 +782,7 @@ HRESULT Material::ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniq
 	if (!m_shader)
 		return E_FAIL;
 
-	return m_shader->ApplyPass(techniqueIndex, passIndex);
+	return m_shader->ApplyPass(deviceContext, techniqueIndex, passIndex);
 }
 
 void Material::ApplyVariables()
@@ -791,10 +791,10 @@ void Material::ApplyVariables()
 		var->Apply();
 }
 
-void Material::ApplySpecificVariables(ICamera* camera)
+void Material::ApplySpecificVariables(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
 	for (auto& var : m_specificShaderVariables)
-		var->Apply(camera);
+		var->Apply(deviceContext, camera);
 }
 
 void Material::SetupShaderVariables()

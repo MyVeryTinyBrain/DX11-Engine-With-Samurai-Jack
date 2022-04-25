@@ -80,26 +80,26 @@ HRESULT Shader::SetTextures(const string& name, ResourceRef<Texture>* textures, 
 	return m_shaderDesc->SetTextures(name, shaderResourceViews, count);
 }
 
-HRESULT Shader::SetInputLayout(uint techniqueIndex, uint passIndex)
+HRESULT Shader::SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
 {
+	if (!deviceContext)
+		return E_FAIL;
+
 	if (!m_shaderDesc)
 		return E_FAIL;
 
-	if (!system || !system->graphic || !system->graphic->deviceContext)
-		return E_FAIL;
-
-	return m_shaderDesc->SetInputLayout(system->graphic->deviceContext, techniqueIndex, passIndex);
+	return m_shaderDesc->SetInputLayout(deviceContext, techniqueIndex, passIndex);
 }
 
-HRESULT Shader::ApplyPass(uint techniqueIndex, uint passIndex)
+HRESULT Shader::ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex)
 {
+	if (!deviceContext)
+		return E_FAIL;
+
 	if (!m_shaderDesc)
 		return E_FAIL;
 
-	if (!system || !system->graphic)
-		return E_FAIL;
-
-	return m_shaderDesc->ApplyPass(system->graphic->deviceContext, techniqueIndex, passIndex);
+	return m_shaderDesc->ApplyPass(deviceContext, techniqueIndex, passIndex);
 }
 
 HRESULT Shader::GetTechniqueCount(uint& out_techniqueCount) const

@@ -59,15 +59,18 @@ bool Light::IsWorking() const
 	return active;
 }
 
-void Light::ClearDepthes()
+void Light::ClearDepthes(Com<ID3D11DeviceContext> deviceContext)
 {
+	if (!deviceContext)
+		return;
+
 	uint projectionCount = GetProjectionCount();
 	for (uint i = 0; i < projectionCount; ++i)
 	{
 		if (m_depthes[i] == nullptr)
 			continue;
 
-		m_depthes[i]->Clear(system->graphic->deviceContext);
+		m_depthes[i]->Clear(deviceContext);
 	}
 }
 

@@ -521,7 +521,7 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
 
-	output.volumetric = half4(0, 0, 0, 0);
+	output.volumetric = half4(0, 0, 0, 1);
 
 	return output;
 }
@@ -569,7 +569,7 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
 
-	half4 volumetric = half4(0, 0, 0, 0);
+	half4 volumetric = half4(0, 0, 0, 1);
 	[branch]
 	if (_VolumetricDesc.DrawVolumetric)
 	{
@@ -625,7 +625,7 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 	output.light = half4(_LightDesc.Diffuse.rgb * lightIntensity + _LightDesc.Ambient.rgb * atten * occlusionMask, 1.0f);
 	output.specular = half4(_LightDesc.Diffuse.rgb * specularMask * specularIntensity, 1.0f);
 
-	half4 volumetric = half4(0, 0, 0, 0);
+	half4 volumetric = half4(0, 0, 0, 1);
 	[branch]
 	if (_VolumetricDesc.DrawVolumetric)
 	{

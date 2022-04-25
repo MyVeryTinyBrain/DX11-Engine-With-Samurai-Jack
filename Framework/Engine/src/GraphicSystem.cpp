@@ -326,6 +326,38 @@ void GraphicSystem::SetRenderTargetsWithDepthStencil(Com<ID3D11DeviceContext> de
 	deviceContext->OMSetRenderTargets(count, arrRTV, dsv);
 }
 
+void GraphicSystem::SyncronizeDeferredContext(Com<ID3D11DeviceContext> dc)
+{
+	if (!dc)
+		return;
+
+	dc->ClearState();
+
+	ID3D11RenderTargetView* rtv[8] = {};
+	ID3D11DepthStencilView* dsv = nullptr;
+	m_deviceContext->OMGetRenderTargets(8, rtv, &dsv);
+	dc->OMSetRenderTargets(8, rtv, dsv);
+
+	UINT numViewports = 1;
+	D3D11_VIEWPORT viewport;
+	m_deviceContext->RSGetViewports(&numViewports, &viewport);
+	dc->RSSetViewports(1, &viewport);
+}
+
+void GraphicSystem::ExecuteDeferredContext(Com<ID3D11DeviceContext> dc)
+{
+	if (!dc)
+		return;
+
+	ID3D11CommandList* commandList = nullptr;
+	dc->FinishCommandList(FALSE, &commandList);
+	if (commandList)
+	{
+		m_deviceContext->ExecuteCommandList(commandList, TRUE);
+		commandList->Release();
+	}
+}
+
 const Color& GraphicSystem::GetClearColor() const
 {
 	return m_clearColor;

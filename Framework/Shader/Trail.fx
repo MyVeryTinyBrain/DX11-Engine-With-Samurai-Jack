@@ -61,6 +61,7 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	float2 sPosition = ndcPosition.xy * float2(1.0f, -1.0f) * 0.5f + 0.5f;
 
 	half4 grab = _Grab.Sample(linearSampler, sPosition);
+	//grab.a = 1.0f;
 	return grab * _Color;
 }
 

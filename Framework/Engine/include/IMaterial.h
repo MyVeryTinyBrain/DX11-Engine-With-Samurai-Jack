@@ -10,7 +10,7 @@ public:
 
 	virtual ~IMaterial() = default;
 
-	virtual void ApplyMaterial(ICamera* camera) = 0;
+	virtual void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera) = 0;
 
 	virtual HRESULT GetTechniqueCount(uint& out_techniqueCount) const = 0;
 

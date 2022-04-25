@@ -315,26 +315,26 @@ void PlayerTestScene::OnLoad()
 			goSphere->AddComponent<SphereCollider>();
 		}
 
-		//{
-		//	m_sphere[0] = CreateGameObject(TEXT("Sphere"));
+		{
+			m_sphere[0] = CreateGameObject(TEXT("Sphere"));
 
-		//	MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
-		//	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+			MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
-		//	m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
+			m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
 
-		//	m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
-		//	m_rigidbody->sleepThresholder = 1000;
-		//	m_sphere[0]->AddComponent<SphereCollider>();
+			m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
+			m_rigidbody->sleepThresholder = 1000;
+			m_sphere[0]->AddComponent<SphereCollider>();
 
-		//	ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
-		//	ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
-		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
+			ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
+			ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
+			material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-		//	m_trailRenderer[0]->material = material;
+			m_trailRenderer[0]->material = material;
 
-		//	m_sphere[0]->activeSelf = true;
-		//}
+			m_sphere[0]->activeSelf = true;
+		}
 
 		//{
 		//	m_sphere[1] = CreateGameObject(TEXT("Sphere"));

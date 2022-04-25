@@ -24,13 +24,12 @@ Texture2D::~Texture2D()
 	SafeRelease(m_srv);
 }
 
-ResourceRef<Texture2D> Texture2D::Copy() const
+ResourceRef<Texture2D> Texture2D::Copy(Com<ID3D11DeviceContext> deviceContext) const
 {
-	if (!system || !system->graphic || !system->graphic->device || !system->graphic->deviceContext)
+	if (!system || !system->graphic || !system->graphic->device || !deviceContext)
 		return nullptr;
 
 	auto device = system->graphic->device;
-	auto deviceContext = system->graphic->deviceContext;
 
 	ID3D11Texture2D* src = nullptr;
 	ID3D11Texture2D* dest = nullptr;
@@ -75,15 +74,17 @@ ResourceRef<Texture2D> Texture2D::Copy() const
 	return new Texture2D(management, false, path, TEXT(""), dest, destSRV, m_format, m_desc);
 }
 
-bool Texture2D::CopyTo(ResourceRef<Texture2D> destTex)
+bool Texture2D::CopyTo(Com<ID3D11DeviceContext> deviceContext, ResourceRef<Texture2D> destTex)
 {
+	if (!deviceContext)
+		return false;
+
 	if (width != destTex->width || height != destTex->height)
 		return false;
 
 	if (destTex->m_desc.Usage == D3D11_USAGE_IMMUTABLE)
 		return false;
 
-	auto deviceContext = system->graphic->deviceContext;
 	ID3D11Resource* src = m_texture;
 	ID3D11Resource* dest = destTex->m_texture;
 	deviceContext->CopyResource(dest, src);

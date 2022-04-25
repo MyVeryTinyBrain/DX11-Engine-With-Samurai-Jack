@@ -20,23 +20,23 @@ public:
 
 	void EndApply();
 
-	void ApplyWorldMatrixBuffer(const M4& world);
+	void ApplyWorldMatrixBuffer(Com<ID3D11DeviceContext> deviceContext, const M4& world);
 
-	void ApplyCameraBuffer(const V3& position, const V3& direction, const M4& view, const M4& proj, uint2 size, float Near, float Far);
+	void ApplyCameraBuffer(Com<ID3D11DeviceContext> deviceContext, const V3& position, const V3& direction, const M4& view, const M4& proj, uint2 size, float Near, float Far);
 
-	void ApplyBoneMatricesUsageBuffer(bool use);
+	void ApplyBoneMatricesUsageBuffer(Com<ID3D11DeviceContext> deviceContext, bool use);
 
 	BoneMatricesCBuffer* GetBoneMatricesBufferData();
 
-	void ApplyBoneMatrices();
+	void ApplyBoneMatrices(Com<ID3D11DeviceContext> deviceContext);
 
 private:
 
 	HRESULT CreateBuffer(size_t size, ID3D11Buffer** out_buffer);
 
-	HRESULT MapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE* out_mappedSubresource);
+	HRESULT MapBuffer(Com<ID3D11DeviceContext> deviceContext, ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE* out_mappedSubresource);
 
-	HRESULT UnmapBuffer(ID3D11Buffer* buffer);
+	HRESULT UnmapBuffer(Com<ID3D11DeviceContext> deviceContext, ID3D11Buffer* buffer);
 
 	HRESULT SetCBuffer(ID3D11Buffer* buffer, Com<ID3DX11Effect> effect, const char* CBufferName);
 

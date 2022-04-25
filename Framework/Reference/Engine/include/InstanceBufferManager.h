@@ -20,9 +20,9 @@ public:
 
 	HRESULT Reserve(uint count);
 
-	HRESULT BeginSetDatas(uint maxCount);
+	HRESULT BeginSetDatas(Com<ID3D11DeviceContext> deviceContext, uint maxCount);
 
-	void EndSetDatas();
+	void EndSetDatas(Com<ID3D11DeviceContext> deviceContext);
 
 	HRESULT SetData(uint index, InstanceData* pInstanceData);
 

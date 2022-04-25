@@ -25,8 +25,8 @@ public:
 	HRESULT SetTexture(const string& name, ResourceRef<Texture> texture);
 	HRESULT SetTextures(const string& name, ResourceRef<Texture>* textures, uint count);
 
-	HRESULT SetInputLayout(uint techniqueIndex, uint passIndex);
-	HRESULT ApplyPass(uint techniqueIndex, uint passIndex);
+	HRESULT SetInputLayout(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex);
+	HRESULT ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniqueIndex, uint passIndex);
 
 public:
 

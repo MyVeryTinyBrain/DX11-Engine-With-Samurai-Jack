@@ -52,10 +52,10 @@ void CBufferManager::EndApply()
     m_settedEffect = nullptr;
 }
 
-void CBufferManager::ApplyWorldMatrixBuffer(const M4& world)
+void CBufferManager::ApplyWorldMatrixBuffer(Com<ID3D11DeviceContext> deviceContext, const M4& world)
 {
     D3D11_MAPPED_SUBRESOURCE resource = {};
-    if (FAILED(MapBuffer(m_worldMatrixBuffer, &resource)))
+    if (FAILED(MapBuffer(deviceContext, m_worldMatrixBuffer, &resource)))
         return;
     
     if (WorldMatrixCBuffer* buffer = (WorldMatrixCBuffer*)resource.pData)
@@ -64,17 +64,17 @@ void CBufferManager::ApplyWorldMatrixBuffer(const M4& world)
         buffer->_WorldMatrix = world.transposed;
     }
 
-    if (FAILED(UnmapBuffer(m_worldMatrixBuffer)))
+    if (FAILED(UnmapBuffer(deviceContext, m_worldMatrixBuffer)))
         return;
 
     if (FAILED(SetCBuffer(m_worldMatrixBuffer, m_settedEffect, "WorldMatrixCBuffer")))
         return;
 }
 
-void CBufferManager::ApplyCameraBuffer(const V3& position, const V3& direction, const M4& view, const M4& proj, uint2 size, float Near, float Far)
+void CBufferManager::ApplyCameraBuffer(Com<ID3D11DeviceContext> deviceContext, const V3& position, const V3& direction, const M4& view, const M4& proj, uint2 size, float Near, float Far)
 {
     D3D11_MAPPED_SUBRESOURCE resource = {};
-    if (FAILED(MapBuffer(m_cameraBuffer, &resource)))
+    if (FAILED(MapBuffer(deviceContext, m_cameraBuffer, &resource)))
         return;
 
     if (CameraCBuffer* buffer = (CameraCBuffer*)resource.pData)
@@ -92,17 +92,17 @@ void CBufferManager::ApplyCameraBuffer(const V3& position, const V3& direction, 
         buffer->_Far = Far;
     }
 
-    if (FAILED(UnmapBuffer(m_cameraBuffer)))
+    if (FAILED(UnmapBuffer(deviceContext, m_cameraBuffer)))
         return;
 
     if (FAILED(SetCBuffer(m_cameraBuffer, m_settedEffect, "CameraCBuffer")))
         return;
 }
 
-void CBufferManager::ApplyBoneMatricesUsageBuffer(bool use)
+void CBufferManager::ApplyBoneMatricesUsageBuffer(Com<ID3D11DeviceContext> deviceContext, bool use)
 {
     D3D11_MAPPED_SUBRESOURCE resource = {};
-    if (FAILED(MapBuffer(m_boneMatricesUsageBuffer, &resource)))
+    if (FAILED(MapBuffer(deviceContext, m_boneMatricesUsageBuffer, &resource)))
         return;
 
     if (BoneMatricesUsageCBuffer* buffer = (BoneMatricesUsageCBuffer*)resource.pData)
@@ -113,7 +113,7 @@ void CBufferManager::ApplyBoneMatricesUsageBuffer(bool use)
             buffer->_BoneMatricesUsage = uint4(0, 0, 0, 0);
     }
 
-    if (FAILED(UnmapBuffer(m_boneMatricesUsageBuffer)))
+    if (FAILED(UnmapBuffer(deviceContext, m_boneMatricesUsageBuffer)))
         return;
 
     if (FAILED(SetCBuffer(m_boneMatricesUsageBuffer, m_settedEffect, "BoneMatricesUsageCBuffer")))
@@ -125,10 +125,10 @@ BoneMatricesCBuffer* CBufferManager::GetBoneMatricesBufferData()
     return &m_boneMatricesBufferData;
 }
 
-void CBufferManager::ApplyBoneMatrices()
+void CBufferManager::ApplyBoneMatrices(Com<ID3D11DeviceContext> deviceContext)
 {
     D3D11_MAPPED_SUBRESOURCE resource = {};
-    if (FAILED(MapBuffer(m_boneMatricesBuffer, &resource)))
+    if (FAILED(MapBuffer(deviceContext, m_boneMatricesBuffer, &resource)))
         return;
 
     if (BoneMatricesCBuffer* buffer = (BoneMatricesCBuffer*)resource.pData)
@@ -136,7 +136,7 @@ void CBufferManager::ApplyBoneMatrices()
         memcpy(buffer, &m_boneMatricesBufferData, sizeof(BoneMatricesCBuffer));
     }
 
-    if (FAILED(UnmapBuffer(m_boneMatricesBuffer)))
+    if (FAILED(UnmapBuffer(deviceContext, m_boneMatricesBuffer)))
         return;
 
     if (FAILED(SetCBuffer(m_boneMatricesBuffer, m_settedEffect, "BoneMatricesCBuffer")))
@@ -164,26 +164,22 @@ HRESULT CBufferManager::CreateBuffer(size_t size, ID3D11Buffer** out_buffer)
     return S_OK;
 }
 
-HRESULT CBufferManager::MapBuffer(ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE* out_mappedSubresource)
+HRESULT CBufferManager::MapBuffer(Com<ID3D11DeviceContext> deviceContext, ID3D11Buffer* buffer, D3D11_MAPPED_SUBRESOURCE* out_mappedSubresource)
 {
     if (!buffer)
         return E_FAIL;
-
-    auto context = m_graphicSystem->deviceContext;
 
     HRESULT hr = S_OK;
 
-    return context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, out_mappedSubresource);
+    return deviceContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, out_mappedSubresource);
 }
 
-HRESULT CBufferManager::UnmapBuffer(ID3D11Buffer* buffer)
+HRESULT CBufferManager::UnmapBuffer(Com<ID3D11DeviceContext> deviceContext, ID3D11Buffer* buffer)
 {
     if (!buffer)
         return E_FAIL;
 
-    auto context = m_graphicSystem->deviceContext;
-
-    context->Unmap(buffer, 0);
+    deviceContext->Unmap(buffer, 0);
 
     return S_OK;
 }

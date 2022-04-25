@@ -22,12 +22,12 @@ protected:
 public:
 
 	// Copy to unmanaged Texture2D
-	ResourceRef<Texture2D> Copy() const;
+	ResourceRef<Texture2D> Copy(Com<ID3D11DeviceContext> deviceContext) const;
 
 	// Copy to the dest Texture2D of the same size.
 	// Fail to copy if their sizes are different.
 	// Fail to copy if destTex is D3D11_USAGE_IMMUTABLE.
-	bool CopyTo(ResourceRef<Texture2D> destTex);
+	bool CopyTo(Com<ID3D11DeviceContext> deviceContext, ResourceRef<Texture2D> destTex);
 
 public:
 

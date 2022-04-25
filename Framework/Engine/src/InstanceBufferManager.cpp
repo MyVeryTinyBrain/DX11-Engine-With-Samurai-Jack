@@ -74,7 +74,7 @@ HRESULT InstanceBufferManager::Reserve(uint count)
     return Resize(count);
 }
 
-HRESULT InstanceBufferManager::BeginSetDatas(uint maxCount)
+HRESULT InstanceBufferManager::BeginSetDatas(Com<ID3D11DeviceContext> deviceContext, uint maxCount)
 {
     HRESULT hr = S_OK;
 
@@ -84,15 +84,15 @@ HRESULT InstanceBufferManager::BeginSetDatas(uint maxCount)
             return hr;
     }
 
-    if (FAILED(hr = m_graphicSystem->deviceContext->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &m_mappedSubresource)))
+    if (FAILED(hr = deviceContext->Map(m_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &m_mappedSubresource)))
         return hr;
 
     return S_OK;
 }
 
-void InstanceBufferManager::EndSetDatas()
+void InstanceBufferManager::EndSetDatas(Com<ID3D11DeviceContext> deviceContext)
 {
-    m_graphicSystem->deviceContext->Unmap(m_buffer, 0);
+    deviceContext->Unmap(m_buffer, 0);
 }
 
 HRESULT InstanceBufferManager::SetData(uint index, InstanceData* pInstanceData)

@@ -61,7 +61,8 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 
 float4 PS_MAIN_Volumetric(PS_IN In) : SV_TARGET
 {
-	return _Volumetric.Sample(pointSampler, In.UV);
+	half4 color = _Volumetric.Sample(pointSampler, In.UV);
+	return color;
 }
 
 RasterizerState RasterizerState0
@@ -77,7 +78,15 @@ DepthStencilState DepthStencilState0
 	DepthWriteMask = zero;
 };
 
-BlendState BlendState0
+BlendState BlendState_Mix
+{
+	BlendEnable[0] = true;
+	SrcBlend = Src_Alpha;
+	DestBlend = Inv_Src_Alpha;
+	BlendOp = Add;
+};
+
+BlendState BlendState_Add
 {
 	BlendEnable[0] = true;
 	SrcBlend = One;
@@ -91,7 +100,7 @@ technique11 Technique0
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_Add, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
@@ -99,7 +108,7 @@ technique11 Technique0
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_Add, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_Volumetric();
 	}

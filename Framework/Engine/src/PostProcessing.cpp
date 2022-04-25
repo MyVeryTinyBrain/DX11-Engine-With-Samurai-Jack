@@ -46,7 +46,7 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 
 	m_CBufferManager->BeginApply(m_shaderPostProcessing->GetEffect());
 	{
-		m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
+		m_CBufferManager->ApplyCameraBuffer(m_graphicSystem->deviceContext, camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 
 		m_shaderPostProcessing->SetVector("_TextureSize", V2(float(drt->width), float(drt->height)));
 		m_shaderPostProcessing->SetTexture("_Diffuse", drt->diffuse->srv);

@@ -69,18 +69,18 @@ private:
 
 	bool IsValidLight(ICamera* camera, ILight* light) const;
 	bool IsValidShadowRequest(ICamera* camera, const RenderRequest& request, const BoundingHolder& boundingHolder) const;
-	void ApplyCBufferForLight(const RenderRequest& request, const LightDesc& lightDesc, uint projectionIndex);
+	void ApplyCBufferForLight(Com<ID3D11DeviceContext> deviceContext, const RenderRequest& request, const LightDesc& lightDesc, uint projectionIndex);
 
 	bool CullOp(const RenderRequest& request, const BoundingHolder& boundingHolder) const;
 
 	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial);
 	void ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMesh* mesh, IMesh** inout_prevMesh);
-	void ApplyCameraBuffer(const LightDesc& lightDesc, uint projectionIndex);
-	void ApplyBoneMatrices(IRendererBoneOp* boneOp, uint subMeshIndex);
-	void ApplyWorldMatrix(const M4& worldMatrix);
+	void ApplyCameraBuffer(Com<ID3D11DeviceContext> deviceContext, const LightDesc& lightDesc, uint projectionIndex);
+	void ApplyBoneMatrices(Com<ID3D11DeviceContext> deviceContext, IRendererBoneOp* boneOp, uint subMeshIndex);
+	void ApplyWorldMatrix(Com<ID3D11DeviceContext> deviceContext, const M4& worldMatrix);
 
 	void IApplyMesh(Com<ID3D11DeviceContext> deviceContext, Com<ID3D11Buffer> instanceDataBuffer, IMesh* mesh, IMesh** inout_prevMesh);
-	void IApplyBoneMatricesUsage();
+	void IApplyBoneMatricesUsage(Com<ID3D11DeviceContext> deviceContext);
 	 
 private:
 
@@ -114,8 +114,6 @@ private:
 	Map_RenderRequestsByMesh		m_skinnedRequests;
 	Map_RenderRequestsByMaterial	m_shadowPassRequests;
 	IMap_RenderRequestsByMaterial	m_shadowPassInstanceRequests;
-
-	Com<ID3D11DeviceContext>		m_deferredDeviceContext;
 };
 
 ENGINE_END

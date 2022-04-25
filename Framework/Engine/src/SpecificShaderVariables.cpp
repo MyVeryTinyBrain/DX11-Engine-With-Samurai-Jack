@@ -10,32 +10,35 @@
 #include "GraphicSystem.h"
 #include "RenderTarget.h"
 
-void SSVTime::Apply(ICamera* camera)
+void SSVTime::Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
 	float value = m_system->time->accumulatedSinceStartup;
 	m_variableInfo->Handle->SetRawValue(&value, 0, sizeof(float));
 }
 
-void SSVUnscaledTime::Apply(ICamera* camera)
+void SSVUnscaledTime::Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
 	float value = m_system->time->unscaledAccumulatedSinceStartup;
 	m_variableInfo->Handle->SetRawValue(&value, 0, sizeof(float));
 }
 
-void SSVDeltaTime::Apply(ICamera* camera)
+void SSVDeltaTime::Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
 	float value = m_system->time->deltaTime;
 	m_variableInfo->Handle->SetRawValue(&value, 0, sizeof(float));
 }
 
-void SSVFixedDeltaTime::Apply(ICamera* camera)
+void SSVFixedDeltaTime::Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
 	float value = m_system->time->fixedDeltaTime;
 	m_variableInfo->Handle->SetRawValue(&value, 0, sizeof(float));
 }
 
-void SSVGrabTexture::Apply(ICamera* camera)
+void SSVGrabTexture::Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
+	if (!deviceContext)
+		return;
+
 	ID3DX11EffectShaderResourceVariable* hValue = m_variableInfo->Handle->AsShaderResource();
 	if (!hValue->IsValid())
 	{
@@ -44,14 +47,17 @@ void SSVGrabTexture::Apply(ICamera* camera)
 	}
 
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	m_system->graphic->deviceContext->CopyResource(drt->copyTargetResult->texture.Get(), drt->result->texture.Get());
+	deviceContext->CopyResource(drt->copyTargetResult->texture.Get(), drt->result->texture.Get());
 	hValue->SetResource(drt->copyTargetResult->srv.Get());
 
 	SafeRelease(hValue);
 }
 
-void SSVDepthTexture::Apply(ICamera* camera)
+void SSVDepthTexture::Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
+	if (!deviceContext)
+		return;
+
 	ID3DX11EffectShaderResourceVariable* hValue = m_variableInfo->Handle->AsShaderResource();
 	if (!hValue->IsValid())
 	{
@@ -60,7 +66,7 @@ void SSVDepthTexture::Apply(ICamera* camera)
 	}
 
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	m_system->graphic->deviceContext->CopyResource(drt->copyTargetDepth->texture.Get(), drt->depth->texture.Get());
+	deviceContext->CopyResource(drt->copyTargetDepth->texture.Get(), drt->depth->texture.Get());
 	hValue->SetResource(drt->copyTargetDepth->srv.Get());
 
 	SafeRelease(hValue);

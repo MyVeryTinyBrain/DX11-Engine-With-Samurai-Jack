@@ -18,7 +18,7 @@ public:
 
 	virtual ~Material();
 
-	virtual void ApplyMaterial(ICamera* camera) override;
+	virtual void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera) override;
 
 public:
 
@@ -100,7 +100,7 @@ private:
 private:
 
 	void ApplyVariables();
-	void ApplySpecificVariables(ICamera* camera);
+	void ApplySpecificVariables(Com<ID3D11DeviceContext> deviceContext, ICamera* camera);
 
 private:
 

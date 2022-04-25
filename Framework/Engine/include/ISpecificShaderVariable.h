@@ -17,7 +17,7 @@ public:
 
 	virtual ~ISpecificShaderVariable() = default;
 
-	virtual void Apply(ICamera* camera) = 0;
+	virtual void Apply(Com<ID3D11DeviceContext> deviceContext, ICamera* camera) = 0;
 
 	virtual ISpecificShaderVariable* Copy(Material* material, const ISpecificShaderVariable& other) const = 0;
 

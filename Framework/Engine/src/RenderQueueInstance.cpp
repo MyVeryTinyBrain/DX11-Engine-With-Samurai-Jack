@@ -95,7 +95,7 @@ void RenderQueueInstance::Render(ICamera* camera)
 					const RenderRequest& front = requests.front();
 
 					uint drawCount = 0;
-					m_instanceBufferManager->BeginSetDatas(instanceRequestCount);
+					m_instanceBufferManager->BeginSetDatas(m_graphicSystem->deviceContext, instanceRequestCount);
 					{
 						for (uint i = 0; i < instanceRequestCount; ++i)
 						{
@@ -117,7 +117,7 @@ void RenderQueueInstance::Render(ICamera* camera)
 							++drawCount;
 						}
 					}
-					m_instanceBufferManager->EndSetDatas();
+					m_instanceBufferManager->EndSetDatas(m_graphicSystem->deviceContext);
 
 					if (drawCount == 0)
 						continue;
@@ -177,7 +177,7 @@ void RenderQueueInstance::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, 
 
 	*inout_prevMaterial = material;
 
-	material->ApplyMaterial(camera);
+	material->ApplyMaterial(deviceContext, camera);
 
 	if (FAILED(hr = material->SetInputLayout(deviceContext, techniqueIndex, passIndex)))
 		return;
@@ -208,16 +208,16 @@ void RenderQueueInstance::IApplyMesh(Com<ID3D11DeviceContext> deviceContext, Com
 
 void RenderQueueInstance::ApplyCameraBuffer(ICamera* camera)
 {
-	m_CBufferManager->ApplyCameraBuffer(camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
+	m_CBufferManager->ApplyCameraBuffer(m_graphicSystem->deviceContext, camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 }
 
 void RenderQueueInstance::ApplyWorldMatrix(const M4& worldMatrix)
 {
 	// There's no meaning in this render queue
-	m_CBufferManager->ApplyWorldMatrixBuffer(worldMatrix);
+	m_CBufferManager->ApplyWorldMatrixBuffer(m_graphicSystem->deviceContext, worldMatrix);
 }
 
 void RenderQueueInstance::IApplyBoneMatricesUsage()
 {
-	m_CBufferManager->ApplyBoneMatricesUsageBuffer(false);
+	m_CBufferManager->ApplyBoneMatricesUsageBuffer(m_graphicSystem->deviceContext, false);
 }

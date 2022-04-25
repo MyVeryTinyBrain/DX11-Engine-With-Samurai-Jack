@@ -81,7 +81,7 @@ public:
 
 	virtual void GetDepthes(DepthStencil** out_depthes) const = 0;
 
-	virtual void ClearDepthes() = 0;
+	virtual void ClearDepthes(Com<ID3D11DeviceContext> deviceContext) = 0;
 
 };
 
