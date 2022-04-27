@@ -264,13 +264,14 @@ void PlayerTestScene::OnLoad()
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
 
 			ResourceRef<Material> standardMaterial = system->resource->factory->CopyUnmanagedMaterial(system->resource->builtInResources->standardMaterial);
-			standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
-			standardMaterial->SetTexture("_ReflectionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
-			standardMaterial->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
-			standardMaterial->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg")));
-			standardMaterial->SetFloat("_ReflectionTransparency", 0.0f);
-			standardMaterial->SetFloat("_SpecularTransparency", 0.5f);
-			standardMaterial->SetFloat("_SpecularPower", 20.0f); 
+			//standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
+			//standardMaterial->SetTexture("_ReflectionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
+			//standardMaterial->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
+			//standardMaterial->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg")));
+			//standardMaterial->SetFloat("_ReflectionTransparency", 0.0f);
+			//standardMaterial->SetFloat("_SpecularTransparency", 0.5f);
+			//standardMaterial->SetFloat("_SpecularPower", 20.0f); 
+			////## Test
 
 			meshRenderer->material = standardMaterial;
 
@@ -288,14 +289,15 @@ void PlayerTestScene::OnLoad()
 			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
 			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-			meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
+			//meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg")));
-			meshRenderer->material->SetTexture("_SpecularMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg")));
-			meshRenderer->material->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg")));
-			meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg")));
-			meshRenderer->material->SetFloat("_SpecularTransparency", 0.5f);
-			meshRenderer->material->SetFloat("_SpecularPower", 20.0f);
+			//meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg")));
+			//meshRenderer->material->SetTexture("_SpecularMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg")));
+			//meshRenderer->material->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg")));
+			//meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg")));
+			//meshRenderer->material->SetFloat("_SpecularTransparency", 0.5f);
+			//meshRenderer->material->SetFloat("_SpecularPower", 20.0f);
+			////## Test
 
 			//ResourceRef<Material> m = Material::CreateUnmanagedMaterialFromJson(system->resourceManagement, TEXT("../Resource/test.material"));
 			//meshRenderer->material = m;
@@ -315,26 +317,26 @@ void PlayerTestScene::OnLoad()
 			goSphere->AddComponent<SphereCollider>();
 		}
 
-		{
-			m_sphere[0] = CreateGameObject(TEXT("Sphere"));
+		//{
+		//	m_sphere[0] = CreateGameObject(TEXT("Sphere"));
 
-			MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+		//	MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
+		//	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
 
-			m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
+		//	m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
 
-			m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
-			m_rigidbody->sleepThresholder = 1000;
-			m_sphere[0]->AddComponent<SphereCollider>();
+		//	m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
+		//	m_rigidbody->sleepThresholder = 1000;
+		//	m_sphere[0]->AddComponent<SphereCollider>();
 
-			ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
-			ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
-			material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
+		//	ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
+		//	ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
+		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-			m_trailRenderer[0]->material = material;
+		//	m_trailRenderer[0]->material = material;
 
-			m_sphere[0]->activeSelf = true;
-		}
+		//	m_sphere[0]->activeSelf = true;
+		//}
 
 		//{
 		//	m_sphere[1] = CreateGameObject(TEXT("Sphere"));
