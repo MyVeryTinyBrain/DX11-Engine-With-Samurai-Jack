@@ -509,7 +509,7 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (!shader)
 		return nullptr;
 
-	return new Material(management, false, TEXT(""), TEXT(""), shader);
+	return new Material(management, true, resourceKey, TEXT(""), shader);
 }
 
 ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName)
@@ -524,7 +524,7 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (!shader)
 		return nullptr;
 
-	return new Material(management, false, TEXT(""), TEXT(""), shader);
+	return new Material(management, true, resourceKey, groupName, shader);
 }
 
 ResourceRef<Material> Material::CreateUnmanagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader)
@@ -549,7 +549,7 @@ ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* manageme
 	if (management->Exist(resourceKey))
 		return nullptr;
 
-	return new Material(management, false, resourceKey, TEXT(""), *material);
+	return new Material(management, true, resourceKey, TEXT(""), *material);
 }
 
 ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName)
@@ -563,7 +563,7 @@ ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* manageme
 	if (management->Exist(resourceKey))
 		return nullptr;
 
-	return new Material(management, false, resourceKey, groupName, *material);
+	return new Material(management, true, resourceKey, groupName, *material);
 }
 
 ResourceRef<Material> Material::CopyUnmanagedMaterial(ResourceManagement* management, ResourceRef<Material> material)

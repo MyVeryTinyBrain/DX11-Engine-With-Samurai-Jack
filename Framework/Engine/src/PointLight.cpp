@@ -71,7 +71,8 @@ LightDesc PointLight::GetLightDesc(ICamera* camera) const
     desc.ProjectionMatrix[2] = 
     desc.ProjectionMatrix[3] = 
     desc.ProjectionMatrix[4] = 
-    desc.ProjectionMatrix[5] = DirectX::XMMatrixPerspectiveFovLH(90.0f * Deg2Rad, 1.0f, m_near, Far);
+    desc.ProjectionMatrix[5] = DirectX::XMMatrixPerspectiveFovLH(90.1f * Deg2Rad, 1.0f, m_near, Far);
+    // 90.0f 사용시 부동 소수점 오차로 인해 경계가 제대로 그려지지 않습니다.
 
     return desc;
 }
@@ -103,12 +104,12 @@ bool PointLight::IsWorking() const
 
 void PointLight::SetupRotations()
 {
-    // const V3	m_arrDirection[6] = { V3::right(),V3::left(),V3::forward(),V3::back(),V3::up(),V3::down(), };
+    // const V3	m_arrDirection[6] = { V3::up(),V3::left(),V3::forward(),V3::right(),V3::back(),V3::down(), };
 
-    m_arrRotations[0] = Q::Euler(0, +90, 0);
+    m_arrRotations[4] = Q::Euler(-90, 0, 0);
     m_arrRotations[1] = Q::Euler(0, -90, 0);
     m_arrRotations[2] = Q::Euler(0, +000, 0);
+    m_arrRotations[0] = Q::Euler(0, +90, 0);
     m_arrRotations[3] = Q::Euler(0, +180, 0);
-    m_arrRotations[4] = Q::Euler(-90, 0, 0);
     m_arrRotations[5] = Q::Euler(+90, 0, 0);
 }

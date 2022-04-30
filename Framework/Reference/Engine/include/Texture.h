@@ -17,11 +17,14 @@ protected:
 public:
 
 	virtual Com<ID3D11Resource> GetTexture() const override = 0;
-
 	virtual Com<ID3D11ShaderResourceView> GetSRV() const override = 0;
 
 	_declspec(property(get = GetTexture)) Com<ID3D11Resource> texture;
 	_declspec(property(get = GetSRV)) Com<ID3D11ShaderResourceView> shaderResourceView;
+
+public:
+
+	bool RegenerateMipmap(Com<ID3D11DeviceContext> deviceContext);
 
 };
 

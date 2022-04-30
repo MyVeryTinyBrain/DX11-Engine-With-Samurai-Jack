@@ -44,16 +44,15 @@ public:
 
 public:
 
-	inline RenderTarget* GetDiffuse() const { return m_Diffuse; }
-	inline RenderTarget* GetNormal() const { return m_Normal; }
-	inline RenderTarget* GetDepth() const { return m_Depth[0]; }
-	inline RenderTarget* GetLight_Occlusion_Shadow() const { return m_Light_Occlusion_Shadow; }
-	inline RenderTarget* GetSpecular_Power() const { return m_Specular_Power; }
-	inline RenderTarget* GetEmissive() const { return m_Emissive; }
-	inline RenderTarget* GetReflection_ReflectionBlur_ReflectMask() const { return m_Reflection_ReflectionBlur_ReflectMask; }
+	inline RenderTarget* GetAlbedo() const { return m_albedo; }
+	inline RenderTarget* GetNormal() const { return m_normal; }
+	inline RenderTarget* GetDepth() const { return m_depth[0]; }
+	inline RenderTarget* GetLight_Shadow() const { return m_light_shadow; }
+	inline RenderTarget* GetRoughness_Metallic() const { return m_roughness_metallic; }
+	inline RenderTarget* GetEmissive() const { return m_emissive; }
+	inline RenderTarget* GetOcclusion_Reflection_ReflectionBlur_ReflectMask() const { return m_occlusion_reflection_reflectionBlur_reflectMask; }
 
 	inline RenderTarget* GetLight() const { return m_light; }
-	inline RenderTarget* GetSpecular() const { return m_specular; }
 	inline RenderTarget* GetVolumetric() const { return m_volumetric; }
 	inline RenderTarget* GetLightBlend() const { return m_lightBlend; }
 
@@ -67,16 +66,16 @@ public:
 	inline RenderTarget* GetSSRBlur() const { return m_ssrBlur; }
 	inline RenderTarget* GetDOF() const { return m_dof; }
 
-	inline RenderTarget* GetCopyTargetDepth() const { return m_Depth[1]; }
+	inline RenderTarget* GetCopyTargetDepth() const { return m_depth[1]; }
 	inline RenderTarget* GetCopyTargetResult() const { return m_result[1]; }
 
-	_declspec(property(get = GetDiffuse)) RenderTarget* diffuse;
+	_declspec(property(get = GetAlbedo)) RenderTarget* albedo;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
 	_declspec(property(get = GetDepth)) RenderTarget* depth;
-	_declspec(property(get = GetLight_Occlusion_Shadow)) RenderTarget* light_Occlusion_Shadow;
-	_declspec(property(get = GetSpecular_Power)) RenderTarget* specular_Power;
+	_declspec(property(get = GetLight_Shadow)) RenderTarget* light_shadow;
+	_declspec(property(get = GetRoughness_Metallic)) RenderTarget* roughness_metallic;
 	_declspec(property(get = GetEmissive)) RenderTarget* emissive;
-	_declspec(property(get = GetReflection_ReflectionBlur_ReflectMask)) RenderTarget* reflection_ReflectionBlur_ReflectMask;
+	_declspec(property(get = GetOcclusion_Reflection_ReflectionBlur_ReflectMask)) RenderTarget* occlusion_reflection_reflectionBlur_reflectMask;
 
 	_declspec(property(get = GetLight)) RenderTarget* light;
 	_declspec(property(get = GetSpecular)) RenderTarget* specular;
@@ -114,16 +113,15 @@ private:
 	RenderTargets								m_postProcessingRenderTargets;
 	RenderTargets								m_copyTargets;
 
-	RenderTarget*								m_Diffuse = nullptr; // RGBA(Diffuse)
-	RenderTarget*								m_Normal = nullptr; // RGB(Normal)
-	RenderTarget*								m_Depth[COPYABLE] = {}; // R=G=B(Depth)
-	RenderTarget*								m_Light_Occlusion_Shadow = nullptr; // R(LightMask)G(OcclusionMask)B(ShadowMask)
-	RenderTarget*								m_Specular_Power = nullptr; // RGB(SpecularMask)A(Power)
-	RenderTarget*								m_Emissive = nullptr; // RGBA(Emissive)
-	RenderTarget*								m_Reflection_ReflectionBlur_ReflectMask = nullptr; // R(Reflection)G(ReflectionBlur)B(ReflectMask)
+	RenderTarget*								m_albedo = nullptr;
+	RenderTarget*								m_normal = nullptr;
+	RenderTarget*								m_depth[COPYABLE] = {};
+	RenderTarget*								m_light_shadow = nullptr;
+	RenderTarget*								m_roughness_metallic = nullptr;
+	RenderTarget*								m_emissive = nullptr;
+	RenderTarget*								m_occlusion_reflection_reflectionBlur_reflectMask = nullptr;
 
 	RenderTarget*								m_light = nullptr;
-	RenderTarget*								m_specular = nullptr;
 	RenderTarget*								m_volumetric = nullptr;
 	RenderTarget*								m_lightBlend = nullptr;
 

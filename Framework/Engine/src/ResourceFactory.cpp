@@ -14,49 +14,24 @@ ResourceFactory::~ResourceFactory()
 {
 }
 
-ResourceRef<Texture2D> ResourceFactory::CreateManagedTexture2DFromFile(const tstring& path, bool warning)
+ResourceRef<Texture2D> ResourceFactory::CreateTexture2DM(const TextureCreateDesc& desc, const tstring& resourceKey, const tstring& groupName)
 {
-	return Texture2D::CreateManagedTexture2DFromFile(m_management, path, warning);
+	return Texture2D::CreateTexture2DM(m_management, desc, resourceKey, groupName);
 }
 
-ResourceRef<Texture2D> ResourceFactory::CreateManagedTexture2DFromFile(const tstring& path, const tstring& groupName, bool warning)
+ResourceRef<Texture2D> ResourceFactory::CreateTexture2DUM(const TextureCreateDesc& desc)
 {
-	return Texture2D::CreateManagedTexture2DFromFile(m_management, groupName, path, warning);
+	return Texture2D::CreateTexture2DUM(m_management, desc);
 }
 
-ResourceRef<Texture2D> ResourceFactory::CreateUnmanagedTexture2DFromFile(const tstring& path, bool warning)
+ResourceRef<Texture2D> ResourceFactory::LoadTexture2DM(const TextureOptionDesc& desc, const tstring& path, const tstring& groupName)
 {
-	return Texture2D::CreateUnmanagedTexture2DFromFile(m_management, path, warning);
+	return Texture2D::LoadTexture2DM(m_management, desc, path, groupName);
 }
 
-ResourceRef<Texture2D> ResourceFactory::CreateManagedTexture2D(const tstring& resourceKey, const Color& color, unsigned int width, unsigned int height)
+ResourceRef<Texture2D> ResourceFactory::LoadTexture2DUM(const TextureOptionDesc& desc, const tstring& path)
 {
-	return Texture2D::CreateManagedTexture2D(m_management, resourceKey, color, width, height);
-}
-
-ResourceRef<Texture2D> ResourceFactory::CreateManagedTexture2D(const tstring& resourceKey, const tstring& groupName, const Color& color, unsigned int width, unsigned int height)
-{
-	return Texture2D::CreateManagedTexture2D(m_management, resourceKey, groupName, color, width, height);
-}
-
-ResourceRef<Texture2D> ResourceFactory::CreateUnmanagedTexture2D(const Color& color, unsigned int width, unsigned int height)
-{
-	return Texture2D::CreateUnmanagedTexture2D(m_management, color, width, height);
-}
-
-ResourceRef<Texture2D> ResourceFactory::CreateManagedDynamicTexture2D(const tstring& resourceKey, const Color& color, unsigned int width, unsigned int height)
-{
-	return Texture2D::CreateManagedDynamicTexture2D(m_management, resourceKey, color, width, height);
-}
-
-ResourceRef<Texture2D> ResourceFactory::CreateManagedDynamicTexture2D(const tstring& resourceKey, const tstring& groupName, const Color& color, unsigned int width, unsigned int height)
-{
-	return Texture2D::CreateManagedDynamicTexture2D(m_management, resourceKey, groupName, color, width, height);
-}
-
-ResourceRef<Texture2D> ResourceFactory::CreateUnmanagedDynamicTexture2D(const Color& color, unsigned int width, unsigned int height)
-{
-	return Texture2D::CreateUnmanagedDynamicTexture2D(m_management, color, width, height);
+	return Texture2D::LoadTexture2DUM(m_management, desc, path);
 }
 
 ResourceRef<RenderTexture2D> ResourceFactory::CreateManagedRenderTexture2D(const tstring& resourceKey, unsigned int width, unsigned int height)
@@ -132,7 +107,10 @@ ResourceRef<Mesh> ResourceFactory::CreateManagedMeshFromFile(const tstring& path
 	{
 		vector<ModelMaterialDesc> materialDescs = mesh->materialDescs;
 		for (uint i = 0; i < materialDescs.size(); ++i)
-			CreateManagedTexture2DFromFile(materialDescs[i].diffuse, false);
+		{
+			TextureOptionDesc desc = {};
+			LoadTexture2DM(desc, materialDescs[i].diffuse);
+		}
 	}
 
 	return mesh;

@@ -2,6 +2,7 @@
 
 #include "IResourceFactory.h"
 #include "ResourceRef.h"
+#include "DxTextureCreateType.h"
 
 ENGINE_BEGIN
 class Texture2D;
@@ -23,15 +24,10 @@ public:
 
 public:
 
-	ResourceRef<Texture2D> CreateManagedTexture2DFromFile(const tstring& path, bool warning = true);
-	ResourceRef<Texture2D> CreateManagedTexture2DFromFile(const tstring& path, const tstring& groupName, bool warning = true);
-	ResourceRef<Texture2D> CreateUnmanagedTexture2DFromFile(const tstring& path, bool warning = true);
-	ResourceRef<Texture2D> CreateManagedTexture2D(const tstring& resourceKey, const Color& color, unsigned int width, unsigned int height);
-	ResourceRef<Texture2D> CreateManagedTexture2D(const tstring& resourceKey, const tstring& groupName, const Color& color, unsigned int width, unsigned int height);
-	ResourceRef<Texture2D> CreateUnmanagedTexture2D(const Color& color, unsigned int width, unsigned int height);
-	ResourceRef<Texture2D> CreateManagedDynamicTexture2D(const tstring& resourceKey, const Color& color, unsigned int width, unsigned int height);
-	ResourceRef<Texture2D> CreateManagedDynamicTexture2D(const tstring& resourceKey, const tstring& groupName, const Color& color, unsigned int width, unsigned int height);
-	ResourceRef<Texture2D> CreateUnmanagedDynamicTexture2D(const Color& color, unsigned int width, unsigned int height);
+	ResourceRef<Texture2D> CreateTexture2DM(const TextureCreateDesc& desc, const tstring& resourceKey, const tstring& groupName = TEXT(""));
+	ResourceRef<Texture2D> CreateTexture2DUM(const TextureCreateDesc& desc);
+	ResourceRef<Texture2D> LoadTexture2DM(const TextureOptionDesc& desc, const tstring& path, const tstring& groupName = TEXT(""));
+	ResourceRef<Texture2D> LoadTexture2DUM(const TextureOptionDesc& desc, const tstring& path);
 
 	ResourceRef<RenderTexture2D> CreateManagedRenderTexture2D(const tstring& resourceKey, unsigned int width, unsigned int height);
 	ResourceRef<RenderTexture2D> CreateManagedRenderTexture2D(const tstring& resourceKey, const tstring& groupName, unsigned int width, unsigned int height);

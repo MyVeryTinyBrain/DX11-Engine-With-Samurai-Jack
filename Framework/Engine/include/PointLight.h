@@ -43,8 +43,8 @@ private:
 
 	// For Shadow
 
-	const V3	m_arrDirection[6] = { V3::right(),V3::left(),V3::forward(),V3::back(),V3::up(),V3::down(), };
-	const V3	m_arrUp[6] =		{ V3::up(),V3::up(),V3::up(),V3::up(),V3::forward(),V3::forward(), };
+	const V3	m_arrDirection[6] = { V3::up(),V3::left(),V3::forward(),V3::right(),V3::back(),V3::down(), };
+	const V3	m_arrUp[6] =		{ V3::forward(),V3::up(),V3::up(),V3::up(),V3::up(),V3::forward(), };
 	Q			m_arrRotations[6] = {};
 
 	float		m_near = 0.1f;

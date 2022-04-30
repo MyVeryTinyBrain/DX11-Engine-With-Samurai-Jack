@@ -85,7 +85,7 @@ private:
 	float					m_shadowBias = 0.0001f;
 
 	bool					m_volumetricLightState = false;
-	uint					m_volumetricNumSamples = 100;
+	uint					m_volumetricNumSamples = 50;
 	float					m_volumetricIntensity = 1.5f;
 	float					m_volumetricPower = 1.5f;
 

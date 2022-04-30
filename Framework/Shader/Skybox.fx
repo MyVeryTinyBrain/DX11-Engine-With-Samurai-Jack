@@ -15,7 +15,7 @@ struct PS_IN
 struct PS_OUT
 {
 	float4 Diffuse : SV_TARGET0;
-	float4 Light_Occlusion_Shadow : SV_TARGET3;
+	float4 Light_Shadow : SV_TARGET3;
 };
 
 texture2D		_Texture < string Default = "black"; > ;
@@ -59,7 +59,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT output = (PS_OUT)0;
 
 	output.Diffuse = _Texture.Sample(pointSampler, In.UV);
-	output.Light_Occlusion_Shadow = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	output.Light_Shadow = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return output;
 }

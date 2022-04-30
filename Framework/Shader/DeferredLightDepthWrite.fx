@@ -24,8 +24,6 @@ struct PS_IN
 	float2 UV : TEXCOORD;
 };
 
-texture2D		_ShadowCutoffTexture;
-float			_ShadowCutoffAlpha;
 SamplerState	pointSampler
 {
 	AddressU = Clamp;

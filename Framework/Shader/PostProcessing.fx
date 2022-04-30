@@ -99,12 +99,13 @@ DOFDesc					_DOFDesc;
 BlurDesc				_BlurDesc;
 ChromaticAberrationDesc _ChromaticAberrationDesc;
 float4					_TextureSize;
-texture2D				_Diffuse;
+texture2D				_Albedo;
 texture2D				_Normal;
-texture2D				_WorldPosition;
 texture2D				_Depth;
-texture2D				_Light_Occlusion_Shadow;
-texture2D				_Reflection_ReflectionBlur_ReflectMask;
+texture2D				_Light_Shadow;
+texture2D				_Roughness_Metallic;
+texture2D				_Emissive;
+texture2D				_Occlusion_Reflection_ReflectionBlur_ReflectMask;
 texture2D				_Result;
 texture2D				_Sample; // For Temp Texture
 texture2D				_Other; // For Temp Texture
@@ -167,7 +168,7 @@ half SSAORayMarch(float2 uv)
 	half3 normal = UnpackNormal(_Normal, pointSampler, uv);
 
 	half depth = _Depth.Sample(pointSampler, uv, 0).r;
-	half occlusionMask = _Light_Occlusion_Shadow.Sample(pointSampler, uv, 0).g;
+	half occlusionMask = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, uv, 0).r;
 
 	[flatten] // Fast exit
 	if (depth == 1.0f) return 1.0f;
@@ -222,7 +223,8 @@ half SSAORayMarch(float2 uv)
 
 	occlusion = 1.0f - (occlusion / _SSAODesc.NumSamples);
 	occlusion = (_SSAODesc.NumSamples > 0) ? occlusion : 1.0f;
-	return pow(abs(occlusion), _SSAODesc.Power) * occlusionMask;
+	occlusion = pow(abs(occlusion), _SSAODesc.Power);
+	return lerp(1.0f, occlusion, occlusionMask);
 }
 
 float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
@@ -238,8 +240,8 @@ float4 PS_MAIN_SSAO_WriteOcclusion(PS_IN In) : SV_TARGET
 
 float4 PS_MAIN_SSAO_ApplyOcclusion(PS_IN In) : SV_TARGET
 {
-	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
-	half occlusionMask = _Light_Occlusion_Shadow.Sample(pointSampler, In.UV).g;
+	half4 diffuse = _Albedo.Sample(pointSampler, In.UV);
+	half occlusionMask = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, In.UV).r;
 	half4 occlusion = 1.0f - _Sample.Sample(pointSampler, In.UV);
 	occlusion = sin(PI / 2.0f * occlusion); // Adjust
 	return half4(0, 0, 0, occlusion.r * diffuse.a * (1.0f - _SSAODesc.Transparency) * occlusionMask);
@@ -354,8 +356,8 @@ half4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
 
 	half sideFade = SSRSideFadeFunction(1.0f, 1, 0.3f, uv);
 
-	half4 reflectionReflectionBlurReflectMask = _Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, uv);
-	half reflectMask = reflectionReflectionBlurReflectMask.b;
+	half4 orrr = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, In.UV);
+	half reflectMask = orrr.a;
 
 	color.rgb = _Sample.Sample(pointSampler, uv, 0).rgb;
 	color.a = reflectMask * sideFade;
@@ -368,9 +370,9 @@ half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 	half4 reflectedColor = _Sample.Sample(pointSampler, In.UV);
 	half4 reflectedBlurColor = _Other.Sample(pointSampler, In.UV);
 
-	half4 reflectionReflectionBlurReflectMask = _Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, In.UV);
-	half reflection = reflectionReflectionBlurReflectMask.r;
-	half reflectionBlur = reflectionReflectionBlurReflectMask.g;
+	half4 orrr = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, In.UV);
+	half reflection = orrr.g;
+	half reflectionBlur = orrr.b;
 
 	half4 color = lerp(reflectedColor, reflectedBlurColor, reflectionBlur);
 	color.a *= reflection;

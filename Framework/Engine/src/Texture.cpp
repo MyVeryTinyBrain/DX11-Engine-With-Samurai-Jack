@@ -7,3 +7,15 @@ Texture::Texture(
 {
 }
 
+bool Texture::RegenerateMipmap(Com<ID3D11DeviceContext> deviceContext)
+{
+	Com<ID3D11ShaderResourceView> srv = GetSRV();
+
+	if (!deviceContext || !srv)
+		return false;
+
+	deviceContext->GenerateMips(srv.Get());
+
+	return true;
+}
+

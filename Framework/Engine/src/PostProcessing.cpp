@@ -49,11 +49,13 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 		m_CBufferManager->ApplyCameraBuffer(m_graphicSystem->deviceContext, camera->GetPosition(), camera->GetDirection(), camera->GetViewMatrix(), camera->GetProjectionMatrix(), camera->GetSize(), camera->GetNear(), camera->GetFar());
 
 		m_shaderPostProcessing->SetVector("_TextureSize", V2(float(drt->width), float(drt->height)));
-		m_shaderPostProcessing->SetTexture("_Diffuse", drt->diffuse->srv);
+		m_shaderPostProcessing->SetTexture("_Albedo", drt->albedo->srv);
 		m_shaderPostProcessing->SetTexture("_Normal", drt->normal->srv);
 		m_shaderPostProcessing->SetTexture("_Depth", drt->depth->srv);
-		m_shaderPostProcessing->SetTexture("_Light_Occlusion_Shadow", drt->light_Occlusion_Shadow->srv);
-		m_shaderPostProcessing->SetTexture("_Reflection_ReflectionBlur_ReflectMask", drt->reflection_ReflectionBlur_ReflectMask->srv);
+		m_shaderPostProcessing->SetTexture("_Light_Shadow", drt->light_shadow->srv);
+		m_shaderPostProcessing->SetTexture("_Roughness_Metallic", drt->roughness_metallic->srv);
+		m_shaderPostProcessing->SetTexture("_Emissive", drt->emissive->srv);
+		m_shaderPostProcessing->SetTexture("_Occlusion_Reflection_ReflectionBlur_ReflectMask", drt->occlusion_reflection_reflectionBlur_reflectMask->srv);
 
 		m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
 		m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);

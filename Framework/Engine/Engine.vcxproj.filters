@@ -536,6 +536,12 @@
     <ClInclude Include="include\VTFTexture.h">
       <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\DxTextureUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DxTextureCreateType.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1027,6 +1033,12 @@
     <ClCompile Include="src\VTFTexture.cpp">
       <Filter>Object\SceneObject\Component\Renderer\SkinnedMeshRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\DxTextureUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DxTextureCreateType.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1342,6 +1354,9 @@
     </FxCompile>
     <FxCompile Include="..\Shader\Standard.fx">
       <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Light.hlsl">
+      <Filter>Object\Resource\Shader\Built-in Header</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

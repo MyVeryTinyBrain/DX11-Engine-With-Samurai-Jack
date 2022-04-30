@@ -19,7 +19,7 @@
 #define FLT_MAX						3.402823466e+38F
 #define FLT_MIN						1.175494351e-38F
 
-#define PI							3.14159265f
+#define PI							3.14159265359f
 #define TAU							(PI * 2.0f)
 #define Deg2Rad						(PI / 180.0f)
 #define Rad2Deg						(180.0f / PI)

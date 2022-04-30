@@ -12,11 +12,10 @@ struct PS_IN
 	float2 UV : TEXCOORD;
 };
 
-texture2D		_Diffuse;
+texture2D		_Albedo;
 texture2D		_Depth;
-texture2D		_Light_Occlusion_Shadow;
+texture2D		_Light_Shadow; //_Light_Occlusion_Shadow
 texture2D		_Light;
-texture2D		_Specular;
 texture2D		_Volumetric;
 SamplerState	pointSampler
 {
@@ -38,23 +37,34 @@ PS_IN VS_MAIN(VS_IN In)
 	return output;
 }
 
+inline half3 HDRTonemapping(half3 color)
+{
+	return color / (color + 1.0f);
+}
+
+inline half3 GammaCorrection(half3 color)
+{
+	return pow(color, 1.0f / 2.2f);
+}
+
 float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
 	float4 color = (float4)0;
 
-	half4 diffuse = _Diffuse.Sample(pointSampler, In.UV);
-	half4 lightOcclusionShadow = _Light_Occlusion_Shadow.Sample(pointSampler, In.UV);
-	half lightMask = lightOcclusionShadow.r;
-	half occlusion = lightOcclusionShadow.g;
+	half4 albedo = _Albedo.Sample(pointSampler, In.UV);
+	half4 ls = _Light_Shadow.Sample(pointSampler, In.UV);
+	half lightMask = ls.r;
 	half4 light = _Light.Sample(pointSampler, In.UV);
-	half4 specular = _Specular.Sample(pointSampler, In.UV);
 
-	half3 lightedColor = saturate(diffuse.rgb * light.rgb + specular.rgb);
-	half3 unlighttedColor = saturate(diffuse.rgb);
+	//light.rgb = HDRTonemapping(light.rgb);
+	//light.rgb = GammaCorrection(light.rgb);
+
+	half3 lightedColor = saturate(light.rgb);
+	half3 unlighttedColor = saturate(albedo.rgb);
 
 	color.rgb = lerp(unlighttedColor, lightedColor, lightMask);
 	//color.rgb = min(color.rgb, half3(1, 1, 1));
-	color.a = diffuse.a;
+	color.a = albedo.a;
 
 	return color;
 }
@@ -76,6 +86,14 @@ DepthStencilState DepthStencilState0
 	DepthEnable = false;
 	DepthFunc = always;
 	DepthWriteMask = zero;
+};
+
+BlendState BlendState_None
+{
+	BlendEnable[0] = false;
+	SrcBlend = Src_Alpha;
+	DestBlend = Inv_Src_Alpha;
+	BlendOp = Add;
 };
 
 BlendState BlendState_Mix
@@ -100,7 +118,7 @@ technique11 Technique0
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_Add, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BlendState_None, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}

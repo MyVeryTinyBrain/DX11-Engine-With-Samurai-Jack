@@ -586,10 +586,11 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
+    RenderTarget* albedo = drt->albedo;
     RenderTarget* normal = drt->normal;
     RenderTarget* depth = drt->depth;
-    RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
-    RenderTarget* specular_Power = drt->specular_Power;
+    RenderTarget* light_shadow = drt->light_shadow;
+    RenderTarget* roughness_metallic = drt->roughness_metallic;
     DepthStencil* lightDepthes[6] = {};
     light->GetDepthes(lightDepthes);
 
@@ -624,10 +625,11 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
             m_shaderLighting->SetRawValue("_LightDesc", &lightDesc, sizeof(LightDesc));
             m_shaderLighting->SetRawValue("_VolumetricDesc", &volumetricDesc, sizeof(VolumetricDesc));
+            m_shaderLighting->SetTexture("_Albedo", albedo->srv);
             m_shaderLighting->SetTexture("_Normal", normal->srv);
             m_shaderLighting->SetTexture("_Depth", depth->srv);
-            m_shaderLighting->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
-            m_shaderLighting->SetTexture("_Specular_Power", specular_Power->srv);
+            m_shaderLighting->SetTexture("_Light_Shadow", light_shadow->srv);
+            m_shaderLighting->SetTexture("_Roughness_Metallic", roughness_metallic->srv);
 
             m_shaderLighting->SetInputLayout(m_graphicSystem->deviceContext, 0, passIndex);
             m_shaderLighting->ApplyPass(m_graphicSystem->deviceContext, 0, passIndex);
@@ -645,22 +647,21 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
-    RenderTarget* diffuse = drt->diffuse;
+    RenderTarget* albedo = drt->albedo;
     RenderTarget* depth = drt->depth;
-    RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
+    RenderTarget* light_shadow = drt->light_shadow;
     RenderTarget* light = drt->light;
-    RenderTarget* specular = drt->specular;
     RenderTarget* volumetric = drt->volumetric;
 
     // Outputs
     drt->SetDeferredLightBlendRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
 
     {
-        m_shaderLightBlending->SetTexture("_Diffuse", diffuse->srv);
+        m_shaderLightBlending->SetTexture("_Albedo", albedo->srv);
         m_shaderLightBlending->SetTexture("_Depth", depth->srv);
-        m_shaderLightBlending->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
+        m_shaderLightBlending->SetTexture("_Light_Shadow", light_shadow->srv);
         m_shaderLightBlending->SetTexture("_Light", light->srv);
-        m_shaderLightBlending->SetTexture("_Specular", specular->srv);
+        m_shaderLightBlending->SetTexture("_Volumetric", volumetric->srv);
 
         m_shaderLightBlending->SetInputLayout(m_graphicSystem->deviceContext, 0, 0);
         m_shaderLightBlending->ApplyPass(m_graphicSystem->deviceContext, 0, 0);
@@ -677,22 +678,20 @@ void RenderQueueLight::Render_Volumetric(ICamera* camera)
     DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
     // Inputs
-    RenderTarget* diffuse = drt->diffuse;
+    RenderTarget* albedo = drt->albedo;
     RenderTarget* depth = drt->depth;
-    RenderTarget* light_Occlusion_Shadow = drt->light_Occlusion_Shadow;
+    RenderTarget* light_shadow = drt->light_shadow;
     RenderTarget* light = drt->light;
-    RenderTarget* specular = drt->specular;
     RenderTarget* volumetric = drt->volumetric;
 
     // Outputs
     drt->SetDeferredVolumetricLightBlendTargets(m_graphicSystem, m_graphicSystem->deviceContext);
 
     {
-        m_shaderLightBlending->SetTexture("_Diffuse", diffuse->srv);
+        m_shaderLightBlending->SetTexture("_Albedo", albedo->srv);
         m_shaderLightBlending->SetTexture("_Depth", depth->srv);
-        m_shaderLightBlending->SetTexture("_Light_Occlusion_Shadow", light_Occlusion_Shadow->srv);
+        m_shaderLightBlending->SetTexture("_Light_Shadow", light_shadow->srv);
         m_shaderLightBlending->SetTexture("_Light", light->srv);
-        m_shaderLightBlending->SetTexture("_Specular", specular->srv);
         m_shaderLightBlending->SetTexture("_Volumetric", volumetric->srv);
 
         m_shaderLightBlending->SetInputLayout(m_graphicSystem->deviceContext, 0, 1);

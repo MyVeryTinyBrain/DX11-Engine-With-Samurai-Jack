@@ -9,34 +9,65 @@ Scene* PlayerTestScene::Clone()
 	return new PlayerTestScene;
 }
 
+//V2 ts(V3 v)
+//{
+//	uint faceIndex;
+//	V3 vAbs = V3::Abs(v);
+//	float ma;
+//	V2 uv;
+//	if (vAbs.z >= vAbs.x && vAbs.z >= vAbs.y)
+//	{
+//		faceIndex = v.z < 0.0 ? 5.0 : 4.0;
+//		ma = 0.5 / vAbs.z;
+//		uv = V2(v.z < 0.0 ? -v.x : v.x, -v.y);
+//	}
+//	else if (vAbs.y >= vAbs.x)
+//	{
+//		faceIndex = v.y < 0.0 ? 3.0 : 2.0;
+//		ma = 0.5 / vAbs.y;
+//		uv = V2(v.x, v.y < 0.0 ? -v.z : v.z);
+//	}
+//	else
+//	{
+//		faceIndex = v.x < 0.0 ? 1.0 : 0.0;
+//		ma = 0.5 / vAbs.x;
+//		uv = V2(v.x < 0.0 ? v.z : -v.z, -v.y);
+//	}
+//	return uv * ma + V2(0.5f, 0.5f);
+//}
+
 void PlayerTestScene::OnLoad()
 {
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Normal.png"));
+	TextureOptionDesc loadDesc = {};
+	TextureOptionDesc loadMipDesc = {};
+	loadMipDesc.GenerateMipmap = true;
 
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Base Color.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Ambient Occlusion.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Normal.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Specular Level.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Stone 03/Stone03_Roughness.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Roughness.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Base Color.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Ambient Occlusion.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Normal.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Specular Level.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Roughness.jpg"));
 
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_ambient_occlusion.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_basecolor.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_normal.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_glossiness_1.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Painted/WoodPlanksPainted_roughness.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Roughness.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg"));
 
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_glossiness.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
-	system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_ambient_occlusion.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_basecolor.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_normal.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_glossiness_1.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_roughness.jpg"));
+
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_glossiness.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
 
 
 	/*
@@ -95,7 +126,7 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 			meshRenderer->material->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
 		}
 
@@ -151,7 +182,7 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goPriorityRender->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 		}
 	}
 	/*/
@@ -186,6 +217,19 @@ void PlayerTestScene::OnLoad()
 			pointLight->enable = true;
 		}
 
+		//for (uint i = 0; i < 10; ++i)
+		//{
+		//	int x = (rand() % 40) - 20;
+		//	int z = (rand() % 40) - 20;
+
+		//	GameObject* goPointLight = CreateGameObject();
+		//	goPointLight->transform->position = V3(x, 5, z);
+		//	PointLight* pointLight = goPointLight->AddComponent<PointLight>();
+		//	pointLight->range = 10.0f;
+		//	pointLight->drawShadow = false;
+		//	pointLight->enable = true;
+		//}
+
 		{
 			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
 			goSpotLight->transform->position = V3(0, 2, -10);
@@ -200,12 +244,12 @@ void PlayerTestScene::OnLoad()
 
 		//{
 		//	ResourceRef<Texture> texture[6];
-		//	texture[0] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/top.png"));
-		//	texture[1] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/bottom.png"));
-		//	texture[2] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/left.png"));
-		//	texture[3] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/right.png"));
-		//	texture[4] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/forward.png"));
-		//	texture[5] = system->resourceManagement->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/back.png"));
+		//	texture[0] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/top.png"));
+		//	texture[1] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/bottom.png"));
+		//	texture[2] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/left.png"));
+		//	texture[3] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/right.png"));
+		//	texture[4] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/forward.png"));
+		//	texture[5] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/back.png"));
 
 		//	ResourceRef<Shader> priority = system->resourceManagement->factory->CreateManagedShaderFromBinaryFolder(TEXT("Priority.cso"));
 		//	ResourceRef<Material> material[6];
@@ -239,21 +283,21 @@ void PlayerTestScene::OnLoad()
 		//	goSky[5]->transform->forward = -V3::back();
 		//}
 
-		//{
-		//	ResourceRef<Texture> texture = system->resource->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/Skybox/skybox.png"));
+		{
+			ResourceRef<Texture> texture = system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/skybox.png"));
 
-		//	//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
-		//	ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Skybox.cso"));
-		//	ResourceRef<Material> material;
-		//	material = system->resource->factory->CreateUnmanagedMaterialByShader(skybox);
-		//	material->SetTexture("_Texture", texture);
+			//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
+			ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Skybox.cso"));
+			ResourceRef<Material> material;
+			material = system->resource->factory->CreateUnmanagedMaterialByShader(skybox);
+			material->SetTexture("_Texture", texture);
 
-		//	GameObject* goSky;
-		//	goSky = CreateGameObject();
-		//	MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
-		//	mr->mesh = system->resource->builtInResources->skyboxMesh;
-		//	mr->material = material;
-		//}
+			GameObject* goSky;
+			goSky = CreateGameObject();
+			MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
+			mr->mesh = system->resource->builtInResources->skyboxMesh;
+			mr->material = material;
+		}
 
 		{
 			GameObject* goGround = CreateGameObject();
@@ -264,8 +308,9 @@ void PlayerTestScene::OnLoad()
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
 
 			ResourceRef<Material> standardMaterial = system->resource->factory->CopyUnmanagedMaterial(system->resource->builtInResources->standardMaterial);
+			standardMaterial->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 			//standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
-			//standardMaterial->SetTexture("_ReflectionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
+			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
 			//standardMaterial->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
 			//standardMaterial->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg")));
 			//standardMaterial->SetFloat("_ReflectionTransparency", 0.0f);
@@ -288,7 +333,7 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
-			meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 			//meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
 			//meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg")));
@@ -312,6 +357,12 @@ void PlayerTestScene::OnLoad()
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+
+			//ResourceRef<Shader> s = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("PBR.cso"));
+			//ResourceRef<Material> m = system->resource->factory->CreateManagedMaterialByShader(s, TEXT("M"));
+			////m->SetTexture("_Cubemap", system->resource->Find(TEXT("../Resource/Skybox/skybox.png")));
+			//m->SetTexture("_BRDF", system->resource->Find(TEXT("../Resource/PBR/BRDF.png")));
+			//meshRenderer->material = m;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();

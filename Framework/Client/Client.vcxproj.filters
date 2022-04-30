@@ -110,5 +110,8 @@
     <FxCompile Include="..\Shader\Skybox.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shader\PBR.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

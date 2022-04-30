@@ -349,22 +349,22 @@ void GizmoScaling::SetupResources()
 	{
 		m_axisMesh = system->resource->builtInResources->boxMesh;
 	}
-	if (!m_rTexture)
-	{
-		m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
-	}
-	if (!m_gTexture)
-	{
-		m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
-	}
-	if (!m_bTexture)
-	{
-		m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
-	}
-	if (!m_pTexture)
-	{
-		m_pTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::grey(), 16, 16);
-	}
+	//if (!m_rTexture)
+	//{
+	//	m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
+	//}
+	//if (!m_gTexture)
+	//{
+	//	m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
+	//}
+	//if (!m_bTexture)
+	//{
+	//	m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
+	//}
+	//if (!m_pTexture)
+	//{
+	//	m_pTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::grey(), 16, 16);
+	//}
 	//if (!m_rMat)
 	//{
 	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();

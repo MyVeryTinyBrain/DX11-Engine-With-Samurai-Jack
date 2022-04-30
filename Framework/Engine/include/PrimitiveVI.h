@@ -20,9 +20,9 @@ public:
 
 	static VI* CreateSphere(float radius = 0.5f, uint numV = 16, uint numH = 16);
 
-	static VI* CreateCapsule(float radius = 0.5f, float halfHeight = 0.5f, uint numV = 16, uint numCapH = 16);
+	static VI* CreateCapsule(float radius = 0.5f, float halfHeight = 0.5f, uint numV = 32, uint numCapH = 32);
 
-	static VI* CreateCylinder(float radius = 0.5f, float halfHeight = 1.0f, uint numV = 16);
+	static VI* CreateCylinder(float radius = 0.5f, float halfHeight = 1.0f, uint numV = 32);
 
 private:
 

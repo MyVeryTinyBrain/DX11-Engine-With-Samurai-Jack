@@ -43,6 +43,8 @@
     <ClInclude Include="include\DeferredRenderTarget.h" />
     <ClInclude Include="include\DepthStencil.h" />
     <ClInclude Include="include\DirectionalLight.h" />
+    <ClInclude Include="include\DxTextureCreateType.h" />
+    <ClInclude Include="include\DxTextureUtility.h" />
     <ClInclude Include="include\ILight.h" />
     <ClInclude Include="include\ILightManager.h" />
     <ClInclude Include="include\IPhysicsObject.h" />
@@ -220,6 +222,8 @@
     <ClCompile Include="src\DeferredRenderTarget.cpp" />
     <ClCompile Include="src\DepthStencil.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\DxTextureCreateType.cpp" />
+    <ClCompile Include="src\DxTextureUtility.cpp" />
     <ClCompile Include="src\ILight.cpp" />
     <ClCompile Include="src\ILightManager.cpp" />
     <ClCompile Include="src\IPhysicsObject.cpp" />
@@ -391,6 +395,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Shader\Color.fx" />
+    <FxCompile Include="..\Shader\Light.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\Shader\Macros.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

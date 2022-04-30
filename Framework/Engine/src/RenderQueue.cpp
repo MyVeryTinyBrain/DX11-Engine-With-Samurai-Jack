@@ -142,17 +142,16 @@ void RenderQueue::Render(ICamera* camera)
 
 	m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
 
-	m_graphicSystem->postProcessing->DrawToScreen(drt->diffuse->srv, uint2(0, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->albedo->srv, uint2(0, 0), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->normal->srv, uint2(100, 0), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->depth->srv, uint2(200, 0), uint2(100, 100), PostProcessing::CopyType::LinearDepth);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->light_Occlusion_Shadow->srv, uint2(300, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->specular_Power->srv, uint2(400, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->light_shadow->srv, uint2(300, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->roughness_metallic->srv, uint2(400, 0), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->emissive->srv, uint2(500, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->reflection_ReflectionBlur_ReflectMask->srv, uint2(600, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->occlusion_reflection_reflectionBlur_reflectMask->srv, uint2(600, 0), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->light->srv, uint2(000, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->specular->srv, uint2(100, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->volumetric->srv, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, uint2(300, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->volumetric->srv, uint2(100, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+	m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->ssao->srv, uint2(000, 200), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->ssr->srv, uint2(100, 200), uint2(100, 100), PostProcessing::CopyType::Default);
 	m_graphicSystem->postProcessing->DrawToScreen(drt->dof->srv, uint2(200, 200), uint2(100, 100), PostProcessing::CopyType::Default);

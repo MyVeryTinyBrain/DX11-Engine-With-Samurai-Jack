@@ -29,4 +29,10 @@ namespace XmMathPlus
 	using uint32 = unsigned __int32;
 
 	using uint64 = unsigned __int64;
+
+	typedef union __declspec(intrin_type) __declspec(align(16)) __b128
+	{
+		uint32 u32[4];
+	} __b128;
+	using b128 = __b128;
 }

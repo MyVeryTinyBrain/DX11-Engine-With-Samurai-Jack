@@ -9,34 +9,31 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_width = width;
 	m_height = height;
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Diffuse);
-	m_renderTargets.push_back(m_Diffuse);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_albedo);
+	m_renderTargets.push_back(m_albedo);
 	
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Normal);
-	m_renderTargets.push_back(m_Normal);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_normal);
+	m_renderTargets.push_back(m_normal);
 	
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_Depth[0]);
-	m_renderTargets.push_back(m_Depth[0]);
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_Depth[1]);
-	m_copyTargets.push_back(m_Depth[1]);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_depth[0]);
+	m_renderTargets.push_back(m_depth[0]);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_depth[1]);
+	m_copyTargets.push_back(m_depth[1]);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Light_Occlusion_Shadow);
-	m_renderTargets.push_back(m_Light_Occlusion_Shadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_light_shadow);
+	m_renderTargets.push_back(m_light_shadow);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_Specular_Power);
-	m_renderTargets.push_back(m_Specular_Power);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_roughness_metallic);
+	m_renderTargets.push_back(m_roughness_metallic);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_Emissive);
-	m_renderTargets.push_back(m_Emissive);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_emissive);
+	m_renderTargets.push_back(m_emissive);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_Reflection_ReflectionBlur_ReflectMask);
-	m_renderTargets.push_back(m_Reflection_ReflectionBlur_ReflectMask);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_occlusion_reflection_reflectionBlur_reflectMask);
+	m_renderTargets.push_back(m_occlusion_reflection_reflectionBlur_reflectMask);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_light);
 	m_renderTargets.push_back(m_light);
-
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_specular);
-	m_renderTargets.push_back(m_specular);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_volumetric);
 	m_renderTargets.push_back(m_volumetric);
@@ -140,7 +137,7 @@ void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> deviceContext)
 
 	for (auto& renderTarget : m_renderTargets)
 	{
-		if (renderTarget == m_Depth[0])
+		if (renderTarget == m_depth[0])
 			renderTarget->Clear(deviceContext, Color::white());
 		else if (renderTarget == m_volumetric)
 			renderTarget->Clear(deviceContext, Color::clear());
@@ -179,13 +176,13 @@ void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	ZeroMemory(arrRTV, sizeof(arrRTV));
-	arrRTV[0] = m_Diffuse->rtv.Get();
-	arrRTV[1] = m_Normal->rtv.Get();
-	arrRTV[2] = m_Depth[0]->rtv.Get();
-	arrRTV[3] = m_Light_Occlusion_Shadow->rtv.Get();
-	arrRTV[4] = m_Specular_Power->rtv.Get();
-	arrRTV[5] = m_Emissive->rtv.Get();
-	arrRTV[6] = m_Reflection_ReflectionBlur_ReflectMask->rtv.Get();
+	arrRTV[0] = m_albedo->rtv.Get();
+	arrRTV[1] = m_normal->rtv.Get();
+	arrRTV[2] = m_depth[0]->rtv.Get();
+	arrRTV[3] = m_light_shadow->rtv.Get();
+	arrRTV[4] = m_roughness_metallic->rtv.Get();
+	arrRTV[5] = m_emissive->rtv.Get();
+	arrRTV[6] = m_occlusion_reflection_reflectionBlur_reflectMask->rtv.Get();
 
 	graphicSystem->SetRenderTargets(deviceContext, 7, arrRTV);
 }
@@ -196,12 +193,12 @@ void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem,
 
 	ZeroMemory(arrRTV, sizeof(arrRTV));
 	arrRTV[0] = m_result[0]->rtv.Get();
-	arrRTV[1] = m_Normal->rtv.Get();
-	arrRTV[2] = m_Depth[0]->rtv.Get();
-	arrRTV[3] = m_Light_Occlusion_Shadow->rtv.Get();
-	arrRTV[4] = m_Specular_Power->rtv.Get();
-	arrRTV[5] = m_Emissive->rtv.Get();
-	arrRTV[6] = m_Reflection_ReflectionBlur_ReflectMask->rtv.Get();
+	arrRTV[1] = m_normal->rtv.Get();
+	arrRTV[2] = m_depth[0]->rtv.Get();
+	arrRTV[3] = m_light_shadow->rtv.Get();
+	arrRTV[4] = m_roughness_metallic->rtv.Get();
+	arrRTV[5] = m_emissive->rtv.Get();
+	arrRTV[6] = m_occlusion_reflection_reflectionBlur_reflectMask->rtv.Get();
 
 	graphicSystem->SetRenderTargets(deviceContext, 7, arrRTV);
 }
@@ -211,10 +208,9 @@ void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_light->rtv.Get();
-	arrRTV[1] = m_specular->rtv.Get();
-	arrRTV[2] = m_volumetric->rtv.Get();
+	arrRTV[1] = m_volumetric->rtv.Get();
 
-	graphicSystem->SetRenderTargets(deviceContext, 3, arrRTV);
+	graphicSystem->SetRenderTargets(deviceContext, 2, arrRTV);
 }
 
 void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
@@ -253,7 +249,7 @@ bool DeferredRenderTarget::ResultWasCopied() const
 
 void DeferredRenderTarget::CopyDepth(Com<ID3D11DeviceContext> deviceContext)
 {
-	deviceContext->CopyResource(m_Depth[0]->texture.Get(), m_Depth[1]->texture.Get());
+	deviceContext->CopyResource(m_depth[0]->texture.Get(), m_depth[1]->texture.Get());
 	m_depthWasCopied = true;
 }
 

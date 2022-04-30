@@ -347,30 +347,30 @@ void GizmoRotation::SetupResources()
 	SetupAxisMesh(32);
 	SetupAxisLineStripMesh(32);
 	SetupSliceLineMesh();
-	if (!m_rTexture)
-	{
-		m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(1, 0, 0, 0.5f), 16, 16);
-	}
-	if (!m_gTexture)
-	{
-		m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 1, 0, 0.5f), 16, 16);
-	}
-	if (!m_bTexture)
-	{
-		m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 0, 1, 0.5f), 16, 16);
-	}
-	if (!m_lrTexture)
-	{
-		m_lrTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
-	}
-	if (!m_lgTexture)
-	{
-		m_lgTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
-	}
-	if (!m_lbTexture)
-	{
-		m_lbTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
-	}
+	//if (!m_rTexture)
+	//{
+	//	m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(1, 0, 0, 0.5f), 16, 16);
+	//}
+	//if (!m_gTexture)
+	//{
+	//	m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 1, 0, 0.5f), 16, 16);
+	//}
+	//if (!m_bTexture)
+	//{
+	//	m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 0, 1, 0.5f), 16, 16);
+	//}
+	//if (!m_lrTexture)
+	//{
+	//	m_lrTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
+	//}
+	//if (!m_lgTexture)
+	//{
+	//	m_lgTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
+	//}
+	//if (!m_lbTexture)
+	//{
+	//	m_lbTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
+	//}
 	//if (!m_rMat)
 	//{
 	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();

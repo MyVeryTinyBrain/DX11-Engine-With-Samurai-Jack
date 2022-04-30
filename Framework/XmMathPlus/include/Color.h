@@ -45,13 +45,23 @@ namespace XmMathPlus
 		bool operator != (const Color& rhs) const;
 
 		// RGBA Hex color
-		operator uint() const;
+		operator b128() const;
+		operator uint64() const;
+		operator uint32() const;
+		operator uint16() const;
+		operator uint8() const;
 
 		operator Real4() const;
 
 		operator DirectX::XMVECTOR() const;
 
 		// Member Functions ============================================================================
+
+		b128 ToB128() const { return (b128)*this; }
+		uint64 ToUint64() const { return (uint64)*this; }
+		uint32 ToUint32() const { return (uint32)*this; }
+		uint16 ToUint16() const { return (uint16)*this; }
+		uint8 ToUint8() const { return (uint8)*this; }
 
 		// Member Variables	============================================================================
 

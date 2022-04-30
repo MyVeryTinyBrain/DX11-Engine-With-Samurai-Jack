@@ -323,3 +323,107 @@ inline half4x4 NormalizeTransformationMatrix(half4x4 m)
     m[2].xyz = normalize(m[2].xyz);
     return m;
 }
+
+half2 DirectionToCubemapUV(half3 dir)
+{
+    half3 absDir = abs(dir);
+    half2 planeUV;
+    half2 uv;
+    if (absDir.z >= absDir.x && absDir.z >= absDir.y && dir.z >= 0) // +Z Plane
+    {
+        static const half3 normal = half3(0, 0, -1);
+        static const half3 p0 = -normal;
+        float t = dot(normal, p0) / dot(normal, dir);
+        half3 p = t * dir;
+        planeUV = half2(p.x, -p.y) * half2(0.5f, 0.5f) + half2(0.5f, 0.5f);
+        uv = planeUV * half2(1.0f / 4.0f, 1.0f / 3.0f) + half2(1.0f / 4.0f, 1.0f / 3.0f);
+    }
+    else if (absDir.z >= absDir.x && absDir.z >= absDir.y && dir.z < 0) // -Z Plane
+    {
+        static const half3 normal = half3(0, 0, +1);
+        static const half3 p0 = -normal;
+        float t = dot(normal, p0) / dot(normal, dir);
+        half3 p = t * dir;
+        planeUV = half2(-p.x, -p.y) * half2(0.5f, 0.5f) + half2(0.5f, 0.5f);
+        uv = planeUV * half2(1.0f / 4.0f, 1.0f / 3.0f) + half2(3.0f / 4.0f, 1.0f / 3.0f);
+    }
+    else if (absDir.y >= absDir.x && dir.y >= 0) // +Y Plane
+    {
+        static const half3 normal = half3(0, -1, 0);
+        static const half3 p0 = -normal;
+        float t = dot(normal, p0) / dot(normal, dir);
+        half3 p = t * dir;
+        planeUV = half2(p.x, p.z) * half2(0.5f, 0.5f) + half2(0.5f, 0.5f);
+        uv = planeUV * half2(1.0f / 4.0f, 1.0f / 3.0f) + half2(1.0f / 4.0f, 0.0f / 3.0f);
+    }
+    else if (absDir.y >= absDir.x && dir.y < 0) // -Y Plane
+    {
+        static const half3 normal = half3(0, +1, 0);
+        static const half3 p0 = -normal;
+        float t = dot(normal, p0) / dot(normal, dir);
+        half3 p = t * dir;
+        planeUV = half2(p.x, -p.z) * half2(0.5f, 0.5f) + half2(0.5f, 0.5f);
+        uv = planeUV * half2(1.0f / 4.0f, 1.0f / 3.0f) + half2(1.0f / 4.0f, 2.0f / 3.0f);
+    }
+    else if (dir.x >= 0) // +X Plane
+    {
+        static const half3 normal = half3(-1, 0, 0);
+        static const half3 p0 = -normal;
+        float t = dot(normal, p0) / dot(normal, dir);
+        half3 p = t * dir;
+        planeUV = half2(-p.z, -p.y) * half2(0.5f, 0.5f) + half2(0.5f, 0.5f);
+        uv = planeUV * half2(1.0f / 4.0f, 1.0f / 3.0f) + half2(2.0f / 4.0f, 1.0f / 3.0f);
+    }
+    else // -X Plane
+    {
+        static const half3 normal = half3(+1, 0, 0);
+        static const half3 p0 = -normal;
+        float t = dot(normal, p0) / dot(normal, dir);
+        half3 p = t * dir;
+        planeUV = half2(p.z, -p.y) * half2(0.5f, 0.5f) + half2(0.5f, 0.5f);
+        uv = planeUV * half2(1.0f / 4.0f, 1.0f / 3.0f) + half2(0.0f / 4.0f, 1.0f / 3.0f);
+    }
+    return uv;
+}
+
+float Max(float4 v)
+{
+    float a = max(v.r, v.g);
+    float b = max(a, v.b);
+    float c = max(b, v.a);
+    return c;
+}
+
+float Max(float3 v)
+{
+    float a = max(v.r, v.g);
+    float b = max(a, v.b);
+    return b;
+}
+
+float Max(float2 v)
+{
+    float a = max(v.r, v.g);
+    return a;
+}
+
+half Max(half4 v)
+{
+    half a = max(v.r, v.g);
+    half b = max(a, v.b);
+    half c = max(b, v.a);
+    return c;
+}
+
+half Max(half3 v)
+{
+    half a = max(v.r, v.g);
+    half b = max(a, v.b);
+    return b;
+}
+
+half Max(half2 v)
+{
+    half a = max(v.r, v.g);
+    return a;
+}

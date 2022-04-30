@@ -28,28 +28,27 @@ struct PS_IN
 
 struct PS_OUT
 {
-	float4 Diffuse : SV_TARGET0;
+	float4 Albedo : SV_TARGET0;
 	float4 Normal : SV_TARGET1;
 	float4 Depth : SV_TARGET2;
-	float4 Light_Occlusion_Shadow : SV_TARGET3;
-	float4 Specular_Power : SV_TARGET4;
+	float4 Light_Shadow : SV_TARGET3;
+	float4 Roughness_Metallic : SV_TARGET4;
 	float4 Emissive : SV_TARGET5;
-	float4 Reflection_ReflectionBlur_ReflectMask : SV_TARGET6;
+	float4 Occlusion_Reflection_ReflectionBlur_ReflectMask : SV_TARGET6;
 };
 
-texture2D		_DiffuseTexture;
-texture2D		_NormalMapTexture;
-texture2D		_LightMapTexture;
-texture2D		_OcclusionTexture;
-texture2D		_ShadowMapTexture;
-texture2D		_SpecularMapTexture;
-float			_SpecularTransparency;
-float			_SpecularPower;
-texture2D		_EmissiveTexture;
-texture2D		_ReflectionTexture;
-float			_ReflectionTransparency;
-float			_ReflectionBlur;
-float			_ReflectMask;
+texture2D		_AlbedoTexture < string Default = "White"; > ;
+texture2D		_NormalMapTexture < string Default = "Normal"; > ;
+texture2D		_LightMaskTexture < string Default = "White"; > ;
+texture2D		_ShadowMaskTexture < string Default = "White"; > ;
+texture2D		_RoughnessTexture < string Default = "Black"; > ;
+texture2D		_MetallicTexture < string Default = "Black"; > ;
+texture2D		_EmissiveTexture < string Default = "Clear"; > ;
+texture2D		_OcclusionTexture < string Default = "White"; > ;
+texture2D		_ReflectionTexture < string Default = "Clear"; > ;
+float			_ReflectionTransparency <float Default = 0.5f; > ;
+float			_ReflectionBlur <float Default = 1.0f; > ;
+float			_ReflectMask <float Default = 1.0f; > ;
 SamplerState	diffuseSampler
 {
 	AddressU = wrap;
@@ -104,7 +103,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	output.Diffuse = _DiffuseTexture.Sample(diffuseSampler, In.UV);
+	output.Albedo = _AlbedoTexture.Sample(diffuseSampler, In.UV);
 
 	half3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.UV).rgb;
 	half3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
@@ -115,21 +114,22 @@ PS_OUT PS_MAIN(PS_IN In)
 	half depth = In.ProjPosition.z / In.ProjPosition.w;
 	output.Depth = half4(depth, depth, depth, 1.0f);
 
-	half lightMask = _LightMapTexture.Sample(diffuseSampler, In.UV).r;
-	half shadowMask = _ShadowMapTexture.Sample(diffuseSampler, In.UV).r;
-	half occlusionMask = _OcclusionTexture.Sample(diffuseSampler, In.UV).r;
-	output.Light_Occlusion_Shadow = half4(lightMask, occlusionMask, shadowMask, 1.0f);
+	half lightMask = _LightMaskTexture.Sample(diffuseSampler, In.UV).r;
+	half shadowMask = _ShadowMaskTexture.Sample(diffuseSampler, In.UV).r;
+	output.Light_Shadow = half4(lightMask, shadowMask, 0.0f, 1.0f);
 
-	half3 specularMask = _SpecularMapTexture.Sample(diffuseSampler, In.UV).rgb;
-	output.Specular_Power = half4(specularMask * _SpecularTransparency, _SpecularPower);
+	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).r;
+	half metallic = _MetallicTexture.Sample(diffuseSampler, In.UV).r;
+	output.Roughness_Metallic = half4(roughness, metallic, 0.0f, 1.0f);
 
 	half4 emissive = _EmissiveTexture.Sample(diffuseSampler, In.UV);
 	output.Emissive = emissive;
 
+	half occlusionMask = _OcclusionTexture.Sample(diffuseSampler, In.UV).r;
 	half reflection = _ReflectionTexture.Sample(diffuseSampler, In.UV).r * (1.0f - _ReflectionTransparency);
 	half reflectionBlur = _ReflectionBlur;
 	half reflectMask = _ReflectMask;
-	output.Reflection_ReflectionBlur_ReflectMask = half4(reflection, reflectionBlur, reflectMask, 1);
+	output.Occlusion_Reflection_ReflectionBlur_ReflectMask = half4(occlusionMask, reflection, reflectionBlur, reflectMask);
 
 	return output;
 }

@@ -4,7 +4,6 @@
 #include "System.h"
 #include "GraphicSystem.h"
 #include "RenderTarget.h"
-#include "..\include\RenderTexture2D.h"
 
 RenderTexture2D::RenderTexture2D(
 	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName,
