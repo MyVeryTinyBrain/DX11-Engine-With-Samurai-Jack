@@ -6,9 +6,9 @@
 #include "GraphicSystem.h"
 
 ComputeShader::ComputeShader(
-	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
+	ResourceManagement* management, bool managed, const tstring& path,
 	CompiledShaderDesc* shaderDesc) :
-	ResourceObject(management, managed, path, groupName),
+	ResourceObject(management, managed, path),
 	m_shaderDesc(shaderDesc)
 {
 }
@@ -29,7 +29,7 @@ ResourceRef<ComputeShader> ComputeShader::CreateManagedShaderFromFile(ResourceMa
 
 	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
+		CompiledShaderDesc::LoadCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
 
 	if (!compiledShaderDesc)
 	{
@@ -40,34 +40,8 @@ ResourceRef<ComputeShader> ComputeShader::CreateManagedShaderFromFile(ResourceMa
 		return ResourceRef<ComputeShader>();
 	}
 
-	ComputeShader* shader = new ComputeShader(management, true, path, TEXT(""), compiledShaderDesc);
+	ComputeShader* shader = new ComputeShader(management, true, path, compiledShaderDesc);
 
 	return ResourceRef<ComputeShader>(shader);
 }
 
-ResourceRef<ComputeShader> ComputeShader::CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName)
-{
-	if (!management)
-		return ResourceRef<ComputeShader>();
-
-	ResourceRef<ComputeShader> find = management->Find(path);
-	if (find)
-		return find;
-
-	tstring error;
-	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
-
-	if (!compiledShaderDesc)
-	{
-		tstring error_message = TEXT("Failed to compile Compute Shader: ") + path;
-		if (error.length() > 0)
-			error_message += TEXT("(") + error + TEXT(")");
-		ERROR_MESSAGE_NT(error_message.c_str());
-		return ResourceRef<ComputeShader>();
-	}
-
-	ComputeShader* shader = new ComputeShader(management, true, path, groupName, compiledShaderDesc);
-
-	return ResourceRef<ComputeShader>(shader);
-}

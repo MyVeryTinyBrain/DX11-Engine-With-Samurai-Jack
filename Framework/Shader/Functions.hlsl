@@ -203,18 +203,6 @@ inline half ToLinearDepth(half Near, half Far, half Depth)
     return 2.0f * Near / (Far + Near - Depth * (Far - Near));
 }
 
-inline half Brightness(half3 colorRGB)
-{
-    half a = max(colorRGB.r, colorRGB.g);
-    half b = max(a, colorRGB.b);
-    return b;
-}
-
-inline half Brightness(half4 colorRGBA)
-{
-    return Brightness(colorRGBA.rgb) * colorRGBA.a;
-}
-
 inline half Random(half2 xy)
 {
     float2 noise = (frac(sin(dot(xy, half2(12.9898f, 78.233f) * 2.0f)) * 43758.5453f));

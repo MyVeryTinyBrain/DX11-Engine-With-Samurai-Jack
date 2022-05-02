@@ -2,17 +2,17 @@
 
 ENGINE_BEGIN
 
-struct ENGINE_API JsonUtility final
+namespace JsonUtility
 {
-	static string Parse(const V4& value);
-	static string Parse(const M4& value);
-	static string Parse(const Color& value);
-	static string Parse(const Q& value);
+	ENGINE_API string Parse(const V4& value);
+	ENGINE_API string Parse(const M4& value);
+	ENGINE_API string Parse(const Color& value);
+	ENGINE_API string Parse(const Q& value);
 
-	static bool ToVector4(const string& str, V4& out);
-	static bool ToMatrix4x4(const string& str, M4& out);
-	static bool ToColor(const string& str, Color& out);
-	static bool ToQuaternion(const string& str, Q& out);
+	ENGINE_API bool ToVector4(const string& str, V4& out);
+	ENGINE_API bool ToMatrix4x4(const string& str, M4& out);
+	ENGINE_API bool ToColor(const string& str, Color& out);
+	ENGINE_API bool ToQuaternion(const string& str, Q& out);
 };
 
 ENGINE_END

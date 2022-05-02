@@ -10,8 +10,7 @@
 
 void Camera::Awake()
 {
-	ResetAspect();
-	ResetProjectionMatrix();
+	Reset();
 
 	ICameraManager* iCameraManager = system->graphic->cameraManager;
 	iCameraManager->AddCamera(this);
@@ -34,12 +33,6 @@ void Camera::Awake()
 	m_ssrDesc.Enable = true;
 	m_ssrDesc.BlurEnable = true;
 	m_ssrDesc.BlurType = BlurType::InvDepth;
-	//m_ssrDesc.NumSamples = 100;
-	//m_ssrDesc.BlurNumSamples = 4;
-	//m_ssrDesc.Step = 0.1f;
-	//m_ssrDesc.Thickness = 0.3f;
-	//m_ssrDesc.Bias = 0.05f;
-	//m_ssrDesc.BlurPixelDistance = 1000.0f;
 	m_ssrDesc.NumSamples = 50;
 	m_ssrDesc.BlurNumSamples = 4;
 	m_ssrDesc.Step = 0.2f;
@@ -75,20 +68,16 @@ void Camera::Awake()
 
 void Camera::Render()
 {
-	if (m_renderTexture)
+	if (!m_renderTexture)
 	{
-		FitDepthStencilToRenderTexture();
+		FitDeferredRenderTargetToResolution(uint(system->graphic->width), uint(system->graphic->height));
+	}
+	else
+	{
 		FitDeferredRenderTargetToRenderTexture();
 	}
 
-	if (m_hasRenderTexture && !m_renderTexture)
-	{
-		m_hasRenderTexture = false;
-		m_renderTexture = nullptr;
-		ResetAspect();
-		ResetProjectionMatrix();
-	}
-
+	// Update Bounding holder
 	m_boundingHolder = GetBoundingHolder();
 }
 
@@ -97,18 +86,18 @@ inline void Camera::OnDestroyed()
 	ICameraManager* iCameraManager = system->graphic->cameraManager;
 	iCameraManager->RemoveCamera(this);
 
-	SafeDelete(m_depthStencil);
 	SafeDelete(m_deferredRenderTarget);
 }
 
 void Camera::OnResolutionChanged(float width, float height, float aspect)
 {
-	ResetAspect();
-	ResetProjectionMatrix();
-
 	if (!m_renderTexture)
 	{
-		FitDeferredRenderTargetToResolution(uint(width), uint(height));
+		FitDeferredRenderTargetToResolution(uint(system->graphic->width), uint(system->graphic->height));
+	}
+	else
+	{
+		FitDeferredRenderTargetToRenderTexture();
 	}
 }
 
@@ -261,20 +250,26 @@ bool Camera::IsWorking() const
 	return IsActive();
 }
 
+bool Camera::HasRenderTexture2D() const
+{
+	return !m_renderTexture.IsNull();
+}
+
 RenderTarget* Camera::GetRenderTarget() const
 {
 	if (!m_renderTexture)
-		return nullptr;
-
-	return m_renderTexture->renderTarget;
+	{
+		return m_deferredRenderTarget->result;
+	}
+	else
+	{
+		return m_renderTexture->renderTarget;
+	}
 }
 
 DepthStencil* Camera::GetDepthStencil() const
 {
-	if (!m_renderTexture)
-		return nullptr;
-
-	return m_depthStencil;
+	return m_deferredRenderTarget->depthStencil;
 }
 
 DeferredRenderTarget* Camera::GetDeferredRenderTarget() const
@@ -285,16 +280,6 @@ DeferredRenderTarget* Camera::GetDeferredRenderTarget() const
 uint2 Camera::GetSize() const
 {
 	return uint2(m_deferredRenderTarget->width, m_deferredRenderTarget->height);
-}
-
-bool Camera::IsAutoFitToResolutionMode() const
-{
-	return m_autoFitToResolution;
-}
-
-void Camera::SetAutoFitToResolutionMode(bool value)
-{
-	m_autoFitToResolution = value;
 }
 
 float Camera::GetAspect() const
@@ -320,6 +305,27 @@ void Camera::ResetAspect()
 {
 	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
 	SetAspect(asp);
+}
+
+void Camera::ResetProjectionMatrix()
+{
+	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
+
+	switch (m_projection)
+	{
+		case Projection::Perspective:
+			m_projectionMatrix = XMMatrixPerspectiveFovLH(m_fov, asp, m_near, m_far);
+			break;
+		case Projection::Orthographic:
+			m_projectionMatrix = XMMatrixOrthographicLH(asp * m_orthographicSize, 1.0f * m_orthographicSize, 0, m_far);
+			break;
+	}
+}
+
+void Camera::Reset()
+{
+	ResetAspect();
+	ResetProjectionMatrix();
 }
 
 float Camera::GetNear() const
@@ -384,25 +390,21 @@ const ResourceRef<RenderTexture2D>& Camera::GetRenderTexture() const
 
 void Camera::SetRenderTexture(const ResourceRef<RenderTexture2D>& value)
 {
-	bool prevHasRenderTexture = m_hasRenderTexture;
+	if (value == m_renderTexture)
+		return;
 
-	if (!value)
+	m_renderTexture = value;
+
+	if (!m_renderTexture)
 	{
-		m_hasRenderTexture = false;
-		m_renderTexture = nullptr;
+		FitDeferredRenderTargetToResolution(uint(system->graphic->width), uint(system->graphic->height));
 	}
 	else
 	{
-		m_hasRenderTexture = true;
-		m_renderTexture = value;
-		FitDepthStencilToRenderTexture();
+		FitDeferredRenderTargetToRenderTexture();
 	}
 
-	if (prevHasRenderTexture != m_hasRenderTexture)
-	{
-		ResetAspect();
-		ResetProjectionMatrix();
-	}
+	Reset();
 }
 
 bool Camera::Contains(const V3& point) const
@@ -415,54 +417,21 @@ bool Camera::Intersects(const BoundingHolder& boundingHolder) const
 	return m_boundingHolder.IntersectsBoundingHolder(boundingHolder);
 }
 
-void Camera::ResetProjectionMatrix()
-{
-	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
-
-	switch (m_projection)
-	{
-		case Projection::Perspective:
-			m_projectionMatrix = XMMatrixPerspectiveFovLH(m_fov, asp, m_near, m_far);
-			break;
-		case Projection::Orthographic:
-			m_projectionMatrix = XMMatrixOrthographicLH(asp * m_orthographicSize, 1.0f * m_orthographicSize, 0, m_far);
-			break;
-	}
-}
-
-void Camera::FitDepthStencilToRenderTexture()
-{
-	if (!m_renderTexture)
-		return;
-
-	if (!m_depthStencil)
-	{
-		DepthStencil::Create(system->graphic->device, m_renderTexture->width, m_renderTexture->height, false, DepthStencil::Type::WRITEONLY_DEPTH_STENCIL, &m_depthStencil);
-	}
-	
-	bool diffWidth = m_depthStencil->width != m_renderTexture->width;
-	bool diffHeight = m_depthStencil->height != m_renderTexture->height;
-	if (diffWidth || diffHeight)
-	{
-		m_depthStencil->Resize(system->graphic->device, m_renderTexture->width, m_renderTexture->height);
-	}
-}
-
 void Camera::FitDeferredRenderTargetToRenderTexture()
 {
 	if (!m_renderTexture)
 		return;
 
-	bool diffWidth = m_depthStencil->width != m_renderTexture->width;
-	bool diffHeight = m_depthStencil->height != m_renderTexture->height;
-
-	if (diffWidth || diffHeight)
+	if (m_deferredRenderTarget->Resize(system->graphic->device, m_renderTexture->width, m_renderTexture->height))
 	{
-		m_deferredRenderTarget->Resize(system->graphic->device, m_renderTexture->width, m_renderTexture->height);
+		Reset();
 	}
 }
 
 void Camera::FitDeferredRenderTargetToResolution(uint width, uint height)
 {
-	m_deferredRenderTarget->Resize(system->graphic->device, width, height);
+	if (m_deferredRenderTarget->Resize(system->graphic->device, width, height))
+	{
+		Reset();
+	}
 }

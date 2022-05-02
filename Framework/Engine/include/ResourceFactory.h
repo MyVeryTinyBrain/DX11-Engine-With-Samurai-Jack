@@ -24,37 +24,29 @@ public:
 
 public:
 
-	ResourceRef<Texture2D> CreateTexture2DM(const TextureCreateDesc& desc, const tstring& resourceKey, const tstring& groupName = TEXT(""));
+	ResourceRef<Texture2D> CreateTexture2DM(const TextureCreateDesc& desc, const tstring& resourceKey);
 	ResourceRef<Texture2D> CreateTexture2DUM(const TextureCreateDesc& desc);
-	ResourceRef<Texture2D> LoadTexture2DM(const TextureOptionDesc& desc, const tstring& path, const tstring& groupName = TEXT(""));
+	ResourceRef<Texture2D> LoadTexture2DM(const TextureOptionDesc& desc, const tstring& path);
 	ResourceRef<Texture2D> LoadTexture2DUM(const TextureOptionDesc& desc, const tstring& path);
 
-	ResourceRef<RenderTexture2D> CreateManagedRenderTexture2D(const tstring& resourceKey, unsigned int width, unsigned int height);
-	ResourceRef<RenderTexture2D> CreateManagedRenderTexture2D(const tstring& resourceKey, const tstring& groupName, unsigned int width, unsigned int height);
-	ResourceRef<RenderTexture2D> CreateUnmanagedRenderTexture2D(unsigned int width, unsigned int height);
+	ResourceRef<RenderTexture2D> CreateRenderTexture2DM(const tstring& resourceKey, unsigned int width, unsigned int height);
+	ResourceRef<RenderTexture2D> CreateRenderTexture2DUM(unsigned int width, unsigned int height);
 
-	ResourceRef<Shader> CreateManagedShaderFromFile(const tstring& path); 
-	ResourceRef<Shader> CreateManagedShaderFromFile(const tstring& path, const tstring& groupName);
-	ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(const tstring& path);
-	ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(const tstring& path, const tstring& groupName);
+	ResourceRef<Shader> LoadShaderFromFileM(const tstring& path); 
+	ResourceRef<Shader> LoadShaderFromBinaryFolderM(const tstring& path);
 
-	ResourceRef<Mesh> CreateManagedMesh(const tstring& resourceKey, const VIBuffer* viBuffer);
-	ResourceRef<Mesh> CreateManagedMesh(const tstring& resourceKey, const tstring& groupName, const VIBuffer* viBuffer);
-	ResourceRef<Mesh> CreateUnamanagedMesh(const VIBuffer* viBuffer);
-	ResourceRef<Mesh> CreateManagedMeshNocopy(const tstring& resourceKey, VIBuffer** ppVIBuffer);
-	ResourceRef<Mesh> CreateManagedMeshNocopy(const tstring& resourceKey, const tstring& groupName, VIBuffer** ppVIBuffer);
-	ResourceRef<Mesh> CreateUnamanagedMeshNocopy(VIBuffer** ppVIBuffer);
-	ResourceRef<Mesh> CreateManagedMeshFromFile(const tstring& path, bool withTextures = true);
+	ResourceRef<Mesh> CreateMeshM(const tstring& resourceKey, const VIBuffer* viBuffer);
+	ResourceRef<Mesh> CreateMeshUM(const VIBuffer* viBuffer);
+	ResourceRef<Mesh> CreateMeshNocopyM(const tstring& resourceKey, VIBuffer** ppVIBuffer);
+	ResourceRef<Mesh> CreateMeshNocopyUM(VIBuffer** ppVIBuffer);
+	ResourceRef<Mesh> LoadMeshM(const tstring& path, bool withTextures = true);
 
-	ResourceRef<Material> CreateManagedMaterialByShader(ResourceRef<Shader> shader, const tstring& resourceKey);
-	ResourceRef<Material> CreateManagedMaterialByShader(ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName);
-	ResourceRef<Material> CreateUnmanagedMaterialByShader(ResourceRef<Shader> shader);
-	ResourceRef<Material> CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey);
-	ResourceRef<Material> CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName);
-	ResourceRef<Material> CopyUnmanagedMaterial(ResourceRef<Material> material);
-	ResourceRef<Material> CreateManagedMaterialFromJson(const tstring& jsonPath);
-	ResourceRef<Material> CreateManagedMaterialFromJson(const tstring& jsonPath, const tstring& groupName);
-	ResourceRef<Material> CreateUnmanagedMaterialFromJson(const tstring& jsonPath);
+	ResourceRef<Material> CreateMaterialByShaderM(ResourceRef<Shader> shader, const tstring& resourceKey);
+	ResourceRef<Material> CreateMaterialByShaderUM(ResourceRef<Shader> shader);
+	ResourceRef<Material> CopyMaterialM(ResourceRef<Material> material, const tstring& resourceKey);
+	ResourceRef<Material> CopyMaterialUM(ResourceRef<Material> material);
+	ResourceRef<Material> LoadMaterialM(const tstring& jsonPath);
+	ResourceRef<Material> LoadMaterialUM(const tstring& jsonPath);
 
 public:
 

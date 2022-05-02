@@ -49,7 +49,7 @@ HRESULT DxTextureUtility::CreateTexture2D(
 
 	tex2dDesc.Width = tcDesc.Size.x;
 	tex2dDesc.Height = tcDesc.Size.y;
-	tex2dDesc.MipLevels = tcDesc.Option.GenerateMipmap ? 0 : 1;
+	tex2dDesc.MipLevels = tcDesc.Option.GenerateMipmap ? tcDesc.Option.MipLevel : 1;
 	tex2dDesc.ArraySize = 1;
 	tex2dDesc.Format = tcDesc.Format;
 	tex2dDesc.SampleDesc.Count = 1;
@@ -119,7 +119,7 @@ HRESULT DxTextureUtility::LoadTexture2D(
 	if (out_srv) *out_srv = nullptr;
 	if (out_rtv) *out_rtv = nullptr;
 	
-	if (FAILED(hr = LoadScratchImage(tlDesc.Path, tlDesc.Option.GenerateMipmap, &scratchImage)))
+	if (FAILED(hr = LoadScratchImage(tlDesc.Path, tlDesc.Option.GenerateMipmap, tlDesc.Option.MipLevel, &scratchImage)))
 	{
 		return hr;
 	}
@@ -165,7 +165,7 @@ HRESULT DxTextureUtility::LoadTexture2D(
 	return S_OK;
 }
 
-HRESULT DxTextureUtility::LoadScratchImage(const TCHAR* Path, bool generateMipmap, DirectX::ScratchImage* out_scratchImage)
+HRESULT DxTextureUtility::LoadScratchImage(const TCHAR* Path, bool generateMipmap, uint mipLevel, DirectX::ScratchImage* out_scratchImage)
 {
 	HRESULT hr = S_OK;
 
@@ -201,8 +201,7 @@ HRESULT DxTextureUtility::LoadScratchImage(const TCHAR* Path, bool generateMipma
 	{
 		// levels: Number of mip map levels including base. A value of 0 indicates creating a full mipmap chain down to 1x1
 		DirectX::ScratchImage mipmapScratchImage;
-		//TEX_FILTER_DEFAULT
-		hr = DirectX::GenerateMipMaps(out_scratchImage->GetImages(), out_scratchImage->GetImageCount(), out_scratchImage->GetMetadata(), TEX_FILTER_MIRROR | TEX_FILTER_MIRROR_U | TEX_FILTER_MIRROR_V, 0, mipmapScratchImage);
+		hr = DirectX::GenerateMipMaps(out_scratchImage->GetImages(), out_scratchImage->GetImageCount(), out_scratchImage->GetMetadata(), TEX_FILTER_DEFAULT, mipLevel, mipmapScratchImage);
 		*out_scratchImage = std::move(mipmapScratchImage);
 	}
 
@@ -263,4 +262,9 @@ void DxTextureUtility::SetTexture2DPixels(D3D11_SUBRESOURCE_DATA* inout_tex2dDat
 	inout_tex2dData->SysMemSlicePitch = size.x * size.y * (uint)colorSize / 8;
 
 	*out_bytes = arrPixelColors;
+}
+
+uint DxTextureUtility::TexCoordToAddress(uint2 texCoord, uint rowPitch)
+{
+	return texCoord.y * rowPitch + (texCoord.x * 4);
 }

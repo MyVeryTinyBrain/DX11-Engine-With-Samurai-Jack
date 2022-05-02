@@ -98,10 +98,10 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateShader(TEXT("Color.cso"), &m_colorShader)))
 		return hr;
 
-	if (nullptr == (m_standardMaterial = m_factory->CreateUnmanagedMaterialByShader(m_standardShader)))
+	if (nullptr == (m_standardMaterial = m_factory->CreateMaterialByShaderUM(m_standardShader)))
 		return E_FAIL;
 
-	if (nullptr == (m_wireframeMaterial = m_factory->CreateUnmanagedMaterialByShader(m_colorShader)))
+	if (nullptr == (m_wireframeMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
 
 	return S_OK;
@@ -251,7 +251,7 @@ HRESULT BuiltInResources::CreateMeshNocopyVI(VI* vi, ResourceRef<Mesh>* out_mesh
 		return hr;
 	}
 
-	if (nullptr == (*out_mesh = m_factory->CreateUnamanagedMeshNocopy(&viBuffer)))
+	if (nullptr == (*out_mesh = m_factory->CreateMeshNocopyUM(&viBuffer)))
 	{
 		SafeDelete(viBuffer);
 		return E_FAIL;
@@ -262,7 +262,7 @@ HRESULT BuiltInResources::CreateMeshNocopyVI(VI* vi, ResourceRef<Mesh>* out_mesh
 
 HRESULT BuiltInResources::CreateShader(const tstring& shaderPath, ResourceRef<Shader>* out_shader)
 {
-	if (nullptr == (*out_shader = m_factory->CreateManagedShaderFromBinaryFolder(shaderPath)))
+	if (nullptr == (*out_shader = m_factory->LoadShaderFromBinaryFolderM(shaderPath)))
 		return E_FAIL;
 
 	return S_OK;

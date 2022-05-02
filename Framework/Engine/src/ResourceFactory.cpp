@@ -14,9 +14,9 @@ ResourceFactory::~ResourceFactory()
 {
 }
 
-ResourceRef<Texture2D> ResourceFactory::CreateTexture2DM(const TextureCreateDesc& desc, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Texture2D> ResourceFactory::CreateTexture2DM(const TextureCreateDesc& desc, const tstring& resourceKey)
 {
-	return Texture2D::CreateTexture2DM(m_management, desc, resourceKey, groupName);
+	return Texture2D::CreateTexture2DM(m_management, desc, resourceKey);
 }
 
 ResourceRef<Texture2D> ResourceFactory::CreateTexture2DUM(const TextureCreateDesc& desc)
@@ -24,9 +24,9 @@ ResourceRef<Texture2D> ResourceFactory::CreateTexture2DUM(const TextureCreateDes
 	return Texture2D::CreateTexture2DUM(m_management, desc);
 }
 
-ResourceRef<Texture2D> ResourceFactory::LoadTexture2DM(const TextureOptionDesc& desc, const tstring& path, const tstring& groupName)
+ResourceRef<Texture2D> ResourceFactory::LoadTexture2DM(const TextureOptionDesc& desc, const tstring& path)
 {
-	return Texture2D::LoadTexture2DM(m_management, desc, path, groupName);
+	return Texture2D::LoadTexture2DM(m_management, desc, path);
 }
 
 ResourceRef<Texture2D> ResourceFactory::LoadTexture2DUM(const TextureOptionDesc& desc, const tstring& path)
@@ -34,74 +34,49 @@ ResourceRef<Texture2D> ResourceFactory::LoadTexture2DUM(const TextureOptionDesc&
 	return Texture2D::LoadTexture2DUM(m_management, desc, path);
 }
 
-ResourceRef<RenderTexture2D> ResourceFactory::CreateManagedRenderTexture2D(const tstring& resourceKey, unsigned int width, unsigned int height)
+ResourceRef<RenderTexture2D> ResourceFactory::CreateRenderTexture2DM(const tstring& resourceKey, unsigned int width, unsigned int height)
 {
-	return RenderTexture2D::CreateManagedRenderTexture2D(m_management, resourceKey, width, height);
+	return RenderTexture2D::CreateRenderTexture2DM(m_management, resourceKey, width, height);
 }
 
-ResourceRef<RenderTexture2D> ResourceFactory::CreateManagedRenderTexture2D(const tstring& resourceKey, const tstring& groupName, unsigned int width, unsigned int height)
+ResourceRef<RenderTexture2D> ResourceFactory::CreateRenderTexture2DUM(unsigned int width, unsigned int height)
 {
-	return RenderTexture2D::CreateManagedRenderTexture2D(m_management, resourceKey, groupName, width, height);
+	return RenderTexture2D::CreateRenderTexture2DUM(m_management, width, height);
 }
 
-ResourceRef<RenderTexture2D> ResourceFactory::CreateUnmanagedRenderTexture2D(unsigned int width, unsigned int height)
+ResourceRef<Shader> ResourceFactory::LoadShaderFromFileM(const tstring& path)
 {
-	return RenderTexture2D::CreateUnmanagedRenderTexture2D(m_management, width, height);
+	return Shader::LoadShaderFromFileM(m_management, path);
 }
 
-ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromFile(const tstring& path)
+ResourceRef<Shader> ResourceFactory::LoadShaderFromBinaryFolderM(const tstring& path)
 {
-	return Shader::CreateManagedShaderFromFile(m_management, path);
+	return Shader::LoadShaderFromBinaryFolderM(m_management, path);
 }
 
-ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromFile(const tstring& path, const tstring& groupName)
+ResourceRef<Mesh> ResourceFactory::CreateMeshM(const tstring& resourceKey, const VIBuffer* viBuffer)
 {
-	return Shader::CreateManagedShaderFromFile(m_management, path, groupName);
+	return Mesh::CreateMeshM(m_management, resourceKey, viBuffer);
 }
 
-ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromBinaryFolder(const tstring& path)
+ResourceRef<Mesh> ResourceFactory::CreateMeshUM(const VIBuffer* viBuffer)
 {
-	return Shader::CreateManagedShaderFromBinaryFolder(m_management, path);
+	return Mesh::CreateMeshUM(m_management, viBuffer);
 }
 
-ResourceRef<Shader> ResourceFactory::CreateManagedShaderFromBinaryFolder(const tstring& path, const tstring& groupName)
+ResourceRef<Mesh> ResourceFactory::CreateMeshNocopyM(const tstring& resourceKey, VIBuffer** ppVIBuffer)
 {
-	return Shader::CreateManagedShaderFromBinaryFolder(m_management, path, groupName);
+	return Mesh::CreateMeshNocopyM(m_management, resourceKey, ppVIBuffer);
 }
 
-ResourceRef<Mesh> ResourceFactory::CreateManagedMesh(const tstring& resourceKey, const VIBuffer* viBuffer)
+ResourceRef<Mesh> ResourceFactory::CreateMeshNocopyUM(VIBuffer** ppVIBuffer)
 {
-	return Mesh::CreateManagedMesh(m_management, resourceKey, viBuffer);
+	return Mesh::CreateMeshNocopyUM(m_management, ppVIBuffer);
 }
 
-ResourceRef<Mesh> ResourceFactory::CreateManagedMesh(const tstring& resourceKey, const tstring& groupName, const VIBuffer* viBuffer)
+ResourceRef<Mesh> ResourceFactory::LoadMeshM(const tstring& path, bool withTextures)
 {
-	return Mesh::CreateManagedMesh(m_management, resourceKey, groupName, viBuffer);
-}
-
-ResourceRef<Mesh> ResourceFactory::CreateUnamanagedMesh(const VIBuffer* viBuffer)
-{
-	return Mesh::CreateUnamanagedMesh(m_management, viBuffer);
-}
-
-ResourceRef<Mesh> ResourceFactory::CreateManagedMeshNocopy(const tstring& resourceKey, VIBuffer** ppVIBuffer)
-{
-	return Mesh::CreateManagedMeshNocopy(m_management, resourceKey, ppVIBuffer);
-}
-
-ResourceRef<Mesh> ResourceFactory::CreateManagedMeshNocopy(const tstring& resourceKey, const tstring& groupName, VIBuffer** ppVIBuffer)
-{
-	return Mesh::CreateManagedMeshNocopy(m_management, resourceKey, groupName, ppVIBuffer);
-}
-
-ResourceRef<Mesh> ResourceFactory::CreateUnamanagedMeshNocopy(VIBuffer** ppVIBuffer)
-{
-	return Mesh::CreateUnamanagedMeshNocopy(m_management, ppVIBuffer);
-}
-
-ResourceRef<Mesh> ResourceFactory::CreateManagedMeshFromFile(const tstring& path, bool withTextures)
-{
-	ResourceRef<Mesh> mesh = Mesh::CreateManagedMeshFromFile(m_management, path);
+	ResourceRef<Mesh> mesh = Mesh::LoadMeshM(m_management, path);
 
 	if (mesh && withTextures)
 	{
@@ -116,49 +91,34 @@ ResourceRef<Mesh> ResourceFactory::CreateManagedMeshFromFile(const tstring& path
 	return mesh;
 }
 
-ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(ResourceRef<Shader> shader, const tstring& resourceKey)
+ResourceRef<Material> ResourceFactory::CreateMaterialByShaderM(ResourceRef<Shader> shader, const tstring& resourceKey)
 {
-	return Material::CreateManagedMaterialByShader(m_management, shader, resourceKey);
+	return Material::CreateMaterialByShaderM(m_management, shader, resourceKey);
 }
 
-ResourceRef<Material> ResourceFactory::CreateManagedMaterialByShader(ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Material> ResourceFactory::CreateMaterialByShaderUM(ResourceRef<Shader> shader)
 {
-	return Material::CreateManagedMaterialByShader(m_management, shader, resourceKey, groupName);
+	return Material::CreateMaterialByShaderUM(m_management, shader);
 }
 
-ResourceRef<Material> ResourceFactory::CreateUnmanagedMaterialByShader(ResourceRef<Shader> shader)
+ResourceRef<Material> ResourceFactory::CopyMaterialM(ResourceRef<Material> material, const tstring& resourceKey)
 {
-	return Material::CreateUnmanagedMaterialByShader(m_management, shader);
+	return Material::CopyMaterialM(m_management, material, resourceKey);
 }
 
-ResourceRef<Material> ResourceFactory::CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey)
+ResourceRef<Material> ResourceFactory::CopyMaterialUM(ResourceRef<Material> material)
 {
-	return Material::CopyManagedMaterial(m_management, material, resourceKey);
+	return Material::CopyMaterialUM(m_management, material);
 }
 
-ResourceRef<Material> ResourceFactory::CopyManagedMaterial(ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Material> ResourceFactory::LoadMaterialM(const tstring& jsonPath)
 {
-	return Material::CopyManagedMaterial(m_management, material, resourceKey, groupName);
+	return Material::LoadMaterialM(m_management, jsonPath);
 }
 
-ResourceRef<Material> ResourceFactory::CopyUnmanagedMaterial(ResourceRef<Material> material)
+ResourceRef<Material> ResourceFactory::LoadMaterialUM(const tstring& jsonPath)
 {
-	return Material::CopyUnmanagedMaterial(m_management, material);
-}
-
-ResourceRef<Material> ResourceFactory::CreateManagedMaterialFromJson(const tstring& jsonPath)
-{
-	return Material::CreateManagedMaterialFromJson(m_management, jsonPath);
-}
-
-ResourceRef<Material> ResourceFactory::CreateManagedMaterialFromJson(const tstring& jsonPath, const tstring& groupName)
-{
-	return Material::CreateManagedMaterialFromJson(m_management, jsonPath, groupName);
-}
-
-ResourceRef<Material> ResourceFactory::CreateUnmanagedMaterialFromJson(const tstring& jsonPath)
-{
-	return Material::CreateUnmanagedMaterialFromJson(m_management, jsonPath);
+	return Material::LoadMaterialUM(m_management, jsonPath);
 }
 
 ResourceManagement* ResourceFactory::GetManagement() const

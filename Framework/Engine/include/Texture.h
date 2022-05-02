@@ -10,7 +10,7 @@ class ENGINE_API Texture : public ResourceObject, public ITexture
 
 protected:
 
-	Texture(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName);
+	Texture(ResourceManagement* management, bool managed, const tstring& path);
 
 	virtual ~Texture() = default;
 

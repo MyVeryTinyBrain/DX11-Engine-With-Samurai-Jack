@@ -43,6 +43,7 @@
     <ClInclude Include="include\DeferredRenderTarget.h" />
     <ClInclude Include="include\DepthStencil.h" />
     <ClInclude Include="include\DirectionalLight.h" />
+    <ClInclude Include="include\DxUtility.h" />
     <ClInclude Include="include\DxTextureCreateType.h" />
     <ClInclude Include="include\DxTextureUtility.h" />
     <ClInclude Include="include\ILight.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="src\DeferredRenderTarget.cpp" />
     <ClCompile Include="src\DepthStencil.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
+    <ClCompile Include="src\DxUtility.cpp" />
     <ClCompile Include="src\DxTextureCreateType.cpp" />
     <ClCompile Include="src\DxTextureUtility.cpp" />
     <ClCompile Include="src\ILight.cpp" />
@@ -413,6 +415,9 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="include\Engine.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

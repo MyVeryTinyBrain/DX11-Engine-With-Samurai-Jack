@@ -49,8 +49,8 @@ public:
 
 public:
 
-	static CompiledShaderDesc* CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error);
-	static CompiledShaderDesc* CreateCompiledShaderFromBinaryFolder(Com<ID3D11Device> device, const tstring& path, tstring& out_error);
+	static CompiledShaderDesc* LoadCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error);
+	static CompiledShaderDesc* LoadCompiledShaderFromBinaryFolder(Com<ID3D11Device> device, const tstring& path, tstring& out_error);
 
 	static tstring ParseToBinaryShaderPath(const tstring& path);
 

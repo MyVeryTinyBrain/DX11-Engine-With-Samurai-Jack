@@ -174,7 +174,7 @@ void CapsuleCollider::CreateDebugShape()
 		D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		&viBuffer);
-	m_dbgMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_dbgMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
 	m_dbgMaterial = system->resource->builtInResources->wireframeMaterial;
 }
 

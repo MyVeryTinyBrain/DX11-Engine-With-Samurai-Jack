@@ -6,9 +6,9 @@
 #include "DxTextureUtility.h"
 
 Texture2D::Texture2D(
-	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName,
+	ResourceManagement* management, bool managed, const tstring& path, 
 	ID3D11Texture2D* texture, ID3D11ShaderResourceView* srv) :
-	Texture(management, managed, path, groupName),
+	Texture(management, managed, path),
 	m_texture(texture), m_srv(srv)
 {
 }
@@ -36,7 +36,7 @@ ResourceRef<Texture2D> Texture2D::Copy(Com<ID3D11DeviceContext> deviceContext) c
 		SafeRelease(destSRV);
 	};
 
-	m_texture->GetDesc(&desc);
+	texture2D->GetDesc(&desc);
 	if (desc.Usage == D3D11_USAGE_IMMUTABLE)
 		desc.Usage = D3D11_USAGE_DEFAULT;
 
@@ -46,7 +46,7 @@ ResourceRef<Texture2D> Texture2D::Copy(Com<ID3D11DeviceContext> deviceContext) c
 		return nullptr;
 	}
 
-	deviceContext->CopyResource(dest, m_texture);
+	deviceContext->CopyResource(dest, texture2D.Get());
 
 	if (FAILED(device->CreateShaderResourceView(dest, nullptr, &destSRV)))
 	{
@@ -54,7 +54,7 @@ ResourceRef<Texture2D> Texture2D::Copy(Com<ID3D11DeviceContext> deviceContext) c
 		return nullptr;
 	}
 
-	return new Texture2D(management, false, path, TEXT(""), dest, destSRV);
+	return new Texture2D(management, false, path, dest, destSRV);
 }
 
 bool Texture2D::CopyTo(Com<ID3D11DeviceContext> deviceContext, ResourceRef<Texture2D> destTex)
@@ -66,42 +66,32 @@ bool Texture2D::CopyTo(Com<ID3D11DeviceContext> deviceContext, ResourceRef<Textu
 		return false;
 
 	D3D11_TEXTURE2D_DESC desc = {};
-	destTex->m_texture->GetDesc(&desc);
+	destTex->texture2D->GetDesc(&desc);
 
 	if (desc.Usage == D3D11_USAGE_IMMUTABLE)
 		return false;
 
-	ID3D11Resource* dest = destTex->m_texture;
-	deviceContext->CopyResource(dest, m_texture);
+	ID3D11Resource* dest = destTex->texture2D.Get();
+	deviceContext->CopyResource(dest, texture2D.Get());
 
 	return true;
-}
-
-Com<ID3D11Resource> Texture2D::GetTexture() const
-{
-	return m_texture;
-}
-
-Com<ID3D11ShaderResourceView> Texture2D::GetSRV() const
-{
-	return m_srv;
 }
 
 unsigned int Texture2D::GetWidth() const
 {
 	D3D11_TEXTURE2D_DESC desc = {};
-	m_texture->GetDesc(&desc);
+	texture2D->GetDesc(&desc);
 	return desc.Width;
 }
 
 unsigned int Texture2D::GetHeight() const
 {
 	D3D11_TEXTURE2D_DESC desc = {};
-	m_texture->GetDesc(&desc);
+	texture2D->GetDesc(&desc);
 	return desc.Height;
 }
 
-ResourceRef<Texture2D> Texture2D::CreateTexture2DM(ResourceManagement* management, const TextureCreateDesc& desc, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Texture2D> Texture2D::CreateTexture2DM(ResourceManagement* management, const TextureCreateDesc& desc, const tstring& resourceKey)
 {
 	if (!management)
 		return nullptr;
@@ -116,7 +106,7 @@ ResourceRef<Texture2D> Texture2D::CreateTexture2DM(ResourceManagement* managemen
 	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, desc, &texture, &srv)))
 		return nullptr;
 
-	return new Texture2D(management, true, resourceKey, groupName, texture, srv);
+	return new Texture2D(management, true, resourceKey, texture, srv);
 }
 
 ResourceRef<Texture2D> Texture2D::CreateTexture2DUM(ResourceManagement* management, const TextureCreateDesc& desc)
@@ -130,10 +120,10 @@ ResourceRef<Texture2D> Texture2D::CreateTexture2DUM(ResourceManagement* manageme
 	if (FAILED(CreateTexture2D(management->GetSystem()->graphic->device, desc, &texture, &srv)))
 		return nullptr;
 
-	return new Texture2D(management, false, TEXT(""), TEXT(""), texture, srv);
+	return new Texture2D(management, false, TEXT(""), texture, srv);
 }
 
-ResourceRef<Texture2D> Texture2D::LoadTexture2DM(ResourceManagement* management, const TextureOptionDesc& desc, const tstring& path, const tstring& groupName)
+ResourceRef<Texture2D> Texture2D::LoadTexture2DM(ResourceManagement* management, const TextureOptionDesc& desc, const tstring& path)
 {
 	if (!management)
 		return nullptr;
@@ -152,7 +142,7 @@ ResourceRef<Texture2D> Texture2D::LoadTexture2DM(ResourceManagement* management,
 	if (FAILED(LoadTexture2D(management->GetSystem()->graphic->device, tlDesc, &texture, &srv)))
 		return nullptr;
 
-	return new Texture2D(management, true, path, groupName, texture, srv);
+	return new Texture2D(management, true, path, texture, srv);
 }
 
 ResourceRef<Texture2D> Texture2D::LoadTexture2DUM(ResourceManagement* management, const TextureOptionDesc& desc, const tstring& path)
@@ -170,7 +160,7 @@ ResourceRef<Texture2D> Texture2D::LoadTexture2DUM(ResourceManagement* management
 	if (FAILED(LoadTexture2D(management->GetSystem()->graphic->device, tlDesc, &texture, &srv)))
 		return nullptr;
 
-	return new Texture2D(management, false, TEXT(""), TEXT(""), texture, srv);
+	return new Texture2D(management, false, TEXT(""), texture, srv);
 }
 
 HRESULT Texture2D::CreateTexture2D(Com<ID3D11Device> device, const TextureCreateDesc& desc, ID3D11Texture2D** out_texture, ID3D11ShaderResourceView** out_srv)

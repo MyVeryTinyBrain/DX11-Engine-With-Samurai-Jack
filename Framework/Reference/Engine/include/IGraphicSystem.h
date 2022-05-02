@@ -37,15 +37,6 @@ public:
 
 	virtual LightManager* GetLightManager() const = 0;
 
-public:
-
-	virtual HRESULT SetViewport
-	(Com<ID3D11DeviceContext> deviceContext, unsigned int width, unsigned int height) = 0;
-
-	virtual uint2 GetViewport(Com<ID3D11DeviceContext> deviceContext) const = 0;
-
-	virtual HRESULT RollbackViewport(Com<ID3D11DeviceContext> deviceContext) = 0;
-
 };
 
 ENGINE_END

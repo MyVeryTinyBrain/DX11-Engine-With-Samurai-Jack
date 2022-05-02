@@ -11,9 +11,9 @@
 #include "AnimationClip.h"
 
 Mesh::Mesh(
-	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
+	ResourceManagement* management, bool managed, const tstring& path,  
 	VIBuffer* viBuffer) :
-	ResourceObject(management, managed, path, groupName),
+	ResourceObject(management, managed, path),
 	m_viBuffer(viBuffer)
 {
 }
@@ -86,7 +86,7 @@ bool Mesh::RaycastInWorldSpace(V3& worldHit, const Ray& worldRay, const M4& loca
 	return m_viBuffer->RaycastInWorldSpace(worldHit, worldRay, localToWorldMatrix, in90Degrees);
 }
 
-ResourceRef<Mesh> Mesh::CreateManagedMesh(ResourceManagement* management, const tstring& resourceKey, const VIBuffer* viBuffer)
+ResourceRef<Mesh> Mesh::CreateMeshM(ResourceManagement* management, const tstring& resourceKey, const VIBuffer* viBuffer)
 {
 	if (!management)
 		return nullptr;
@@ -98,25 +98,10 @@ ResourceRef<Mesh> Mesh::CreateManagedMesh(ResourceManagement* management, const 
 	if(!viBuffer || !viBuffer->IsValid())
 		return nullptr;
 
-	return new Mesh(management, true, resourceKey, TEXT(""), viBuffer->Copy());
+	return new Mesh(management, true, resourceKey, viBuffer->Copy());
 }
 
-ResourceRef<Mesh> Mesh::CreateManagedMesh(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, const VIBuffer* viBuffer)
-{
-	if (!management)
-		return nullptr;
-
-	ResourceRef<ResourceObject> find = management->Find(resourceKey);
-	if (find)
-		return find;
-
-	if (!viBuffer || !viBuffer->IsValid())
-		return nullptr;
-
-	return new Mesh(management, true, resourceKey, groupName, viBuffer->Copy());
-}
-
-ResourceRef<Mesh> Mesh::CreateUnamanagedMesh(ResourceManagement* management, const VIBuffer* viBuffer)
+ResourceRef<Mesh> Mesh::CreateMeshUM(ResourceManagement* management, const VIBuffer* viBuffer)
 {
 	if (!management)
 		return nullptr;
@@ -124,10 +109,10 @@ ResourceRef<Mesh> Mesh::CreateUnamanagedMesh(ResourceManagement* management, con
 	if (!viBuffer || !viBuffer->IsValid())
 		return nullptr;
 
-	return new Mesh(management, false, TEXT(""), TEXT(""), viBuffer->Copy());
+	return new Mesh(management, false, TEXT(""), viBuffer->Copy());
 }
 
-ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, const tstring& resourceKey, VIBuffer** ppVIBuffer)
+ResourceRef<Mesh> Mesh::CreateMeshNocopyM(ResourceManagement* management, const tstring& resourceKey, VIBuffer** ppVIBuffer)
 {
 	auto ReleaseVars = [&]()
 	{
@@ -153,47 +138,14 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, 
 		return nullptr;
 	}
 
-	Mesh* mesh = new Mesh(management, true, resourceKey, TEXT(""), *ppVIBuffer);
+	Mesh* mesh = new Mesh(management, true, resourceKey, *ppVIBuffer);
 
 	*ppVIBuffer = nullptr;
 
 	return mesh;
 }
 
-ResourceRef<Mesh> Mesh::CreateManagedMeshNocopy(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, VIBuffer** ppVIBuffer)
-{
-	auto ReleaseVars = [&]()
-	{
-		SafeDelete(*ppVIBuffer);
-	};
-
-	if (!ppVIBuffer || !*ppVIBuffer)
-		return nullptr;
-
-	if (!management)
-	{
-		ReleaseVars();
-		return nullptr;
-	}
-
-	ResourceRef<ResourceObject> find = management->Find(resourceKey);
-	if (find)
-		return find;
-
-	if (!(*ppVIBuffer)->IsValid())
-	{
-		ReleaseVars();
-		return nullptr;
-	}
-
-	Mesh* mesh = new Mesh(management, true, resourceKey, groupName, *ppVIBuffer);
-
-	*ppVIBuffer = nullptr;
-
-	return mesh;
-}
-
-ResourceRef<Mesh> Mesh::CreateUnamanagedMeshNocopy(ResourceManagement* management, VIBuffer** ppViBuffer)
+ResourceRef<Mesh> Mesh::CreateMeshNocopyUM(ResourceManagement* management, VIBuffer** ppViBuffer)
 {
 	auto ReleaseVars = [&]()
 	{
@@ -215,14 +167,14 @@ ResourceRef<Mesh> Mesh::CreateUnamanagedMeshNocopy(ResourceManagement* managemen
 		return nullptr;
 	}
 
-	Mesh* mesh = new Mesh(management, false, TEXT(""), TEXT(""), *ppViBuffer);
+	Mesh* mesh = new Mesh(management, false, TEXT(""), *ppViBuffer);
 
 	*ppViBuffer = nullptr;
 
 	return mesh;
 }
 
-ResourceRef<Mesh> Mesh::CreateManagedMeshFromFile(ResourceManagement* management, const tstring& path)
+ResourceRef<Mesh> Mesh::LoadMeshM(ResourceManagement* management, const tstring& path)
 {
 	tstring errorMessage;
 	AssimpData* data = nullptr;
@@ -281,7 +233,7 @@ ResourceRef<Mesh> Mesh::CreateManagedMeshFromFile(ResourceManagement* management
 		return nullptr;
 	}
 
-	Mesh* mesh = new Mesh(management, true, path, TEXT(""), viBufferLoaded);
+	Mesh* mesh = new Mesh(management, true, path, viBufferLoaded);
 
 	mesh->m_subMeshNodeIndices.resize(data->numSubMeshes);
 	for (uint i = 0; i < data->numSubMeshes; ++i)

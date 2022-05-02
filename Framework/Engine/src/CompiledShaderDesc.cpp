@@ -275,7 +275,7 @@ HRESULT CompiledShaderDesc::SetTextures(const string& name, ID3D11ShaderResource
 	return S_OK;
 }
 
-CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
+CompiledShaderDesc* CompiledShaderDesc::LoadCompiledShaderFromFile(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
 {
 	ID3DBlob* compiledShader = nullptr;
 	ID3DBlob* compiledShaderErrorMessage = nullptr;
@@ -300,7 +300,7 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromFile(Com<ID3D11D
 	return shader;
 }
 
-CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
+CompiledShaderDesc* CompiledShaderDesc::LoadCompiledShaderFromBinaryFolder(Com<ID3D11Device> device, const tstring& path, tstring& out_error)
 {
 	ID3DBlob* compiledShader = nullptr;
 

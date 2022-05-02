@@ -490,7 +490,7 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 	const static half4 BLACK = half4(0, 0, 0, 1);
 
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	half brightness = Brightness(sampleColor.rgb);
+	half brightness = Max(sampleColor.rgb);
 	//half brightness = saturate(length(sampleColor.rgb));
 
 	//half percent = _BloomDesc.Threshold * brightness;
@@ -522,7 +522,7 @@ half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
 half4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
 {
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	half brightness = Brightness(sampleColor.rgb);
+	half brightness = Max(sampleColor.rgb);
 
 	half4 color;
 	color.rgb = normalize(sampleColor.rgb);

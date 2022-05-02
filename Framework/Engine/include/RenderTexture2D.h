@@ -9,7 +9,7 @@ class ENGINE_API RenderTexture2D : public Texture
 protected:
 	
 	RenderTexture2D(
-		ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName,
+		ResourceManagement* management, bool managed, const tstring& path,
 		class RenderTarget* renderTarget);
 
 	virtual ~RenderTexture2D();
@@ -42,15 +42,11 @@ public:
 
 public:
 
-	static ResourceRef<RenderTexture2D> CreateManagedRenderTexture2D(
+	static ResourceRef<RenderTexture2D> CreateRenderTexture2DM(
 		ResourceManagement* management, const tstring& resourceKey, 
 		unsigned int width, unsigned int height);
 
-	static ResourceRef<RenderTexture2D> CreateManagedRenderTexture2D(
-		ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, 
-		unsigned int width, unsigned int height);
-
-	static ResourceRef<RenderTexture2D> CreateUnmanagedRenderTexture2D(
+	static ResourceRef<RenderTexture2D> CreateRenderTexture2DUM(
 		ResourceManagement* management, 
 		unsigned int width, unsigned int height);
 

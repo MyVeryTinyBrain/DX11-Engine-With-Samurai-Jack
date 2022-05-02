@@ -6,9 +6,9 @@
 #include "RenderTarget.h"
 
 RenderTexture2D::RenderTexture2D(
-	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName,
+	ResourceManagement* management, bool managed, const tstring& path, 
 	RenderTarget* renderTarget) :
-	Texture(management, managed, path, groupName),
+	Texture(management, managed, path),
 	m_renderTarget(renderTarget)
 {
 }
@@ -53,7 +53,7 @@ float RenderTexture2D::GetAspect() const
 	return m_renderTarget->aspect;
 }
 
-ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
+ResourceRef<RenderTexture2D> RenderTexture2D::CreateRenderTexture2DM(
 	ResourceManagement* management, const tstring& resourceKey, 
 	unsigned int width, unsigned int height)
 {
@@ -68,28 +68,10 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
 	if (FAILED(RenderTarget::Create(management->system->graphic->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
 		return nullptr;
 
-	return new RenderTexture2D(management, true, resourceKey, TEXT(""), renderTarget);
+	return new RenderTexture2D(management, true, resourceKey, renderTarget);
 }
 
-ResourceRef<RenderTexture2D> RenderTexture2D::CreateManagedRenderTexture2D(
-	ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, 
-	unsigned int width, unsigned int height)
-{
-	if (!management)
-		return nullptr;
-
-	ResourceRef<ResourceObject> find = management->Find(resourceKey);
-	if (find)
-		return find;
-
-	RenderTarget* renderTarget = nullptr;
-	if (FAILED(RenderTarget::Create(management->system->graphic->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
-		return nullptr;
-
-	return new RenderTexture2D(management, true, resourceKey, groupName, renderTarget);
-}
-
-ResourceRef<RenderTexture2D> RenderTexture2D::CreateUnmanagedRenderTexture2D(
+ResourceRef<RenderTexture2D> RenderTexture2D::CreateRenderTexture2DUM(
 	ResourceManagement* management, 
 	unsigned int width, unsigned int height)
 {
@@ -100,6 +82,6 @@ ResourceRef<RenderTexture2D> RenderTexture2D::CreateUnmanagedRenderTexture2D(
 	if (FAILED(RenderTarget::Create(management->system->graphic->device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &renderTarget)))
 		return nullptr;
 
-	return new RenderTexture2D(management, false, TEXT(""), TEXT(""), renderTarget);
+	return new RenderTexture2D(management, false, TEXT(""), renderTarget);
 }
 

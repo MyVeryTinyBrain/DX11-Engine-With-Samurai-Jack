@@ -23,10 +23,6 @@ private:
 
 public:
 
-	bool ClearBackBuffer(const Color & color);
-
-	bool ClearDepthStencilBuffer(float depth, unsigned int stencil);
-
 	virtual bool Present() override;
 
 public:
@@ -65,9 +61,8 @@ public:
 
 	bool SetResolution(uint width, uint height);
 
-	inline Com<ID3D11RenderTargetView> GetBackBufferRenderTargetView() const { return m_backBufferRTV; }
-
-	inline Com<ID3D11DepthStencilView> GetBackBufferDepthStencilView() const { return m_dsv; }
+	inline Com<ID3D11RenderTargetView> GetRTV() const { return m_rtv; }
+	inline Com<ID3D11DepthStencilView> GetDSV() const { return m_dsv; }
 
 	// Use IDXGISwapChain::ResizeTarget
 	//bool SetResolutionAndScreenSize(uint width, uint height, refresh);
@@ -76,87 +71,40 @@ public:
 	_declspec(property(get = GetWidth)) float width;
 	_declspec(property(get = GetHeight)) float height;
 	_declspec(property(get = GetAspect)) float aspect;
-	_declspec(property(get = GetBackBufferRenderTargetView)) Com<ID3D11RenderTargetView> backBufferRenderTargetView;
-	_declspec(property(get = GetBackBufferDepthStencilView)) Com<ID3D11DepthStencilView> backBufferDepthStencilView;
+	_declspec(property(get = GetRTV)) Com<ID3D11RenderTargetView> rtv;
+	_declspec(property(get = GetDSV)) Com<ID3D11DepthStencilView> dsv;
 
 public:
 
-	void ResetShaderResource(Com<ID3D11DeviceContext> deviceContext);
-	void RollbackRenderTarget(Com<ID3D11DeviceContext> deviceContext);
-	void SetRenderTargets(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV);
-	void SetRenderTargetsWithDepthStencil(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv);
-
-	void SyncronizeDeferredContext(Com<ID3D11DeviceContext> dc);
-	void ExecuteDeferredContext(Com<ID3D11DeviceContext> dc);
-
-public:
-
-	const Color& GetClearColor() const;
-
-	void SetClearColor(const Color & color);
+	const Color& GetClearColor() const { return m_clearColor; }
+	void SetClearColor(const Color& color) { m_clearColor = color; }
 
 	_declspec(property(get = GetClearColor, put = SetClearColor)) const Color& clearColor;
-
-private:
-
-	HRESULT CreateSwapChain(
-		ID3D11Device * device,
-		HWND hWnd, unsigned int width, unsigned int height,
-		unsigned int refreshPerSec, bool vsync, bool fullScreen,
-		IDXGISwapChain * *out_swapChain);
-
-	HRESULT CreateBackBufferView(
-		ID3D11Device * device,
-		IDXGISwapChain * swapChain,
-		ID3D11RenderTargetView * *out_backBufferView);
-
-	HRESULT CreateDepthStencilView(
-		ID3D11Device * device,
-		unsigned int width, unsigned int height,
-		ID3D11DepthStencilView * *out_depthStencilRTV);
-
-	virtual HRESULT SetViewport
-	(Com<ID3D11DeviceContext> deviceContext, unsigned int width, unsigned int height) override;
-
-	virtual uint2 GetViewport(Com<ID3D11DeviceContext> deviceContext) const override;
-
-	virtual HRESULT RollbackViewport(Com<ID3D11DeviceContext> deviceContext) override;
 
 private:
 
 	HWND						m_hWnd = NULL;
 
 	unsigned int				m_width = 0;
-
 	unsigned int				m_height = 0;
-
 	unsigned int				m_refreshPerSec = 0;
-
 	bool						m_vsync = false;
-
 	bool						m_fullScreen = false;
 
 	Color						m_clearColor = Color::black();
 
 	ID3D11Device*				m_device = nullptr;
-
 	ID3D11DeviceContext*		m_deviceContext = nullptr;
 
 	IDXGISwapChain*				m_swapChain = nullptr;
-
-	ID3D11RenderTargetView*		m_backBufferRTV = nullptr;
-
+	ID3D11RenderTargetView*		m_rtv = nullptr;
 	ID3D11DepthStencilView*		m_dsv = nullptr;
 
 	CBufferManager*				m_CBufferManager = nullptr;
 	InstanceBufferManager*		m_instanceBufferManager = nullptr;
-
 	RenderQueue*				m_renderQueue = nullptr;
-
 	CameraManager*				m_cameraManager = nullptr;
-
 	PostProcessing*				m_postProcessing = nullptr;
-
 	LightManager*				m_lightManager = nullptr;
 
 };

@@ -56,6 +56,7 @@ public:
 private:
 
 	virtual bool IsWorking() const override;
+	virtual bool HasRenderTexture2D() const override;
 	virtual class RenderTarget* GetRenderTarget() const override;
 	virtual class DepthStencil* GetDepthStencil() const override;
 
@@ -64,14 +65,16 @@ public:
 	virtual class DeferredRenderTarget* GetDeferredRenderTarget() const override;
 	virtual uint2 GetSize() const override;
 
-public:
+private:
 
-	bool IsAutoFitToResolutionMode() const;
-	void SetAutoFitToResolutionMode(bool value);
-
-	float GetAspect() const;
 	void SetAspect(float value);
 	void ResetAspect();
+	void ResetProjectionMatrix();
+	void Reset();
+
+public:
+
+	float GetAspect() const;
 
 	float GetNear() const override;
 	void SetNear(float value);
@@ -105,6 +108,9 @@ public:
 
 public:
 
+	inline virtual bool IsDrawingGBuffer() const override { return m_drawGBuffer; }
+	void SetGBufferDraw(bool value) { m_drawGBuffer = value; }
+
 	inline virtual bool GetPostProcessingState() const override { return m_postProcessing; }
 	inline void SetPostProcessingState(bool value) { m_postProcessing = value;; }
 
@@ -126,6 +132,7 @@ public:
 	inline virtual const ChromaticAberrationDesc& GetChromaticAberrationDesc() const override { return m_chromaticAberrationDesc; }
 	inline void SetChromaticAberrationDesc(const ChromaticAberrationDesc& value) { m_chromaticAberrationDesc = value; }
 
+	_declspec(property(get = IsDrawingGBuffer, put = SetGBufferDraw)) bool drawGBuffer;
 	_declspec(property(get = GetPostProcessingState, put = SetPostProcessingState)) bool postProcessingState;
 	_declspec(property(get = GetSSAODesc, put = SetSSAODesc)) const SSAODesc& ssaoDesc;
 	_declspec(property(get = GetSSRDesc, put = SetSSRDesc)) const SSRDesc& ssrDesc;
@@ -136,14 +143,10 @@ public:
 
 private:
 
-	void ResetProjectionMatrix();
-	void FitDepthStencilToRenderTexture();
 	void FitDeferredRenderTargetToRenderTexture();
 	void FitDeferredRenderTargetToResolution(uint width, uint height);
 
 private:
-
-	bool								m_autoFitToResolution = false;
 
 	float								m_aspect = 1.0f;
 	float								m_near = 0.1f;
@@ -158,12 +161,11 @@ private:
 	uint32_t							m_allowedLayers = 0xFFFFFFFF;
 	int									m_order = 0;
 
-	bool								m_hasRenderTexture = false;
 	ResourceRef<RenderTexture2D>		m_renderTexture;
-	class DepthStencil*					m_depthStencil = nullptr;
 
 	class DeferredRenderTarget*			m_deferredRenderTarget = nullptr;
 
+	bool								m_drawGBuffer = true;
 	bool								m_postProcessing = true;
 	SSAODesc							m_ssaoDesc = {};
 	SSRDesc								m_ssrDesc = {};

@@ -70,7 +70,7 @@ public:
 
 	void PostProcess(ICamera* camera, PostProcessing::Step step);
 	void Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* bridge, RenderTarget* out);
-	void DrawToScreen(Com<ID3D11ShaderResourceView> src, uint2 pos, uint2 size, CopyType type);
+	void DrawToScreen(Com<ID3D11ShaderResourceView> src, Com<ID3D11RenderTargetView> dest, uint2 destSize, uint2 pos, uint2 size, CopyType type);
 	void DrawToTextrue(Com<ID3D11ShaderResourceView> src, Com<ID3D11RenderTargetView> dest, uint2 destSize, CopyType type);
 
 private:
@@ -101,7 +101,7 @@ private:
 
 private:
 
-	HRESULT SetScreenQuad(uint x, uint y, uint width, uint height);
+	HRESULT SetScreenQuad(uint screenWidth, uint screenHeight, uint x, uint y, uint width, uint height);
 
 private:
 

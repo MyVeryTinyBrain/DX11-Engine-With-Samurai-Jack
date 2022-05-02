@@ -24,6 +24,8 @@ struct TextureOptionDesc
 	bool						CPURead;
 	bool						CPUWrite;
 	bool						GenerateMipmap;
+	// 0: 0 to generate a full set of subtextures.
+	uint						MipLevel;
 };
 
 struct TextureResourceDesc

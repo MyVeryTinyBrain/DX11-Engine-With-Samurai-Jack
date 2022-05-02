@@ -10,7 +10,7 @@ class ENGINE_API Texture2D : public Texture
 protected:
 
 	Texture2D(
-		ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName,
+		ResourceManagement* management, bool managed, const tstring& path,
 		ID3D11Texture2D* texture, ID3D11ShaderResourceView* srv);
 
 	virtual ~Texture2D();
@@ -27,22 +27,24 @@ public:
 
 public:
 
-	virtual Com<ID3D11Resource> GetTexture() const override;
-	virtual Com<ID3D11ShaderResourceView> GetSRV() const override;
+	virtual Com<ID3D11Resource> GetTexture() const override { return m_texture; }
+	virtual Com<ID3D11Texture2D> GetTexture2D() const { return m_texture; }
+	virtual Com<ID3D11ShaderResourceView> GetSRV() const override { return m_srv; }
 	unsigned int GetWidth() const;
 	unsigned int GetHeight() const;
 
+	_declspec(property(get = GetTexture2D)) Com<ID3D11Texture2D> texture2D;
 	_declspec(property(get = GetWidth)) unsigned int width;
 	_declspec(property(get = GetHeight)) unsigned int height;
 
 public:
 
-	static ResourceRef<Texture2D> CreateTexture2DM(ResourceManagement* management, const TextureCreateDesc& desc, const tstring& resourceKey, const tstring& groupName = TEXT(""));
+	static ResourceRef<Texture2D> CreateTexture2DM(ResourceManagement* management, const TextureCreateDesc& desc, const tstring& resourceKey);
 	static ResourceRef<Texture2D> CreateTexture2DUM(ResourceManagement* management, const TextureCreateDesc& desc);
-	static ResourceRef<Texture2D> LoadTexture2DM(ResourceManagement* management, const TextureOptionDesc& desc, const tstring& path, const tstring& groupName = TEXT(""));
+	static ResourceRef<Texture2D> LoadTexture2DM(ResourceManagement* management, const TextureOptionDesc& desc, const tstring& path);
 	static ResourceRef<Texture2D> LoadTexture2DUM(ResourceManagement* management, const TextureOptionDesc& desc, const tstring& path);
 
-protected:
+private:
 
 	static HRESULT CreateTexture2D(Com<ID3D11Device> device, const TextureCreateDesc& desc, ID3D11Texture2D** out_texture, ID3D11ShaderResourceView** out_srv);
 	static HRESULT LoadTexture2D(Com<ID3D11Device> device, const TextureLoadDesc& desc, ID3D11Texture2D** out_texture, ID3D11ShaderResourceView** out_srv);

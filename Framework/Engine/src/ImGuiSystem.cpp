@@ -3,6 +3,7 @@
 #include "System.h"
 #include "GraphicSystem.h"
 #include "Input.h"
+#include "DxUtility.h"
 
 ImGuiSystem::ImGuiSystem()
 {
@@ -94,9 +95,6 @@ bool ImGuiSystem::BeginRender()
 
 bool ImGuiSystem::EndRender()
 {
-	if (!m_graphicSystem->ClearDepthStencilBuffer(1.0f, 0))
-		return false;
-
 	ImGui::Render();
 
 	ImDrawData* drawData = ImGui::GetDrawData();

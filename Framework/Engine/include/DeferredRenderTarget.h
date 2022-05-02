@@ -22,27 +22,29 @@ public:
 
 	bool Resize(Com<ID3D11Device> device, uint width, uint height);
 
-	void Clear(Com<ID3D11DeviceContext> deviceContext);
-	void ClearPostProcessings(Com<ID3D11DeviceContext> deviceContext);
+	void Clear(Com<ID3D11DeviceContext> dc);
+	void ClearPostProcessings(Com<ID3D11DeviceContext> dc);
 
 public:
 
-	bool ReadyToDraw(Com<ID3D11DeviceContext> deviceContext);
-	void SetDeferredRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
-	void SetForwardRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
-	void SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
-	void SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
-	void SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext);
+	bool ReadyToDraw(Com<ID3D11DeviceContext> dc);
+	void SetDeferredRenderTargets(Com<ID3D11DeviceContext> dc);
+	void SetForwardRenderTargets(Com<ID3D11DeviceContext> dc);
+	void SetDeferredLightAccumulateRenderTargets(Com<ID3D11DeviceContext> dc);
+	void SetDeferredLightBlendRenderTargets(Com<ID3D11DeviceContext> dc);
+	void SetDeferredVolumetricLightBlendTargets(Com<ID3D11DeviceContext> dc);
 
 public:
 
 	void ClearCopyTargets();
 	bool DepthWasCopied() const;
 	bool ResultWasCopied() const;
-	void CopyDepth(Com<ID3D11DeviceContext> deviceContext);
-	void CopyResult(Com<ID3D11DeviceContext> deviceContext);
+	void CopyDepth(Com<ID3D11DeviceContext> dc);
+	void CopyResult(Com<ID3D11DeviceContext> dc);
 
 public:
+
+	inline DepthStencil* GetDepthStencil() const { return m_depthStencil; }
 
 	inline RenderTarget* GetAlbedo() const { return m_albedo; }
 	inline RenderTarget* GetNormal() const { return m_normal; }
@@ -68,6 +70,8 @@ public:
 
 	inline RenderTarget* GetCopyTargetDepth() const { return m_depth[1]; }
 	inline RenderTarget* GetCopyTargetResult() const { return m_result[1]; }
+
+	_declspec(property(get = GetDepthStencil)) DepthStencil* depthStencil;
 
 	_declspec(property(get = GetAlbedo)) RenderTarget* albedo;
 	_declspec(property(get = GetNormal)) RenderTarget* normal;
@@ -112,6 +116,8 @@ private:
 	RenderTargets								m_renderTargets;
 	RenderTargets								m_postProcessingRenderTargets;
 	RenderTargets								m_copyTargets;
+
+	DepthStencil*								m_depthStencil = nullptr;
 
 	RenderTarget*								m_albedo = nullptr;
 	RenderTarget*								m_normal = nullptr;

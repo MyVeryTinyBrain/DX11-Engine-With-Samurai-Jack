@@ -13,8 +13,8 @@ class ENGINE_API Material : public ResourceObject, public IMaterial
 {
 public:
 
-	Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, ResourceRef<Shader> shader);
-	Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, const Material& other);
+	Material(ResourceManagement* management, bool managed, const tstring& path, ResourceRef<Shader> shader);
+	Material(ResourceManagement* management, bool managed, const tstring& path, const Material& other);
 
 	virtual ~Material();
 
@@ -73,23 +73,20 @@ public:
 
 public:
 
-	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey);
-	static ResourceRef<Material> CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName);
-	static ResourceRef<Material> CreateUnmanagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader);
+	static ResourceRef<Material> CreateMaterialByShaderM(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey);
+	static ResourceRef<Material> CreateMaterialByShaderUM(ResourceManagement* management, ResourceRef<Shader> shader);
 
-	static ResourceRef<Material> CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey);
-	static ResourceRef<Material> CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName);
-	static ResourceRef<Material> CopyUnmanagedMaterial(ResourceManagement* management, ResourceRef<Material> material);
+	static ResourceRef<Material> CopyMaterialM(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey);
+	static ResourceRef<Material> CopyMaterialUM(ResourceManagement* management, ResourceRef<Material> material);
 
-	static ResourceRef<Material> CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath);
-	static ResourceRef<Material> CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath, const tstring& groupName);
-	static ResourceRef<Material> CreateUnmanagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath);
+	static ResourceRef<Material> LoadMaterialM(ResourceManagement* management, const tstring& jsonPath);
+	static ResourceRef<Material> LoadMaterialUM(ResourceManagement* management, const tstring& jsonPath);
 
 	string ToJson() const;
 
 private:
 
-	static ResourceRef<Material> CreateMaterialFromJsonCommon(ResourceManagement* management, const tstring& jsonPath, const tstring* nullable_resourceKey, const tstring* nullable_groupName);
+	static ResourceRef<Material> LoadMaterialFromJsonCommon(ResourceManagement* management, const tstring& jsonPath, const tstring* nullable_resourceKey);
 
 private: 
 

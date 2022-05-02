@@ -249,7 +249,7 @@ void GizmoRotation::SetupAxisMesh(uint edge)
 		return;
 
 	// Setup Mesh
-	m_axisMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_axisMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
 }
 
 void GizmoRotation::SetupAxisLineStripMesh(uint edge)
@@ -297,7 +297,7 @@ void GizmoRotation::SetupAxisLineStripMesh(uint edge)
 		return;
 
 	// Setup Mesh
-	m_axisLineMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_axisLineMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
 }
 
 void GizmoRotation::SetupSliceLineMesh()
@@ -339,7 +339,7 @@ void GizmoRotation::SetupSliceLineMesh()
 		return;
 
 	// Setup Mesh
-	m_sliceLineMesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+	m_sliceLineMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
 }
 
 void GizmoRotation::SetupResources()

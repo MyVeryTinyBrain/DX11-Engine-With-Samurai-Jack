@@ -10,7 +10,7 @@ class ENGINE_API Shader : public ResourceObject
 protected:
 
 	Shader(
-		ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
+		ResourceManagement* management, bool managed, const tstring& path, 
 		CompiledShaderDesc* shaderDesc);
 
 	virtual ~Shader();
@@ -46,10 +46,8 @@ public:
 
 public:
 
-	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path);
-	static ResourceRef<Shader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName);
-	static ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(ResourceManagement* management, const tstring& path);
-	static ResourceRef<Shader> CreateManagedShaderFromBinaryFolder(ResourceManagement* management, const tstring& path, const tstring& groupName);
+	static ResourceRef<Shader> LoadShaderFromFileM(ResourceManagement* management, const tstring& path);
+	static ResourceRef<Shader> LoadShaderFromBinaryFolderM(ResourceManagement* management, const tstring& path);
 
 private:
 

@@ -15,7 +15,7 @@ class ENGINE_API Mesh : public ResourceObject, public IMesh
 protected:
 
 	Mesh(
-		ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
+		ResourceManagement* management, bool managed, const tstring& path,
 		VIBuffer* viBuffer);
 
 	virtual ~Mesh();
@@ -73,19 +73,15 @@ public:
 	// VIBuffer is copy on other memory
 	// you can release VIBuffer
 
-	static ResourceRef<Mesh> CreateManagedMesh(ResourceManagement* management, const tstring& resourceKey, const VIBuffer* viBuffer);
+	static ResourceRef<Mesh> CreateMeshM(ResourceManagement* management, const tstring& resourceKey, const VIBuffer* viBuffer);
 
-	static ResourceRef<Mesh> CreateManagedMesh(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, const VIBuffer* viBuffer);
+	static ResourceRef<Mesh> CreateMeshUM(ResourceManagement* management, const VIBuffer* viBuffer);
 
-	static ResourceRef<Mesh> CreateUnamanagedMesh(ResourceManagement* management, const VIBuffer* viBuffer);
+	static ResourceRef<Mesh> CreateMeshNocopyM(ResourceManagement* management, const tstring& resourceKey, VIBuffer** ppVIBuffer);
 
-	static ResourceRef<Mesh> CreateManagedMeshNocopy(ResourceManagement* management, const tstring& resourceKey, VIBuffer** ppVIBuffer);
+	static ResourceRef<Mesh> CreateMeshNocopyUM(ResourceManagement* management, VIBuffer** ppVIBuffer);
 
-	static ResourceRef<Mesh> CreateManagedMeshNocopy(ResourceManagement* management, const tstring& resourceKey, const tstring& groupName, VIBuffer** ppVIBuffer);
-
-	static ResourceRef<Mesh> CreateUnamanagedMeshNocopy(ResourceManagement* management, VIBuffer** ppVIBuffer);
-
-	static ResourceRef<Mesh> CreateManagedMeshFromFile(ResourceManagement* management, const tstring& path);
+	static ResourceRef<Mesh> LoadMeshM(ResourceManagement* management, const tstring& path);
 
 private: 
 

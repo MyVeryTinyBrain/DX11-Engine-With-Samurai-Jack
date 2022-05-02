@@ -8,9 +8,9 @@
 #include "TechniqueDesc.h"
 
 Shader::Shader(
-	ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, 
+	ResourceManagement* management, bool managed, const tstring& path, 
 	CompiledShaderDesc* shaderDesc) :
-	ResourceObject(management, managed, path, groupName),
+	ResourceObject(management, managed, path),
 	m_shaderDesc(shaderDesc)
 {
 }
@@ -156,36 +156,11 @@ const ShaderVariableInfo* Shader::FindVariableByIndex(uint index)
 	return m_shaderDesc->FindVariableByIndex(index);
 }
 
-ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path)
-{
-	if (!management)
-		return nullptr;
-
-	ResourceRef<ResourceObject> find = management->Find(path);
-	if (find)
-		return find;
-
-	tstring error;
-	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
-
-	if (!compiledShaderDesc)
-	{
-		tstring error_message = TEXT("Failed to compile Shader: ") + path;
-		if (error.length() > 0)
-			error_message += TEXT("(") + error + TEXT(")");
-		ERROR_MESSAGE_NT(error_message.c_str());
-		return nullptr;
-	}
-
-	return new Shader(management, true, path, TEXT(""), compiledShaderDesc);
-}
-
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
-ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName)
+ResourceRef<Shader> Shader::LoadShaderFromFileM(ResourceManagement* management, const tstring& path)
 {
 	if (!management)
 		return nullptr;
@@ -196,7 +171,7 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 
 	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
+		CompiledShaderDesc::LoadCompiledShaderFromFile(management->GetSystem()->graphic->device, path, error);
 
 	if (!compiledShaderDesc)
 	{
@@ -207,10 +182,10 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromFile(ResourceManagement* mana
 		return nullptr;
 	}
 
-	return new Shader(management, true, path, groupName, compiledShaderDesc);
+	return new Shader(management, true, path, compiledShaderDesc);
 }
 
-ResourceRef<Shader> Shader::CreateManagedShaderFromBinaryFolder(ResourceManagement* management, const tstring& path)
+ResourceRef<Shader> Shader::LoadShaderFromBinaryFolderM(ResourceManagement* management, const tstring& path)
 {
 	if (!management)
 		return nullptr;
@@ -223,7 +198,7 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromBinaryFolder(ResourceManageme
 
 	tstring error;
 	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(management->GetSystem()->graphic->device, path, error);
+		CompiledShaderDesc::LoadCompiledShaderFromBinaryFolder(management->GetSystem()->graphic->device, path, error);
 
 	if (!compiledShaderDesc)
 	{
@@ -234,32 +209,5 @@ ResourceRef<Shader> Shader::CreateManagedShaderFromBinaryFolder(ResourceManageme
 		return nullptr;
 	}
 
-	return new Shader(management, true, binaryShaderPath, TEXT(""), compiledShaderDesc);
-}
-
-ResourceRef<Shader> Shader::CreateManagedShaderFromBinaryFolder(ResourceManagement* management, const tstring& path, const tstring& groupName)
-{
-	if (!management)
-		return nullptr;
-
-	tstring binaryShaderPath = CompiledShaderDesc::ParseToBinaryShaderPath(path);
-
-	ResourceRef<ResourceObject> find = management->Find(binaryShaderPath);
-	if (find)
-		return find;
-
-	tstring error;
-	CompiledShaderDesc* compiledShaderDesc =
-		CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(management->GetSystem()->graphic->device, path, error);
-
-	if (!compiledShaderDesc)
-	{
-		tstring error_message = TEXT("Failed to compile Shader: ") + binaryShaderPath;
-		if (error.length() > 0)
-			error_message += TEXT("(") + error + TEXT(")");
-		ERROR_MESSAGE_NT(error_message.c_str());
-		return nullptr;
-	}
-
-	return new Shader(management, true, binaryShaderPath, groupName, compiledShaderDesc);
+	return new Shader(management, true, binaryShaderPath, compiledShaderDesc);
 }

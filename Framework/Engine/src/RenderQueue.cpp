@@ -18,6 +18,8 @@
 #include "RenderQueueLight.h"
 #include "PostProcessing.h"
 
+#include "DxUtility.h"
+
 RenderQueue::RenderQueue(GraphicSystem* graphicSystem, CBufferManager* cBufferManager, InstanceBufferManager* instanceBufferManager) :
 	m_graphicSystem(graphicSystem),
 	m_CBufferManager(cBufferManager),
@@ -138,25 +140,25 @@ void RenderQueue::Render(ICamera* camera)
 
 	Render_Deferred(camera);
 	Render_Forward(camera);
-	Render_Result(camera);
 
-	m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
-
-	m_graphicSystem->postProcessing->DrawToScreen(drt->albedo->srv, uint2(0, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->normal->srv, uint2(100, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->depth->srv, uint2(200, 0), uint2(100, 100), PostProcessing::CopyType::LinearDepth);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->light_shadow->srv, uint2(300, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->roughness_metallic->srv, uint2(400, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->emissive->srv, uint2(500, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->occlusion_reflection_reflectionBlur_reflectMask->srv, uint2(600, 0), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->light->srv, uint2(000, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->volumetric->srv, uint2(100, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->ssao->srv, uint2(000, 200), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->ssr->srv, uint2(100, 200), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->dof->srv, uint2(200, 200), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->bloom->srv, uint2(300, 200), uint2(100, 100), PostProcessing::CopyType::Default);
-	m_graphicSystem->postProcessing->DrawToScreen(drt->result->srv, uint2(000, 300), uint2(100, 100), PostProcessing::CopyType::Default);
+	if (camera->IsDrawingGBuffer())
+	{
+		uint2 resSize = uint2(drt->result->width, drt->result->height);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->albedo->srv, drt->result->rtv, resSize, uint2(0, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->normal->srv, drt->result->rtv, resSize, uint2(100, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->depth->srv, drt->result->rtv, resSize, uint2(200, 0), uint2(100, 100), PostProcessing::CopyType::LinearDepth);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->light_shadow->srv, drt->result->rtv, resSize, uint2(300, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->roughness_metallic->srv, drt->result->rtv, resSize, uint2(400, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->emissive->srv, drt->result->rtv, resSize, uint2(500, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->occlusion_reflection_reflectionBlur_reflectMask->srv, drt->result->rtv, resSize, uint2(600, 0), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->light->srv, drt->result->rtv, resSize, uint2(000, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->volumetric->srv, drt->result->rtv, resSize, uint2(100, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->lightBlend->srv, drt->result->rtv, resSize, uint2(200, 100), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->ssao->srv, drt->result->rtv, resSize, uint2(000, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->ssr->srv, drt->result->rtv, resSize, uint2(100, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->dof->srv, drt->result->rtv, resSize, uint2(200, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+		m_graphicSystem->postProcessing->DrawToScreen(drt->bloom->srv, drt->result->rtv, resSize, uint2(300, 200), uint2(100, 100), PostProcessing::CopyType::Default);
+	}
 }
 
 void RenderQueue::Clear()
@@ -178,7 +180,7 @@ void RenderQueue::Clear()
 void RenderQueue::Render_Deferred(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->SetDeferredRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
+	drt->SetDeferredRenderTargets(m_graphicSystem->deviceContext);
 
 	m_priority->Render(camera);
 	m_priorityInstance->Render(camera);
@@ -199,7 +201,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 void RenderQueue::Render_Forward(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->SetForwardRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
+	drt->SetForwardRenderTargets(m_graphicSystem->deviceContext);
 
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
@@ -208,7 +210,7 @@ void RenderQueue::Render_Forward(ICamera* camera)
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::After);
 
-	drt->SetForwardRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
+	drt->SetForwardRenderTargets(m_graphicSystem->deviceContext);
 
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);
@@ -219,11 +221,4 @@ void RenderQueue::Render_Emissive(ICamera* camera)
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 
 	m_graphicSystem->postProcessing->DrawToTextrue(drt->emissive->srv, drt->result->rtv, uint2(drt->result->width, drt->result->height), PostProcessing::CopyType::Alphablend);
-}
-
-void RenderQueue::Render_Result(ICamera* camera)
-{
-	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-
-	m_graphicSystem->postProcessing->DrawToTextrue(drt->result->srv, m_graphicSystem->backBufferRenderTargetView, uint2((uint)m_graphicSystem->width, (uint)m_graphicSystem->height), PostProcessing::CopyType::Default);
 }

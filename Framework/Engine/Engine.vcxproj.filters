@@ -542,6 +542,9 @@
     <ClInclude Include="include\DxTextureCreateType.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="include\DxUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1039,6 +1042,9 @@
     <ClCompile Include="src\DxTextureCreateType.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\DxUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1361,5 +1367,8 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="include\Engine.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

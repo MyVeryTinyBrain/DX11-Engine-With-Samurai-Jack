@@ -15,8 +15,8 @@
 #include "ResourceManagement.h"
 #include "JsonUtility.h"
 
-Material::Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, ResourceRef<Shader> shader) :
-	ResourceObject(management, managed, path, groupName)
+Material::Material(ResourceManagement* management, bool managed, const tstring& path, ResourceRef<Shader> shader) :
+	ResourceObject(management, managed, path)
 {
 	m_shader = shader;
 
@@ -24,8 +24,8 @@ Material::Material(ResourceManagement* management, bool managed, const tstring& 
 		SetupShaderVariables();
 }
 
-Material::Material(ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName, const Material& other) :
-	ResourceObject(management, managed, path, groupName)
+Material::Material(ResourceManagement* management, bool managed, const tstring& path, const Material& other) :
+	ResourceObject(management, managed, path)
 {
 	m_shader = other.m_shader;
 	m_techniqueIndex = other.m_techniqueIndex;
@@ -497,7 +497,7 @@ ResourceRef<Shader> Material::GetShader() const
 	return m_shader;
 }
 
-ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey)
+ResourceRef<Material> Material::CreateMaterialByShaderM(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey)
 {
 	if (!management)
 		return nullptr;
@@ -509,25 +509,10 @@ ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement
 	if (!shader)
 		return nullptr;
 
-	return new Material(management, true, resourceKey, TEXT(""), shader);
+	return new Material(management, true, resourceKey, shader);
 }
 
-ResourceRef<Material> Material::CreateManagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader, const tstring& resourceKey, const tstring& groupName)
-{
-	if (!management)
-		return nullptr;
-
-	ResourceRef<ResourceObject> find = management->Find(resourceKey);
-	if (find)
-		return find;
-
-	if (!shader)
-		return nullptr;
-
-	return new Material(management, true, resourceKey, groupName, shader);
-}
-
-ResourceRef<Material> Material::CreateUnmanagedMaterialByShader(ResourceManagement* management, ResourceRef<Shader> shader)
+ResourceRef<Material> Material::CreateMaterialByShaderUM(ResourceManagement* management, ResourceRef<Shader> shader)
 {
 	if (!management)
 		return nullptr;
@@ -535,10 +520,10 @@ ResourceRef<Material> Material::CreateUnmanagedMaterialByShader(ResourceManageme
 	if (!shader)
 		return nullptr;
 
-	return new Material(management, false, TEXT(""), TEXT(""), shader);
+	return new Material(management, false, TEXT(""), shader);
 }
 
-ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey)
+ResourceRef<Material> Material::CopyMaterialM(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey)
 {
 	if (!management)
 		return nullptr;
@@ -549,10 +534,10 @@ ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* manageme
 	if (management->Exist(resourceKey))
 		return nullptr;
 
-	return new Material(management, true, resourceKey, TEXT(""), *material);
+	return new Material(management, true, resourceKey, *material);
 }
 
-ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* management, ResourceRef<Material> material, const tstring& resourceKey, const tstring& groupName)
+ResourceRef<Material> Material::CopyMaterialUM(ResourceManagement* management, ResourceRef<Material> material)
 {
 	if (!management)
 		return nullptr;
@@ -560,36 +545,17 @@ ResourceRef<Material> Material::CopyManagedMaterial(ResourceManagement* manageme
 	if (!material)
 		return nullptr;
 
-	if (management->Exist(resourceKey))
-		return nullptr;
-
-	return new Material(management, true, resourceKey, groupName, *material);
+	return new Material(management, false, TEXT(""), *material);
 }
 
-ResourceRef<Material> Material::CopyUnmanagedMaterial(ResourceManagement* management, ResourceRef<Material> material)
+ResourceRef<Material> Material::LoadMaterialM(ResourceManagement* management, const tstring& jsonPath)
 {
-	if (!management)
-		return nullptr;
-
-	if (!material)
-		return nullptr;
-
-	return new Material(management, false, TEXT(""), TEXT(""), *material);
+	return LoadMaterialFromJsonCommon(management, jsonPath, &jsonPath);
 }
 
-ResourceRef<Material> Material::CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath)
+ResourceRef<Material> Material::LoadMaterialUM(ResourceManagement* management, const tstring& jsonPath)
 {
-	return CreateMaterialFromJsonCommon(management, jsonPath, &jsonPath, nullptr);
-}
-
-ResourceRef<Material> Material::CreateManagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath, const tstring& groupName)
-{
-	return CreateMaterialFromJsonCommon(management, jsonPath, &jsonPath, &groupName);
-}
-
-ResourceRef<Material> Material::CreateUnmanagedMaterialFromJson(ResourceManagement* management, const tstring& jsonPath)
-{
-	return CreateMaterialFromJsonCommon(management, jsonPath, nullptr, nullptr);
+	return LoadMaterialFromJsonCommon(management, jsonPath, nullptr);
 }
 
 string Material::ToJson() const
@@ -650,7 +616,7 @@ string Material::ToJson() const
 	return Json::writeString(builder, root);
 }
 
-ResourceRef<Material> Material::CreateMaterialFromJsonCommon(ResourceManagement* management, const tstring& jsonPath, const tstring* nullable_resourceKey, const tstring* nullable_groupName)
+ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* management, const tstring& jsonPath, const tstring* nullable_resourceKey)
 {
 	if (!management)
 		return nullptr;
@@ -682,8 +648,7 @@ ResourceRef<Material> Material::CreateMaterialFromJsonCommon(ResourceManagement*
 
 	bool isManagement = nullable_resourceKey != nullptr;
 	tstring resourceKey = nullable_resourceKey ? *nullable_resourceKey : jsonPath;
-	tstring groupName = nullable_groupName ? *nullable_groupName : TEXT("");
-	Material* material = new Material(management, isManagement, resourceKey, groupName, shader);
+	Material* material = new Material(management, isManagement, resourceKey, shader);
 	const Json::Value& variables = root["variables"];
 
 	for (uint i = 0; i < variables.size(); ++i)

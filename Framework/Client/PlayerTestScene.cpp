@@ -251,11 +251,11 @@ void PlayerTestScene::OnLoad()
 		//	texture[4] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/forward.png"));
 		//	texture[5] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/back.png"));
 
-		//	ResourceRef<Shader> priority = system->resourceManagement->factory->CreateManagedShaderFromBinaryFolder(TEXT("Priority.cso"));
+		//	ResourceRef<Shader> priority = system->resourceManagement->factory->CreateShaderFromBinaryFolderM(TEXT("Priority.cso"));
 		//	ResourceRef<Material> material[6];
 		//	for (uint i = 0; i < 6; ++i)
 		//	{
-		//		material[i] = system->resourceManagement->factory->CreateUnmanagedMaterialByShader(priority);
+		//		material[i] = system->resourceManagement->factory->CreateMaterialByShaderUM(priority);
 		//		material[i]->SetTexture("_Texture", texture[i]);
 		//	}
 
@@ -287,9 +287,9 @@ void PlayerTestScene::OnLoad()
 			ResourceRef<Texture> texture = system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/skybox.png"));
 
 			//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
-			ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Skybox.cso"));
+			ResourceRef<Shader> skybox = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Skybox.cso"));
 			ResourceRef<Material> material;
-			material = system->resource->factory->CreateUnmanagedMaterialByShader(skybox);
+			material = system->resource->factory->CreateMaterialByShaderUM(skybox);
 			material->SetTexture("_Texture", texture);
 
 			GameObject* goSky;
@@ -307,7 +307,7 @@ void PlayerTestScene::OnLoad()
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
 
-			ResourceRef<Material> standardMaterial = system->resource->factory->CopyUnmanagedMaterial(system->resource->builtInResources->standardMaterial);
+			ResourceRef<Material> standardMaterial = system->resource->factory->CopyMaterialUM(system->resource->builtInResources->standardMaterial);
 			standardMaterial->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 			//standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
 			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
@@ -380,8 +380,8 @@ void PlayerTestScene::OnLoad()
 		//	m_rigidbody->sleepThresholder = 1000;
 		//	m_sphere[0]->AddComponent<SphereCollider>();
 
-		//	ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
-		//	ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
+		//	ResourceRef<Shader> shader = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Trail.cso"));
+		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
 		//	m_trailRenderer[0]->material = material;
@@ -401,8 +401,8 @@ void PlayerTestScene::OnLoad()
 		//	m_rigidbody->sleepThresholder = 1000;
 		//	m_sphere[1]->AddComponent<SphereCollider>();
 
-		//	ResourceRef<Shader> shader = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("Trail.cso"));
-		//	ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(shader);
+		//	ResourceRef<Shader> shader = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Trail.cso"));
+		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
 		//	m_trailRenderer[1]->material = material;

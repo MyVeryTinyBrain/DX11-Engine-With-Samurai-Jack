@@ -233,7 +233,7 @@ void TrailRenderer::SetupMesh(uint numRect)
 			D3D11_USAGE_IMMUTABLE, 0, 0,
 			&viBuffer);
 
-		m_mesh = system->resource->factory->CreateUnamanagedMeshNocopy(&viBuffer);
+		m_mesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
 	}
 	else
 	{

@@ -42,12 +42,14 @@ public:
 	virtual int GetOrder() const = 0;
 
 	virtual bool IsWorking() const = 0;
-
+	
+	virtual bool HasRenderTexture2D() const = 0;
 	virtual class RenderTarget* GetRenderTarget() const = 0;
 	virtual class DepthStencil* GetDepthStencil() const = 0;
 	virtual class DeferredRenderTarget* GetDeferredRenderTarget() const = 0;
 	virtual uint2 GetSize() const = 0;
 
+	virtual bool IsDrawingGBuffer() const = 0;
 	virtual bool GetPostProcessingState() const = 0;
 	virtual const SSAODesc& GetSSAODesc() const = 0;
 	virtual const SSRDesc& GetSSRDesc() const = 0;

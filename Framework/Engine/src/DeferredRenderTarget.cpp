@@ -2,12 +2,14 @@
 #include "DeferredRenderTarget.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
-#include "GraphicSystem.h"
+#include "DxUtility.h"
 
 DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width, uint height)
 {
 	m_width = width;
 	m_height = height;
+
+	DepthStencil::Create(device, width, height, false, DepthStencil::Type::WRITEONLY_DEPTH_STENCIL, &m_depthStencil);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_albedo);
 	m_renderTargets.push_back(m_albedo);
@@ -20,10 +22,10 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_depth[1]);
 	m_copyTargets.push_back(m_depth[1]);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_light_shadow);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8_UNORM, &m_light_shadow);
 	m_renderTargets.push_back(m_light_shadow);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_roughness_metallic);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8_UNORM, &m_roughness_metallic);
 	m_renderTargets.push_back(m_roughness_metallic);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_emissive);
@@ -32,7 +34,7 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_occlusion_reflection_reflectionBlur_reflectMask);
 	m_renderTargets.push_back(m_occlusion_reflection_reflectionBlur_reflectMask);
 
-	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32G32B32A32_FLOAT, &m_light);
+	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_light);
 	m_renderTargets.push_back(m_light);
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_volumetric);
@@ -75,6 +77,8 @@ DeferredRenderTarget* DeferredRenderTarget::Create(Com<ID3D11Device> device, uin
 
 DeferredRenderTarget::~DeferredRenderTarget()
 {
+	SafeDelete(m_depthStencil);
+
 	for (auto& renderTarget : m_renderTargets)
 		SafeDelete(renderTarget);
 
@@ -95,6 +99,8 @@ bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint hei
 
 	if (diffWidth || diffHeight)
 	{
+		if (!m_depthStencil->Resize(device, width, height))
+			return false;
 		for (auto& renderTarget : m_renderTargets)
 		{
 			if (!renderTarget->Resize(device, width, height))
@@ -128,9 +134,9 @@ bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint hei
 	return true;
 }
 
-void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> dc)
 {
-	if (!deviceContext)
+	if (!dc)
 		return;
 
 	Color clearColor = Color::clear();
@@ -138,40 +144,40 @@ void DeferredRenderTarget::Clear(Com<ID3D11DeviceContext> deviceContext)
 	for (auto& renderTarget : m_renderTargets)
 	{
 		if (renderTarget == m_depth[0])
-			renderTarget->Clear(deviceContext, Color::white());
+			renderTarget->Clear(dc, Color::white());
 		else if (renderTarget == m_volumetric)
-			renderTarget->Clear(deviceContext, Color::clear());
+			renderTarget->Clear(dc, Color::clear());
 		else
-			renderTarget->Clear(deviceContext, clearColor);
+			renderTarget->Clear(dc, clearColor);
 	}
 }
 
-void DeferredRenderTarget::ClearPostProcessings(Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::ClearPostProcessings(Com<ID3D11DeviceContext> dc)
 {
-	if (!deviceContext)
+	if (!dc)
 		return;
 
 	Color clearColor = Color::clear();
 
 	for (auto& postProcessingRenderTarget : m_postProcessingRenderTargets)
 	{
-		postProcessingRenderTarget->Clear(deviceContext, clearColor);
+		postProcessingRenderTarget->Clear(dc, clearColor);
 	}
 }
 
-bool DeferredRenderTarget::ReadyToDraw(Com<ID3D11DeviceContext> deviceContext)
+bool DeferredRenderTarget::ReadyToDraw(Com<ID3D11DeviceContext> dc)
 {
-	if (!deviceContext)
+	if (!dc)
 		return false;
 
-	Clear(deviceContext);
-	ClearPostProcessings(deviceContext);
+	Clear(dc);
+	ClearPostProcessings(dc);
 	ClearCopyTargets();
 
 	return true;
 }
 
-void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::SetDeferredRenderTargets(Com<ID3D11DeviceContext> dc)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
@@ -184,10 +190,11 @@ void DeferredRenderTarget::SetDeferredRenderTargets(GraphicSystem* graphicSystem
 	arrRTV[5] = m_emissive->rtv.Get();
 	arrRTV[6] = m_occlusion_reflection_reflectionBlur_reflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(deviceContext, 7, arrRTV);
+	DxUtility::SetRenderTargets(dc, 7, arrRTV, m_depthStencil->GetDSV().Get());
+	DxUtility::SetViewport(dc, m_width, m_height);
 }
 
-void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::SetForwardRenderTargets(Com<ID3D11DeviceContext> dc)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
@@ -200,35 +207,39 @@ void DeferredRenderTarget::SetForwardRenderTargets(GraphicSystem* graphicSystem,
 	arrRTV[5] = m_emissive->rtv.Get();
 	arrRTV[6] = m_occlusion_reflection_reflectionBlur_reflectMask->rtv.Get();
 
-	graphicSystem->SetRenderTargets(deviceContext, 7, arrRTV);
+	DxUtility::SetRenderTargets(dc, 7, arrRTV, m_depthStencil->GetDSV().Get());
+	DxUtility::SetViewport(dc, m_width, m_height);
 }
 
-void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::SetDeferredLightAccumulateRenderTargets(Com<ID3D11DeviceContext> dc)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_light->rtv.Get();
 	arrRTV[1] = m_volumetric->rtv.Get();
 
-	graphicSystem->SetRenderTargets(deviceContext, 2, arrRTV);
+	DxUtility::SetRenderTargets(dc, 2, arrRTV, m_depthStencil->GetDSV().Get());
+	DxUtility::SetViewport(dc, m_width, m_height);
 }
 
-void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::SetDeferredLightBlendRenderTargets(Com<ID3D11DeviceContext> dc)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_lightBlend->rtv.Get();
 
-	graphicSystem->SetRenderTargets(deviceContext, 1, arrRTV);
+	DxUtility::SetRenderTargets(dc, 1, arrRTV, m_depthStencil->GetDSV().Get());
+	DxUtility::SetViewport(dc, m_width, m_height);
 }
 
-void DeferredRenderTarget::SetDeferredVolumetricLightBlendTargets(GraphicSystem* graphicSystem, Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::SetDeferredVolumetricLightBlendTargets(Com<ID3D11DeviceContext> dc)
 {
 	ID3D11RenderTargetView* arrRTV[8] = {};
 
 	arrRTV[0] = m_result[0]->rtv.Get();
 
-	graphicSystem->SetRenderTargets(deviceContext, 1, arrRTV);
+	DxUtility::SetRenderTargets(dc, 1, arrRTV, m_depthStencil->GetDSV().Get());
+	DxUtility::SetViewport(dc, m_width, m_height);
 }
 
 void DeferredRenderTarget::ClearCopyTargets()
@@ -247,14 +258,14 @@ bool DeferredRenderTarget::ResultWasCopied() const
 	return m_resultWasCopied;
 }
 
-void DeferredRenderTarget::CopyDepth(Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::CopyDepth(Com<ID3D11DeviceContext> dc)
 {
-	deviceContext->CopyResource(m_depth[0]->texture.Get(), m_depth[1]->texture.Get());
+	dc->CopyResource(m_depth[0]->texture.Get(), m_depth[1]->texture.Get());
 	m_depthWasCopied = true;
 }
 
-void DeferredRenderTarget::CopyResult(Com<ID3D11DeviceContext> deviceContext)
+void DeferredRenderTarget::CopyResult(Com<ID3D11DeviceContext> dc)
 {
-	deviceContext->CopyResource(m_result[0]->texture.Get(), m_result[1]->texture.Get());
+	dc->CopyResource(m_result[0]->texture.Get(), m_result[1]->texture.Get());
 	m_resultWasCopied = true;
 }

@@ -10,7 +10,7 @@ class ENGINE_API ComputeShader : public ResourceObject
 protected:
 
 	ComputeShader(
-		ResourceManagement* management, bool managed, const tstring& path, const tstring& groupName,
+		ResourceManagement* management, bool managed, const tstring& path,
 		CompiledShaderDesc* shaderDesc);
 
 	virtual ~ComputeShader();
@@ -18,8 +18,6 @@ protected:
 public:
 
 	static ResourceRef<ComputeShader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path);
-
-	static ResourceRef<ComputeShader> CreateManagedShaderFromFile(ResourceManagement* management, const tstring& path, const tstring& groupName);
 
 private:
 

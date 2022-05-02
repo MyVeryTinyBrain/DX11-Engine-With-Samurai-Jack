@@ -8,6 +8,8 @@
 #include "DepthStencil.h"
 #include "PostProcessing.h"
 #include "LightManager.h"
+#include "DxUtility.h"
+#include "DeferredRenderTarget.h"
 
 GraphicSystem::~GraphicSystem()
 {
@@ -33,19 +35,18 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, flag, nullptr, 0, D3D11_SDK_VERSION, &m_device, &feature, &m_deviceContext)))
 		return false;
 
-	if (FAILED(CreateSwapChain(m_device, hWnd, width, height, refreshPerSec, vsync, fullScreen, &m_swapChain)))
+	if (FAILED(DxUtility::CreateSwapChain(m_device, hWnd, width, height, refreshPerSec, vsync, fullScreen, &m_swapChain)))
 		return false;
 
-	if (FAILED(CreateBackBufferView(m_device, m_swapChain, &m_backBufferRTV)))
+	if (FAILED(DxUtility::CreateBackBufferView(m_device, m_swapChain, &m_rtv)))
 		return false;
 
-	if (FAILED(CreateDepthStencilView(m_device, width, height, &m_dsv)))
+	if (FAILED(DxUtility::CreateDepthStencilView(m_device, width, height, &m_dsv)))
 		return false;
 
-	m_deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_dsv);
+	m_deviceContext->OMSetRenderTargets(1, &m_rtv, m_dsv);
 
-	if (FAILED(SetViewport(m_deviceContext, width, height)))
-		return false;
+	DxUtility::SetViewport(m_deviceContext, width, height);
 
 	m_CBufferManager = new CBufferManager(this);
 	if (FAILED(m_CBufferManager->Initialize()))
@@ -85,7 +86,7 @@ bool GraphicSystem::Release()
 	SafeDelete(m_instanceBufferManager);
 	SafeDelete(m_CBufferManager);
 	SafeRelease(m_dsv);
-	SafeRelease(m_backBufferRTV);
+	SafeRelease(m_rtv);
 	SafeRelease(m_swapChain);
 	SafeRelease(m_deviceContext);
 	SafeRelease(m_device);
@@ -111,72 +112,39 @@ void GraphicSystem::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 void GraphicSystem::Render()
 {
+	DxUtility::ClearRTV(m_deviceContext, m_clearColor, m_rtv);
+	DxUtility::ClearDSV(m_deviceContext, m_dsv);
+
 	Color clearColorLerped = Color::Lerp(m_clearColor, Color::white(), 1 - m_clearColor.a);
 	
 	for (uint i = 0; i < m_cameraManager->GetCameraCount(); ++i)
 	{
 		ICamera* camera = m_cameraManager->GetCamera(i);
+		if (!camera->IsWorking())
+			continue;
 
-		ID3D11RenderTargetView* currentRTV = nullptr;
-		ID3D11DepthStencilView* currentDSV = nullptr;
-		RenderTarget* cameraRenderTarget = camera->GetRenderTarget();
-		DepthStencil* cameraDepthStencil = camera->GetDepthStencil();
-		ID3D11RenderTargetView* camRTV = nullptr;
-		ID3D11DepthStencilView* camDSV = nullptr;
-		if (cameraRenderTarget && cameraDepthStencil)
-		{
-			camRTV = cameraRenderTarget->rtv.Get();
-			camDSV = cameraDepthStencil->dsv.Get();
-			SetViewport(m_deviceContext, cameraRenderTarget->width, cameraRenderTarget->height);
-		}
+		DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+		bool hasRenderTexture2D = camera->HasRenderTexture2D();
 
-		if (camRTV && camDSV)
-		{
-			m_deviceContext->OMGetRenderTargets(1, &currentRTV, &currentDSV);
-
-			m_deviceContext->OMSetRenderTargets(1, &camRTV, camDSV);
-			m_deviceContext->ClearRenderTargetView(camRTV, (FLOAT*)&clearColorLerped);
-			m_deviceContext->ClearDepthStencilView(camDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		}
-		else
-		{
-			ClearBackBuffer(clearColorLerped);
-			ClearDepthStencilBuffer(1.0f, 0);
-		}
+		DxUtility::ClearRTV(m_deviceContext, m_clearColor, drt->result->rtv.Get());
+		DxUtility::ClearDSV(m_deviceContext, drt->depthStencil->dsv.Get());
 
 		m_renderQueue->Render(camera);
 
-		if (camRTV && camDSV)
+		if (!hasRenderTexture2D)
 		{
-			m_deviceContext->OMSetRenderTargets(1, &currentRTV, currentDSV);
-			SafeRelease(currentRTV);
-			SafeRelease(currentDSV);
-
-			RollbackViewport(m_deviceContext);
+			m_postProcessing->DrawToTextrue(drt->result->srv, m_rtv, uint2(m_width, m_height), PostProcessing::CopyType::Default);
+		}
+		else
+		{
+			m_postProcessing->DrawToTextrue(drt->result->srv, camera->GetRenderTarget()->rtv.Get(), uint2(camera->GetRenderTarget()->width, camera->GetRenderTarget()->height), PostProcessing::CopyType::Default);
 		}
 	}
 
 	m_renderQueue->Clear();
-}
 
-bool GraphicSystem::ClearBackBuffer(const Color& color)
-{
-	if (!m_backBufferRTV)
-		return false;
-
-	m_deviceContext->ClearRenderTargetView(m_backBufferRTV, (FLOAT*)&color);
-
-	return true;
-}
-
-bool GraphicSystem::ClearDepthStencilBuffer(float depth, unsigned int stencil)
-{
-	if (!m_dsv)
-		return false;
-
-	m_deviceContext->ClearDepthStencilView(m_dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
-
-	return true;
+	DxUtility::SetViewport(m_deviceContext, m_width, m_height);
+	DxUtility::SetRenderTargets(m_deviceContext, 1, &m_rtv, m_dsv);
 }
 
 bool GraphicSystem::Present()
@@ -244,7 +212,7 @@ float GraphicSystem::GetAspect() const
 
 bool GraphicSystem::SetResolution(uint width, uint height)
 {
-	SafeRelease(m_backBufferRTV);
+	SafeRelease(m_rtv);
 	SafeRelease(m_dsv);
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -262,31 +230,27 @@ bool GraphicSystem::SetResolution(uint width, uint height)
 		SafeRelease(backBufferRTV);
 	};
 
-	if (FAILED(CreateBackBufferView(m_device, m_swapChain, &backBufferRTV)))
+	if (FAILED(DxUtility::CreateBackBufferView(m_device, m_swapChain, &backBufferRTV)))
 	{
 		ReleaseVars();
 		RETURN_FALSE_ERROR_MESSAGE("GraphicSystem::SetResolution::CreateBackBufferView");
 	}
 
-	if (FAILED(CreateDepthStencilView(m_device, width, height, &depthStencilRTV)))
+	if (FAILED(DxUtility::CreateDepthStencilView(m_device, width, height, &depthStencilRTV)))
 	{
 		ReleaseVars();
 		RETURN_FALSE_ERROR_MESSAGE("GraphicSystem::SetResolution::CreateDepthStencilBufferView");
 	}
 
-	if (FAILED(SetViewport(m_deviceContext, width, height)))
-	{
-		ReleaseVars();
-		RETURN_FALSE_ERROR_MESSAGE("GraphicSystem::SetResolution::SetViewport");
-	}
+	DxUtility::SetViewport(m_deviceContext, width, height);
 
 	m_deviceContext->OMSetRenderTargets(1, &backBufferRTV, depthStencilRTV);
 
 	{
 		SafeRelease(m_dsv);
-		SafeRelease(m_backBufferRTV);
+		SafeRelease(m_rtv);
 
-		m_backBufferRTV = backBufferRTV;
+		m_rtv = backBufferRTV;
 		m_dsv = depthStencilRTV;
 	}
 
@@ -299,248 +263,4 @@ bool GraphicSystem::SetResolution(uint width, uint height)
 	iCameraManager->OnResolutionChanged(fWidth, fHeight, aspect);
 
 	return true;
-}
-
-void GraphicSystem::ResetShaderResource(Com<ID3D11DeviceContext> deviceContext)
-{
-	ID3D11ShaderResourceView* nullSRV[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = {};
-	deviceContext->VSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, nullSRV);
-	deviceContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, nullSRV);
-}
-
-void GraphicSystem::RollbackRenderTarget(Com<ID3D11DeviceContext> deviceContext)
-{
-	ResetShaderResource(deviceContext);
-	deviceContext->OMSetRenderTargets(1, &m_backBufferRTV, m_dsv);
-}
-
-void GraphicSystem::SetRenderTargets(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV)
-{
-	ResetShaderResource(deviceContext);
-	deviceContext->OMSetRenderTargets(count, arrRTV, m_dsv);
-}
-
-void GraphicSystem::SetRenderTargetsWithDepthStencil(Com<ID3D11DeviceContext> deviceContext, uint count, ID3D11RenderTargetView* const* arrRTV, ID3D11DepthStencilView* dsv)
-{
-	ResetShaderResource(deviceContext);
-	deviceContext->OMSetRenderTargets(count, arrRTV, dsv);
-}
-
-void GraphicSystem::SyncronizeDeferredContext(Com<ID3D11DeviceContext> dc)
-{
-	if (!dc)
-		return;
-
-	dc->ClearState();
-
-	ID3D11RenderTargetView* rtv[8] = {};
-	ID3D11DepthStencilView* dsv = nullptr;
-	m_deviceContext->OMGetRenderTargets(8, rtv, &dsv);
-	dc->OMSetRenderTargets(8, rtv, dsv);
-
-	UINT numViewports = 1;
-	D3D11_VIEWPORT viewport;
-	m_deviceContext->RSGetViewports(&numViewports, &viewport);
-	dc->RSSetViewports(1, &viewport);
-}
-
-void GraphicSystem::ExecuteDeferredContext(Com<ID3D11DeviceContext> dc)
-{
-	if (!dc)
-		return;
-
-	ID3D11CommandList* commandList = nullptr;
-	dc->FinishCommandList(FALSE, &commandList);
-	if (commandList)
-	{
-		m_deviceContext->ExecuteCommandList(commandList, TRUE);
-		commandList->Release();
-	}
-}
-
-const Color& GraphicSystem::GetClearColor() const
-{
-	return m_clearColor;
-}
-
-void GraphicSystem::SetClearColor(const Color& color)
-{
-	m_clearColor = color;
-}
-
-HRESULT GraphicSystem::CreateSwapChain(ID3D11Device* device, HWND hWnd, unsigned int width, unsigned int height, unsigned int refreshPerSec, bool vsync, bool fullScreen, IDXGISwapChain** out_swapChain)
-{
-	if (!out_swapChain)
-		return E_FAIL;
-
-	IDXGIDevice* dxgiDevice = nullptr;
-	IDXGIAdapter* dxgiAdapter = nullptr;
-	IDXGIFactory* dxgiFactory = nullptr;
-
-	auto ReleaseVars = [&]()
-	{
-		SafeRelease(dxgiFactory);
-		SafeRelease(dxgiAdapter);
-		SafeRelease(dxgiDevice);
-	};
-
-	if (!device || !hWnd)
-		return E_FAIL;
-
-	if (FAILED(device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeSwapChain::ID3D11Device::QueryInterface");
-	}
-
-	if (FAILED(dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeSwapChain::IDXGIDevice::GetParent");
-	}
-
-	if (FAILED(dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&dxgiFactory)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeSwapChain::IDXGIAdapter::GetParent");
-	}
-
-	DXGI_SWAP_CHAIN_DESC desc = {};
-
-	desc.BufferDesc.Width = width;
-	desc.BufferDesc.Height = height;
-	if (vsync)
-	{
-		desc.BufferDesc.RefreshRate.Numerator = refreshPerSec;
-		desc.BufferDesc.RefreshRate.Denominator = 1;
-	}
-	else
-	{
-		desc.BufferDesc.RefreshRate.Numerator = 0;
-		desc.BufferDesc.RefreshRate.Denominator = 1;
-	}
-
-	desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-
-	desc.SampleDesc.Quality = 0;
-	desc.SampleDesc.Count = 1;
-
-	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	desc.BufferCount = 1;
-	desc.OutputWindow = hWnd;
-	desc.Windowed = !fullScreen;
-	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
-	if (FAILED(dxgiFactory->CreateSwapChain(device, &desc, out_swapChain)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeSwapChain::IDXGIFactory::CreateSwapChain");
-	}
-
-	ReleaseVars();
-
-	return S_OK;
-}
-
-HRESULT GraphicSystem::CreateBackBufferView(ID3D11Device* device, IDXGISwapChain* swapChain, ID3D11RenderTargetView** out_backBufferView)
-{
-	if (!out_backBufferView)
-		return E_FAIL;
-
-	ID3D11Texture2D* backBufferTex = nullptr;
-
-	auto ReleaseVars = [&]()
-	{
-		SafeRelease(backBufferTex);
-	};
-
-	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTex)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeBackBufferView::IDXGISwapChain::GetBuffer");
-	}
-
-	if (FAILED(m_device->CreateRenderTargetView(backBufferTex, nullptr, out_backBufferView)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeBackBufferView::ID3D11Device::CreateRenderTargetView");
-	}
-
-	ReleaseVars();
-
-	return S_OK;
-}
-
-HRESULT GraphicSystem::CreateDepthStencilView(ID3D11Device* device, unsigned int width, unsigned int height, ID3D11DepthStencilView** out_depthStencilRTV)
-{
-	if (!out_depthStencilRTV)
-		return E_FAIL;
-
-	ID3D11Texture2D* depthStencilBufferTex = nullptr;
-
-	auto ReleaseVars = [&]()
-	{
-		SafeRelease(depthStencilBufferTex);
-	};
-
-	D3D11_TEXTURE2D_DESC desc = {};
-
-	desc.Width = width;
-	desc.Height = height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-
-	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-
-	if (FAILED(device->CreateTexture2D(&desc, nullptr, &depthStencilBufferTex)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeDepthStencilBufferView::ID3D11Device::CreateTexture2D");
-	}
-
-	if (FAILED(device->CreateDepthStencilView(depthStencilBufferTex, nullptr, out_depthStencilRTV)))
-	{
-		ReleaseVars();
-		RETURN_E_FAIL_ERROR_MESSAGE("GraphicSystem::InitializeDepthStencilBufferView::ID3D11Device::CreateDepthStencilView");
-	}
-
-	ReleaseVars();
-
-	return S_OK;
-}
-
-HRESULT GraphicSystem::SetViewport(Com<ID3D11DeviceContext> deviceContext, unsigned int width, unsigned int height)
-{
-	D3D11_VIEWPORT viewportDesc = {};
-	viewportDesc.Width = float(width);
-	viewportDesc.Height = float(height);
-	viewportDesc.TopLeftX = viewportDesc.TopLeftY = 0;
-	viewportDesc.MinDepth = 0.0f;
-	viewportDesc.MaxDepth = 1.0f;
-
-	deviceContext->RSSetViewports(1, &viewportDesc);
-
-	return S_OK;
-}
-
-uint2 GraphicSystem::GetViewport(Com<ID3D11DeviceContext> deviceContext) const
-{
-	uint num = 1;
-	D3D11_VIEWPORT viewport;
-	deviceContext->RSGetViewports(&num, &viewport);
-
-	return uint2(uint(viewport.Width), uint(viewport.Height));
-}
-
-HRESULT GraphicSystem::RollbackViewport(Com<ID3D11DeviceContext> deviceContext)
-{
-	return SetViewport(deviceContext, m_width, m_height);
 }

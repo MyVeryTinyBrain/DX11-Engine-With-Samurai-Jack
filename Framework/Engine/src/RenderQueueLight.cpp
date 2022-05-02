@@ -8,6 +8,7 @@
 #include "RenderTarget.h"
 #include "DeferredRenderTarget.h"
 #include "PostProcessing.h"
+#include "DxUtility.h"
 
 RenderQueueLight::~RenderQueueLight()
 {
@@ -312,8 +313,10 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
     Com<ID3D11Device> device = m_graphicSystem->device;
     Com<ID3D11DeviceContext> deviceContext = m_graphicSystem->deviceContext;
 
-    IGraphicSystem* iGraphicSystem = m_graphicSystem;
-    uint2 prevViewport = iGraphicSystem->GetViewport(deviceContext);
+    ID3D11RenderTargetView* arrRTV[8] = {};
+    ID3D11DepthStencilView* dsv = nullptr;
+    uint2 prevViewport = DxUtility::GetViewport(deviceContext);
+    DxUtility::GetRenderTargets(deviceContext, arrRTV, &dsv);
 
     BoundingHolder lightBounds[6];
     uint projectionCount = light->GetProjectionCount();
@@ -322,13 +325,13 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
     light->GetBoundingHolders(camera, lightBounds);
     light->GetDepthes(lightDepthes);
 
-    iGraphicSystem->SetViewport(deviceContext, depthSize, depthSize);
+    DxUtility::SetViewport(deviceContext, depthSize, depthSize);
     {
         light->ClearDepthes(deviceContext);
 
         for (uint i = 0; i < projectionCount; ++i)
         {
-            m_graphicSystem->SetRenderTargetsWithDepthStencil(deviceContext, 0, nullptr, lightDepthes[i]->dsv.Get());
+            DxUtility::SetRenderTargets(deviceContext, 0, nullptr, lightDepthes[i]->dsv.Get());
 
             Render_DepthOfLight_Static(camera, lightDesc, lightBounds, i);
             Render_DepthOfLight_Skinned(camera, lightDesc, lightBounds, i);
@@ -336,9 +339,8 @@ void RenderQueueLight::Render_DepthOfLight(ICamera* camera, ILight* light, const
             Render_DepthOfLight_ShadowPassInstance(camera, lightDesc, lightBounds, i);
         }
     }
-    iGraphicSystem->SetViewport(deviceContext, prevViewport.x, prevViewport.y);
-
-    m_graphicSystem->RollbackRenderTarget(deviceContext);
+    DxUtility::SetViewport(deviceContext, prevViewport);
+    DxUtility::SetRenderTargets(deviceContext, 8, arrRTV, dsv);
 }
 
 void RenderQueueLight::Render_DepthOfLight_Static(ICamera* camera, const LightDesc& lightDesc, BoundingHolder* boundings, uint projectionIndex)
@@ -595,7 +597,7 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     light->GetDepthes(lightDepthes);
 
     // Outputs
-    drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
+    drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem->deviceContext);
 
     {
         m_CBufferManager->BeginApply(m_shaderLighting->GetEffect());
@@ -639,7 +641,6 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
         }
         m_CBufferManager->EndApply();
     }
-    m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
 }
 
 void RenderQueueLight::Render_LightBlend(ICamera* camera)
@@ -654,7 +655,7 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
     RenderTarget* volumetric = drt->volumetric;
 
     // Outputs
-    drt->SetDeferredLightBlendRenderTargets(m_graphicSystem, m_graphicSystem->deviceContext);
+    drt->SetDeferredLightBlendRenderTargets(m_graphicSystem->deviceContext);
 
     {
         m_shaderLightBlending->SetTexture("_Albedo", albedo->srv);
@@ -669,8 +670,6 @@ void RenderQueueLight::Render_LightBlend(ICamera* camera)
         m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
         m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
     }
-
-    m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
 }
 
 void RenderQueueLight::Render_Volumetric(ICamera* camera)
@@ -685,7 +684,7 @@ void RenderQueueLight::Render_Volumetric(ICamera* camera)
     RenderTarget* volumetric = drt->volumetric;
 
     // Outputs
-    drt->SetDeferredVolumetricLightBlendTargets(m_graphicSystem, m_graphicSystem->deviceContext);
+    drt->SetDeferredVolumetricLightBlendTargets(m_graphicSystem->deviceContext);
 
     {
         m_shaderLightBlending->SetTexture("_Albedo", albedo->srv);
@@ -700,8 +699,6 @@ void RenderQueueLight::Render_Volumetric(ICamera* camera)
         m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
         m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
     }
-
-    m_graphicSystem->RollbackRenderTarget(m_graphicSystem->deviceContext);
 }
 
 HRESULT RenderQueueLight::SetupQuad()
@@ -723,15 +720,15 @@ HRESULT RenderQueueLight::SetupShaders()
 {
     tstring error;
 
-    m_shaderLightDepthWrite = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLightDepthWrite.cso"), error);
+    m_shaderLightDepthWrite = CompiledShaderDesc::LoadCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLightDepthWrite.cso"), error);
     if (!m_shaderLightDepthWrite)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load DeferredLightDepthWrite.cso");
 
-    m_shaderLighting = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLighting.cso"), error);
+    m_shaderLighting = CompiledShaderDesc::LoadCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLighting.cso"), error);
     if (!m_shaderLighting)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load DeferredLighting.cso");
 
-    m_shaderLightBlending = CompiledShaderDesc::CreateCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLightBlending.cso"), error);
+    m_shaderLightBlending = CompiledShaderDesc::LoadCompiledShaderFromBinaryFolder(m_graphicSystem->device, TEXT("DeferredLightBlending.cso"), error);
     if (!m_shaderLightBlending)
         RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to load DeferredLightBlending.cso");
 
