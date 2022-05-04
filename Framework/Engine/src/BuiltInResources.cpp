@@ -3,7 +3,7 @@
 #include "ResourceFactory.h"
 #include "VI.h"
 #include "VIBuffer.h"
-#include "PrimitiveVI.h"
+#include "VIUtility.h"
 #include "System.h"
 #include "GraphicSystem.h"
 #include "ResourceManagement.h"
@@ -71,25 +71,25 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateTexture2D(Color(0.5f, 0.5f, 1.0f, 1.0f), 2, 2, TEXT("normal"), &m_normal)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateQuad(), &m_quad)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateQuad(), &m_quad)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreatePlane(), &m_plane)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreatePlane(), &m_plane)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateBox(), &m_box)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateBox(), &m_box)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateSkyBox(), &m_skybox)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateSkyBox(), &m_skybox)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateSphere(), &m_sphere)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateSphere(), &m_sphere)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateCapsule(), &m_capsule)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateCapsule(), &m_capsule)))
 		return hr;
 
-	if (FAILED(hr = CreateMeshNocopyVI(PrimitiveVI::CreateCylinder(), &m_cylinder)))
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateCylinder(), &m_cylinder)))
 		return hr;
 
 	if (FAILED(hr = CreateShader(TEXT("Standard.cso"), &m_standardShader)))

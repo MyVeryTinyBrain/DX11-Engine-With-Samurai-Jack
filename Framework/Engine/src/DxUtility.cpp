@@ -55,6 +55,34 @@ void DxUtility::SetViewport(Com<ID3D11DeviceContext> dc, uint2 size)
 	DxUtility::SetViewport(dc, size.x, size.y);
 }
 
+void DxUtility::SetViewportByRect(Com<ID3D11DeviceContext> dc, RECT rect)
+{
+	D3D11_VIEWPORT viewportDesc = {};
+	viewportDesc.Width = float(rect.right - rect.left);
+	viewportDesc.Height = float(rect.bottom - rect.top);
+	viewportDesc.TopLeftX = float(rect.left);
+	viewportDesc.TopLeftY = float(rect.top);
+	viewportDesc.MinDepth = 0.0f;
+	viewportDesc.MaxDepth = 1.0f;
+
+	dc->RSSetViewports(1, &viewportDesc);
+}
+
+RECT DxUtility::GetViewportAsRect(Com<ID3D11DeviceContext> dc)
+{
+	uint num = 1;
+	D3D11_VIEWPORT viewport;
+	dc->RSGetViewports(&num, &viewport);
+
+	RECT rect;
+	rect.left = LONG(viewport.TopLeftX);
+	rect.top = LONG(viewport.TopLeftY);
+	rect.right = LONG(viewport.TopLeftX + viewport.Width);
+	rect.bottom = LONG(viewport.TopLeftY + viewport.Height);
+
+	return rect;
+}
+
 uint2 DxUtility::GetViewport(Com<ID3D11DeviceContext> dc)
 {
 	uint num = 1;

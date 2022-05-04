@@ -101,10 +101,6 @@ private:
 
 private:
 
-	HRESULT SetScreenQuad(uint screenWidth, uint screenHeight, uint x, uint y, uint width, uint height);
-
-private:
-
 	HRESULT SetupQuads();
 	HRESULT SetupShaders();
 
@@ -115,7 +111,7 @@ private:
 	InstanceBufferManager*		m_instanceBufferManager = nullptr;
 
 	VIBuffer*					m_normalizedQuad = nullptr;			// Immutable Vertices
-	VIBuffer*					m_quad = nullptr;					// Dynamic Vertices
+	VIBuffer*					m_screenQuad = nullptr;				// Dynamic Vertices
 
 	CompiledShaderDesc*			m_shaderPostProcessing = nullptr;
 };

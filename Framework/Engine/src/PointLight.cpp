@@ -83,6 +83,37 @@ bool PointLight::ContainsInCamera(ICamera* camera) const
     return camera->Intersects(sphere);
 }
 
+FRect PointLight::GetDeferredScreenQuad(ICamera* camera) const
+{
+    const M4& V = camera->GetViewMatrix();
+    const M4& P = camera->GetProjectionMatrix();
+
+    OrientedBounds obb(transform->position, m_range * V3::one(), Q::identity());
+    V3 corners[8];
+    obb.GetCorners(corners);
+
+    V2 min = V2(FLT_MAX, FLT_MAX);
+    V2 max = V2(FLT_MIN, FLT_MIN);
+
+    for (uint i = 0; i < 8; ++i)
+    {
+        V4 wCorner = V4(corners[i].x, corners[i].y, corners[i].z, 1.0f);
+        V4 vCorner = wCorner * V;
+        V4 pCorner = vCorner * P;
+        V4 ndcCorner = pCorner / pCorner.w;
+        V2 sCorner = V2(ndcCorner.x, ndcCorner.y);
+        min = V2::Min(min, sCorner);
+        max = V2::Max(max, sCorner);
+    }
+
+    min.x = Clamp(min.x, -1.0f, 1.0f);
+    min.y = Clamp(min.y, -1.0f, 1.0f);
+    max.x = Clamp(max.x, -1.0f, 1.0f);
+    max.y = Clamp(max.y, -1.0f, 1.0f);
+
+    return FRect(min, max);
+}
+
 VolumetricDesc PointLight::GetVolumetricDesc() const
 {
     VolumetricDesc desc;

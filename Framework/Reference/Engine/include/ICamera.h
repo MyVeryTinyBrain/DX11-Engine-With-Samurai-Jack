@@ -26,7 +26,7 @@ public:
 
 	virtual M4 GetProjectionMatrix() const = 0;
 
-	virtual Frustum GetFrustum(float nearPercent, float farPercent) const = 0;
+	virtual Frustum GetFrustum(float Near, float Far) const = 0;
 	virtual Frustum GetFrustum() const = 0;
 	virtual OrientedBounds GetOBB(float nearPercent, float farPercent) const = 0;
 	virtual OrientedBounds GetOBB() const = 0;

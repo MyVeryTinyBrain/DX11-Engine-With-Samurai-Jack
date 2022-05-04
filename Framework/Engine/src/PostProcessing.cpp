@@ -7,7 +7,7 @@
 #include "DeferredRenderTarget.h"
 #include "RenderTarget.h"
 #include "VIBuffer.h"
-#include "PrimitiveVI.h"
+#include "VIUtility.h"
 #include "VI.h"
 #include "DxUtility.h"
 
@@ -20,7 +20,7 @@ PostProcessing::PostProcessing(GraphicSystem* graphicSystem, CBufferManager* cBu
 
 PostProcessing::~PostProcessing()
 {
-	SafeDelete(m_quad);
+	SafeDelete(m_screenQuad);
 	SafeDelete(m_normalizedQuad);
 	SafeDelete(m_shaderPostProcessing);
 }
@@ -90,7 +90,15 @@ void PostProcessing::Blur(const BlurDesc& desc, RenderTarget* in, RenderTarget* 
 
 void PostProcessing::DrawToScreen(Com<ID3D11ShaderResourceView> src, Com<ID3D11RenderTargetView> dest, uint2 destSize, uint2 pos, uint2 size, CopyType type)
 {
-	SetScreenQuad(destSize.x, destSize.y, pos.x, pos.y, size.x, size.y);
+	FRect rect;
+	rect.Left = float(pos.x);
+	rect.Top = float(pos.y);
+	rect.Right = float(pos.x + size.x);
+	rect.Bottom = float(pos.y + size.y);
+	V2 screenSize = V2(float(destSize.x), float(destSize.y));
+	VI* vi = m_screenQuad->GetVI();
+	VIUtility::SetQuadInScreen(screenSize, rect, vi);
+	m_screenQuad->UpdateVertexBuffer();
 
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = dest.Get();
@@ -105,9 +113,9 @@ void PostProcessing::DrawToScreen(Com<ID3D11ShaderResourceView> src, Com<ID3D11R
 	m_shaderPostProcessing->SetTexture("_Sample", src);
 	m_shaderPostProcessing->SetInputLayout(m_graphicSystem->deviceContext, technique, pass);
 	m_shaderPostProcessing->ApplyPass(m_graphicSystem->deviceContext, technique, pass);
-	m_quad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
-	m_quad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
-	m_quad->DrawOnce(m_graphicSystem->deviceContext);
+	m_screenQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
+	m_screenQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
+	m_screenQuad->DrawOnce(m_graphicSystem->deviceContext);
 
 	DxUtility::SetViewport(m_graphicSystem->deviceContext, prevViewport);
 }
@@ -643,46 +651,24 @@ void PostProcessing::Render_Blur(const BlurDesc& desc, RenderTarget* in, RenderT
 	DxUtility::SetViewport(m_graphicSystem->deviceContext, prevViewport);
 }
 
-HRESULT PostProcessing::SetScreenQuad(uint screenWidth, uint screenHeight, uint x, uint y, uint width, uint height)
-{
-	//RECT rect = {};
-	//GetClientRect(m_graphicSystem->windowHandle, &rect);
-	//uint cw = rect.right;
-	//uint ch = rect.bottom;
-
-	uint cw = screenWidth;
-	uint ch = screenHeight;
-
-	float dw = float(cw) * 0.5f;
-	float dh = float(ch) * 0.5f * -1.0f;
-
-	VI* vi = m_quad->GetVI();
-	Vertex* vertices = vi->GetVertices();
-	vertices[0].position = V3(float(x) / dw - 1.0f, float(y) / dh + 1.0f, 0.0f);
-	vertices[1].position = V3(float(x + width) / dw - 1.0f, float(y) / dh + 1.0f, 0.0f);
-	vertices[2].position = V3(float(x + width) / dw - 1.0f, float(y + height) / dh + 1.0f, 0.0f);
-	vertices[3].position = V3(float(x) / dw - 1.0f, float(y + height) / dh + 1.0f, 0.0f);
-	return m_quad->UpdateVertexBuffer();
-}
-
 HRESULT PostProcessing::SetupQuads()
 {
 	// Setup Screen Quad
 	{
-		VI* vi = PrimitiveVI::CreateQuad();
+		VI* vi = VIUtility::CreateQuad();
 		HRESULT hr = VIBuffer::CreateVIBufferNocopy(
 			m_graphicSystem->device, m_graphicSystem->deviceContext,
 			&vi,
 			D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
 			D3D11_USAGE_IMMUTABLE, 0, 0,
-			&m_quad);
+			&m_screenQuad);
 		if (FAILED(hr))
 			RETURN_E_FAIL_ERROR_MESSAGE("PostProcessing::SetupQuads::Failed to create VIBuffer(Screen Quad)");
 	}
 
 	// Setup Normalized Quad
 	{
-		VI* vi = PrimitiveVI::CreateNormalizedQuad();
+		VI* vi = VIUtility::CreateNormalizedQuad();
 		HRESULT hr = VIBuffer::CreateVIBufferNocopy(
 			m_graphicSystem->device, m_graphicSystem->deviceContext,
 			&vi,

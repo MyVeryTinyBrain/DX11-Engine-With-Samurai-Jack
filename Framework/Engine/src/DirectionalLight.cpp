@@ -139,6 +139,16 @@ bool DirectionalLight::ContainsInCamera(ICamera* camera) const
 	return true;
 }
 
+FRect DirectionalLight::GetDeferredScreenQuad(ICamera* camera) const
+{
+	FRect rect;
+	rect.Left = -1.0f;
+	rect.Top = -1.0f;
+	rect.Right = +1.0f;
+	rect.Bottom = +1.0f;
+	return rect;
+}
+
 VolumetricDesc DirectionalLight::GetVolumetricDesc() const
 {
 	VolumetricDesc desc;

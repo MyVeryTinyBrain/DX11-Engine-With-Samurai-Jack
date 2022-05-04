@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "RenderQueueLight.h"
 #include "DepthStencil.h"
-#include "PrimitiveVI.h"
+#include "VIUtility.h"
 #include "VIBuffer.h"
 #include "CompiledShaderDesc.h"
 #include "LightManager.h"
@@ -9,10 +9,12 @@
 #include "DeferredRenderTarget.h"
 #include "PostProcessing.h"
 #include "DxUtility.h"
+#include "VI.h"
 
 RenderQueueLight::~RenderQueueLight()
 {
     SafeDelete(m_normalizedQuad);
+    SafeDelete(m_screenQuad);
 
     SafeDelete(m_shaderLightDepthWrite);
     SafeDelete(m_shaderLighting);
@@ -599,6 +601,25 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     // Outputs
     drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem->deviceContext);
 
+    //FRect screenQuadRect = light->GetDeferredScreenQuad(camera);
+    //screenQuadRect.Vector4 += V4::one();
+    //screenQuadRect.Vector4 *= 0.5f;
+    //VI* vi = m_screenQuad->GetVI();
+    //VIUtility::SetQuadInScreen(V2(1.0f, 1.0f), screenQuadRect, vi);
+    //m_screenQuad->UpdateVertexBuffer();
+
+    FRect screenQuadRect = light->GetDeferredScreenQuad(camera);
+    V2 corners[4] = {};
+    screenQuadRect.GetCorners(corners);
+    VI* vi = m_screenQuad->GetVI();
+    Vertex* vertices = vi->GetVertices();
+    for (uint i = 0; i < 4; ++i)
+    {
+        vertices[i].position = corners[i];
+        vertices[i].uvw = corners[i] * V2(0.5f, -0.5f) + V2(0.5f, 0.5f);
+    }
+    m_screenQuad->UpdateVertexBuffer();
+
     {
         m_CBufferManager->BeginApply(m_shaderLighting->GetEffect());
         {
@@ -635,9 +656,9 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
             m_shaderLighting->SetInputLayout(m_graphicSystem->deviceContext, 0, passIndex);
             m_shaderLighting->ApplyPass(m_graphicSystem->deviceContext, 0, passIndex);
-            m_normalizedQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
-            m_normalizedQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
-            m_normalizedQuad->DrawOnce(m_graphicSystem->deviceContext);
+            m_screenQuad->ApplyVertexBuffer(m_graphicSystem->deviceContext);
+            m_screenQuad->ApplyIndexBuffer(m_graphicSystem->deviceContext);
+            m_screenQuad->DrawOnce(m_graphicSystem->deviceContext);
         }
         m_CBufferManager->EndApply();
     }
@@ -703,15 +724,31 @@ void RenderQueueLight::Render_Volumetric(ICamera* camera)
 
 HRESULT RenderQueueLight::SetupQuad()
 {
-    VI* vi = PrimitiveVI::CreateNormalizedQuad();
-    HRESULT hr = VIBuffer::CreateVIBufferNocopy(
-        m_graphicSystem->device, m_graphicSystem->deviceContext,
-        &vi,
-        D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
-        D3D11_USAGE_IMMUTABLE, 0, 0,
-        &m_normalizedQuad);
-    if (FAILED(hr))
-        RETURN_E_FAIL_ERROR_MESSAGE("RenderQueueLight::Initialize::Failed to create VIBuffer(Normalized Quad)");
+    // Setup Screen Quad
+    {
+        VI* vi = VIUtility::CreateQuad();
+        HRESULT hr = VIBuffer::CreateVIBufferNocopy(
+            m_graphicSystem->device, m_graphicSystem->deviceContext,
+            &vi,
+            D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
+            D3D11_USAGE_IMMUTABLE, 0, 0,
+            &m_screenQuad);
+        if (FAILED(hr))
+            RETURN_E_FAIL_ERROR_MESSAGE("PostProcessing::SetupQuads::Failed to create VIBuffer(Screen Quad)");
+    }
+
+    // Setup Normalized Quad
+    {
+        VI* vi = VIUtility::CreateNormalizedQuad();
+        HRESULT hr = VIBuffer::CreateVIBufferNocopy(
+            m_graphicSystem->device, m_graphicSystem->deviceContext,
+            &vi,
+            D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
+            D3D11_USAGE_IMMUTABLE, 0, 0,
+            &m_normalizedQuad);
+        if (FAILED(hr))
+            RETURN_E_FAIL_ERROR_MESSAGE("PostProcessing::SetupQuads::Failed to create VIBuffer(Normalized Quad)");
+    }
 
     return S_OK;
 }

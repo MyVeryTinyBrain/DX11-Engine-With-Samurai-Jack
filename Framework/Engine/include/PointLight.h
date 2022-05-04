@@ -26,6 +26,7 @@ public:
 	virtual LightDesc GetLightDesc(ICamera* camera) const override;
 
 	virtual bool ContainsInCamera(ICamera* camera) const override;
+	virtual FRect GetDeferredScreenQuad(ICamera* camera) const override;
 
 private:
 

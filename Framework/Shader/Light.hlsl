@@ -302,8 +302,10 @@ int RaycastSphere(float3 rayPoint, half3 rayDir, float3 spherePoint, float radiu
 half4 ComputeVolumetric_Point(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], float3 worldPosition, float3 cameraPosition)
 {
 	float3 viewToPixel = worldPosition - cameraPosition;
+	float3 spherePoint = light.Position.xyz;
+	float sphereRadius = light.Range;
 	float3 intersects[2];
-	int numPoints = RaycastSphere(cameraPosition, normalize(viewToPixel), light.Position.xyz, light.Range, intersects);
+	int numPoints = RaycastSphere(cameraPosition, normalize(viewToPixel), spherePoint, sphereRadius, intersects);
 
 	float3 start, end;
 
@@ -312,7 +314,7 @@ half4 ComputeVolumetric_Point(LightDesc light, VolumetricDesc volumetricDesc, te
 	{
 		return half4(0, 0, 0, 0);
 	}
-	else if (numPoints == 1 || length(light.Position.xyz - cameraPosition) < light.Range)
+	else if (numPoints == 1 || length(spherePoint - cameraPosition) < sphereRadius)
 	{
 		start = cameraPosition;
 		end = intersects[1];
@@ -357,9 +359,10 @@ half4 ComputeVolumetric_Spot(LightDesc light, VolumetricDesc volumetricDesc, tex
 {
 	float3 viewToPixel = worldPosition - cameraPosition;
 	float coneSideLength = light.Range / cos(light.Angle * Deg2Rad);
-	float3 coneCenter = (light.Position.xyz + light.Position.xyz + light.Direction.xyz * light.Range * 0.5f) * 0.5f;
+	float3 spherePoint = light.Position.xyz;
+	float sphereRadius = coneSideLength;
 	float3 intersects[2];
-	int numPoints = RaycastSphere(cameraPosition, normalize(viewToPixel), coneCenter, coneSideLength * 0.5f, intersects);
+	int numPoints = RaycastSphere(cameraPosition, normalize(viewToPixel), spherePoint, sphereRadius, intersects);
 
 	float3 start, end;
 
@@ -368,7 +371,7 @@ half4 ComputeVolumetric_Spot(LightDesc light, VolumetricDesc volumetricDesc, tex
 	{
 		return half4(0, 0, 0, 0);
 	}
-	else if (numPoints == 1 || length(coneCenter - cameraPosition) < coneSideLength * 0.5f)
+	else if (numPoints == 1 || length(spherePoint - cameraPosition) < sphereRadius)
 	{
 		start = cameraPosition;
 		end = intersects[1];

@@ -103,6 +103,7 @@ private:
 private:
 
 	VIBuffer*						m_normalizedQuad = nullptr;		// Immutable Vertices
+	VIBuffer*						m_screenQuad = nullptr;			// Dynamic Vertices
 
 	CompiledShaderDesc*				m_shaderLightDepthWrite = nullptr;
 	CompiledShaderDesc*				m_shaderLighting = nullptr;

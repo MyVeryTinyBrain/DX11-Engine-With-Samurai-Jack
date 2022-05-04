@@ -23,6 +23,7 @@
     <ClCompile Include="src\Bounds.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\Ex2.cpp" />
+    <ClCompile Include="src\FRect.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\M4.cpp" />
     <ClCompile Include="src\Ex.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\Ex2.h" />
     <ClInclude Include="include\Ex2.hpp" />
+    <ClInclude Include="include\FRect.h" />
     <ClInclude Include="include\Frustum.h" />
     <ClInclude Include="include\M4.h" />
     <ClInclude Include="include\Ex.h" />

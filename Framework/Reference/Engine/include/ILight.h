@@ -75,6 +75,8 @@ public:
 
 	virtual bool ContainsInCamera(ICamera* camera) const = 0;
 
+	virtual FRect GetDeferredScreenQuad(ICamera* camera) const = 0;
+
 public:
 
 	virtual uint GetDepthSize() const = 0;

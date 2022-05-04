@@ -61,6 +61,9 @@
     <ClCompile Include="src\BoundingHolder.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="src\FRect.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\XmMathPlus.h" />
@@ -132,6 +135,9 @@
       <Filter>Geometry</Filter>
     </ClInclude>
     <ClInclude Include="include\BoundingHolder.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FRect.h">
       <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>

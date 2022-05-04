@@ -21,4 +21,5 @@
 #include "Sphere.h"
 #include "Frustum.h"
 #include "BoundingHolder.h"
+#include "FRect.h"
 #include "Ex2.h"

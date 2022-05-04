@@ -118,7 +118,7 @@ RasterizerState ShadowRasterizerState
 	FillMode = Solid;
 	Cullmode = Back;
 	DepthClipEnable = TRUE;
-	DepthBias = 300; // DepthBias = 300 + 100 * ShadowSmoothness
+	DepthBias = 1000; // DepthBias = 300 + 100 * ShadowSmoothness (Default: 300)
 	DepthBiasClamp = 0.0f;
 	SlopeScaledDepthBias = 15.0f;
 };

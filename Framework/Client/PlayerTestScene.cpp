@@ -217,10 +217,17 @@ void PlayerTestScene::OnLoad()
 			pointLight->enable = true;
 		}
 
-		//for (uint i = 0; i < 10; ++i)
+		//for (uint i = 0; i < 1000; ++i)
 		//{
-		//	int x = (rand() % 40) - 20;
-		//	int z = (rand() % 40) - 20;
+		//	int range = 100;
+		//	int range2 = range * 2;
+
+		//	int x = (rand() % range2) - range;
+		//	int z = (rand() % range2) - range;
+
+		//	float r = float(rand() % 255) / 255.0f;
+		//	float g = float(rand() % 255) / 255.0f;
+		//	float b = float(rand() % 255) / 255.0f;
 
 		//	GameObject* goPointLight = CreateGameObject();
 		//	goPointLight->transform->position = V3(x, 5, z);
@@ -228,6 +235,7 @@ void PlayerTestScene::OnLoad()
 		//	pointLight->range = 10.0f;
 		//	pointLight->drawShadow = false;
 		//	pointLight->enable = true;
+		//	pointLight->diffuse = Color(r, g, b, 1.0f);
 		//}
 
 		{
@@ -302,7 +310,7 @@ void PlayerTestScene::OnLoad()
 		{
 			GameObject* goGround = CreateGameObject();
 			goGround->transform->position = V3(0.0f, 0.5f, 0.0f);
-			goGround->transform->localScale = V3(40, 1, 40);
+			goGround->transform->localScale = V3(200, 1, 200);
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;

@@ -182,9 +182,6 @@
     <ClInclude Include="include\ICameraManager.h">
       <Filter>EngineWorld\System\Graphic\CameraManager</Filter>
     </ClInclude>
-    <ClInclude Include="include\PrimitiveVI.h">
-      <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
-    </ClInclude>
     <ClInclude Include="include\MeshRenderer.h">
       <Filter>Object\SceneObject\Component\Renderer\MeshRenderer</Filter>
     </ClInclude>
@@ -545,6 +542,9 @@
     <ClInclude Include="include\DxUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="include\VIUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -723,9 +723,6 @@
     </ClCompile>
     <ClCompile Include="src\ICameraManager.cpp">
       <Filter>EngineWorld\System\Graphic\CameraManager</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PrimitiveVI.cpp">
-      <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
     </ClCompile>
     <ClCompile Include="src\MeshRenderer.cpp">
       <Filter>Object\SceneObject\Component\Renderer\MeshRenderer</Filter>
@@ -1043,6 +1040,9 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="src\DxUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VIUtility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
   </ItemGroup>

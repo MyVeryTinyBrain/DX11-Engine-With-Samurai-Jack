@@ -18,7 +18,7 @@
 #include "Material.h"
 #include "GraphicSystem.h"
 #include "RenderQueue.h"
-#include "PrimitiveVI.h"
+#include "VIUtility.h"
 #include "ResourceFactory.h"
 #include "ICamera.h"
 
@@ -165,7 +165,7 @@ void CapsuleCollider::CreateDebugShape()
 	V3 absScale = V3::Abs(transform->lossyScale);
 	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
 
-	VI* vi = PrimitiveVI::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_INIT_SLICE, CAPSULE_INIT_STEP);
+	VI* vi = VIUtility::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_INIT_SLICE, CAPSULE_INIT_STEP);
 	VIBuffer* viBuffer = nullptr;
 	VIBuffer::CreateVIBufferNocopy(
 		system->graphic->device,

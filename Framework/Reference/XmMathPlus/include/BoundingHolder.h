@@ -28,10 +28,10 @@ namespace XmMathPlus
 		inline operator const DirectX::BoundingOrientedBox& () { return m_obb; }
 		inline operator const DirectX::BoundingSphere& () { return m_sphere; }
 		inline operator const DirectX::BoundingFrustum& () { return m_frustum; }
-		inline operator const Bounds& () { return m_aabb; }
-		inline operator const OrientedBounds& () { return m_obb; }
-		inline operator const Sphere& () { return m_sphere; }
-		inline operator const Frustum& () { return m_frustum; }
+		inline operator Bounds () { return m_aabb; }
+		inline operator OrientedBounds () { return m_obb; }
+		inline operator Sphere () { return m_sphere; }
+		inline operator Frustum () { return m_frustum; }
 
 		inline void Set(const DirectX::BoundingBox& aabb) { Clear();  m_type = BoundingHolder::Type::AABB; m_aabb = aabb; }
 		inline void Set(const DirectX::BoundingOrientedBox& obb) { Clear();  m_type = BoundingHolder::Type::OBB; m_obb = obb; }

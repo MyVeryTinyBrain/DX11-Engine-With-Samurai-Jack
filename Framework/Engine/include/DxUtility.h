@@ -9,6 +9,8 @@ namespace DxUtility
 	ENGINE_API void GetRenderTargets(Com<ID3D11DeviceContext> dc, ID3D11RenderTargetView** out_ArrRTV, ID3D11DepthStencilView** out_dsv);
 	ENGINE_API void SetViewport(Com<ID3D11DeviceContext> dc, uint width, uint height);
 	ENGINE_API void SetViewport(Com<ID3D11DeviceContext> dc, uint2 size);
+	ENGINE_API void SetViewportByRect(Com<ID3D11DeviceContext> dc, RECT rect);
+	ENGINE_API RECT GetViewportAsRect(Com<ID3D11DeviceContext> dc);
 	ENGINE_API uint2 GetViewport(Com<ID3D11DeviceContext> dc);
 	ENGINE_API void ClearRTV(Com<ID3D11DeviceContext> dc, const Color& color, ID3D11RenderTargetView* rtv);
 	ENGINE_API void ClearDSV(Com<ID3D11DeviceContext> dc, ID3D11DepthStencilView* dsv);
