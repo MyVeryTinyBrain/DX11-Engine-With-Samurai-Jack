@@ -27,17 +27,19 @@ public:
 	virtual V3 GetDirection() const override;
 	void SetDirection(const V3& direction);
 
+	virtual Q GetRotation() const override;
+
 	M4 GetWorldMatrix() const;
 	virtual M4 GetViewMatrix() const override;
-	virtual M4 GetProjectionMatrix(float nearPercent, float farPercent) const override; 
+	virtual M4 GetProjectionMatrix(float Near, float Far) const override; 
 	virtual M4 GetProjectionMatrix() const override;
 
-	virtual Frustum GetFrustum(float nearPercent, float farPercent) const override;
+	virtual Frustum GetFrustum(float Near, float Far) const override;
 	virtual Frustum GetFrustum() const override;
-	virtual OrientedBounds GetOBB(float nearPercent, float farPercent) const override;
+	virtual OrientedBounds GetOBB(float Near, float Far) const override;
 	virtual OrientedBounds GetOBB() const override;
 
-	virtual BoundingHolder GetBoundingHolder(float nearPercent, float farPercent) const override;
+	virtual BoundingHolder GetBoundingHolder(float Near, float Far) const override;
 	virtual BoundingHolder GetBoundingHolder() const override;
 	 
 	virtual uint32_t GetAllowedLayers() const override;

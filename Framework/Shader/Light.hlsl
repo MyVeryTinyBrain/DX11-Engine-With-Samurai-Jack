@@ -12,6 +12,12 @@ SamplerComparisonState	ShadowSampler
 	Filter = COMPARISON_MIN_MAG_MIP_LINEAR;
 };
 
+struct LightCalculateDesc
+{
+	half4	Light;
+	half4	Volumetric;
+};
+
 struct ShadowDesc
 {
 	half	Value;
@@ -50,7 +56,7 @@ struct VolumetricDesc
 	float		Power;
 };
 
-half ComputeDistanceAtten(LightDesc light, float3 worldPosition)
+inline half ComputeDistanceAtten(LightDesc light, float3 worldPosition)
 {
 	float3 lightToPixel = worldPosition - light.Position.xyz;
 	half d = length(lightToPixel);
@@ -58,7 +64,7 @@ half ComputeDistanceAtten(LightDesc light, float3 worldPosition)
 	return distAtten;
 }
 
-half ComputeAngleAtten(LightDesc light, float3 worldPosition)
+inline half ComputeAngleAtten(LightDesc light, float3 worldPosition)
 {
 	float3 lightToPixel = worldPosition - light.Position.xyz;
 	half cosAngle = cos(light.Angle * Deg2Rad);
@@ -82,12 +88,12 @@ inline half SampleShadow(texture2D lightDepthMap[6], uint index, half2 texCoord,
 	}
 }
 
-ShadowDesc ComputeShadowCommon(LightDesc light, texture2D lightDepthMap[6], uint index, half shadowWhiteness, float4 worldPosition)
+inline ShadowDesc ComputeShadowCommon(LightDesc light, texture2D lightDepthMap[6], uint index, half shadowWhiteness, float3 worldPosition)
 {
 	ShadowDesc shadowDesc = (ShadowDesc)0;
 
 	half4 lightViewPosition;
-	lightViewPosition = mul(worldPosition, light.ViewMatrix[index]);
+	lightViewPosition = mul(float4(worldPosition, 1.0f), light.ViewMatrix[index]);
 	lightViewPosition = mul(lightViewPosition, light.ProjectionMatrix[index]);
 
 	half2 projectTexCoord;
@@ -125,12 +131,12 @@ ShadowDesc ComputeShadowCommon(LightDesc light, texture2D lightDepthMap[6], uint
 	return shadowDesc;
 }
 
-ShadowDesc ComputeShadowCommonPCF3X3(LightDesc light, texture2D lightDepthMap[6], uint index, half shadowWhiteness, float4 worldPosition)
+inline ShadowDesc ComputeShadowCommonPCF3X3(LightDesc light, texture2D lightDepthMap[6], uint index, half shadowWhiteness, float3 worldPosition)
 {
 	ShadowDesc shadowDesc = (ShadowDesc)0;
 
 	half4 lightViewPosition;
-	lightViewPosition = mul(worldPosition, light.ViewMatrix[index]);
+	lightViewPosition = mul(float4(worldPosition, 1.0f), light.ViewMatrix[index]);
 	lightViewPosition = mul(lightViewPosition, light.ProjectionMatrix[index]);
 
 	half2 projectTexCoord;
@@ -180,7 +186,7 @@ ShadowDesc ComputeShadowCommonPCF3X3(LightDesc light, texture2D lightDepthMap[6]
 	return shadowDesc;
 }
 
-half ComputeShadow_Directional(LightDesc light, texture2D lightDepthMap[6], half shadowWhiteness, float4 worldPosition)
+inline half ComputeShadow_Directional(LightDesc light, texture2D lightDepthMap[6], half shadowWhiteness, float3 worldPosition)
 {
 	// 가까운 쉐도우맵부터 순회합니다.
 	// 픽셀의 월드 위치가 i번째 쉐도우맵에 포함되어 있다면 i번째 쉐도우맵에 대하여 연산합니다.
@@ -198,7 +204,7 @@ half ComputeShadow_Directional(LightDesc light, texture2D lightDepthMap[6], half
 	return 1.0f;
 }
 
-uint DirectionToCubemapIndex(half3 dir)
+inline uint DirectionToCubemapIndex(half3 dir)
 {
 	half3 absDir = abs(dir);
 	uint index = 0;
@@ -230,7 +236,7 @@ uint DirectionToCubemapIndex(half3 dir)
 	return index;
 }
 
-half ComputeShadow_Point(LightDesc light, texture2D lightDepthMap[6], half3 lightToPixel, half shadowWhiteness, float4 worldPosition)
+inline half ComputeShadow_Point(LightDesc light, texture2D lightDepthMap[6], half3 lightToPixel, half shadowWhiteness, float3 worldPosition)
 {
 	// PointLight.h에 정의된 뷰 행렬의 순서입니다.
 	// const V3	m_arrDirection[6] = { V3::up(),V3::left(),V3::forward(),V3::right(),V3::back(),V3::down(), };
@@ -266,13 +272,13 @@ half ComputeShadow_Point(LightDesc light, texture2D lightDepthMap[6], half3 ligh
 	return shadowDesc.Value;
 }
 
-half ComputeShadow_Spot(LightDesc light, texture2D lightDepthMap[6], half shadowWhiteness, float4 worldPosition)
+inline half ComputeShadow_Spot(LightDesc light, texture2D lightDepthMap[6], half shadowWhiteness, float3 worldPosition)
 {
 	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(light, lightDepthMap, 0, shadowWhiteness, worldPosition);
 	return shadowDesc.Value;
 }
 
-int RaycastSphere(float3 rayPoint, half3 rayDir, float3 spherePoint, float radius, out float3 intersects[2])
+inline int RaycastSphere(float3 rayPoint, half3 rayDir, float3 spherePoint, float radius, out float3 intersects[2])
 {
 	float3 o_minus_c = rayPoint - spherePoint;
 
@@ -299,7 +305,7 @@ int RaycastSphere(float3 rayPoint, half3 rayDir, float3 spherePoint, float radiu
 	}
 }
 
-half4 ComputeVolumetric_Point(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], float3 worldPosition, float3 cameraPosition)
+inline half4 ComputeVolumetric_Point(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], float3 worldPosition, float3 cameraPosition)
 {
 	float3 viewToPixel = worldPosition - cameraPosition;
 	float3 spherePoint = light.Position.xyz;
@@ -340,12 +346,11 @@ half4 ComputeVolumetric_Point(LightDesc light, VolumetricDesc volumetricDesc, te
 	for (uint i = 0; i < numStep; ++i)
 	{
 		half distance = step * i;
-		float4 wp;
-		wp.xyz = start + dir * distance;
-		wp.w = 1.0f;
+		float3 wp;
+		wp = start + dir * distance;
 
-		half3 lightToWP = (wp.xyz - light.Position.xyz);
-		half da = ComputeDistanceAtten(light, wp.xyz);
+		half3 lightToWP = (wp - light.Position.xyz);
+		half da = ComputeDistanceAtten(light, wp);
 		half wpShaft = ComputeShadow_Point(light, lightDepthMap, lightToWP, 0, wp) * da;
 		shaft += wpShaft;
 	}
@@ -355,7 +360,7 @@ half4 ComputeVolumetric_Point(LightDesc light, VolumetricDesc volumetricDesc, te
 	return half4(light.Diffuse.rgb * shaft, 1.0f);
 }
 
-half4 ComputeVolumetric_Spot(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], float3 worldPosition, float3 cameraPosition)
+inline half4 ComputeVolumetric_Spot(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], float3 worldPosition, float3 cameraPosition)
 {
 	float3 viewToPixel = worldPosition - cameraPosition;
 	float coneSideLength = light.Range / cos(light.Angle * Deg2Rad);
@@ -397,12 +402,11 @@ half4 ComputeVolumetric_Spot(LightDesc light, VolumetricDesc volumetricDesc, tex
 	for (uint i = 0; i < numStep; ++i)
 	{
 		half distance = step * i;
-		float4 wp;
-		wp.xyz = start + dir * distance;
-		wp.w = 1.0f;
+		float3 wp;
+		wp = start + dir * distance;
 
-		half da = ComputeDistanceAtten(light, wp.xyz);
-		half aa = ComputeAngleAtten(light, wp.xyz);
+		half da = ComputeDistanceAtten(light, wp);
+		half aa = ComputeAngleAtten(light, wp);
 		half a = da * aa;
 		half wpShaft = ComputeShadow_Spot(light, lightDepthMap, 0, wp) * a;
 		shaft += wpShaft;
@@ -413,7 +417,7 @@ half4 ComputeVolumetric_Spot(LightDesc light, VolumetricDesc volumetricDesc, tex
 	return half4(light.Diffuse.rgb * shaft, 1.0f);
 }
 
-float distributionGGX(float3 N, float3 H, float roughness)
+inline float distributionGGX(float3 N, float3 H, float roughness)
 {
 	float a = roughness * roughness;
 	float a2 = a * a;
@@ -427,7 +431,7 @@ float distributionGGX(float3 N, float3 H, float roughness)
 	return nom / denom;
 }
 
-float geometrySchlickGGX(float NdotV, float roughness)
+inline float geometrySchlickGGX(float NdotV, float roughness)
 {
 	float r = (roughness + 1.0);
 	float k = (r * r) / 8.0;
@@ -438,7 +442,7 @@ float geometrySchlickGGX(float NdotV, float roughness)
 	return nom / denom;
 }
 
-float geometrySmith(float3 N, float3 V, float3 L, float roughness)
+inline float geometrySmith(float3 N, float3 V, float3 L, float roughness)
 {
 	float NdotV = max(dot(N, V), 0.0);
 	float NdotL = max(dot(N, L), 0.0);
@@ -448,17 +452,17 @@ float geometrySmith(float3 N, float3 V, float3 L, float roughness)
 	return ggx1 * ggx2;
 }
 
-float3 fresnelSchlick(float cosTheta, float3 F0)
+inline float3 fresnelSchlick(float cosTheta, float3 F0)
 {
 	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
-float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+inline float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
 {
 	return F0 + (max(1.0f - roughness, F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
-half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo, half3 normal, float3 world2Light, float3 world2Camera, half roughness, half metallic, out half intensity)
+inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo, half3 normal, float3 world2Light, float3 world2Camera, half roughness, half metallic, out half intensity)
 {
 	roughness = min(roughness, 0.995f);
 
@@ -499,4 +503,119 @@ half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo, half3 
 	//Lo = Lo / (Lo + 1.0f);
 	//// Gamma correction
 	//Lo = pow(Lo, 1.0f / 2.2f);
+}
+
+inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], half3 albedo, half3 normal, float3 worldPosition, half depth, half shadowMask, half roughness, half metallic)
+{
+	half atten = 1.0f;
+
+	float3 world2Light = -light.Direction.xyz;
+	float3 world2Camera = _ViewPosition.xyz - worldPosition;
+	half lightIntensity;
+	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
+
+	half shadow = 1.0f;
+	[branch]
+	if (light.DrawShadow && shadowMask > 0.0f)
+	{
+		shadow = ComputeShadow_Directional(light, lightDepthMap, light.ShadowWhiteness, worldPosition);
+		shadow = lerp(1.0f, shadow, shadowMask);
+	}
+
+	Lo *= shadow;
+
+	LightCalculateDesc result;
+	result.Light = half4(Lo + light.Ambient.rgb * albedo, 1.0f);
+	result.Volumetric = half4(0, 0, 0, 1);
+
+	return result;
+}
+
+inline LightCalculateDesc ComputePointLight(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], half3 albedo, half3 normal, float3 worldPosition, half depth, half shadowMask, half roughness, half metallic)
+{
+	half3 lightToPixel = (worldPosition - light.Position.xyz);
+
+	half atten = ComputeDistanceAtten(light, worldPosition);
+	float3 world2Light = light.Position.xyz - worldPosition;
+	float3 world2Camera = _ViewPosition.xyz - worldPosition;
+	half lightIntensity;
+	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
+
+	half shadow = 1.0f;
+	[branch]
+	if (light.DrawShadow && shadowMask > 0.0f)
+	{
+		shadow = ComputeShadow_Point(light, lightDepthMap, lightToPixel, light.ShadowWhiteness, worldPosition);
+		shadow = lerp(1.0f, shadow, shadowMask);
+	}
+
+	Lo *= shadow;
+
+	half4 volumetric = half4(0, 0, 0, 1);
+	[branch]
+	if (volumetricDesc.DrawVolumetric)
+	{
+		volumetric = ComputeVolumetric_Point(light, volumetricDesc, lightDepthMap, worldPosition, _ViewPosition.xyz);
+	}
+
+	LightCalculateDesc output;
+	output.Light = half4(Lo + light.Ambient.rgb * albedo * atten, 1.0f);
+	output.Volumetric = volumetric;
+	return output;
+}
+
+inline LightCalculateDesc ComputeSpotLight(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], half3 albedo, half3 normal, float3 worldPosition, half depth, half shadowMask, half roughness, half metallic)
+{
+	half3 lightToPixel = (worldPosition - light.Position.xyz);
+
+	half distAtten = ComputeDistanceAtten(light, worldPosition);
+	half angleAtten = ComputeAngleAtten(light, worldPosition);
+	half atten = distAtten * angleAtten;
+	float3 world2Light = light.Position.xyz - worldPosition;
+	float3 world2Camera = _ViewPosition.xyz - worldPosition;
+	half lightIntensity;
+	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
+
+	half shadow = 1.0f;
+	[branch]
+	if (light.DrawShadow && shadowMask > 0.0f)
+	{
+		shadow = ComputeShadow_Spot(light, lightDepthMap, light.ShadowWhiteness, worldPosition);
+		shadow = lerp(1.0f, shadow, shadowMask);
+	}
+
+	Lo *= shadow;
+
+	half4 volumetric = half4(0, 0, 0, 1);
+	[branch]
+	if (volumetricDesc.DrawVolumetric)
+	{
+		volumetric = ComputeVolumetric_Spot(light, volumetricDesc, lightDepthMap, worldPosition, _ViewPosition.xyz);
+	}
+
+	LightCalculateDesc output;
+	output.Light = half4(Lo + light.Ambient.rgb * albedo * atten, 1.0f);
+	output.Volumetric = volumetric;
+	return output;
+}
+
+inline LightCalculateDesc ComputeLight(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], half3 albedo, half3 normal, float3 worldPosition, half depth, half shadowMask, half roughness, half metallic)
+{
+	LightCalculateDesc output = (LightCalculateDesc)0;
+
+	[branch]
+	switch (light.Type)
+	{
+		case LIGHT_TYPE_DIRECTIONAL:
+			output = ComputeDirectionalLight(light, volumetricDesc, lightDepthMap, albedo, normal, worldPosition, depth, shadowMask, roughness, metallic);
+			break;
+		case LIGHT_TYPE_POINT:
+			output = ComputePointLight(light, volumetricDesc, lightDepthMap, albedo, normal, worldPosition, depth, shadowMask, roughness, metallic);
+			break;
+		case LIGHT_TYPE_SPOT:
+			output = ComputeSpotLight(light, volumetricDesc, lightDepthMap, albedo, normal, worldPosition, depth, shadowMask, roughness, metallic);
+			break;
+	}
+
+	return output;
 }

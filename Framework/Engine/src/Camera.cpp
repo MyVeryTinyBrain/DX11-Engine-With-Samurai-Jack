@@ -121,6 +121,11 @@ void Camera::SetDirection(const V3& direction)
 	transform->forward = direction;
 }
 
+Q Camera::GetRotation() const
+{
+	return transform->rotation;
+}
+
 M4 Camera::GetWorldMatrix() const
 {
 	M4 localToWorld = transform->localToWorldMatrix;
@@ -146,23 +151,34 @@ M4 Camera::GetViewMatrix() const
 	return GetWorldMatrix().inversed;
 }
 
-M4 Camera::GetProjectionMatrix(float nearPercent, float farPercent) const
+M4 Camera::GetProjectionMatrix(float Near, float Far) const
 {
 	float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
-
-	float deltaPercent = farPercent - nearPercent;
-	float deltaDist = m_far - m_near;
-	float nearByPercent = m_near + deltaDist * nearPercent;
-	float farByPercent = nearByPercent + deltaDist * deltaPercent;
 
 	switch (m_projection)
 	{
 		case Projection::Perspective:
-			return XMMatrixPerspectiveFovLH(m_fov, asp, Clamp(nearByPercent, 0.01f, farByPercent), farByPercent);
+			return XMMatrixPerspectiveFovLH(m_fov, asp, Clamp(Near, 0.01f, Far), Far);
 		case Projection::Orthographic:
-			return XMMatrixOrthographicLH(asp * m_orthographicSize, 1.0f * m_orthographicSize, Clamp(nearByPercent, 0.01f, farByPercent), farByPercent);
+			return XMMatrixOrthographicLH(asp * m_orthographicSize, 1.0f * m_orthographicSize, Clamp(Near, 0.01f, Far), Far);
 	}
 	return m_projectionMatrix;
+
+	//float asp = nullptr != m_renderTexture ? m_renderTexture->aspect : system->graphic->aspect;
+
+	//float deltaPercent = farPercent - nearPercent;
+	//float deltaDist = m_far - m_near;
+	//float nearByPercent = m_near + deltaDist * nearPercent;
+	//float farByPercent = nearByPercent + deltaDist * deltaPercent;
+
+	//switch (m_projection)
+	//{
+	//	case Projection::Perspective:
+	//		return XMMatrixPerspectiveFovLH(m_fov, asp, Clamp(nearByPercent, 0.01f, farByPercent), farByPercent);
+	//	case Projection::Orthographic:
+	//		return XMMatrixOrthographicLH(asp * m_orthographicSize, 1.0f * m_orthographicSize, Clamp(nearByPercent, 0.01f, farByPercent), farByPercent);
+	//}
+	//return m_projectionMatrix;
 }
 
 M4 Camera::GetProjectionMatrix() const
@@ -170,9 +186,9 @@ M4 Camera::GetProjectionMatrix() const
 	return m_projectionMatrix;
 }
 
-Frustum Camera::GetFrustum(float nearPercent, float farPercent) const
+Frustum Camera::GetFrustum(float Near, float Far) const
 {
-	Frustum frustum(GetProjectionMatrix(nearPercent, farPercent));
+	Frustum frustum(GetProjectionMatrix(Near, Far));
 	frustum.Transform(GetWorldMatrix());
 	return frustum;
 }
@@ -184,9 +200,9 @@ Frustum Camera::GetFrustum() const
 	return frustum;
 }
 
-OrientedBounds Camera::GetOBB(float nearPercent, float farPercent) const
+OrientedBounds Camera::GetOBB(float Near, float Far) const
 {
-	OrientedBounds obb(GetProjectionMatrix(nearPercent, farPercent));
+	OrientedBounds obb(GetProjectionMatrix(Near, Far));
 	obb.Transform(GetWorldMatrix());
 	return obb;
 }
@@ -198,15 +214,15 @@ OrientedBounds Camera::GetOBB() const
 	return obb;
 }
 
-BoundingHolder Camera::GetBoundingHolder(float nearPercent, float farPercent) const
+BoundingHolder Camera::GetBoundingHolder(float Near, float Far) const
 {
 	switch (m_projection)
 	{
 		default:
 		case Camera::Projection::Perspective:
-			return GetFrustum(nearPercent, farPercent);
+			return GetFrustum(Near, Far);
 		case Camera::Projection::Orthographic:
-			return GetOBB(nearPercent, farPercent);
+			return GetOBB(Near, Far);
 	}
 }
 

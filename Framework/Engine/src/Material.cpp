@@ -707,6 +707,8 @@ ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* m
 								texture = management->builtInResources->clearTexture;
 							else if (texturePath == "normal")
 								texture = management->builtInResources->normalTexture;
+							else if (texturePath == "roughness")
+								texture = management->builtInResources->roughnessTexture;
 							else
 								texture = management->Find(string_to_tstring(texturePath));
 							shaderVariable->SetTextureByIndex(texture, j); break;
@@ -867,6 +869,8 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 							variable->SetTexture(system->resource->builtInResources->clearTexture);
 						else if (annotation.text == "normal")
 							variable->SetTexture(system->resource->builtInResources->normalTexture);
+						else if (annotation.text == "roughness")
+							variable->SetTexture(system->resource->builtInResources->roughnessTexture);
 					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Vector:

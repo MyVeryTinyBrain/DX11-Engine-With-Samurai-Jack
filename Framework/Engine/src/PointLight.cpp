@@ -88,7 +88,7 @@ FRect PointLight::GetDeferredScreenQuad(ICamera* camera) const
     const M4& V = camera->GetViewMatrix();
     const M4& P = camera->GetProjectionMatrix();
 
-    OrientedBounds obb(transform->position, m_range * V3::one(), Q::identity());
+    OrientedBounds obb(transform->position, m_range * V3::one(), camera->GetRotation());
     V3 corners[8];
     obb.GetCorners(corners);
 

@@ -24,20 +24,20 @@ struct PS_IN
 
 struct PS_OUT
 {
-	float4 Albedo : SV_TARGET0; //Diffuse
+	float4 Albedo : SV_TARGET0; 
 	float4 Normal : SV_TARGET1; 
 	float4 Depth : SV_TARGET2; 
-	float4 Light_Shadow : SV_TARGET3; //Light_Occlusion_Shadow
-	float4 Roughness_Metallic : SV_TARGET4; //Specular_Power
+	float4 Light_Shadow : SV_TARGET3; 
+	float4 Roughness_Metallic : SV_TARGET4;
 	float4 Emissive : SV_TARGET5;
-	float4 Occlusion_Reflection_ReflectionBlur_ReflectMask : SV_TARGET6; //Reflection_ReflectionBlur_ReflectMask
+	float4 Occlusion_Reflection_ReflectionBlur_ReflectMask : SV_TARGET6; 
 };
 
 texture2D		_AlbedoTexture < string Default = "White"; > ;
 texture2D		_NormalMapTexture < string Default = "Normal"; > ;
 texture2D		_LightMaskTexture < string Default = "White"; > ;
 texture2D		_ShadowMaskTexture < string Default = "White"; > ;
-texture2D		_RoughnessTexture < string Default = "Black"; > ;
+texture2D		_RoughnessTexture < string Default = "Roughness"; > ;
 texture2D		_MetallicTexture < string Default = "Black"; > ;
 texture2D		_EmissiveTexture < string Default = "Clear"; > ;
 texture2D		_OcclusionTexture < string Default = "White"; > ;
@@ -118,7 +118,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	output.Light_Shadow = half4(lightMask, shadowMask, 0.0f, 1.0f);
 
 	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).r;
-	roughness = 0.3f;
 	half metallic = _MetallicTexture.Sample(diffuseSampler, In.UV).r;
 	output.Roughness_Metallic = half4(roughness, metallic, 0.0f, 1.0f);
 

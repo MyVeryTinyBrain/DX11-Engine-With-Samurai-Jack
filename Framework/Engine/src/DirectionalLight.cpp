@@ -9,15 +9,11 @@ void DirectionalLight::Awake()
 	SetDrawShadowMode(true);
 }
 
-V3 DirectionalLight::CalculateViewPosition(ICamera* camera, float camNearPercent, float camFarPercent) const
+V3 DirectionalLight::CalculateViewPosition(ICamera* camera, float camNear, float camFar) const
 {
-	float deltaPercent = camFarPercent - camNearPercent;
-	float deltaDist = (camera->GetFar() - camera->GetNear()) * deltaPercent;
-	float startDist = camera->GetNear() + deltaDist * camNearPercent;
-	float endDist = startDist + deltaDist;
-
-	V3 start = camera->GetPosition() + camera->GetDirection() * startDist;
-	V3 end = start + camera->GetDirection() * endDist;
+	float deltaDist = camFar - camNear;
+	V3 start = camera->GetPosition() + camera->GetDirection() * camNear;
+	V3 end = start + camera->GetDirection() * deltaDist;
 	V3 center = (start + end) * 0.5f;
 
 	return center - transform->forward * (m_far - m_near) * 0.5f;
@@ -26,14 +22,14 @@ V3 DirectionalLight::CalculateViewPosition(ICamera* camera, float camNearPercent
 void DirectionalLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const
 {
 	V3 viewPositions[3] = {};
-	viewPositions[0] = CalculateViewPosition(camera, m_nearPercent[0], m_farPercent[0]);
-	viewPositions[1] = CalculateViewPosition(camera, m_nearPercent[1], m_farPercent[1]);
-	viewPositions[2] = CalculateViewPosition(camera, m_nearPercent[2], m_farPercent[2]);
+	viewPositions[0] = CalculateViewPosition(camera, m_camNear[0], m_camFar[0]);
+	viewPositions[1] = CalculateViewPosition(camera, m_camNear[1], m_camFar[1]);
+	viewPositions[2] = CalculateViewPosition(camera, m_camNear[2], m_camFar[2]);
 
 	Frustum camFrustums[3] = {}; 
-	camFrustums[0] = camera->GetFrustum(m_nearPercent[0], m_farPercent[0]);
-	camFrustums[1] = camera->GetFrustum(m_nearPercent[1], m_farPercent[1]);
-	camFrustums[2] = camera->GetFrustum(m_nearPercent[2], m_farPercent[2]);
+	camFrustums[0] = camera->GetFrustum(m_camNear[0], m_camFar[0]);
+	camFrustums[1] = camera->GetFrustum(m_camNear[1], m_camFar[1]);
+	camFrustums[2] = camera->GetFrustum(m_camNear[2], m_camFar[2]);
 
 	V3 camFrustumCorners[3][8] = {};
 	camFrustums[0].GetCorners(camFrustumCorners[0]);
@@ -75,14 +71,14 @@ void DirectionalLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_a
 LightDesc DirectionalLight::GetLightDesc(ICamera* camera) const
 {
 	V3 viewPositions[3] = {};
-	viewPositions[0] = CalculateViewPosition(camera, m_nearPercent[0], m_farPercent[0]);
-	viewPositions[1] = CalculateViewPosition(camera, m_nearPercent[1], m_farPercent[1]);
-	viewPositions[2] = CalculateViewPosition(camera, m_nearPercent[2], m_farPercent[2]);
+	viewPositions[0] = CalculateViewPosition(camera, m_camNear[0], m_camFar[0]);
+	viewPositions[1] = CalculateViewPosition(camera, m_camNear[1], m_camFar[1]);
+	viewPositions[2] = CalculateViewPosition(camera, m_camNear[2], m_camFar[2]);
 
 	Frustum camFrustums[3] = {};
-	camFrustums[0] = camera->GetFrustum(m_nearPercent[0], m_farPercent[0]);
-	camFrustums[1] = camera->GetFrustum(m_nearPercent[1], m_farPercent[1]);
-	camFrustums[2] = camera->GetFrustum(m_nearPercent[2], m_farPercent[2]);
+	camFrustums[0] = camera->GetFrustum(m_camNear[0], m_camFar[0]);
+	camFrustums[1] = camera->GetFrustum(m_camNear[1], m_camFar[1]);
+	camFrustums[2] = camera->GetFrustum(m_camNear[2], m_camFar[2]);
 
 	V3 camFrustumCorners[3][8] = {};
 	camFrustums[0].GetCorners(camFrustumCorners[0]);
@@ -141,12 +137,7 @@ bool DirectionalLight::ContainsInCamera(ICamera* camera) const
 
 FRect DirectionalLight::GetDeferredScreenQuad(ICamera* camera) const
 {
-	FRect rect;
-	rect.Left = -1.0f;
-	rect.Top = -1.0f;
-	rect.Right = +1.0f;
-	rect.Bottom = +1.0f;
-	return rect;
+	return FRect(-1.0f, +1.0f, +1.0f, -1.0f);
 }
 
 VolumetricDesc DirectionalLight::GetVolumetricDesc() const

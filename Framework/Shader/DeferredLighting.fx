@@ -59,7 +59,7 @@ PS_IN VS_MAIN(VS_IN In)
 void UnpackGBuffersForLight(half2 uv,
 	out half3 albedo,
 	out half3 normal,
-	out float4 worldPosition,
+	out float3 worldPosition,
 	out half depth,
 	out half shadowMask,
 	out half roughness, out half metallic)
@@ -74,38 +74,18 @@ void UnpackGBuffersForLight(half2 uv,
 	shadowMask = ls.g;
 
 	half3 viewPosition = ToViewSpace(uv, depth, Inverse(_ProjectionMatrix));
-	worldPosition.xyz = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
-	worldPosition.w = 1.0f;
+	worldPosition = mul(float4(viewPosition, 1.0f), Inverse(_ViewMatrix)).xyz;
 
 	half4 rm = _Roughness_Metallic.Sample(pointSampler, uv);
 	roughness = rm.r;
 	metallic = rm.g;
 }
 
-half ComputeLightIntensity(half3 lightDirection, half3 normal)
-{
-	lightDirection = normalize(lightDirection);
-	half nDotL = dot(lightDirection * -1.0f, normal);
-	return saturate(nDotL);
-}
-
-half ComputeSpecular(half3 viewToPixel, half3 normal, half power)
-{
-	viewToPixel = normalize(viewToPixel);
-	half3 reflection = reflect(viewToPixel * -1.0f, normal);
-	half rDotV = dot(reflection, viewToPixel);
-	rDotV = saturate(rDotV);
-	half specular = pow(rDotV, power);
-	return specular;
-}
-
 PS_OUT PS_MAIN_Directional(PS_IN In)
 {
-	PS_OUT output = (PS_OUT)0;
-
 	half3 albedo;
 	half3 normal;
-	float4 worldPosition;
+	float3 worldPosition;
 	half depth;
 	half shadowMask;
 	half roughness, metallic;
@@ -117,37 +97,19 @@ PS_OUT PS_MAIN_Directional(PS_IN In)
 		shadowMask,
 		roughness, metallic);
 
-	half atten = 1.0f;
+	LightCalculateDesc desc = ComputeDirectionalLight(_LightDesc, _VolumetricDesc, _LightDepthMap, albedo, normal, worldPosition, depth, shadowMask, roughness, metallic);
 
-	float3 world2Light = -_LightDesc.Direction.xyz;
-	float3 world2Camera = _ViewPosition.xyz - worldPosition.xyz;
-	half lightIntensity;
-	half3 Lo = ComputePBRLightIntensity(_LightDesc, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
-
-	half shadow = 1.0f;
-	[branch]
-	if (_LightDesc.DrawShadow && shadowMask > 0.0f)
-	{
-		shadow = ComputeShadow_Directional(_LightDesc, _LightDepthMap, _LightDesc.ShadowWhiteness, worldPosition);
-		shadow = lerp(1.0f, shadow, shadowMask);
-	}
-
-	Lo *= shadow;
-
-	output.light = half4(Lo + _LightDesc.Ambient.rgb * albedo, 1.0f);
-
-	output.volumetric = half4(0, 0, 0, 1);
-
+	PS_OUT output = (PS_OUT)0;
+	output.light = desc.Light;
+	output.volumetric = desc.Volumetric;
 	return output;
 }
 
 PS_OUT PS_MAIN_Point(PS_IN In)
 {
-	PS_OUT output = (PS_OUT)0;
-
 	half3 albedo;
 	half3 normal;
-	float4 worldPosition;
+	float3 worldPosition;
 	half depth;
 	half shadowMask;
 	half roughness, metallic;
@@ -159,44 +121,19 @@ PS_OUT PS_MAIN_Point(PS_IN In)
 		shadowMask,
 		roughness, metallic);
 
-	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
+	LightCalculateDesc desc = ComputePointLight(_LightDesc, _VolumetricDesc, _LightDepthMap, albedo, normal, worldPosition, depth, shadowMask, roughness, metallic);
 
-	half atten = ComputeDistanceAtten(_LightDesc, worldPosition.xyz);
-	float3 world2Light = _LightDesc.Position.xyz - worldPosition.xyz;
-	float3 world2Camera = _ViewPosition.xyz - worldPosition.xyz;
-	half lightIntensity;
-	half3 Lo = ComputePBRLightIntensity(_LightDesc, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
-
-	half shadow = 1.0f;
-	[branch]
-	if (_LightDesc.DrawShadow && shadowMask > 0.0f)
-	{
-		shadow = ComputeShadow_Point(_LightDesc, _LightDepthMap, lightToPixel, _LightDesc.ShadowWhiteness, worldPosition);
-		shadow = lerp(1.0f, shadow, shadowMask);
-	}
-
-	Lo *= shadow;
-
-	output.light = half4(Lo + _LightDesc.Ambient.rgb * albedo * atten, 1.0f);
-
-	half4 volumetric = half4(0, 0, 0, 1);
-	[branch]
-	if (_VolumetricDesc.DrawVolumetric)
-	{
-		volumetric = ComputeVolumetric_Point(_LightDesc, _VolumetricDesc, _LightDepthMap, worldPosition.xyz, _ViewPosition.xyz);
-	}
-	output.volumetric = volumetric;
-
+	PS_OUT output = (PS_OUT)0;
+	output.light = desc.Light;
+	output.volumetric = desc.Volumetric;
 	return output;
 }
 
 PS_OUT PS_MAIN_Spot(PS_IN In)
 {
-	PS_OUT output = (PS_OUT)0;
-
 	half3 albedo;
 	half3 normal;
-	float4 worldPosition;
+	float3 worldPosition;
 	half depth;
 	half shadowMask;
 	half roughness, metallic;
@@ -208,36 +145,11 @@ PS_OUT PS_MAIN_Spot(PS_IN In)
 		shadowMask,
 		roughness, metallic);
 
-	half3 lightToPixel = (worldPosition.xyz - _LightDesc.Position.xyz);
+	LightCalculateDesc desc = ComputeSpotLight(_LightDesc, _VolumetricDesc, _LightDepthMap, albedo, normal, worldPosition, depth, shadowMask, roughness, metallic);
 
-	half distAtten = ComputeDistanceAtten(_LightDesc, worldPosition.xyz);
-	half angleAtten = ComputeAngleAtten(_LightDesc, worldPosition.xyz);
-	half atten = distAtten * angleAtten;
-	float3 world2Light = _LightDesc.Position.xyz - worldPosition.xyz;
-	float3 world2Camera = _ViewPosition.xyz - worldPosition.xyz;
-	half lightIntensity;
-	half3 Lo = ComputePBRLightIntensity(_LightDesc, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
-
-	half shadow = 1.0f;
-	[branch]
-	if (_LightDesc.DrawShadow && shadowMask > 0.0f)
-	{
-		shadow = ComputeShadow_Spot(_LightDesc, _LightDepthMap, _LightDesc.ShadowWhiteness, worldPosition);
-		shadow = lerp(1.0f, shadow, shadowMask);
-	}
-
-	Lo *= shadow;
-
-	output.light = half4(Lo + _LightDesc.Ambient.rgb * albedo * atten, 1.0f);
-
-	half4 volumetric = half4(0, 0, 0, 1);
-	[branch]
-	if (_VolumetricDesc.DrawVolumetric)
-	{
-		volumetric = ComputeVolumetric_Spot(_LightDesc, _VolumetricDesc, _LightDepthMap, worldPosition.xyz, _ViewPosition.xyz);
-	}
-	output.volumetric = volumetric;
-
+	PS_OUT output = (PS_OUT)0;
+	output.light = desc.Light;
+	output.volumetric = desc.Volumetric;
 	return output;
 }
 
@@ -265,11 +177,6 @@ BlendState BlendState0
 	SrcBlend[1] = One;
 	DestBlend[1] = One;
 	BlendOp[1] = Add;
-
-	BlendEnable[2] = true;
-	SrcBlend[2] = One;
-	DestBlend[2] = One;
-	BlendOp[2] = Add;
 };
 
 technique11 Technique0

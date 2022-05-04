@@ -56,11 +56,10 @@ FRect SpotLight::GetDeferredScreenQuad(ICamera* camera) const
     const M4& V = camera->GetViewMatrix();
     const M4& P = camera->GetProjectionMatrix();
 
-    BoundingHolder boundingHolder;
-    GetBoundingHolders(camera, &boundingHolder);
-    const Frustum& frustum = boundingHolder;
+    float radius = m_range / Cos(m_angle * Deg2Rad);
+    OrientedBounds obb(transform->position, radius * V3::one(), camera->GetRotation());
     V3 corners[8];
-    frustum.GetCorners(corners);
+    obb.GetCorners(corners);
 
     V2 min = V2(FLT_MAX, FLT_MAX);
     V2 max = V2(FLT_MIN, FLT_MIN);

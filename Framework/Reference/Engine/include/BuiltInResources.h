@@ -54,6 +54,9 @@ public:
 	const ResourceRef<Texture2D>& GetNormalTexture() const;
 	_declspec(property(get = GetNormalTexture)) const ResourceRef<Texture2D>& normalTexture;
 
+	const ResourceRef<Texture2D>& GetRoughnessTexture() const;
+	_declspec(property(get = GetRoughnessTexture)) const ResourceRef<Texture2D>& roughnessTexture;
+
 	const ResourceRef<Mesh>& GetQuadMesh() const;
 	_declspec(property(get = GetQuadMesh)) const ResourceRef<Mesh>& quadMesh;
 
@@ -118,6 +121,7 @@ private: // Built-In resources
 	ResourceRef<Texture2D> m_blue;
 
 	ResourceRef<Texture2D> m_normal;
+	ResourceRef<Texture2D> m_roughness;
 
 	ResourceRef<Texture2D> m_whiteTransparent;
 	ResourceRef<Texture2D> m_blackTransparent;

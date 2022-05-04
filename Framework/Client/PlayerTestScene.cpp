@@ -75,9 +75,9 @@ void PlayerTestScene::OnLoad()
 		thread t0(
 			[&]
 			{
-				system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Character/Jack/Jack.FBX"));
-				system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
-				system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+				system->resource->factory->LoadMeshM(TEXT("../Resource/Character/Jack/Jack.FBX"));
+				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
 			});
 		if (t0.joinable())
 			t0.join();

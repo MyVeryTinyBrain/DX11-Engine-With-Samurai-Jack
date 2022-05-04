@@ -71,6 +71,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateTexture2D(Color(0.5f, 0.5f, 1.0f, 1.0f), 2, 2, TEXT("normal"), &m_normal)))
 		return hr;
 
+	if (FAILED(hr = CreateTexture2D(Color(0.3f, 0.3f, 0.3f, 1.0f), 2, 2, TEXT("roughness"), &m_roughness)))
+		return hr;
+
 	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateQuad(), &m_quad)))
 		return hr;
 
@@ -154,6 +157,11 @@ const ResourceRef<Texture2D>& BuiltInResources::GetTransparentBlackTexture() con
 const ResourceRef<Texture2D>& BuiltInResources::GetNormalTexture() const
 {
 	return m_normal;
+}
+
+const ResourceRef<Texture2D>& BuiltInResources::GetRoughnessTexture() const
+{
+	return m_roughness;
 }
 
 const ResourceRef<Mesh>& BuiltInResources::GetQuadMesh() const
