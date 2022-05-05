@@ -71,7 +71,7 @@ bool EngineWorldBase::Initialize(EngineWorldDesc* desc)
 
 	srand(unsigned int(time(NULL)));
 
-	m_animationUpdateThreadPool = new ThreadPool;
+	m_threadPool = new ThreadPool;
 
 	return true;
 }
@@ -169,10 +169,10 @@ bool EngineWorldBase::Step()
 						continue;
 
 					IComponent* iCom = com;
-					m_animationUpdateThreadPool->AddJobFunction([=]() { iCom->AnimationUpdate(); });
+					m_threadPool->AddJobFunction([=]() { iCom->AnimationUpdate(); });
 				}
 			}
-			m_animationUpdateThreadPool->Join();
+			m_threadPool->Join();
 
 			for (auto& coms : componentsByExecutionOrder)
 			{
@@ -243,7 +243,7 @@ bool EngineWorldBase::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 void EngineWorldBase::Release()
 {
-	SafeDelete(m_animationUpdateThreadPool);
+	SafeDelete(m_threadPool);
 
 	if (m_system)
 	{

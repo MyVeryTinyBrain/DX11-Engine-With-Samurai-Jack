@@ -40,7 +40,7 @@ private:
 
 	System*				m_system = nullptr;
 
-	class ThreadPool*	m_animationUpdateThreadPool = nullptr;
+	class ThreadPool*	m_threadPool = nullptr;
 };
 ENGINE_END
 
