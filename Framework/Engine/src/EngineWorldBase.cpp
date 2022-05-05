@@ -16,6 +16,8 @@
 #include <WinUser.h>
 #include <time.h>
 
+#include "ThreadPool.h"
+
 EngineWorldBase::EngineWorldBase()
 {
 }
@@ -68,6 +70,8 @@ bool EngineWorldBase::Initialize(EngineWorldDesc* desc)
 		RETURN_FALSE_ERROR_MESSAGE("EngineWorldBase::System::Initialize");
 
 	srand(unsigned int(time(NULL)));
+
+	m_animationUpdateThreadPool = new ThreadPool;
 
 	return true;
 }
@@ -165,9 +169,10 @@ bool EngineWorldBase::Step()
 						continue;
 
 					IComponent* iCom = com;
-					iCom->AnimationUpdate();
+					m_animationUpdateThreadPool->AddJobFunction([=]() { iCom->AnimationUpdate(); });
 				}
 			}
+			m_animationUpdateThreadPool->Join();
 
 			for (auto& coms : componentsByExecutionOrder)
 			{
@@ -238,6 +243,8 @@ bool EngineWorldBase::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 void EngineWorldBase::Release()
 {
+	SafeDelete(m_animationUpdateThreadPool);
+
 	if (m_system)
 	{
 		ISystem* iSystem = m_system;

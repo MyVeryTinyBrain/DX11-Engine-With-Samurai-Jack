@@ -189,6 +189,7 @@
     <ClInclude Include="include\TechniqueDesc.h" />
     <ClInclude Include="include\Texture.h" />
     <ClInclude Include="include\Texture2D.h" />
+    <ClInclude Include="include\ThreadPool.h" />
     <ClInclude Include="include\Times.h" />
     <ClInclude Include="include\TimeElement.h" />
     <ClInclude Include="include\TrailRenderer.h" />
@@ -367,6 +368,7 @@
     <ClCompile Include="src\TechniqueDesc.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Texture2D.cpp" />
+    <ClCompile Include="src\ThreadPool.cpp" />
     <ClCompile Include="src\Times.cpp" />
     <ClCompile Include="src\TimeElement.cpp" />
     <ClCompile Include="src\TrailRenderer.cpp" />

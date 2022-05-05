@@ -31,7 +31,7 @@ void FreeCamera::Update()
     if (m_rotation)
         UpdateRotation();
     
-    if (system->input->GetKeyDown(Key::Space))
+    if (system->input->GetKeyDown(Key::Space) || system->input->GetKeyDown(Key::Q))
     {
         uint r = rand() % 3;
 
@@ -46,8 +46,7 @@ void FreeCamera::Update()
 
         if (system->input->GetKey(Key::Q))
         {
-            go->transform->localScale = V3::one() * 10.0f;
-            r = 0;
+            r = 3;
         }
 
         switch (r)
@@ -71,6 +70,21 @@ void FreeCamera::Update()
                 SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
                 sphereCollider->restitution = 0.1f;
                 go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->sphereMesh;
+            }
+            break;
+            case 3:
+            {
+                SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
+                sphereCollider->restitution = 0.0f;
+
+                float R = float(rand() % 255) / 255.0f;
+                float G = float(rand() % 255) / 255.0f;
+                float B = float(rand() % 255) / 255.0f;
+
+                PointLight* pointLight = go->AddComponent<PointLight>();
+                pointLight->range = 15.0f + float(rand() % 20 - 10);
+                pointLight->enable = true;
+                pointLight->diffuse = Color(R, G, B, 1.0f);
             }
             break;
         }

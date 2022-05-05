@@ -34,11 +34,13 @@ private:
 
 private:
 
-	HINSTANCE		m_hInstance = NULL;
+	HINSTANCE			m_hInstance = NULL;
 
-	HWND			m_hWnd = NULL;
+	HWND				m_hWnd = NULL;
 
-	System*			m_system = nullptr;
+	System*				m_system = nullptr;
+
+	class ThreadPool*	m_animationUpdateThreadPool = nullptr;
 };
 ENGINE_END
 

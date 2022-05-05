@@ -545,6 +545,9 @@
     <ClInclude Include="include\VIUtility.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="include\ThreadPool.h">
+      <Filter>Default\ThreadPool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1045,6 +1048,9 @@
     <ClCompile Include="src\VIUtility.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
+    <ClCompile Include="src\ThreadPool.cpp">
+      <Filter>Default\ThreadPool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1328,6 +1334,9 @@
     </Filter>
     <Filter Include="Utility">
       <UniqueIdentifier>{6d0e5ac5-c2ba-4a51-b6e9-2955ce2316e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Default\ThreadPool">
+      <UniqueIdentifier>{2b945aaf-be19-4cce-8f82-12dc0a1f7594}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -70,7 +70,7 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
 
 
-	/*
+	//*
 	{
 		thread t0(
 			[&]
@@ -291,21 +291,21 @@ void PlayerTestScene::OnLoad()
 		//	goSky[5]->transform->forward = -V3::back();
 		//}
 
-		{
-			ResourceRef<Texture> texture = system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/skybox.png"));
+		//{
+		//	ResourceRef<Texture> texture = system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/skybox.png"));
 
-			//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
-			ResourceRef<Shader> skybox = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Skybox.cso"));
-			ResourceRef<Material> material;
-			material = system->resource->factory->CreateMaterialByShaderUM(skybox);
-			material->SetTexture("_Texture", texture);
+		//	//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
+		//	ResourceRef<Shader> skybox = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Skybox.cso"));
+		//	ResourceRef<Material> material;
+		//	material = system->resource->factory->CreateMaterialByShaderUM(skybox);
+		//	material->SetTexture("_Texture", texture);
 
-			GameObject* goSky;
-			goSky = CreateGameObject();
-			MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
-			mr->mesh = system->resource->builtInResources->skyboxMesh;
-			mr->material = material;
-		}
+		//	GameObject* goSky;
+		//	goSky = CreateGameObject();
+		//	MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
+		//	mr->mesh = system->resource->builtInResources->skyboxMesh;
+		//	mr->material = material;
+		//}
 
 		{
 			GameObject* goGround = CreateGameObject();
@@ -317,6 +317,7 @@ void PlayerTestScene::OnLoad()
 
 			ResourceRef<Material> standardMaterial = system->resource->factory->CopyMaterialUM(system->resource->builtInResources->standardMaterial);
 			standardMaterial->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+
 			//standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
 			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
 			//standardMaterial->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
@@ -342,6 +343,7 @@ void PlayerTestScene::OnLoad()
 			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
 			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+
 			//meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
 			//meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg")));
