@@ -34,12 +34,19 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 RasterizerState CullOffRasterizerState
 {
 	FillMode = Solid;
-	Cullmode = Back;
+	Cullmode = None;
 };
 RasterizerState WireframeRasterizerState
 {
 	FillMode = Wireframe;
 	Cullmode = None;
+};
+
+DepthStencilState DefaultDepthStencilState
+{
+	DepthEnable = true;
+	DepthFunc = less;
+	DepthWriteMask = all;
 };
 
 DepthStencilState NoWriteDepthStencilState
@@ -61,6 +68,17 @@ BlendState MixBlendState
 	BlendOp = Add;
 };
 
+technique11 Default
+{
+	pass Pass0 < string RenderGroup = "Transparent";>
+	{
+		SetRasterizerState(CullOffRasterizerState);
+		SetDepthStencilState(DefaultDepthStencilState, 0);
+		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+}
 technique11 Object
 {
 	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65532; >

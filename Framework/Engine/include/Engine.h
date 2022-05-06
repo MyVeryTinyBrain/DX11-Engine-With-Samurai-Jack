@@ -63,5 +63,6 @@
 #include "Gizmo.h"
 
 #include "TrailRenderer.h"
+#include "LineRenderer.h"
 
 #include "JsonUtility.h"

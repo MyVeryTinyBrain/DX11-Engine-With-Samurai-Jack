@@ -104,8 +104,14 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (nullptr == (m_standardMaterial = m_factory->CreateMaterialByShaderUM(m_standardShader)))
 		return E_FAIL;
 
+	if (nullptr == (m_whiteMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
+		return E_FAIL;
+	m_whiteMaterial->SetColor("_Color", Color::white());
+	m_whiteMaterial->techniqueIndex = 0;
+
 	if (nullptr == (m_wireframeMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
+	m_wireframeMaterial->techniqueIndex = 3;
 
 	return S_OK;
 }
@@ -212,6 +218,11 @@ const ResourceRef<Shader>& BuiltInResources::GetColorShader() const
 const ResourceRef<Material>& BuiltInResources::GetStandardMaterial() const
 {
 	return m_standardMaterial;
+}
+
+const ResourceRef<Material>& BuiltInResources::GetWhiteMaterial() const
+{
+	return m_whiteMaterial;
 }
 
 const ResourceRef<Material>& BuiltInResources::GetWireframeMaterial() const

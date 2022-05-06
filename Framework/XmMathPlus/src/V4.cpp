@@ -296,6 +296,11 @@ Real XmMathPlus::V4::MaxAbsElement(const V4& v)
 	return MaxElement(Abs(v));
 }
 
+V4 XmMathPlus::V4::CatMulRom(const V4& a, const V4& b, const V4& c, const V4& d, Real t)
+{
+	return  DirectX::XMVectorCatmullRom(a, b, c, d, t);
+}
+
 V4 XmMathPlus::operator*(Real scale, const V4& vector)
 {
 	return vector * scale;

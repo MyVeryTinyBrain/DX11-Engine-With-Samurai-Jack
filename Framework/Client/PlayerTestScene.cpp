@@ -69,7 +69,6 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
 
-
 	//*
 	{
 		thread t0(
@@ -137,29 +136,30 @@ void PlayerTestScene::OnLoad()
 			DirectionalLight* directionalLight = goDirectionalLight->AddComponent<DirectionalLight>();
 			directionalLight->enable = true;
 			directionalLight->drawShadow = true;
-			directionalLight->diffuse = Color(0.25f, 0.25f, 0.25f, 1.0f);
+			directionalLight->diffuse = Color(1, 1, 1, 1);
+			directionalLight->ambient = Color(0.1f, 0.1f, 0.1f, 1.0f);
 		}
 
-		{
-			GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
-			goPointLight->transform->position = V3(0, 5, 0);
-			PointLight* pointLight = goPointLight->AddComponent<PointLight>();
-			pointLight->range = 10.0f;
-			pointLight->drawShadow = true;
-			pointLight->enable = true;
-		}
+		//{
+		//	GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
+		//	goPointLight->transform->position = V3(0, 5, 0);
+		//	PointLight* pointLight = goPointLight->AddComponent<PointLight>();
+		//	pointLight->range = 10.0f;
+		//	pointLight->drawShadow = true;
+		//	pointLight->enable = true;
+		//}
 
-		{
-			//GameObject* goSpotLight = CreateGameObjectToChild(FindGameObject(TEXT("Camera"))->transform, TEXT("SpotLight"));
-			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
-			goSpotLight->transform->position = V3(0, 2, -20);
-			goSpotLight->transform->forward = V3::forward();
-			SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
-			spotLight->range = 20.0f;
-			spotLight->angle = 10.0f;
-			spotLight->drawShadow = true;
-			spotLight->enable = true;
-		}
+		//{
+		//	//GameObject* goSpotLight = CreateGameObjectToChild(FindGameObject(TEXT("Camera"))->transform, TEXT("SpotLight"));
+		//	GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
+		//	goSpotLight->transform->position = V3(0, 2, -20);
+		//	goSpotLight->transform->forward = V3::forward();
+		//	SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
+		//	spotLight->range = 20.0f;
+		//	spotLight->angle = 10.0f;
+		//	spotLight->drawShadow = true;
+		//	spotLight->enable = true;
+		//}
 
 		{
 			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
@@ -415,7 +415,7 @@ void PlayerTestScene::OnLoad()
 		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-		//	m_trailRenderer[1]->material = material;
+		//	m_trailRenderer[1]->material = system->resource->Find(TEXT("TrailMaterial"));
 
 		//	m_sphere[1]->activeSelf = true;
 		//}
@@ -477,14 +477,12 @@ void PlayerTestScene::OnUpdate()
 	{
 		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
 		m_sphere[0]->transform->position = V3::up() * 2.0f + spin * 6.0f;
-		m_trailRenderer[0]->AddPosition(m_sphere[0]->transform->position);
 	}
 
 	if (m_sphere[1])
 	{
 		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
 		m_sphere[1]->transform->position = V3::up() * 2.0f + spin * 6.0f + V3(0, 0, -8.0f);
-		m_trailRenderer[1]->AddPosition(m_sphere[1]->transform->position);
 	}
 
 	{

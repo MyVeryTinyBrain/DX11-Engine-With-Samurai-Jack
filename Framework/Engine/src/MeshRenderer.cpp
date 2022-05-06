@@ -18,8 +18,6 @@ void MeshRenderer::Render()
 	if (!isValid)
 		return;
 
-	M4 localToWorldMatrix = transform->localToWorldMatrix;
-
 	for (uint i = 0; i < m_mesh->GetSubMeshCount() && i < m_materials.size(); ++i)
 	{
 		if (!m_mesh || !m_mesh->isValid)
@@ -49,7 +47,7 @@ void MeshRenderer::Render()
 			if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
 
 			RenderRequest input = {};
-			input.essential.worldMatrix = localToWorldMatrix;
+			input.essential.worldMatrix = transform->localToWorldMatrix;
 			input.essential.renderGroup = renderGroup;
 			input.essential.renderGroupOrder = renderGroupOrder;
 			input.essential.layerIndex = m_layerIndex;

@@ -7,7 +7,7 @@ using namespace XmMathPlus::Ex;
 V3& XmMathPlus::V3::operator+=(const V3& rhs)
 {
 	return (V3&)Real3::operator+=(rhs);
-
+	
 	//x += rhs.x;
 	//y += rhs.y;
 	//z += rhs.z;
@@ -311,6 +311,11 @@ Real XmMathPlus::V3::MinAbsElement(const V3& v)
 Real XmMathPlus::V3::MaxAbsElement(const V3& v)
 {
 	return MaxElement(Abs(v));
+}
+
+V3 XmMathPlus::V3::CatMulRom(const V3& a, const V3& b, const V3& c, const V3& d, Real t)
+{
+	return DirectX::XMVectorCatmullRom(a, b, c, d, t);
 }
 
 V3 XmMathPlus::operator*(Real scale, const V3& vector)

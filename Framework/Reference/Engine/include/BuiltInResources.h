@@ -87,6 +87,9 @@ public:
 	const ResourceRef<Material>& GetStandardMaterial() const;
 	_declspec(property(get = GetStandardMaterial)) const ResourceRef<Material>& standardMaterial;
 
+	const ResourceRef<Material>& GetWhiteMaterial() const;
+	_declspec(property(get = GetWhiteMaterial)) const ResourceRef<Material>& whiteMaterial;
+
 	const ResourceRef<Material>& GetWireframeMaterial() const;
 	_declspec(property(get = GetWireframeMaterial)) const ResourceRef<Material>& wireframeMaterial;
 
@@ -152,6 +155,7 @@ private: // Built-In resources
 
 	ResourceRef<Material> m_standardMaterial;
 
+	ResourceRef<Material> m_whiteMaterial;
 	ResourceRef<Material> m_wireframeMaterial;
 };
 

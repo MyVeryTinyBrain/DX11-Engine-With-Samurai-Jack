@@ -22,7 +22,8 @@ void TrailRenderer::Awake()
 	Renderer::Awake();
 
 	SetupMesh(512);
-	SetupDefaultMaterial();
+
+	SetMaterial(system->resource->builtInResources->whiteMaterial);
 }
 
 void TrailRenderer::LateUpdate()
@@ -36,18 +37,45 @@ void TrailRenderer::LateUpdate()
 		Shrink(m_shrinkDistance * system->time->deltaTime);
 	}
 
-	const V3& position = transform->position;
-	if (m_pairs.empty())
+	if(m_autoTrail)
 	{
-		AddPosition(transform->position);
-	}
-	else
-	{
-		const V3& last = m_pairs.back().Position;
-		float dist = V3::Distance(position, last);
+		const V3& position = transform->position;
+		if (m_datas.empty())
+		{
+			AddPosition(transform->position, transform->rotation);
+		}
+		else
+		{
+			const V3& last = m_datas.back().Position;
+			float dist = V3::Distance(position, last);
 
-		if (dist > m_minVertexDistance)
-			AddPosition(transform->position);
+			if (dist > m_minVertexDistance)
+			{
+				AddPosition(transform->position, transform->rotation);
+
+				//if (m_pairs.size() <= 2)
+				//{
+				//	AddPosition(transform->position, transform->rotation);
+				//}
+				//else
+				//{
+				//	auto end = m_pairs.end() - 1;
+				//	auto prevend = end - 1;
+				//	Pair c;
+				//	c.Position = transform->position;
+				//	c.Rotation = transform->rotation;
+				//	const Pair& b = *end;
+				//	const Pair& a = *prevend;
+				//	for (int i = 0; i < 20; ++i)
+				//	{
+				//		float percent = float(i + 1) / float(20);
+				//		V3 position = V3::CatMulRom(a.Position, b.Position, c.Position, c.Position, percent);
+				//		Q rotation = Q::SLerp(b.Rotation, c.Rotation, percent);
+				//		AddPosition(position, rotation);
+				//	}
+				//}
+			}
+		}
 	}
 }
 
@@ -55,8 +83,6 @@ void TrailRenderer::Render()
 {
 	if (!isValid)
 		return;
-
-	M4 localToWorldMatrix = transform->localToWorldMatrix;
 
 	if (m_materials.empty())
 		return;
@@ -103,7 +129,7 @@ void TrailRenderer::Render()
 		input.essential.instance = instancingFlag;
 
 		input.customPrimitiveCount.usePrimitiveCount = true;
-		input.customPrimitiveCount.primitiveCount = uint(m_pairs.size() - 1) * 2;
+		input.customPrimitiveCount.primitiveCount = uint(m_datas.size() - 1) * 2;
 
 		RenderRequestShadow shadow = {};
 		shadow.draw = drawShadowFlag;
@@ -118,38 +144,39 @@ void TrailRenderer::Render()
 	}
 }
 
-void TrailRenderer::AddPosition(const V3& position)
+void TrailRenderer::AddPosition(const V3& position, const Q& rotation)
 {
-	if (m_pairs.size() >= m_numRect)
+	if (m_datas.size() >= m_numRect)
 	{
 		PopPosition();
 	}
 
-	if (m_pairs.empty())
+	if (m_datas.empty())
 	{
 		m_beginShrinkCounter = m_beginShrinkDelay;
 	}
 
-	Pair pair;
-	pair.Position = position;
+	Data data;
+	data.Position = position;
+	data.Rotation = rotation;
 
-	if (m_pairs.empty())
+	if (m_datas.empty())
 	{
-		pair.DistanceAccumulation = 0.0f;
+		data.DistanceAccumulation = 0.0f;
 	}
 	else
 	{
-		const Pair& back = m_pairs.back();
-		pair.DistanceAccumulation = back.DistanceAccumulation + V3::Distance(back.Position, position);
+		const Data& back = m_datas.back();
+		data.DistanceAccumulation = back.DistanceAccumulation + V3::Distance(back.Position, position);
 	}
 
-	m_pairs.push_back(pair);
+	m_datas.push_back(data);
 }
 
 void TrailRenderer::PopPosition()
 {
-	if (!m_pairs.empty())
-		m_pairs.pop_front();
+	if (!m_datas.empty())
+		m_datas.pop_front();
 }
 
 void TrailRenderer::SetRectCount(uint value)
@@ -158,14 +185,6 @@ void TrailRenderer::SetRectCount(uint value)
 		return;
 
 	SetupMesh(value);
-
-	if (m_pairs.size() > m_numRect)
-	{
-		auto beg = m_pairs.begin();
-		auto end = m_pairs.begin() + m_numRect;
-		deque<Pair>	newPositions(beg, end);
-		m_pairs.swap(newPositions);
-	}
 }
 
 bool TrailRenderer::CullTest(ICamera* camera) const
@@ -187,7 +206,7 @@ bool TrailRenderer::IsValid() const
 	if (!Renderer::IsValid())
 		return false;
 
-	return m_pairs.size() >= 2;
+	return m_datas.size() >= 2;
 }
 
 void TrailRenderer::SetupMesh(uint numRect)
@@ -246,39 +265,39 @@ void TrailRenderer::SetupMesh(uint numRect)
 
 void TrailRenderer::Shrink(float shrinkDistance)
 {
-	if (m_pairs.empty())
+	if (m_datas.empty())
 		return;
 
-	if (m_pairs.size() == 1)
+	if (m_datas.size() == 1)
 	{
-		m_pairs.clear();
+		m_datas.clear();
 		return;
 	}
 
-	Pair& first = m_pairs[0];
-	Pair& second = m_pairs[1];
+	Data& first = m_datas[0];
+	Data& second = m_datas[1];
 
 	V3 delta = second.Position - first.Position;
 	float deltaDist = delta.magnitude;
-	float shrinkDistance2 = shrinkDistance - deltaDist;
 	V3 dir = delta / deltaDist;
 	float newDist = deltaDist - shrinkDistance;
 
 	if (newDist < 0)
 	{
+		float shrinkDistance2 = shrinkDistance - deltaDist;
 		PopPosition();
 		Shrink(shrinkDistance2);
 		return;
 	}
 	else
 	{
-		first.DistanceAccumulation -= shrinkDistance;
+		first.DistanceAccumulation += shrinkDistance;
 		first.Position = second.Position - dir * newDist;
 	}
 }
 
-void TrailRenderer::SetupVerticexPair(
-	uint pairIndex, 
+void TrailRenderer::SetupVertexPair(
+	uint dataIndex, 
 	const V3& camDir, 
 	float width, 
 	V3& inout_min, V3& inout_max)
@@ -288,18 +307,20 @@ void TrailRenderer::SetupVerticexPair(
 
 	// Calc indices of vertices
 
-	uint beginIndex = pairIndex * 2;
+	uint beginIndex = dataIndex * 2;
 	uint vertex[2] = { beginIndex, beginIndex + 1 };
-	uint next = pairIndex + 1;
-	if (pairIndex == m_pairs.size() - 1)
-		next = pairIndex - 1;
+	uint next = dataIndex + 1;
+	if (dataIndex == m_datas.size() - 1)
+		next = dataIndex - 1;
 
-	Pair& curPair = m_pairs[pairIndex];
-	Pair& nextPair = m_pairs[next];
+	Data& curPair = m_datas[dataIndex];
+	Data& nextPair = m_datas[next];
 
 	V3 delta = nextPair.Position - curPair.Position;
 	float deltaDist = delta.magnitude;
 	V3 forward = delta / deltaDist;
+	if (dataIndex == m_datas.size() - 1)
+		forward *= -1.0f;
 
 	V3 right, up;
 
@@ -310,8 +331,9 @@ void TrailRenderer::SetupVerticexPair(
 			up = V3::Cross(right, forward).normalized;
 			break;
 		case TrailRenderer::Alignment::Local:
-			right = transform->right;
-			up = transform->forward;
+			forward = curPair.Rotation.MultiplyVector(V3::forward());
+			right = curPair.Rotation.MultiplyVector(V3::right());
+			up = curPair.Rotation.MultiplyVector(V3::up());
 			break;
 	}
 
@@ -320,10 +342,10 @@ void TrailRenderer::SetupVerticexPair(
 	float halfWidth = width * 0.5f;
 	float scale = 1.0f;
 
-	if (m_useLengthScale)
+	if (m_applyWidthByLength)
 	{
-		Pair& first = m_pairs.front();
-		Pair& end = m_pairs.back();
+		Data& first = m_datas.front();
+		Data& end = m_datas.back();
 
 		float firstDistance = first.DistanceAccumulation;
 		scale = Clamp01((curPair.DistanceAccumulation - first.DistanceAccumulation) / (end.DistanceAccumulation - first.DistanceAccumulation));
@@ -343,9 +365,9 @@ void TrailRenderer::SetupVerticexPair(
 
 	// Set uvw of pair
 
-	float percent = float(pairIndex) / m_pairs.size();
+	float percent = float(dataIndex) / m_datas.size();
 
-	if (!m_applyLengthScaleToU)
+	if (!m_fitUToWidth)
 	{
 		vertices[vertex[0]].uvw.x = 0.0f;
 		vertices[vertex[1]].uvw.x = 1.0f;
@@ -359,7 +381,7 @@ void TrailRenderer::SetupVerticexPair(
 	vertices[vertex[0]].uvw.z = percent;
 	vertices[vertex[1]].uvw.z = percent;
 
-	if (m_stretchV)
+	if (m_fitVToLength)
 	{
 		vertices[vertex[0]].uvw.y = percent;
 		vertices[vertex[1]].uvw.y = percent;
@@ -389,9 +411,9 @@ void TrailRenderer::ApplyVertices()
 	V3 minV = V3(FLT_MAX, FLT_MAX, FLT_MAX);
 	V3 maxV = V3(FLT_MIN, FLT_MIN, FLT_MIN);
 
-	for (int i = 0; i < int(m_pairs.size()); ++i)
+	for (int i = 0; i < int(m_datas.size()); ++i)
 	{
-		SetupVerticexPair(i, camDir, m_width, minV, maxV);
+		SetupVertexPair(i, camDir, m_width, minV, maxV);
 	}
 
 	Bounds bounds;
@@ -407,9 +429,4 @@ void TrailRenderer::ApplyVertices()
 
 	m_mesh->viBuffer->UpdateVertexBuffer();
 	m_mesh->viBuffer->UpdateIndexBuffer();
-}
-
-void TrailRenderer::SetupDefaultMaterial()
-{
-	SetMaterial(system->resource->builtInResources->standardMaterial);
 }

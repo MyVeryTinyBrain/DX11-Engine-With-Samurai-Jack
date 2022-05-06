@@ -55,6 +55,7 @@
     <ClInclude Include="include\JsonUtility.h" />
     <ClInclude Include="include\Light.h" />
     <ClInclude Include="include\LightManager.h" />
+    <ClInclude Include="include\LineRenderer.h" />
     <ClInclude Include="include\PhysicsQueryFilterCallback.h" />
     <ClInclude Include="include\PhysicsQueryType.h" />
     <ClInclude Include="include\PointLight.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="src\JsonUtility.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
+    <ClCompile Include="src\LineRenderer.cpp" />
     <ClCompile Include="src\PhysicsQueryFilterCallback.cpp" />
     <ClCompile Include="src\PhysicsQueryType.cpp" />
     <ClCompile Include="src\PointLight.cpp" />

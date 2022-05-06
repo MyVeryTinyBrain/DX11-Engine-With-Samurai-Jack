@@ -67,5 +67,7 @@ private:
 	GameObject*				m_goKatana;
 	GameObject*				m_goKatanaRenderer;
 	MeshRenderer*			m_katanaRenderer;
+	GameObject*				m_goTrail;
+	TrailRenderer*			m_trailRenderer;
 };
 

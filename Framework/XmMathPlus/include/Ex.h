@@ -100,8 +100,6 @@ namespace XmMathPlus
 
 		XMMATHPLUS_API inline float SmoothStep(float min, float max, float value) { return Clamp((value - min) / (max - min), 0.0f, 1.0f); }
 
-		XMMATHPLUS_API inline float CatmullRom(float p0, float p1, float p2, float p3, float t) { return 0.5f * ((2.0f * p1) + (-p0 + p2) * t + (2.0f * p0 - 5.0f * p1 + 4.0f * p2 - p3) * t * t + (-p0 + 3.0f * p1 - 3.0f * p2 + p3) * t * t * t); }
-
 	};
 }
 

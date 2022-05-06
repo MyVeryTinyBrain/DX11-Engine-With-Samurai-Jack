@@ -14,6 +14,12 @@ void Player::Awake()
 
 void Player::Update()
 {
+	ImGui::Begin("Angles");
+	V3 angles = m_goTrail->transform->localEulerAngles;
+	ImGui::SliderFloat3("angles", (float*)&angles, -360, +360);
+	m_goTrail->transform->localEulerAngles = angles;
+	ImGui::End();
+
 	float dt = system->time->deltaTime;
 	auto layer = m_jackAnimator->GetLayerByIndex(0);
 
@@ -174,6 +180,14 @@ void Player::SetupWeapons()
 	m_goKatanaRenderer = CreateGameObjectToChild(m_goKatana->transform);
 	m_katanaRenderer = m_goKatanaRenderer->AddComponent<MeshRenderer>();
 	m_katanaRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+
+	m_goTrail = CreateGameObjectToChild(m_goKatana->transform);
+	m_goTrail->transform->localPosition = V3(0, 0, -1.0f);
+	m_goTrail->transform->localEulerAngles = V3(0, -96.0f, 0);
+	m_trailRenderer = m_goTrail->AddComponent<TrailRenderer>();
+	m_trailRenderer->alignment = TrailRenderer::Alignment::Local;
+	m_trailRenderer->shrinkDistance = 20.0f;
+	m_trailRenderer->width = 2.0f;
 }
 
 void Player::UpdateAttachmentObjects()

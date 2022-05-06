@@ -548,6 +548,9 @@
     <ClInclude Include="include\ThreadPool.h">
       <Filter>Default\ThreadPool</Filter>
     </ClInclude>
+    <ClInclude Include="include\LineRenderer.h">
+      <Filter>Object\SceneObject\Component\Renderer\LineRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1050,6 +1053,9 @@
     </ClCompile>
     <ClCompile Include="src\ThreadPool.cpp">
       <Filter>Default\ThreadPool</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LineRenderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\LineRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -112,6 +112,8 @@ namespace XmMathPlus
 
 		static Real MaxAbsElement(const V4& v);
 
+		static V4 CatMulRom(const V4& a, const V4& b, const V4& c, const V4& d, Real t);
+
 		// Static Variables	============================================================================
 
 		inline static V4 zero() { return V4(0, 0, 0, 0); };
