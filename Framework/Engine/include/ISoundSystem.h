@@ -18,7 +18,7 @@ public:
 
 public:
 
-	virtual bool Initialize() = 0;;
+	virtual bool Initialize(int numChannels) = 0;;
 	virtual void Release() = 0;
 	virtual void OnPostProcessing() = 0;
 };

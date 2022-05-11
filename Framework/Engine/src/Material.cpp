@@ -692,26 +692,16 @@ ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* m
 						case ShaderVariableType::Texture3D:
 						case ShaderVariableType::Texture1DArray:
 						case ShaderVariableType::Texture2DArray:
+						{
 							string texturePath = variable["data"][j].asString();
-							if (texturePath == "white")
-								texture = management->builtInResources->whiteTexture;
-							else if (texturePath == "black")
-								texture = management->builtInResources->blackTexture;
-							else if (texturePath == "red")
-								texture = management->builtInResources->redTexture;
-							else if (texturePath == "green")
-								texture = management->builtInResources->greenTexture;
-							else if (texturePath == "blue")
-								texture = management->builtInResources->blueTexture;
-							else if (texturePath == "clear")
-								texture = management->builtInResources->clearTexture;
-							else if (texturePath == "normal")
-								texture = management->builtInResources->normalTexture;
-							else if (texturePath == "roughness")
-								texture = management->builtInResources->roughnessTexture;
-							else
+							texture = ParseTexture(management->builtInResources, texturePath);
+							if (!texture)
+							{
 								texture = management->Find(string_to_tstring(texturePath));
-							shaderVariable->SetTextureByIndex(texture, j); break;
+							}
+							shaderVariable->SetTextureByIndex(texture, j);
+						}
+						break;
 					}
 				}
 				break;
@@ -855,22 +845,7 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 				case ShaderVariableInfo::Annotation::Type::Text:
 					if (isTexture2D)
 					{
-						if (annotation.text == "white")
-							variable->SetTexture(system->resource->builtInResources->whiteTexture);
-						else if (annotation.text == "black")
-							variable->SetTexture(system->resource->builtInResources->blackTexture);
-						else if (annotation.text == "red")
-							variable->SetTexture(system->resource->builtInResources->redTexture);
-						else if (annotation.text == "green")
-							variable->SetTexture(system->resource->builtInResources->greenTexture);
-						else if (annotation.text == "blue")
-							variable->SetTexture(system->resource->builtInResources->blueTexture);
-						else if (annotation.text == "clear")
-							variable->SetTexture(system->resource->builtInResources->clearTexture);
-						else if (annotation.text == "normal")
-							variable->SetTexture(system->resource->builtInResources->normalTexture);
-						else if (annotation.text == "roughness")
-							variable->SetTexture(system->resource->builtInResources->roughnessTexture);
+						variable->SetTexture(ParseTexture(system->resource->builtInResources, annotation.text));
 					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Vector:
@@ -882,4 +857,26 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 			}
 		}
 	}
+}
+
+ResourceRef<Texture> Material::ParseTexture(BuiltInResources* BIR, const string& text)
+{
+	if (text == "white")
+		return BIR->whiteTexture;
+	else if (text == "black")
+		return BIR->blackTexture;
+	else if (text == "red")
+		return BIR->redTexture;
+	else if (text == "green")
+		return BIR->greenTexture;
+	else if (text == "blue")
+		return BIR->blueTexture;
+	else if (text == "clear")
+		return BIR->clearTexture;
+	else if (text == "normal")
+		return BIR->normalTexture;
+	else if (text == "roughness")
+		return BIR->roughnessTexture;
+	else
+		return nullptr;
 }

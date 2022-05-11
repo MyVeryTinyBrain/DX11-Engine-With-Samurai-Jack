@@ -24,12 +24,9 @@ bool System::Initialize(EngineWorldDesc* desc, HWND hWnd, unsigned int width, un
 	if (!desc)
 		return false;
 
-	if (!desc->updateDesc)
-		return false;
-
 	m_graphicSystem = new GraphicSystem;
 	IGraphicSystem* iGraphicSystem = m_graphicSystem;
-	if (!iGraphicSystem->Initialize(hWnd, width, height, unsigned int(desc->updateDesc->UpdateFPS), desc->updateDesc->vsync, desc->makeWindowDesc->fullScreen))
+	if (!iGraphicSystem->Initialize(hWnd, width, height, unsigned int(desc->updateDesc.UpdateFPS), desc->updateDesc.vsync, desc->windowCreateDesc.fullScreen))
 		RETURN_FALSE_ERROR_MESSAGE("System::Initialize::IGraphicSystem::Initialize");
 
 	m_input = new Input;
@@ -39,7 +36,7 @@ bool System::Initialize(EngineWorldDesc* desc, HWND hWnd, unsigned int width, un
 
 	m_timeElement = new CentralTimeElement;
 	ICentralTimeElement* iCentralTimeElement = m_timeElement;
-	if (!iCentralTimeElement->Initialize(desc->updateDesc->UpdateFPS, desc->updateDesc->FixedUpdateFPS))
+	if (!iCentralTimeElement->Initialize(desc->updateDesc.UpdateFPS, desc->updateDesc.FixedUpdateFPS))
 		RETURN_FALSE_ERROR_MESSAGE("System::Initialize::CentralTimeElement::Initialize");
 
 	m_timeElementAdapter = new Times(m_timeElement);
@@ -51,7 +48,7 @@ bool System::Initialize(EngineWorldDesc* desc, HWND hWnd, unsigned int width, un
 
 	m_physicsSystem = new PhysicsSystem;
 	IPhysicsSystem* iPhysicsSystem = m_physicsSystem;
-	if (!iPhysicsSystem->Initialize(this, desc->updateDesc->PhysSubStepLimit))
+	if (!iPhysicsSystem->Initialize(this, desc->updateDesc.PhysSubStepLimit))
 		RETURN_FALSE_ERROR_MESSAGE("System::Initialize::PhysicsSimulator::Initialize");
 
 	m_resourceManagement = new ResourceManagement;
@@ -66,7 +63,7 @@ bool System::Initialize(EngineWorldDesc* desc, HWND hWnd, unsigned int width, un
 
 	m_soundSystem = new SoundSystem;
 	ISoundSystem* iSoundSystem = m_soundSystem;
-	if(!iSoundSystem->Initialize())
+	if(!iSoundSystem->Initialize(desc->soundDesc.NumChannels))
 		RETURN_FALSE_ERROR_MESSAGE("System::Initialize::SoundSystem::Initialize");
 
 	m_initialized = true;

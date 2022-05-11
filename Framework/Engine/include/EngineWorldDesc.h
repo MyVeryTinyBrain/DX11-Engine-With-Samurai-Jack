@@ -2,7 +2,7 @@
 
 ENGINE_BEGIN
 
-struct MakeWindowDesc
+struct WindowDesc
 {
 	HINSTANCE hInstance = NULL;
 	unsigned int WinCX = 1280;
@@ -10,10 +10,6 @@ struct MakeWindowDesc
 	WNDPROC WndProc = nullptr;
 	TCHAR Title[256] = {};
 	bool fullScreen = false;
-};
-
-struct AlreadedWindowDesc
-{
 	HWND hWnd = NULL;
 };
 
@@ -25,17 +21,23 @@ struct UpdateDesc
 	bool vsync = false;
 };
 
+struct SoundDesc
+{
+	int NumChannels = 128;
+};
+
 struct EngineWorldDesc
 {
 	// 이 값이 null이 아니라면 AlreadedWindowDesc는 무시됩니다.
-	// 윈도우를 생성에 필요한 정보를 담습니다.
-	MakeWindowDesc* makeWindowDesc = nullptr;
-	
-	// 이미 생성된 윈도우를 사용하기 위한 정보를 담습니다.
-	AlreadedWindowDesc* alreadedWindowDesc = nullptr;
+	// 윈도우를 생성에 필요한 설정입니다.
+	// hWnd를 전달하면 이미 생성된 윈도우를 사용합니다.
+	WindowDesc windowCreateDesc;
 
-	// 업데이트에 필요한 정보를 설정하는 정보를 담습니다.
-	UpdateDesc* updateDesc = nullptr;
+	// 업데이트에 필요한 정보를 설정합니다.
+	UpdateDesc updateDesc;
+
+	// 사운드에 필요한 정보를 설정합니다.
+	SoundDesc soundDesc;
 };
 
 ENGINE_END

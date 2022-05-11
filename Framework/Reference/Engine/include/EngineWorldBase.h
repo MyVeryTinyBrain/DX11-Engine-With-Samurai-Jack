@@ -28,9 +28,9 @@ protected:
 
 private:
 
-	HWND MakeWindow(MakeWindowDesc* desc) const;
+	HWND MakeWindow(WindowDesc* desc) const;
 
-	HINSTANCE GetHInstance(AlreadedWindowDesc* desc) const;
+	HINSTANCE GetHInstance(WindowDesc* desc) const;
 
 private:
 

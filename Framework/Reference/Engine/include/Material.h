@@ -106,6 +106,10 @@ private:
 
 private:
 
+	static ResourceRef<Texture> ParseTexture(class BuiltInResources* BIR, const string& text);
+
+private:
+
 	ResourceRef<Shader> m_shader;
 
 	uint m_techniqueIndex = 0;

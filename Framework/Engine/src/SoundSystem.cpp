@@ -146,8 +146,10 @@ float SoundSystem::GetMasterPitch() const
 	return value;
 }
 
-bool SoundSystem::Initialize()
+bool SoundSystem::Initialize(int numChannels)
 {
+	m_numChannels = numChannels;
+
 	if (!CreateFMODSystem(&m_fmod, m_numChannels, this))
 		return false;
 

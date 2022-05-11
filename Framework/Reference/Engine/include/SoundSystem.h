@@ -44,7 +44,7 @@ public:
 
 private:
 
-	virtual bool Initialize() override;
+	virtual bool Initialize(int numChannels) override;
 	virtual void Release() override;
 	virtual void OnPostProcessing() override;
 
@@ -54,7 +54,7 @@ private:
 private:
 
 	FMOD_SYSTEM*				m_fmod = nullptr;
-	int							m_numChannels = 128;
+	int							m_numChannels;
 	vector<Com<SoundChannel>>	m_channels;
 	vector<Com<SoundListener>>	m_listeners;
 };

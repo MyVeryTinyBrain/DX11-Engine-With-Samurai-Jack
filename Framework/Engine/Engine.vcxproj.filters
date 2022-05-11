@@ -1245,9 +1245,6 @@
     <Filter Include="Object\SceneObject\Component\Renderer\LineRenderer">
       <UniqueIdentifier>{15958ad5-3620-41b3-a313-f2fa04d21dce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\SceneObject\Component\Renderer\PolygonTrailRenderer">
-      <UniqueIdentifier>{e8cba8cc-fad4-44aa-bd83-f5c4de7097b7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="EngineWorld\System\Graphic\CameraManager">
       <UniqueIdentifier>{b48fa428-f702-4f63-90ff-5a744c20fc24}</UniqueIdentifier>
     </Filter>

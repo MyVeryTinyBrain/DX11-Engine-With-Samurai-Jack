@@ -35,22 +35,22 @@ System* EngineWorldBase::GetSystem() const
 
 bool EngineWorldBase::Initialize(EngineWorldDesc* desc)
 {
-	if (desc->makeWindowDesc)
+	if (!desc->windowCreateDesc.hWnd)
 	{
-		m_hInstance = desc->makeWindowDesc->hInstance;
-		m_hWnd = MakeWindow(desc->makeWindowDesc);
+		m_hInstance = desc->windowCreateDesc.hInstance;
+		m_hWnd = MakeWindow(&desc->windowCreateDesc);
 
 		if (!m_hWnd)
 			RETURN_FALSE_ERROR_MESSAGE("EngineWorldBase::Initialize::MakeWindow");
 	}
-	else if (desc->alreadedWindowDesc)
+	else if (desc->windowCreateDesc.hWnd)
 	{
-		m_hInstance = GetHInstance(desc->alreadedWindowDesc);
+		m_hInstance = GetHInstance(&desc->windowCreateDesc);
 
 		if (!m_hInstance)
 			RETURN_FALSE_ERROR_MESSAGE("EngineWorldBase::Initialize::alreadedWindowDesc is nullptr");
 
-		m_hWnd = desc->alreadedWindowDesc->hWnd;
+		m_hWnd = desc->windowCreateDesc.hWnd;
 	}
 	else return false;
 
@@ -257,7 +257,7 @@ void EngineWorldBase::Release()
 	SafeDelete(m_system);
 }
 
-HWND EngineWorldBase::MakeWindow(MakeWindowDesc* desc) const
+HWND EngineWorldBase::MakeWindow(WindowDesc* desc) const
 {
 	if (!desc->hInstance)
 		return NULL;
@@ -302,7 +302,7 @@ HWND EngineWorldBase::MakeWindow(MakeWindowDesc* desc) const
 	return hWnd;
 }
 
-HINSTANCE EngineWorldBase::GetHInstance(AlreadedWindowDesc* desc) const
+HINSTANCE EngineWorldBase::GetHInstance(WindowDesc* desc) const
 {
 	if (!desc->hWnd)
 		return NULL;

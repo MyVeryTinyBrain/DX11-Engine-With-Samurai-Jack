@@ -18,7 +18,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    MakeWindowDesc makeWindowDesc;
+    WindowDesc makeWindowDesc;
     makeWindowDesc.hInstance = hInstance;
     _tcscpy_s(makeWindowDesc.Title, TEXT("Test"));
     makeWindowDesc.WinCX = 1280;
@@ -31,10 +31,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     updateDesc.FixedUpdateFPS = 60.0f;
     updateDesc.PhysSubStepLimit = 3;
 
+    SoundDesc soundDesc;
+    soundDesc.NumChannels = 128;
+
     EngineWorldDesc desc;
-    desc.makeWindowDesc = &makeWindowDesc;
-    desc.alreadedWindowDesc = nullptr;
-    desc.updateDesc = &updateDesc;
+    desc.windowCreateDesc = makeWindowDesc;
+    desc.updateDesc = updateDesc;
+    desc.soundDesc = soundDesc;
 
     if (!world.Initialize(&desc))
     {
