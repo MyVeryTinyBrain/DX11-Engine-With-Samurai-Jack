@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShaderTypes.h"
+#include "ShaderType.h"
 #include "IMaterial.h"
 #include "IMesh.h"
 #include "ICamera.h"

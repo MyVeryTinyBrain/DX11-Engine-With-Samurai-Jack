@@ -13,7 +13,7 @@ AnimationClip::~AnimationClip()
 {
 }
 
-const Channel* AnimationClip::GetChannel(uint index) const
+const AnimationChannel* AnimationClip::GetChannel(uint index) const
 {
 	if (!m_animation)
 		return nullptr;

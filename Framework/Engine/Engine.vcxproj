@@ -33,7 +33,11 @@
     <ClInclude Include="include\AnimatorProperty.h" />
     <ClInclude Include="include\AnimatorSingleNode.h" />
     <ClInclude Include="include\AnimatorTransition.h" />
-    <ClInclude Include="include\AnimatorTypes.h" />
+    <ClInclude Include="include\AnimatorType.h" />
+    <ClInclude Include="include\AudioClip.h" />
+    <ClInclude Include="include\AudioListener.h" />
+    <ClInclude Include="include\AudioSource.h" />
+    <ClInclude Include="include\AudioSourcePlaydata.h" />
     <ClInclude Include="include\BoxCollider.h" />
     <ClInclude Include="include\CapsuleCollider.h" />
     <ClInclude Include="include\Collider.h" />
@@ -50,6 +54,7 @@
     <ClInclude Include="include\ILightManager.h" />
     <ClInclude Include="include\IPhysicsObject.h" />
     <ClInclude Include="include\IRendererBoundsOp.h" />
+    <ClInclude Include="include\ISoundSystem.h" />
     <ClInclude Include="include\ISpecificShaderVariable.h" />
     <ClInclude Include="include\ITexture.h" />
     <ClInclude Include="include\JsonUtility.h" />
@@ -60,7 +65,7 @@
     <ClInclude Include="include\PhysicsQueryType.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\PostProcessing.h" />
-    <ClInclude Include="include\PostProcessingTypes.h" />
+    <ClInclude Include="include\PostProcessingType.h" />
     <ClInclude Include="include\RenderTarget.h" />
     <ClInclude Include="include\Delegate.h" />
     <ClInclude Include="include\Delegate.hpp" />
@@ -84,7 +89,7 @@
     <ClInclude Include="include\NodeDesc.h" />
     <ClInclude Include="include\Node.h" />
     <ClInclude Include="include\NodeSet.h" />
-    <ClInclude Include="include\Channel.h" />
+    <ClInclude Include="include\AnimationChannel.h" />
     <ClInclude Include="include\imconfig.h" />
     <ClInclude Include="include\imgui.h" />
     <ClInclude Include="include\imgui_impl_dx11.h" />
@@ -99,7 +104,7 @@
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\CameraManager.h" />
     <ClInclude Include="include\CBufferManager.h" />
-    <ClInclude Include="include\CBufferTypes.h" />
+    <ClInclude Include="include\CBufferType.h" />
     <ClInclude Include="include\CentralTimeElement.h" />
     <ClInclude Include="include\CompiledShaderDesc.h" />
     <ClInclude Include="include\Component.h" />
@@ -157,7 +162,7 @@
     <ClInclude Include="include\Ref.h" />
     <ClInclude Include="include\Ref.hpp" />
     <ClInclude Include="include\RefData.h" />
-    <ClInclude Include="include\ShaderTypes.h" />
+    <ClInclude Include="include\ShaderType.h" />
     <ClInclude Include="include\RenderQueue.h" />
     <ClInclude Include="include\RenderRequestInput.h" />
     <ClInclude Include="include\RenderTexture2D.h" />
@@ -179,6 +184,11 @@
     <ClInclude Include="include\ShaderVariable.h" />
     <ClInclude Include="include\ShaderVariableInfo.h" />
     <ClInclude Include="include\SkinnedMeshRenderer.h" />
+    <ClInclude Include="include\SoundChannel.h" />
+    <ClInclude Include="include\SoundListener.h" />
+    <ClInclude Include="include\SoundPlayDesc.h" />
+    <ClInclude Include="include\SoundSystem.h" />
+    <ClInclude Include="include\Sound.h" />
     <ClInclude Include="include\SpecificShaderVariables.h" />
     <ClInclude Include="include\SphereCollider.h" />
     <ClInclude Include="include\SpotLight.h" />
@@ -200,7 +210,7 @@
     <ClInclude Include="include\tstring.h" />
     <ClInclude Include="include\VI.h" />
     <ClInclude Include="include\VIBuffer.h" />
-    <ClInclude Include="include\VITypes.h" />
+    <ClInclude Include="include\VIType.h" />
     <ClInclude Include="include\VIUtility.h" />
     <ClInclude Include="include\VTFTexture.h" />
   </ItemGroup>
@@ -216,6 +226,10 @@
     <ClCompile Include="src\AnimatorProperty.cpp" />
     <ClCompile Include="src\AnimatorSingleNode.cpp" />
     <ClCompile Include="src\AnimatorTransition.cpp" />
+    <ClCompile Include="src\AudioClip.cpp" />
+    <ClCompile Include="src\AudioListener.cpp" />
+    <ClCompile Include="src\AudioSource.cpp" />
+    <ClCompile Include="src\AudioSourcePlaydata.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\CapsuleCollider.cpp" />
     <ClCompile Include="src\Collider.cpp" />
@@ -232,6 +246,7 @@
     <ClCompile Include="src\ILightManager.cpp" />
     <ClCompile Include="src\IPhysicsObject.cpp" />
     <ClCompile Include="src\IRendererBoundsOp.cpp" />
+    <ClCompile Include="src\ISoundSystem.cpp" />
     <ClCompile Include="src\ISpecificShaderVariable.cpp" />
     <ClCompile Include="src\ITexture.cpp" />
     <ClCompile Include="src\JsonUtility.cpp" />
@@ -242,7 +257,7 @@
     <ClCompile Include="src\PhysicsQueryType.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
     <ClCompile Include="src\PostProcessing.cpp" />
-    <ClCompile Include="src\PostProcessingTypes.cpp" />
+    <ClCompile Include="src\PostProcessingType.cpp" />
     <ClCompile Include="src\RenderTarget.cpp" />
     <ClCompile Include="src\Gizmo.cpp" />
     <ClCompile Include="src\GizmoBase.cpp" />
@@ -261,7 +276,7 @@
     <ClCompile Include="src\NodeDesc.cpp" />
     <ClCompile Include="src\Node.cpp" />
     <ClCompile Include="src\NodeSet.cpp" />
-    <ClCompile Include="src\Channel.cpp" />
+    <ClCompile Include="src\AnimationChannel.cpp" />
     <ClCompile Include="src\imgui.cpp" />
     <ClCompile Include="src\imgui_demo.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -283,7 +298,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\CameraManager.cpp" />
     <ClCompile Include="src\CBufferManager.cpp" />
-    <ClCompile Include="src\CBufferTypes.cpp" />
+    <ClCompile Include="src\CBufferType.cpp" />
     <ClCompile Include="src\CentralTimeElement.cpp" />
     <ClCompile Include="src\CompiledShaderDesc.cpp" />
     <ClCompile Include="src\Component.cpp" />
@@ -341,7 +356,7 @@
     <ClCompile Include="src\PassDesc.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RefData.cpp" />
-    <ClCompile Include="src\ShaderTypes.cpp" />
+    <ClCompile Include="src\ShaderType.cpp" />
     <ClCompile Include="src\RenderQueue.cpp" />
     <ClCompile Include="src\RenderRequestInput.cpp" />
     <ClCompile Include="src\RenderTexture2D.cpp" />
@@ -361,6 +376,11 @@
     <ClCompile Include="src\ShaderVariable.cpp" />
     <ClCompile Include="src\ShaderVariableInfo.cpp" />
     <ClCompile Include="src\SkinnedMeshRenderer.cpp" />
+    <ClCompile Include="src\SoundChannel.cpp" />
+    <ClCompile Include="src\SoundListener.cpp" />
+    <ClCompile Include="src\SoundPlayDesc.cpp" />
+    <ClCompile Include="src\SoundSystem.cpp" />
+    <ClCompile Include="src\Sound.cpp" />
     <ClCompile Include="src\SpecificShaderVariables.cpp" />
     <ClCompile Include="src\SphereCollider.cpp" />
     <ClCompile Include="src\SpotLight.cpp" />
@@ -380,7 +400,7 @@
     <ClCompile Include="src\tstring.cpp" />
     <ClCompile Include="src\VI.cpp" />
     <ClCompile Include="src\VIBuffer.cpp" />
-    <ClCompile Include="src\VITypes.cpp" />
+    <ClCompile Include="src\VIType.cpp" />
     <ClCompile Include="src\VIUtility.cpp" />
     <ClCompile Include="src\VTFTexture.cpp" />
   </ItemGroup>

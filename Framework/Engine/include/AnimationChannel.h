@@ -4,13 +4,13 @@
 
 ENGINE_BEGIN
 
-class ENGINE_API Channel
+class ENGINE_API AnimationChannel
 {
 public:
 
-	Channel(const TCHAR* boneName, uint boneIndex, vector<KeyframeDesc>&& keyframes);
+	AnimationChannel(const TCHAR* boneName, uint boneIndex, vector<KeyframeDesc>&& keyframes);
 
-	~Channel();
+	~AnimationChannel();
 
 public:
 

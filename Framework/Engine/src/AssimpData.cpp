@@ -1,9 +1,9 @@
 #include "EnginePCH.h"
 #include "AssimpData.h"
-#include "VITypes.h"
+#include "VIType.h"
 #include "NodeSet.h"
 #include "Node.h"
-#include "Channel.h"
+#include "AnimationChannel.h"
 #include "Animation.h"
 #include "AnimationSet.h"
 
@@ -428,7 +428,7 @@ AnimationSet* AssimpData::CreateAnimationSet() const
 	if (!m_scene->HasAnimations())
 		return new AnimationSet();
 
-	vector<Channel*> channels;
+	vector<AnimationChannel*> channels;
 	vector<Animation*> animations;
 
 	auto ReleaseVars = [&]()
@@ -455,7 +455,7 @@ AnimationSet* AssimpData::CreateAnimationSet() const
 			return nullptr;
 		}
 
-		vector<Channel*> temp;
+		vector<AnimationChannel*> temp;
 		channels.swap(temp);
 		channels.resize(m_nodeDescsByIndex.size());
 
@@ -514,7 +514,7 @@ AnimationSet* AssimpData::CreateAnimationSet() const
 				keyframes.push_back(keyframeDesc);
 			}
 
-			Channel* channel = new Channel(nodeDesc->name, nodeDesc->index, std::move(keyframes));
+			AnimationChannel* channel = new AnimationChannel(nodeDesc->name, nodeDesc->index, std::move(keyframes));
 			channels[nodeDesc->index] = channel;
 		}
 

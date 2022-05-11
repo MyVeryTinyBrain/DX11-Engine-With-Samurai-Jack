@@ -35,6 +35,8 @@ public:
 
 	virtual ImGuiSystem* GetImGuiSystem() const override;
 
+	virtual SoundSystem* GetSoundSystem() const override;
+
 	_declspec(property(get = GetInput)) Input* input;
 	_declspec(property(get = GetSceneManagement)) SceneManagement* sceneManagement;
 	_declspec(property(get = GetPhysicsSystem)) PhysicsSystem* physics;
@@ -42,6 +44,7 @@ public:
 	_declspec(property(get = GetResourceManagement)) ResourceManagement* resource;
 	_declspec(property(get = GetGraphicSystem)) GraphicSystem* graphic;
 	_declspec(property(get = GetImGuiSystem)) ImGuiSystem* imguiSystem;
+	_declspec(property(get = GetSoundSystem)) SoundSystem* sound;
 
 private:
 
@@ -66,5 +69,7 @@ private:
 	GraphicSystem*				m_graphicSystem = nullptr;
 
 	ImGuiSystem*				m_imguiSystem = nullptr;
+
+	SoundSystem*				m_soundSystem = nullptr;
 };
 ENGINE_END

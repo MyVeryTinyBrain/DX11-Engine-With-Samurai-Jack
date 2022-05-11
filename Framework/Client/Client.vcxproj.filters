@@ -34,6 +34,7 @@
     <ClInclude Include="JackAnimator.h">
       <Filter>Player</Filter>
     </ClInclude>
+    <ClInclude Include="SoundTest.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -68,6 +69,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{64cf4265-82ae-46db-8a64-32bb2330264a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{95cc7fd1-24f1-4eaa-8133-20d449e30aa3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -99,6 +103,7 @@
     <ClCompile Include="JackAnimator.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="SoundTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">

@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "Animation.h"
 
-Animation::Animation(const tstring& name, float duration, float tickPerSecond, vector<Channel*>&& channels) :
+Animation::Animation(const tstring& name, float duration, float tickPerSecond, vector<AnimationChannel*>&& channels) :
 	m_name(name),
 	m_duration(duration),
 	m_tickPerSecond(tickPerSecond),
@@ -22,7 +22,7 @@ Animation::~Animation()
 	m_channels.clear();
 }
 
-const Channel* Animation::GetChannel(uint index) const
+const AnimationChannel* Animation::GetChannel(uint index) const
 {
 	if (index >= m_channels.size())
 		return nullptr;

@@ -3,7 +3,7 @@
 #include "Object.h"
 #include "IAnimatorLayer.h"
 #include "AnimatorNode.h"
-#include "AnimatorTypes.h"
+#include "AnimatorType.h"
 #include "AnimatorProperty.h"
 #include "AnimatorTransition.h"
 

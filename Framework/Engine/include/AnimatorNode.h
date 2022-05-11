@@ -3,7 +3,7 @@
 #include "Object.h"
 #include "IAnimatorNode.h"
 #include "AnimationClip.h"
-#include "AnimatorTypes.h"
+#include "AnimatorType.h"
 #include "Ref.h"
 
 ENGINE_BEGIN

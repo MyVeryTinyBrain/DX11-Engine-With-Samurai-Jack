@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShaderTypes.h"
+#include "ShaderType.h"
 
 ENGINE_BEGIN
 class System;

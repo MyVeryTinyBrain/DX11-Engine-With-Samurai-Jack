@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "GraphicSystem.h"
 #include "ImGuiSystem.h"
+#include "SoundSystem.h"
 
 #include "Scene.h"
 #include "Component.h"
@@ -220,6 +221,9 @@ bool EngineWorldBase::Step()
 			iImGuiSystem->EndRender();
 
 			iGraphicSystem->Present();
+
+			ISoundSystem* iSoundSystem = m_system->sound;
+			iSoundSystem->OnPostProcessing();
 		}
 	}
 

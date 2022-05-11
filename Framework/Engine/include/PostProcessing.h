@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PostProcessingTypes.h"
+#include "PostProcessingType.h"
 
 ENGINE_BEGIN
 class GraphicSystem;

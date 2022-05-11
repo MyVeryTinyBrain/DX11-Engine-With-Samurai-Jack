@@ -217,7 +217,7 @@ void LineRenderer::SetupMesh(uint numRect)
 	m_numRect = numRect;
 }
 
-void LineRenderer::SetupVertexPair(uint pointIndex, const V3& camDir, float width, V3& inout_min, V3& inout_max)
+void LineRenderer::SetupVertexPair(uint pointIndex, const V3& camDir, const V3& camPos, float width, V3& inout_min, V3& inout_max)
 {
 	VI* vi = m_mesh->viBuffer->GetVI();
 	Vertex* vertices = vi->GetVertices();
@@ -238,9 +238,12 @@ void LineRenderer::SetupVertexPair(uint pointIndex, const V3& camDir, float widt
 	if (pointIndex == m_points.size() - 1)
 		forward *= -1.0f;
 
+	//V3 c2p = (curPoint - camPos).normalized;
+
 	V3 right, up;
 	{
 		right = V3::Cross(camDir, forward).normalized;
+		//right = V3::Cross(c2p, forward).normalized;
 		up = V3::Cross(right, forward).normalized;
 	}
 
@@ -285,13 +288,14 @@ void LineRenderer::ApplyVertices()
 {
 	Camera* mainCamera = (Camera*)system->graphic->cameraManager->mainCamera;
 	V3 camDir = mainCamera->transform->forward;
+	V3 camPos = mainCamera->transform->position;
 
 	V3 minV = V3(FLT_MAX, FLT_MAX, FLT_MAX);
 	V3 maxV = V3(FLT_MIN, FLT_MIN, FLT_MIN);
 
 	for (int i = 0; i < int(m_points.size()); ++i)
 	{
-		SetupVertexPair(i, camDir, m_width, minV, maxV);
+		SetupVertexPair(i, camDir, camPos, m_width, minV, maxV);
 	}
 
 	Bounds bounds;

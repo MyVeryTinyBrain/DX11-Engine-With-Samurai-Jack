@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "FreeCamera.h"
 #include "JackAnimator.h"
+#include "SoundTest.h"
 
 Scene* PlayerTestScene::Clone()
 {
@@ -69,7 +70,30 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
 
-	//*
+	GameObject* goST = CreateGameObject();
+	goST->transform->position = V3(0, 5, 0);
+	SoundTest* st = goST->AddComponent<SoundTest>();
+
+	//{
+	//	GameObject* goLine = CreateGameObject();
+	//	goLine->transform->position = V3(0, 2, -5);
+	//	LineRenderer* line = goLine->AddComponent<LineRenderer>();
+	//	//line->AddPoint(V3(0, 0, 0));
+	//	//line->AddPoint(V3(0, 0, 2));
+
+	//	for (int i = 0; i <= 50; ++i)
+	//	{
+	//		float p = float(i) / 50.0f;
+	//		float r = p * TAU;
+	//		float x = Cos(r);
+	//		float z = Sin(r);
+	//		line->AddPoint(V3(x, 0, z) * 3.0f);
+	//	}
+
+	//	line->isLocalSpace = true;
+	//}
+
+	/*
 	{
 		thread t0(
 			[&]

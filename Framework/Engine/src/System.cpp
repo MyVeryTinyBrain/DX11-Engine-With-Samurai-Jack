@@ -9,6 +9,7 @@
 #include "ResourceManagement.h"
 #include "GraphicSystem.h"
 #include "ImGuiSystem.h"
+#include "SoundSystem.h"
 
 System::System()
 {
@@ -63,6 +64,11 @@ bool System::Initialize(EngineWorldDesc* desc, HWND hWnd, unsigned int width, un
 	if(!iImGuiSystem->Initialize(this, m_graphicSystem))
 		RETURN_FALSE_ERROR_MESSAGE("System::Initialize::ImGuiSystem::Initialize");
 
+	m_soundSystem = new SoundSystem;
+	ISoundSystem* iSoundSystem = m_soundSystem;
+	if(!iSoundSystem->Initialize())
+		RETURN_FALSE_ERROR_MESSAGE("System::Initialize::SoundSystem::Initialize");
+
 	m_initialized = true;
 
 	return true;
@@ -92,6 +98,7 @@ void System::Release()
 	SafeDelete(m_input);
 	SafeDelete(m_physicsSystem);
 	SafeDelete(m_resourceManagement);
+	SafeDelete(m_soundSystem);
 	SafeDelete(m_graphicSystem);
 }
 
@@ -133,4 +140,9 @@ GraphicSystem* System::GetGraphicSystem() const
 ImGuiSystem* System::GetImGuiSystem() const
 {
 	return m_imguiSystem;
+}
+
+SoundSystem* System::GetSoundSystem() const
+{
+	return m_soundSystem;
 }

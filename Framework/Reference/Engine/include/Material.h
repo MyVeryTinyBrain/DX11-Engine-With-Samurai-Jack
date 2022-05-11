@@ -2,7 +2,7 @@
 
 #include "ResourceObject.h"
 #include "IMaterial.h"
-#include "ShaderTypes.h"
+#include "ShaderType.h"
 
 ENGINE_BEGIN
 class Shader;

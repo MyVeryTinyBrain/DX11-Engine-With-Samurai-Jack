@@ -137,7 +137,7 @@
     <ClInclude Include="include\VIBuffer.h">
       <Filter>EngineWorld\System\Graphic\VIBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="include\VITypes.h">
+    <ClInclude Include="include\VIType.h">
       <Filter>EngineWorld\System\Graphic\VIBuffer\VITypes</Filter>
     </ClInclude>
     <ClInclude Include="include\FPSChecker.h">
@@ -161,7 +161,7 @@
     <ClInclude Include="include\VI.h">
       <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
     </ClInclude>
-    <ClInclude Include="include\CBufferTypes.h">
+    <ClInclude Include="include\CBufferType.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferTypes</Filter>
     </ClInclude>
     <ClInclude Include="include\CBufferManager.h">
@@ -239,7 +239,7 @@
     <ClInclude Include="include\Animator.h">
       <Filter>Object\SceneObject\Component\Animator</Filter>
     </ClInclude>
-    <ClInclude Include="include\AnimatorTypes.h">
+    <ClInclude Include="include\AnimatorType.h">
       <Filter>Object\SceneObject\Component\Animator</Filter>
     </ClInclude>
     <ClInclude Include="include\InstanceBufferManager.h">
@@ -287,7 +287,7 @@
     <ClInclude Include="include\AssimpData.h">
       <Filter>Object\Resource\Mesh\Assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\Channel.h">
+    <ClInclude Include="include\AnimationChannel.h">
       <Filter>Object\Resource\Mesh\Assimp</Filter>
     </ClInclude>
     <ClInclude Include="include\KeyframeDesc.h">
@@ -452,7 +452,7 @@
     <ClInclude Include="include\PostProcessing.h">
       <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClInclude>
-    <ClInclude Include="include\PostProcessingTypes.h">
+    <ClInclude Include="include\PostProcessingType.h">
       <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClInclude>
     <ClInclude Include="include\RefData.h">
@@ -506,7 +506,7 @@
     <ClInclude Include="include\TrailRenderer.h">
       <Filter>Object\SceneObject\Component\Renderer\TrailRenderer</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShaderTypes.h">
+    <ClInclude Include="include\ShaderType.h">
       <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
     </ClInclude>
     <ClInclude Include="include\ISpecificShaderVariable.h">
@@ -550,6 +550,36 @@
     </ClInclude>
     <ClInclude Include="include\LineRenderer.h">
       <Filter>Object\SceneObject\Component\Renderer\LineRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioClip.h">
+      <Filter>Object\Resource\Audio\AudioClip</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoundSystem.h">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ISoundSystem.h">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sound.h">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioSource.h">
+      <Filter>Object\SceneObject\Component\Audio\AudioSource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoundChannel.h">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioSourcePlaydata.h">
+      <Filter>Object\SceneObject\Component\Audio\AudioSource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoundPlayDesc.h">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AudioListener.h">
+      <Filter>Object\SceneObject\Component\Audio\AudioListener</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoundListener.h">
+      <Filter>EngineWorld\System\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -670,7 +700,7 @@
     <ClCompile Include="src\Shader.cpp">
       <Filter>Object\Resource\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="src\ShaderTypes.cpp">
+    <ClCompile Include="src\ShaderType.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue</Filter>
     </ClCompile>
     <ClCompile Include="src\CompiledShaderDesc.cpp">
@@ -685,7 +715,7 @@
     <ClCompile Include="src\VIBuffer.cpp">
       <Filter>EngineWorld\System\Graphic\VIBuffer</Filter>
     </ClCompile>
-    <ClCompile Include="src\VITypes.cpp">
+    <ClCompile Include="src\VIType.cpp">
       <Filter>EngineWorld\System\Graphic\VIBuffer\VITypes</Filter>
     </ClCompile>
     <ClCompile Include="src\FPSChecker.cpp">
@@ -709,7 +739,7 @@
     <ClCompile Include="src\VI.cpp">
       <Filter>EngineWorld\System\Graphic\VIBuffer\VI</Filter>
     </ClCompile>
-    <ClCompile Include="src\CBufferTypes.cpp">
+    <ClCompile Include="src\CBufferType.cpp">
       <Filter>EngineWorld\System\Graphic\RenderQueue\CBufferTypes</Filter>
     </ClCompile>
     <ClCompile Include="src\CBufferManager.cpp">
@@ -829,7 +859,7 @@
     <ClCompile Include="src\AssimpData.cpp">
       <Filter>Object\Resource\Mesh\Assimp</Filter>
     </ClCompile>
-    <ClCompile Include="src\Channel.cpp">
+    <ClCompile Include="src\AnimationChannel.cpp">
       <Filter>Object\Resource\Mesh\Assimp</Filter>
     </ClCompile>
     <ClCompile Include="src\KeyframeDesc.cpp">
@@ -979,7 +1009,7 @@
     <ClCompile Include="src\PostProcessing.cpp">
       <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClCompile>
-    <ClCompile Include="src\PostProcessingTypes.cpp">
+    <ClCompile Include="src\PostProcessingType.cpp">
       <Filter>EngineWorld\System\Graphic\DeferredRender\PostProcessing</Filter>
     </ClCompile>
     <ClCompile Include="src\IObject.cpp">
@@ -1056,6 +1086,36 @@
     </ClCompile>
     <ClCompile Include="src\LineRenderer.cpp">
       <Filter>Object\SceneObject\Component\Renderer\LineRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioClip.cpp">
+      <Filter>Object\Resource\Audio\AudioClip</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundSystem.cpp">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ISoundSystem.cpp">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sound.cpp">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioSource.cpp">
+      <Filter>Object\SceneObject\Component\Audio\AudioSource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundChannel.cpp">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioSourcePlaydata.cpp">
+      <Filter>Object\SceneObject\Component\Audio\AudioSource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundPlayDesc.cpp">
+      <Filter>EngineWorld\System\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AudioListener.cpp">
+      <Filter>Object\SceneObject\Component\Audio\AudioListener</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundListener.cpp">
+      <Filter>EngineWorld\System\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1343,6 +1403,24 @@
     </Filter>
     <Filter Include="Default\ThreadPool">
       <UniqueIdentifier>{2b945aaf-be19-4cce-8f82-12dc0a1f7594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Audio">
+      <UniqueIdentifier>{630977dc-bcb6-40e5-862a-3a6ca2b565cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Resource\Audio\AudioClip">
+      <UniqueIdentifier>{086d9970-4785-4383-bc29-d9020e5020c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineWorld\System\Sound">
+      <UniqueIdentifier>{414a89cf-1258-489c-be91-609aa0987c3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Audio">
+      <UniqueIdentifier>{fce1be47-5144-453d-b971-b4568d2abb44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Audio\AudioSource">
+      <UniqueIdentifier>{eb6da8a9-6d9c-4f29-bd50-81ee9272a41b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Audio\AudioListener">
+      <UniqueIdentifier>{9ed65da9-fbfa-4c45-87d6-dcffa2ee43b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

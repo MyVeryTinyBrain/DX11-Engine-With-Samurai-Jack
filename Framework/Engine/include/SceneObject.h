@@ -26,6 +26,11 @@ public:
 private:
 
 	bool m_shouldDestroy = false;
+
+public:
+
+	delegate<void(SceneObject*)> OnDestroyedCallback;
+
 };
 ENGINE_END
 

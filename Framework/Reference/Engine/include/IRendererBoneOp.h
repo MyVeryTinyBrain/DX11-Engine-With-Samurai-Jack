@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CBufferTypes.h"
+#include "CBufferType.h"
 
 ENGINE_BEGIN
 

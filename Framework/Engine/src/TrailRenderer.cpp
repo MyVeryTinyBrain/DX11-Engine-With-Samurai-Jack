@@ -299,6 +299,7 @@ void TrailRenderer::Shrink(float shrinkDistance)
 void TrailRenderer::SetupVertexPair(
 	uint dataIndex, 
 	const V3& camDir, 
+	const V3& camPos,
 	float width, 
 	V3& inout_min, V3& inout_max)
 {
@@ -324,10 +325,13 @@ void TrailRenderer::SetupVertexPair(
 
 	V3 right, up;
 
+	//V3 c2p = (curPair.Position - camPos).normalized;
+
 	switch (m_alignment)
 	{
 		case TrailRenderer::Alignment::View:
 			right = V3::Cross(camDir, forward).normalized;
+			//right = V3::Cross(c2p, forward).normalized;
 			up = V3::Cross(right, forward).normalized;
 			break;
 		case TrailRenderer::Alignment::Local:
@@ -407,13 +411,14 @@ void TrailRenderer::ApplyVertices()
 {
 	Camera* mainCamera = (Camera*)system->graphic->cameraManager->mainCamera;
 	V3 camDir = mainCamera->transform->forward;
+	V3 camPos = mainCamera->transform->position;
 
 	V3 minV = V3(FLT_MAX, FLT_MAX, FLT_MAX);
 	V3 maxV = V3(FLT_MIN, FLT_MIN, FLT_MIN);
 
 	for (int i = 0; i < int(m_datas.size()); ++i)
 	{
-		SetupVertexPair(i, camDir, m_width, minV, maxV);
+		SetupVertexPair(i, camDir, camPos, m_width, minV, maxV);
 	}
 
 	Bounds bounds;

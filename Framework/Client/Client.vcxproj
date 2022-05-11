@@ -170,6 +170,7 @@
     <ClInclude Include="JackAnimator.h" />
     <ClInclude Include="PlayerTestScene.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SoundTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestScene.h">
@@ -186,6 +187,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="JackAnimator.cpp" />
     <ClCompile Include="PlayerTestScene.cpp" />
+    <ClCompile Include="SoundTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

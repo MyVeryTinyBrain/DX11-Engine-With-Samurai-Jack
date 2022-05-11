@@ -42,12 +42,13 @@ public:
 
 private:
 
-	Camera*		m_camera;
+	Camera*			m_camera;
+	AudioListener*	m_listener;
 
-	float		m_translationSpeed = 1.0f;
-	float		m_translationFactor = 10.0f;
-	float		m_rotationSpeed = 0.15f;
+	float			m_translationSpeed = 1.0f;
+	float			m_translationFactor = 10.0f;
+	float			m_rotationSpeed = 0.15f;
 
-	bool		m_rotation = true;
+	bool			m_rotation = true;
 };
 

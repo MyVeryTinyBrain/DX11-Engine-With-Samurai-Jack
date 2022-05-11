@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Channel.h"
+#include "AnimationChannel.h"
 
 ENGINE_BEGIN
 
@@ -8,7 +8,7 @@ class ENGINE_API Animation
 {
 public:
 
-	Animation(const tstring& name, float duration, float tickPerSecond, vector<Channel*>&& channels);
+	Animation(const tstring& name, float duration, float tickPerSecond, vector<AnimationChannel*>&& channels);
 
 	~Animation();
 
@@ -24,16 +24,16 @@ public:
 
 	inline uint GetChannelCount() const { return uint(m_channels.size()); }
 
-	const Channel* GetChannel(uint index) const;
+	const AnimationChannel* GetChannel(uint index) const;
 
-	const vector<Channel*>& GetChannels() const { return m_channels; }
+	const vector<AnimationChannel*>& GetChannels() const { return m_channels; }
 
 	_declspec(property(get = GetName)) const tstring& name;
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = GetTickPerSecond)) float tickPerSecond;
 	_declspec(property(get = GetRealtimeDuration)) float realtimeDuration;
 	_declspec(property(get = GetChannelCount)) uint channelCount;
-	_declspec(property(get = GetChannels)) vector<Channel*>& channels;
+	_declspec(property(get = GetChannels)) vector<AnimationChannel*>& channels;
 
 private:
 
@@ -45,7 +45,7 @@ private:
 
 	float m_realtimeDuration;
 
-	vector<Channel*> m_channels;
+	vector<AnimationChannel*> m_channels;
 
 };
 

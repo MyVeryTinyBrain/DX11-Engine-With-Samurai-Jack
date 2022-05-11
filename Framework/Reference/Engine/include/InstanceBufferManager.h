@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VITypes.h"
+#include "VIType.h"
 
 ENGINE_BEGIN
 class GraphicSystem;

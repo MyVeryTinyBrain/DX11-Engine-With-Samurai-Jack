@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "PassDesc.h"
-#include "VITypes.h"
+#include "VIType.h"
 
 PassDesc::PassDesc(
 	ID3DX11EffectPass* pass, ID3D11InputLayout* inputLayout, 

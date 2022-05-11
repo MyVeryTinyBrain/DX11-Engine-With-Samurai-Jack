@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
-#include "Channel.h"
+#include "AnimationChannel.h"
 
-Channel::Channel(const TCHAR* boneName, uint boneIndex, vector<KeyframeDesc>&& keyframes)
+AnimationChannel::AnimationChannel(const TCHAR* boneName, uint boneIndex, vector<KeyframeDesc>&& keyframes)
 {
 	_tcscpy_s(m_boneName, boneName);
 
@@ -18,11 +18,11 @@ Channel::Channel(const TCHAR* boneName, uint boneIndex, vector<KeyframeDesc>&& k
 	m_maxTime = m_keyframes.back().time;
 }
 
-Channel::~Channel()
+AnimationChannel::~AnimationChannel()
 {
 }
 
-void Channel::GetKeyframeTransform(float time, V3& out_position, Q& out_rotation, V3& out_scale) const
+void AnimationChannel::GetKeyframeTransform(float time, V3& out_position, Q& out_rotation, V3& out_scale) const
 {
 	uint maxKeyframes = (uint)m_keyframes.size();
 
@@ -44,7 +44,7 @@ void Channel::GetKeyframeTransform(float time, V3& out_position, Q& out_rotation
 	out_scale = V3::Lerp(m_keyframes[index].scale, m_keyframes[nextIndex].scale, ratio);
 }
 
-uint Channel::ClosetIndex(float time) const
+uint AnimationChannel::ClosetIndex(float time) const
 {
 	auto it = std::lower_bound(m_keyframes.begin(), m_keyframes.end(), time,
 		[](KeyframeDesc const& x, float d)

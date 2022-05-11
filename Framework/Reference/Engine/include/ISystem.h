@@ -10,6 +10,7 @@ class ResourceManagement;
 class GraphicSystem;
 class Times;
 class ImGuiSystem;
+class SoundSystem;
 class ENGINE_API ISystem abstract
 {
 public:
@@ -37,6 +38,8 @@ public:
 	virtual GraphicSystem* GetGraphicSystem() const = 0;
 
 	virtual ImGuiSystem* GetImGuiSystem() const = 0;
+
+	virtual SoundSystem* GetSoundSystem() const = 0;
 };
 
 ENGINE_END

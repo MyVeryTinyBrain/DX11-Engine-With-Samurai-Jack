@@ -19,7 +19,7 @@ public:
 
 	const Animation* GetAnimation() const { return m_animation; }
 
-	const Channel* GetChannel(uint index) const;
+	const AnimationChannel* GetChannel(uint index) const;
 
 	uint GetChannelCount() const;
 

@@ -91,6 +91,7 @@ private:
 	void SetupVertexPair(
 		uint dataIndex, 
 		const V3& camDir, 
+		const V3& camPos,
 		float width, 
 		V3& inout_min, V3& inout_max);
 	void ApplyVertices();

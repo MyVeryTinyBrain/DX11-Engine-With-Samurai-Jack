@@ -33,7 +33,7 @@ bool AnimatorSingleNode::AnimateNodeImpl(
 	if (!m_animationClip)
 		return false;
 
-	const Channel* channel = m_animationClip->GetChannel(channelIndex);
+	const AnimationChannel* channel = m_animationClip->GetChannel(channelIndex);
 	if (!channel)
 		return false;
 

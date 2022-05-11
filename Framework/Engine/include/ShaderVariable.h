@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShaderTypes.h"
+#include "ShaderType.h"
 #include "ResourceRef.h"
 
 ENGINE_BEGIN

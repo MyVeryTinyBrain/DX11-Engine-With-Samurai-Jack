@@ -15,6 +15,7 @@
 #include "LightManager.h"
 #include "PhysicsSystem.h"
 #include "PhysicsQuery.h"
+#include "SoundSystem.h"
 
 #include "ResourceObject.h"
 #include "ResourceRef.h"
@@ -59,6 +60,10 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+
+#include "AudioClip.h"
+#include "AudioSource.h"
+#include "AudioListener.h"
 
 #include "Gizmo.h"
 

@@ -5,6 +5,7 @@ void FreeCamera::Awake()
 {
 	m_camera = gameObject->AddComponent<Camera>();
     m_camera->projection = Camera::Projection::Perspective;
+    m_listener = gameObject->AddComponent<AudioListener>();
 }
 
 void FreeCamera::Start()
