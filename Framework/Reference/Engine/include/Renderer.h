@@ -17,25 +17,40 @@ public:
 
 public:
 
-	ResourceRef<Material> GetMaterial() const;
+	// 0번째 재질을 설정하거나 가져옵니다.
 
+	ResourceRef<Material> GetMaterial() const;
 	void SetMaterial(ResourceRef<Material> material);
 
-	void SetMaterialByIndex(uint index, ResourceRef<Material> material);
+	// 지정한 인덱스의 재질을 설정한거나 가져옵니다.
 
+	void SetMaterialByIndex(uint index, ResourceRef<Material> material);
 	const vector<ResourceRef<Material>>& GetMaterials() const;
 
 	void SetMaterials(const vector<ResourceRef<Material>>& materials);
-
 	ResourceRef<Material> GetMaterialByIndex(uint index) const;
 
-	void SetMaterialCount(uint count);
+	// 사용할수 있는 재질의 수를 설정하거나 가져옵니다.
 
+	void SetMaterialCount(uint count);
 	uint GetMaterialCount() const;
 
 	inline uint GetLayerIndex() const { return m_layerIndex; }
-
 	inline void SetlayerIndex(uint8_t layerIndex) { m_layerIndex = layerIndex; };
+
+	// 재질을 비웁니다.
+
+	void ClearMaterials();
+
+	// 적용된 메쉬에 알맞은 재질의 수를 설정하고
+	// 알맞은 StandardMaterial을 관리되지 않는 리소스로 생성해 적용합니다.
+	// 메쉬가 설정되어 있지 않다면 재질을 비우게 됩니다.
+
+	void SetupStandardMaterials();
+
+	// 메쉬에 기본 재질을 설정합니다.
+
+	void SetupDefaultMaterials();
 
 	virtual bool IsValid() const;
 

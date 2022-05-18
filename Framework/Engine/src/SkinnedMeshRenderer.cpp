@@ -115,9 +115,9 @@ void SkinnedMeshRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 	if (m_mesh == mesh)
 		return;
 
-	SetupMaterialsToDefault(mesh);
-
 	m_mesh = mesh;
+
+	SetupDefaultMaterials();
 
 	SetupNodeTransforms();
 }
@@ -155,43 +155,6 @@ void SkinnedMeshRenderer::OnSetBoneMatricesCBuffer(uint subMeshIndex, BoneMatric
 	for (uint i = 0; i < count; ++i)
 	{
 		pCBuffer->_BoneMatrices[i] = m_nodeTransformsByIndex[subMeshNodeIndices[i]]->boneMatrix.transposed;
-	}
-}
-
-void SkinnedMeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
-{
-	if (!mesh)
-		return;
-
-	const vector<ModelMaterialDesc>& materials = mesh->materialDescs;
-	const vector<uint>& materialIndices = mesh->materialIndices;
-	SetMaterialCount(mesh->subMeshCount);
-
-	for (uint i = 0; i < mesh->subMeshCount; ++i)
-	{
-		if (m_materials[i])
-			continue;
-
-		tstring texturePath;
-		ResourceRef<Texture2D> texture;
-
-		if (i < materialIndices.size())
-		{
-			texturePath = materials[materialIndices[i]].diffuse;
-			texture = system->resource->Find(texturePath);
-		}
-
-		if (!texture)
-		{
-			SetMaterialByIndex(i, system->resource->builtIn->standardMaterial);
-		}
-		else
-		{
-			tstring materialPath = texturePath + tstring(TEXT(".skinned.material"));
-			ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(system->resource->builtIn->standardShader, materialPath);
-			material->SetTexture("_DiffuseTextrue", texture);
-			SetMaterialByIndex(i, material);
-		}
 	}
 }
 

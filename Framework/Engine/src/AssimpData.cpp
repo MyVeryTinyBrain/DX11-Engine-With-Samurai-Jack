@@ -584,6 +584,7 @@ HRESULT AssimpData::SetupMaterials(const aiScene* scene, const tstring& path, ve
 {
 	// 이 모델에 사용되는 재질들을 반환합니다.
 	// 서브메쉬는 이 재질의 인덱스를 참조합니다.
+	// 이때 재질들의 경로는 메쉬와 같은 경로로 설정됩니다.
 
 	if (!scene)
 		return E_FAIL;

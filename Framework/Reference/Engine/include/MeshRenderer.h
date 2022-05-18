@@ -15,20 +15,13 @@ private:
 public:
 
 	virtual bool CullTest(ICamera* camera) const override;
-
 	virtual Bounds GetBounds() const override;
-
 	virtual bool IsValid() const override;
 
 	const ResourceRef<Mesh>& GetMesh() const { return m_mesh; }
-
 	void SetMesh(const ResourceRef<Mesh>& mesh);
 
 	_declspec(property(get = GetMesh, put = SetMesh)) const ResourceRef<Mesh>& mesh;
-
-private:
-
-	void SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh);
 
 };
 

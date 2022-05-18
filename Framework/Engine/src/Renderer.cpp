@@ -1,5 +1,13 @@
 #include "EnginePCH.h"
 #include "Renderer.h"
+#include "Mesh.h"
+#include "System.h"
+#include "ResourceManagement.h"
+#include "BuiltInResources.h"
+#include "Material.h"
+#include "ResourceRef.h"
+#include "Texture.h"
+#include "ResourceFactory.h"
 
 ResourceRef<Material> Renderer::GetMaterial() const
 {
@@ -62,6 +70,79 @@ void Renderer::SetMaterialCount(uint count)
 uint Renderer::GetMaterialCount() const
 {
     return uint(m_materials.size());
+}
+
+void Renderer::ClearMaterials()
+{
+    m_materials.clear();
+}
+
+void Renderer::SetupStandardMaterials()
+{
+    ClearMaterials();
+
+    if (!m_mesh)
+    {
+        return;
+    }
+
+    vector<ModelMaterialDesc> materialDescs = m_mesh->materialDescs;
+    vector<uint> materialIndices = m_mesh->materialIndices;
+
+    uint numMaterials = m_mesh->subMeshCount;
+    SetMaterialCount(numMaterials);
+
+    ResourceRef<Shader> standardShader = system->resource->builtIn->standardShader;
+    assert(standardShader != nullptr);
+
+    for (uint i = 0; i < numMaterials; ++i)
+    {
+        const uint& materialIndex = materialIndices[i];
+        const ModelMaterialDesc& materialDesc = materialDescs[materialIndex];
+
+        ResourceRef<Texture> albedoTexture;
+        ResourceRef<Texture> normalMapTexture;
+
+        if (materialDesc.HasDiffuse())
+        {
+            albedoTexture = system->resource->Find(materialDesc.diffuse);
+        }
+        if (materialDesc.HasNormals())
+        {
+            normalMapTexture = system->resource->Find(materialDesc.normals);
+        }
+
+        ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(standardShader);
+        
+        if (albedoTexture)
+        {
+            material->SetTexture("_AlbedoTexture", albedoTexture);
+        }
+        if (normalMapTexture)
+        {
+            material->SetTexture("_NormalMapTexture", normalMapTexture);
+        }
+
+        SetMaterialByIndex(i, material);
+    }
+}
+
+void Renderer::SetupDefaultMaterials()
+{
+    ClearMaterials();
+
+    if (!m_mesh)
+    {
+        return;
+    }
+
+    uint numMaterials = m_mesh->subMeshCount;
+    SetMaterialCount(numMaterials);
+
+    for (uint i = 0; i < numMaterials; ++i)
+    {
+        SetMaterialByIndex(i, system->resource->builtIn->standardMaterial);
+    }
 }
 
 bool Renderer::IsValid() const

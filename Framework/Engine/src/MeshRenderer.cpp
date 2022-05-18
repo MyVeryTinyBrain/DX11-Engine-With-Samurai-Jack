@@ -98,55 +98,7 @@ bool MeshRenderer::IsValid() const
 
 void MeshRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 {
-	SetupMaterialsToDefault(mesh);
-
 	m_mesh = mesh;
-}
 
-void MeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
-{
-	if (mesh == m_mesh)
-		return;
-
-	if (!mesh)
-	{
-		m_materials.clear();
-		return;
-	}
-
-	const vector<ModelMaterialDesc>& materials = mesh->materialDescs;
-	const vector<uint>& materialIndices = mesh->materialIndices;
-	SetMaterialCount(mesh->subMeshCount);
-
-	for (uint i = 0; i < mesh->subMeshCount; ++i)
-	{
-		if (m_materials[i])
-			continue;
-
-		tstring texturePath;
-		ResourceRef<Texture2D> texture;
-		ResourceRef<Texture2D> normal;
-
-		if (i < materialIndices.size())
-		{
-			texturePath = materials[materialIndices[i]].diffuse;
-			texture = system->resource->Find(texturePath);
-
-			texturePath = materials[materialIndices[i]].normals;
-			normal = system->resource->Find(texturePath);
-		}
-
-		if (!texture)
-		{
-			SetMaterialByIndex(i, system->resource->builtIn->standardMaterial);
-		}
-		else
-		{
-			tstring materialPath = texturePath + tstring(TEXT(".material"));
-			ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(system->resource->builtIn->standardShader, materialPath);
-			material->SetTexture("_DiffuseTextrue", texture);
-			material->SetTexture("_NormalMapTextrue", normal);
-			SetMaterialByIndex(i, material);
-		}
-	}
+	SetupDefaultMaterials();
 }

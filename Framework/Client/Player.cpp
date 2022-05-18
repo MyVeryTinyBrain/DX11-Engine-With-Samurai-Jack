@@ -129,6 +129,7 @@ void Player::SetupCharacterRenderers()
 	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+	m_characterRenderer->SetupStandardMaterials();
 	//for (auto& m : m_characterRenderer->materials)
 	//	m->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
@@ -138,6 +139,7 @@ void Player::SetupCharacterRenderers()
 	m_goKatanaSheathRenderer = CreateGameObjectToChild(transform);
 	m_katanaSheathRenderer = m_goKatanaSheathRenderer->AddComponent<MeshRenderer>();
 	m_katanaSheathRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+	m_katanaSheathRenderer->SetupStandardMaterials();
 }
 
 void Player::SetupAnimator()
@@ -162,6 +164,7 @@ void Player::SetupWeapons()
 	m_goKatanaRenderer = CreateGameObjectToChild(m_goKatana->transform);
 	m_katanaRenderer = m_goKatanaRenderer->AddComponent<MeshRenderer>();
 	m_katanaRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+	m_katanaRenderer->SetupStandardMaterials();
 
 	m_goTrail = CreateGameObjectToChild(m_goKatana->transform);
 	m_goTrail->transform->localPosition = V3(0, 0, -1.0f);
