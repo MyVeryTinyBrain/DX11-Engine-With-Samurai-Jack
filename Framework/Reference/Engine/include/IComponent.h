@@ -12,7 +12,7 @@ public:
 
 	// 이 컴포넌트를 생성하고 이 함수를 호출해야 합니다.
 	// Awake() 및 OnEnable() 함수를 호출합니다.
-	virtual void Initialize(GameObject* gameObject) = 0;
+	virtual void Initialize(GameObject* gameObject, void* arg = nullptr) = 0;
 
 	// 컴포넌트 생성 이후로 이 함수를 실행하지 않았다면 Start() 함수를 호출합니다.
 	virtual void CallStartOnce() = 0;
@@ -25,6 +25,9 @@ public:
 
 	// 컴포넌트가 생성된 직후 호출됩니다.
 	virtual void Awake() = 0;
+
+	// 생성시 인자가 필요한 경우 사용되는 콜백입니다.
+	virtual void Awake(void* arg) = 0;
 
 	// 컴포넌트가 생성된 다음 프레임에 호출됩니다.
 	virtual void Start() = 0;

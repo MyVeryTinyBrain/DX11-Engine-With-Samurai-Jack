@@ -56,7 +56,7 @@ private:
 	float			m_minDistance = 1.0f;
 	float			m_maxDistance = 10.0f;
 	float			m_distance = 4.0f;
-	float			m_height = 2.0f;
+	float			m_height = 1.0f;
 	float			m_tracePower = 5.0f;
 
 	float			m_rotationSpeed = 0.1f;

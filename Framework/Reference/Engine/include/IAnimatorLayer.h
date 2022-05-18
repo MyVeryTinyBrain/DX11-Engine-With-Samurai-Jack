@@ -5,6 +5,7 @@
 ENGINE_BEGIN
 class SkinnedMeshRenderer;
 class NodeTransform;
+class Mesh;
 class ENGINE_API IAnimatorLayer abstract
 {
 public:

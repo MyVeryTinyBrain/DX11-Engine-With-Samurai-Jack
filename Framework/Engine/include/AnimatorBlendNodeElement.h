@@ -4,7 +4,7 @@
 #include "Ref.h"
 #include "AnimatorNode.h"
 
-ENGINE_BEGIN
+ENGINE_BEGIN 
 
 class ENGINE_API AnimatorBlendNodeElement : public Object
 {

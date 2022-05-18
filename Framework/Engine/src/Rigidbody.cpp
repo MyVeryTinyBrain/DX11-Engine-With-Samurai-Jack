@@ -13,8 +13,6 @@ void Rigidbody::Awake()
 	PxPhysics* physics = iPhysicsSystem->GetPhysics();
 	PxScene* pxScene = iPhysicsSystem->GetScene();
 
-	iPhysicsSystem->RegistPhysicsObject(this);
-
 	PxTransform pose(PxIdentity);
 	m_body = physics->createRigidDynamic(pose);
 	m_body->setMass(1.0f);
@@ -27,6 +25,30 @@ void Rigidbody::Awake()
 
 	m_interpolater = new RigidbodyInterpolate(system->time, this);
 	m_extrapolater = new RigidbodyExtrapolate(system->time, this);
+
+	iPhysicsSystem->RegistPhysicsObject(this);
+}
+
+void Rigidbody::Awake(void* arg)
+{
+	IPhysicsSystem* iPhysicsSystem = system->physics;
+	PxPhysics* physics = iPhysicsSystem->GetPhysics();
+
+	m_body = (PxRigidDynamic*)arg;
+	assert(m_body != nullptr); // PxRigidDynamic이 존재하지 않습니다.
+
+	m_body->userData = this;
+
+	m_isCCTComponent = true;
+
+	ApplyFlags();
+	AttachAll();
+	ApplyBodyTransformFromGameObject();
+
+	m_interpolater = new RigidbodyInterpolate(system->time, this);
+	m_extrapolater = new RigidbodyExtrapolate(system->time, this);
+
+	iPhysicsSystem->RegistPhysicsObject(this);
 }
 
 void Rigidbody::Start()
@@ -105,18 +127,25 @@ void Rigidbody::OnDestroyed()
 	IPhysicsSystem* iPhysicsSystem = system->physics;
 	iPhysicsSystem->UnregistPhysicsObject(this);
 
+	if (m_isCCTComponent)
+		return;
+
 	DetachAll();
 }
 
 Rigidbody::~Rigidbody()
 {
+	m_currentInterpolate = nullptr;
+	SafeDelete(m_interpolater);
+	SafeDelete(m_extrapolater);
+
+	if (m_isCCTComponent)
+		return;
+
 	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxScene* pxScene = iPhysicsSystem->GetScene();
 	pxScene->removeActor(*m_body);
 
-	m_currentInterpolate = nullptr;
-	SafeDelete(m_interpolater);
-	SafeDelete(m_extrapolater);
 	PxRelease(m_body);
 }
 
@@ -156,18 +185,18 @@ Rigidbody::Interpolate Rigidbody::GetInterpolateMode() const
 {
 	if (!m_currentInterpolate)
 	{
-		return Interpolate::None;
+		return Rigidbody::Interpolate::None;
 	}
 	else if (m_currentInterpolate == m_interpolater)
 	{
-		return Interpolate::Interpolate;
+		return Rigidbody::Interpolate::Interpolate;
 	}
 	else if (m_currentInterpolate == m_extrapolater)
 	{
-		return Interpolate::Extrapolate;
+		return Rigidbody::Interpolate::Extrapolate;
 	}
 
-	return Interpolate::None;
+	return Rigidbody::Interpolate::None;
 }
 
 void Rigidbody::SetInterpolateMode(Rigidbody::Interpolate mode)
@@ -179,11 +208,11 @@ void Rigidbody::SetInterpolateMode(Rigidbody::Interpolate mode)
 
 	switch (mode)
 	{
-		case Interpolate::Interpolate:
+		case Rigidbody::Interpolate::Interpolate:
 			m_currentInterpolate = m_interpolater;
 			m_currentInterpolate->OnEnable();
 			break;
-		case Interpolate::Extrapolate:
+		case Rigidbody::Interpolate::Extrapolate:
 			m_currentInterpolate = m_extrapolater;
 			m_currentInterpolate->OnEnable();
 			break;
@@ -254,6 +283,12 @@ void Rigidbody::AttachAll()
 		PxShape* pxShape = iCollider->GetPxShape();
 		if (pxShape)
 		{
+			if (!collider)
+				continue;
+
+			if (collider && collider->IsCCTComponent())
+				continue;
+
 			m_body->attachShape(*pxShape);
 			PxRigidBodyExt::updateMassAndInertia(*m_body, m_body->getMass());
 		}
@@ -265,9 +300,17 @@ void Rigidbody::DetachAll()
 	PxU32 nb = m_body->getNbShapes();
 	PxShape** pxShapes = new PxShape * [nb];
 	m_body->getShapes(pxShapes, sizeof(PxShape*) * nb);
-
+	
 	for (PxU32 i = 0; i < nb; ++i)
 	{
+		Collider* collider = (Collider*)pxShapes[i]->userData;
+
+		if (!collider)
+			continue;
+
+		if (collider && collider->IsCCTComponent())
+			continue;
+
 		m_body->detachShape(*pxShapes[i]);
 	}
 
@@ -330,10 +373,15 @@ void Rigidbody::ApplyGameObjectTransfromFromBody()
 
 	transform->position = FromPxVec3(pose.p);
 
-	transform->rotation = FromPxQuat(pose.q);
+	if (!m_isCCTComponent)
+	{
+		// PhsX::Controller가 Simulation 이후에 각도가 변경됩니다.
+		// 이 현상을 적용하지 않기 위함입니다.
+		transform->rotation = FromPxQuat(pose.q);
+	}
 }
 
-bool Rigidbody::IsWorking()
+bool Rigidbody::IsWorking() const
 {
 	return active;
 }

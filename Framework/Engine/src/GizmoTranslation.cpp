@@ -173,7 +173,7 @@ void GizmoTranslation::SetupResources()
 {
 	if (!m_axisMesh)
 	{
-		m_axisMesh = system->resource->builtInResources->boxMesh;
+		m_axisMesh = system->resource->builtIn->boxMesh;
 	}
 	//if (!m_rTexture)
 	//{

@@ -123,7 +123,7 @@ ResourceFactory* ResourceManagement::GetFactory() const
 	return m_resourceFactory;
 }
 
-BuiltInResources* ResourceManagement::GetBuiltInResource() const
+BuiltInResources* ResourceManagement::GetBuiltIn() const
 {
 	return m_builtInResource;
 }

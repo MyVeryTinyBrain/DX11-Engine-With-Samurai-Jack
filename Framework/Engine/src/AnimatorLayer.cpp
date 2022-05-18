@@ -7,6 +7,8 @@
 #include "Times.h"
 #include "Node.h"
 #include "Transform.h"
+#include "Mesh.h"
+#include "AnimatorBlendNodeElement.h"
 
 AnimatorLayer::AnimatorLayer() :
 	Object()
@@ -152,33 +154,30 @@ bool AnimatorLayer::AddNode(AnimatorNode* node)
 	return true;
 }
 
-bool AnimatorLayer::AddProperty(AnimatorProperty* property)
+AnimatorProperty* AnimatorLayer::AddProperty(const tstring& name, AnimatorProperty::Type type)
 {
-	if (!property)
-		return false;
-
-	auto find_it = m_properties.find(property->name);
+	auto find_it = m_properties.find(name);
 	if (find_it != m_properties.end())
-		return false;
+	{
+		assert(0); // 중복된 이름을 사용했습니다.
+		return nullptr;
+	}
+
+	AnimatorProperty* property = new AnimatorProperty(name, type);
 
 	m_properties.emplace(property->name, property);
-	return true;
+
+	return property;
 }
 
-bool AnimatorLayer::AddTransition(AnimatorTransition* transition)
+AnimatorTransition* AnimatorLayer::AddTransition(AnimatorNode* startNode, AnimatorNode* nextNode, const vector<AnimatorTransition::PropertyValue>& propertyValues, float exitTime, float duration, float offset)
 {
-	if (!transition)
-		return false;
+	AnimatorTransition* transition = new AnimatorTransition(startNode, nextNode, propertyValues, exitTime, duration, offset);
 
-	vector<AnimatorTransition*>& transitionsOfNode = m_transitions[transition->startNode];
-
-	auto find_it = std::find(transitionsOfNode.begin(), transitionsOfNode.end(), transition);
-	if (find_it != transitionsOfNode.end())
-		return false;
-
+	vector<AnimatorTransition*>& transitionsOfNode = m_transitions[startNode];
 	transitionsOfNode.push_back(transition);
 
-	return true;
+	return transition;
 }
 
 void AnimatorLayer::SetRootNodeByName(const tstring& rootNodeName)

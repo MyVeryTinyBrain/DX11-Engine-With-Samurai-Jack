@@ -22,14 +22,6 @@ AnimatorTransition::AnimatorTransition(
 	}
 }
 
-AnimatorTransition* AnimatorTransition::Create(
-	AnimatorNode* startNode, AnimatorNode* nextNode,
-	const vector<PropertyValue>& propertyValues,
-	float exitTime, float duration, float offset)
-{
-	return new AnimatorTransition(startNode, nextNode, propertyValues, exitTime, duration, offset);
-}
-
 AnimatorTransition::~AnimatorTransition()
 {
 }

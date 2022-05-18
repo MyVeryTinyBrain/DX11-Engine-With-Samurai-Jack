@@ -32,29 +32,14 @@ bool JackAnimator::FindJackMesh()
 
 void JackAnimator::SetupProperties()
 {
-	weaponTypeProperty = new AnimatorProperty(TEXT("WeaponType"), AnimatorProperty::Type::FLOAT);
-	m_layer->AddProperty(weaponTypeProperty);
-
-	moveTypeProperty = new AnimatorProperty(TEXT("MoveType"), AnimatorProperty::Type::FLOAT);
-	m_layer->AddProperty(moveTypeProperty);
-
-	moveProperty = new AnimatorProperty(TEXT("MoveBool"), AnimatorProperty::Type::FLOAT);
-	m_layer->AddProperty(moveProperty);
-
-	attackProperty = new AnimatorProperty(TEXT("Attack"), AnimatorProperty::Type::TRIGGER);
-	m_layer->AddProperty(attackProperty);
-
-	comboProperty = new AnimatorProperty(TEXT("Combo"), AnimatorProperty::Type::TRIGGER);
-	m_layer->AddProperty(comboProperty);
-
-	jumpProperty = new AnimatorProperty(TEXT("Jump"), AnimatorProperty::Type::TRIGGER);
-	m_layer->AddProperty(jumpProperty);
-
-	jumpingProperty = new AnimatorProperty(TEXT("Jumping"), AnimatorProperty::Type::TRIGGER);
-	m_layer->AddProperty(jumpingProperty);
-
-	hasGroundProperty = new AnimatorProperty(TEXT("HasGround"), AnimatorProperty::Type::BOOL);
-	m_layer->AddProperty(hasGroundProperty);
+	weaponTypeProperty = m_layer->AddProperty(TEXT("WeaponType"), AnimatorProperty::Type::FLOAT);
+	moveTypeProperty = m_layer->AddProperty(TEXT("MoveType"), AnimatorProperty::Type::FLOAT);
+	moveProperty = m_layer->AddProperty(TEXT("MoveBool"), AnimatorProperty::Type::FLOAT);
+	attackProperty = m_layer->AddProperty(TEXT("Attack"), AnimatorProperty::Type::TRIGGER);
+	comboProperty = m_layer->AddProperty(TEXT("Combo"), AnimatorProperty::Type::TRIGGER);
+	jumpProperty = m_layer->AddProperty(TEXT("Jump"), AnimatorProperty::Type::TRIGGER);
+	jumpingProperty = m_layer->AddProperty(TEXT("Jumping"), AnimatorProperty::Type::TRIGGER);
+	hasGroundProperty = m_layer->AddProperty(TEXT("HasGround"), AnimatorProperty::Type::BOOL);
 }
 
 void JackAnimator::SetupMainLayer()
@@ -161,96 +146,92 @@ void JackAnimator::SetupMainLayer()
 
 	// Setup Transitions =========================================================================================================================================================
 
-	AnimatorTransition* transitionIdleToMove = nullptr;
-	{
+	{	// Idle to Move
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(moveProperty, 0.0f, AnimatorTransition::Compare::GREATER));
-		transitionIdleToMove = AnimatorTransition::Create(blendNodeIdle, blendNodeMove, values, 0.0f, 0.2f);
+		m_layer->AddTransition(blendNodeIdle, blendNodeMove, values, 0.0f, 0.2f);
 	}
-	m_layer->AddTransition(transitionIdleToMove);
 
-	AnimatorTransition* transitionAnyToJump = nullptr;
-	{
+	{	// Any to Jump
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(jumpProperty));
-		transitionAnyToJump = AnimatorTransition::Create(nullptr, blendNodeBeginJump, values, 0.0f, 0.1f);
+		m_layer->AddTransition(nullptr, blendNodeBeginJump, values, 0.0f, 0.1f);
 	}
-	m_layer->AddTransition(transitionAnyToJump);
 
-	AnimatorTransition* transitionAnyToJumping = nullptr;
-	{
+	{	// Any to Jumping
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(jumpingProperty));
-		transitionAnyToJumping = AnimatorTransition::Create(nullptr, blendNodeJumping, values, 0.0f, 0.1f);
+		m_layer->AddTransition(nullptr, blendNodeJumping, values, 0.0f, 0.1f);
 	}
-	m_layer->AddTransition(transitionAnyToJumping);
 
-	AnimatorTransition* transitionJumpToLand = nullptr;
-	{
+	{	// Jump to Land
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(hasGroundProperty, true, AnimatorTransition::Compare::EQUAL));
-		transitionJumpToLand = AnimatorTransition::Create(blendNodeBeginJump, blendNodeLand, values, 0.0f, 0.1f);
+		m_layer->AddTransition(blendNodeBeginJump, blendNodeLand, values, 0.0f, 0.1f);
 	}
-	m_layer->AddTransition(transitionJumpToLand);
 
-	AnimatorTransition* transitionJumpingToLand = nullptr;
-	{
+	{	// Jumping to Land
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(hasGroundProperty, true, AnimatorTransition::Compare::EQUAL));
-		transitionJumpingToLand = AnimatorTransition::Create(blendNodeJumping, blendNodeLand, values, 0.0f, 0.1f);
+		m_layer->AddTransition(blendNodeJumping, blendNodeLand, values, 0.0f, 0.1f);
 	}
-	m_layer->AddTransition(transitionJumpingToLand);
 
-	AnimatorTransition* transitionExitLand = nullptr;
-	{
+	{	// Exit Land
 		vector<AnimatorTransition::PropertyValue> values;
-		transitionExitLand = AnimatorTransition::Create(blendNodeLand, nullptr, values, 0.9f, 0.1f);
+		m_layer->AddTransition(blendNodeLand, nullptr, values, 0.9f, 0.1f);
 	}
-	m_layer->AddTransition(transitionExitLand);
 
-	AnimatorTransition* transitionMoveToIdle = nullptr;
-	{
+	{	// Land to Move
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue(moveProperty, 0.0f, AnimatorTransition::Compare::GREATER));
+		m_layer->AddTransition(blendNodeLand, blendNodeMove, values, 0.0f, 0.2f);
+	}
+
+	{	// Move to Idle
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(moveProperty, 0.0f, AnimatorTransition::Compare::LESS_EQAUL));
-		transitionMoveToIdle = AnimatorTransition::Create(blendNodeMove, blendNodeIdle, values, 0.0f, 0.1f);
+		m_layer->AddTransition(blendNodeMove, blendNodeIdle, values, 0.0f, 0.1f);
 	}
-	m_layer->AddTransition(transitionMoveToIdle);
 
-	AnimatorTransition* transitionAttackX = nullptr;
-	{
+	{	// Any to AttackX
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(attackProperty));
-		transitionAttackX = AnimatorTransition::Create(nullptr, blendNodeAtkX, values, 0.0f, 0.1f);
+		m_layer->AddTransition(nullptr, blendNodeAtkX, values, 0.0f, 0.1f);
 	}
-	m_layer->AddTransition(transitionAttackX);
 
-	AnimatorTransition* transitionAttackXX = nullptr;
-	AnimatorTransition* transitionAttackXXX = nullptr;
-	AnimatorTransition* transitionAttackXXXX = nullptr;
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(comboProperty));
-		transitionAttackXX = AnimatorTransition::Create(blendNodeAtkX, blendNodeAtkXX, values, 0.0f, 0.1f, 0.1f);
-		transitionAttackXXX = AnimatorTransition::Create(blendNodeAtkXX, blendNodeAtkXXX, values, 0.0f, 0.1f);
-		transitionAttackXXXX = AnimatorTransition::Create(blendNodeAtkXXX, blendNodeAtkXXXX, values, 0.0f, 0.1f, 0.05f);
+		// AttackX to AttackXX
+		m_layer->AddTransition(blendNodeAtkX, blendNodeAtkXX, values, 0.0f, 0.1f, 0.1f);
+		// AttackXX to AttackXXX
+		m_layer->AddTransition(blendNodeAtkXX, blendNodeAtkXXX, values, 0.0f, 0.1f);
+		// AttackXXX to AttackXXXX
+		m_layer->AddTransition(blendNodeAtkXXX, blendNodeAtkXXXX, values, 0.0f, 0.1f, 0.05f);
 	}
-	m_layer->AddTransition(transitionAttackXX);
-	m_layer->AddTransition(transitionAttackXXX);
-	m_layer->AddTransition(transitionAttackXXXX);
 
-	AnimatorTransition* transitionExitAttackX = nullptr;
-	AnimatorTransition* transitionExitAttackXX = nullptr;
-	AnimatorTransition* transitionExitAttackXXX = nullptr;
-	AnimatorTransition* transitionExitAttackXXXX = nullptr;
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		transitionExitAttackX = AnimatorTransition::Create(blendNodeAtkX, nullptr, values, 0.5f, 0.2f);
-		transitionExitAttackXX = AnimatorTransition::Create(blendNodeAtkXX, nullptr, values, 0.6f, 0.1f);
-		transitionExitAttackXXX = AnimatorTransition::Create(blendNodeAtkXXX, nullptr, values, 0.9f, 0.1f);
-		transitionExitAttackXXXX = AnimatorTransition::Create(blendNodeAtkXXXX, nullptr, values, 0.9f, 0.05f, 0.05f);
+		values.push_back(AnimatorTransition::PropertyValue(moveProperty, 0.0f, AnimatorTransition::Compare::GREATER));
+		// AttackX to Move
+		m_layer->AddTransition(blendNodeAtkX, nullptr, values, 0.4f, 0.1f);
+		// AttackXX to Move
+		m_layer->AddTransition(blendNodeAtkXX, nullptr, values, 0.5f, 0.1f);
+		// AttackXXX to Move
+		m_layer->AddTransition(blendNodeAtkXXX, nullptr, values, 0.45f, 0.1f);
+		// AttackXXXX to Move
+		m_layer->AddTransition(blendNodeAtkXXXX, nullptr, values, 0.65f, 0.1f);
 	}
-	m_layer->AddTransition(transitionExitAttackX);
-	m_layer->AddTransition(transitionExitAttackXX);
-	m_layer->AddTransition(transitionExitAttackXXX);
-	m_layer->AddTransition(transitionExitAttackXXXX);
+
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		// Exit AttackX
+		m_layer->AddTransition(blendNodeAtkX, nullptr, values, 0.5f, 0.2f);
+		// Exit AttackXX
+		m_layer->AddTransition(blendNodeAtkXX, nullptr, values, 0.6f, 0.1f);
+		// Exit AttackXXX
+		m_layer->AddTransition(blendNodeAtkXXX, nullptr, values, 0.9f, 0.1f);
+		// Exit AttackXXXX
+		m_layer->AddTransition(blendNodeAtkXXXX, nullptr, values, 0.9f, 0.05f, 0.05f);
+	}
 }

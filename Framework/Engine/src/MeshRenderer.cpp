@@ -138,12 +138,12 @@ void MeshRenderer::SetupMaterialsToDefault(const ResourceRef<Mesh>& mesh)
 
 		if (!texture)
 		{
-			SetMaterialByIndex(i, system->resource->builtInResources->standardMaterial);
+			SetMaterialByIndex(i, system->resource->builtIn->standardMaterial);
 		}
 		else
 		{
 			tstring materialPath = texturePath + tstring(TEXT(".material"));
-			ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(system->resource->builtInResources->standardShader, materialPath);
+			ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(system->resource->builtIn->standardShader, materialPath);
 			material->SetTexture("_DiffuseTextrue", texture);
 			material->SetTexture("_NormalMapTextrue", normal);
 			SetMaterialByIndex(i, material);

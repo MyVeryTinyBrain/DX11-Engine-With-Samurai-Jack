@@ -694,7 +694,7 @@ ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* m
 						case ShaderVariableType::Texture2DArray:
 						{
 							string texturePath = variable["data"][j].asString();
-							texture = ParseTexture(management->builtInResources, texturePath);
+							texture = ParseTexture(management->builtIn, texturePath);
 							if (!texture)
 							{
 								texture = management->Find(string_to_tstring(texturePath));
@@ -776,13 +776,13 @@ void Material::SetupShaderVariables()
 			//{
 			//	if (!variable->isArray)
 			//	{
-			//		variable->SetTexture(system->resourceManagement->builtInResources->whiteTexture);
+			//		variable->SetTexture(system->resourceManagement->builtIn->whiteTexture);
 			//	}
 			//	else
 			//	{
 			//		ResourceRef<Texture>* arr = new ResourceRef<Texture>[variable->elementCount]{};
 			//		for (uint i = 0; i < 32 && i < variable->elementCount; ++i)
-			//			arr[i] = system->resourceManagement->builtInResources->whiteTexture;
+			//			arr[i] = system->resourceManagement->builtIn->whiteTexture;
 			//		variable->SetTextures(arr, variable->elementCount);
 			//		SafeDeleteArray(arr);
 			//	}
@@ -845,7 +845,7 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 				case ShaderVariableInfo::Annotation::Type::Text:
 					if (isTexture2D)
 					{
-						variable->SetTexture(ParseTexture(system->resource->builtInResources, annotation.text));
+						variable->SetTexture(ParseTexture(system->resource->builtIn, annotation.text));
 					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Vector:

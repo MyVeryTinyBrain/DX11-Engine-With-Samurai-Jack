@@ -16,8 +16,12 @@ PxQueryHitType::Enum PhysicsQueryFilterCallback::preFilter(const PxFilterData& f
 	Collider* collider = (Collider*)shape->userData;
 	Rigidbody* rigidbody = (Rigidbody*)actor->userData;
 
-	bool allowTrigger = uint(m_queryType) & uint(PhysicsQueryTypes::Trigger);
-	bool allowCollider = uint(m_queryType) & uint(PhysicsQueryTypes::Collider);
+	assert(collider && rigidbody); // 콜라이더 혹은 리지드바디가 없습니다.
+	if (!collider || !rigidbody)
+		return PxQueryHitType::eNONE;
+
+	bool allowTrigger = uint(m_queryType) & uint(PhysicsQueryType::Trigger);
+	bool allowCollider = uint(m_queryType) & uint(PhysicsQueryType::Collider);
 	bool isValidHit = (1 << collider->GetLayerIndex()) & m_layerBitmask;
 
 	// 이 강체가 무시할 강체라면 종료합니다.

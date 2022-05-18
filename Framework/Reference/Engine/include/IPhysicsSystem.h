@@ -21,6 +21,8 @@ public:
 
 	virtual PxScene* GetScene() const = 0;
 
+	virtual PxControllerManager* GetControllerManager() const = 0;
+
 	virtual void RegistPhysicsObject(IPhysicsObject* physicsObject) = 0;
 
 	virtual void UnregistPhysicsObject(IPhysicsObject* physicsObject) = 0;

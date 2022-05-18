@@ -56,21 +56,21 @@ void FreeCamera::Update()
             {
                 BoxCollider* boxCollider = go->AddComponent<BoxCollider>();
                 boxCollider->restitution = 0.1f;
-                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->boxMesh;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtIn->boxMesh;
             }
             break;
             case 1:
             {
                 CapsuleCollider* capsuleCollider = go->AddComponent<CapsuleCollider>();
                 capsuleCollider->restitution = 0.1f;
-                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->capsuleMesh;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtIn->capsuleMesh;
             }
             break;
             case 2:
             {
                 SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
                 sphereCollider->restitution = 0.1f;
-                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtInResources->sphereMesh;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtIn->sphereMesh;
             }
             break;
             case 3:

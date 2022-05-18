@@ -23,9 +23,8 @@ PxFilterFlags PhysicsFilterShaderCallback::pairFound(
 	Collider* c0 = (Collider*)s0->userData;
 	Collider* c1 = (Collider*)s1->userData;
 
-	// 콜라이더가 없습니다.
-	assert(c0 != nullptr);
-	assert(c1 != nullptr);
+	assert(c0 != nullptr); // 콜라이더가 없습니다.
+	assert(c1 != nullptr); // 콜라이더가 없습니다.
 	
 	// 각 콜라이더의 레이어 비트입니다.
 	PxU32 layer0 = filterData0.word0;

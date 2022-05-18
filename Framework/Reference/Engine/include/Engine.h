@@ -55,6 +55,7 @@
 #include "CapsuleCollider.h"
 #include "SphereCollider.h"
 #include "ConvexCollider.h"
+#include "CharacterController.h"
 
 #include "Light.h"
 #include "DirectionalLight.h"

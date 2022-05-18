@@ -4,13 +4,16 @@ ENGINE_BEGIN
 
 class Collider;
 
-using PhysicsQueryType = uint;
-enum class PhysicsQueryTypes : uint
+using PhysicsQueryTypes = uint;
+struct PhysicsQueryType
 {
-	None = 0,
-	Collider = 1 << 0,
-	Trigger = 1 << 1,
-	All = Collider | Trigger,
+	enum : uint
+	{
+		None = 0,
+		Collider = 1 << 0,
+		Trigger = 1 << 1,
+		All = Collider | Trigger,
+	};
 };
 
 struct PhysicsHit

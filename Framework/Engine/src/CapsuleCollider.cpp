@@ -2,10 +2,8 @@
 #include "CapsuleCollider.h"
 #include "Transform.h"
 
-#define CAPSULE_INIT_SLICE		16
-#define CAPSULE_INIT_STEP		16
-#define CAPSULE_SLICE			(CAPSULE_INIT_SLICE % 2 == 0 ? CAPSULE_INIT_SLICE + 1 : CAPSULE_INIT_SLICE)
-#define CAPSULE_STEP			(CAPSULE_INIT_STEP * 2)
+#define CAPSULE_NUM_V		8
+#define CAPSULE_NUM_CAP_H	8
 
 // Debug Render
 #include "System.h"
@@ -63,6 +61,18 @@ void CapsuleCollider::Awake()
 	}
 }
 
+void CapsuleCollider::Awake(void* arg)
+{
+	m_defaultRotation = Q::Euler(0, 0, 90);
+
+	Collider::Awake(arg);
+
+	if (debugRender)
+	{
+		CreateDebugShape();
+	}
+}
+
 void CapsuleCollider::DebugRender()
 {
 	if (!isValid)
@@ -83,30 +93,33 @@ void CapsuleCollider::DebugRender()
 	if (passCount == 0)
 		return;
 
-	RenderGroup renderGroup;
-	int renderGroupOrder;
-	bool instancingFlag;
+	for (uint j = 0; j < passCount; ++j)
+	{
+		RenderGroup renderGroup;
+		int renderGroupOrder;
+		bool instancingFlag;
 
-	if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroup)))
-		return;
-	if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroupOrder)))
-		return;
-	if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(m_dbgMaterial->techniqueIndex, instancingFlag)))
-		return;
+		if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
+			return;
+		if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
+			return;
+		if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
+			return;
 
-	RenderRequest input;
-	input.essential.worldMatrix = localToWorldMatrix;
-	input.essential.renderGroup = renderGroup;
-	input.essential.renderGroupOrder = renderGroupOrder;
-	input.essential.layerIndex = 0;
-	input.essential.material = m_dbgMaterial;
-	input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
-	input.essential.passIndex = 0;
-	input.essential.mesh = m_dbgMesh;
-	input.essential.subMeshIndex = 0;
-	input.essential.instance = instancingFlag;
+		RenderRequest input;
+		input.essential.worldMatrix = localToWorldMatrix;
+		input.essential.renderGroup = renderGroup;
+		input.essential.renderGroupOrder = renderGroupOrder;
+		input.essential.layerIndex = 0;
+		input.essential.material = m_dbgMaterial;
+		input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
+		input.essential.passIndex = j;
+		input.essential.mesh = m_dbgMesh;
+		input.essential.subMeshIndex = 0;
+		input.essential.instance = instancingFlag;
 
-	system->graphic->renderQueue->Add(input);
+		system->graphic->renderQueue->Add(input);
+	}
 }
 
 bool CapsuleCollider::CullTest(ICamera* camera) const
@@ -165,7 +178,7 @@ void CapsuleCollider::CreateDebugShape()
 	V3 absScale = V3::Abs(transform->lossyScale);
 	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
 
-	VI* vi = VIUtility::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_INIT_SLICE, CAPSULE_INIT_STEP);
+	VI* vi = VIUtility::CreateCapsule(m_radius * biggestElementOfXZ, m_halfHeight * absScale.y, CAPSULE_NUM_V, CAPSULE_NUM_CAP_H);
 	VIBuffer* viBuffer = nullptr;
 	VIBuffer::CreateVIBufferNocopy(
 		system->graphic->device,
@@ -175,7 +188,7 @@ void CapsuleCollider::CreateDebugShape()
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		&viBuffer);
 	m_dbgMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
-	m_dbgMaterial = system->resource->builtInResources->wireframeMaterial;
+	m_dbgMaterial = system->resource->builtIn->wireframeMaterial;
 }
 
 void CapsuleCollider::ResetDebugShape()
@@ -187,63 +200,76 @@ void CapsuleCollider::ResetDebugShape()
 			return;
 
 		VI* vi = viBuffer->GetVI();
-		if (!vi)
+		if (!viBuffer)
 			return;
 
 		Vertex* vertices = vi->GetVertices();
+		if (!vertices)
+			return;
 
+		uint numV = CAPSULE_NUM_V;
+		uint numCapH = CAPSULE_NUM_CAP_H;
+
+		if (numV < 3)
+			numV = 3;
+
+		uint numH = numCapH * 2;
+
+		if (numH < 2)
+			numH = 2;
+
+		uint numSpin = numV + 1;
+		uint numVertices = numSpin * numH + numSpin * 2;
+		uint numTriangles = numSpin * (numH + 1) * 2;
+
+		// Setup vertices =====================================================================
+
+		SphericalYaw spherical;
+		spherical.Radius = radius;
+
+		uint vertexIndex = 0;
+		for (uint i = 1; i <= numH; ++i)
 		{
-			V3 absScale = V3::Abs(transform->lossyScale);
-			float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
-			float capsuleHalfHeight = m_halfHeight * absScale.y;
-			float capsuleRadius = m_radius * biggestElementOfXZ;
+			float heightPercent = float(i) / float(numH);
+			spherical.PhiAngle = 180.0f * heightPercent;
 
-			SphericalYaw spherical;
-			spherical.Radius = capsuleRadius * biggestElementOfXZ;
-
-			uint vIndex = 0;
-			for (uint i = 1; i <= CAPSULE_STEP; ++i)
+			for (uint j = 0; j < numSpin; ++j)
 			{
-				uint k = i;
-				if (i > CAPSULE_STEP / 2)
-					k -= 1;
+				float spinPercent = (float(j) / float(numV));
+				spherical.ThetaAngle = 360.0f * spinPercent;
+				V3 cartesian = spherical.cartesian;
+				float direction = (i <= numH / 2) ? (+1.0f) : (-1.0f);
 
-				float heightPercent = float(k) / float(CAPSULE_STEP);
-				spherical.PhiAngle = 180.0f * heightPercent;
+				vertices[vertexIndex].position = spherical.cartesian + (V3::up() * halfHeight * direction);
 
-				for (uint j = 0; j < CAPSULE_SLICE; ++j)
-				{
-					float spinPercent = (float(j) / float(CAPSULE_SLICE - 1));
-					spherical.ThetaAngle = 360.0f * spinPercent;
+				float normalizedHeight = (vertices[vertexIndex].position.y + halfHeight + radius) / (2.0f * (halfHeight + radius));
 
-					V3 cartesian = spherical.cartesian;
+				vertices[vertexIndex].uvw = V2(spinPercent, 1.0f - normalizedHeight);
+				vertices[vertexIndex].normal = cartesian.normalized;
 
-					vertices[vIndex].position = cartesian;
-
-					if (i <= CAPSULE_STEP / 2)
-						vertices[vIndex].position += V3::up() * capsuleHalfHeight;
-					else
-						vertices[vIndex].position += V3::down() * capsuleHalfHeight;
-
-					float v = 1 - (vertices[vIndex].position.y + capsuleHalfHeight + capsuleRadius) / (2.0f * (capsuleHalfHeight + capsuleRadius));
-
-					vertices[vIndex].uvw = V2(spinPercent, v);
-					vertices[vIndex].normal = cartesian.normalized;
-					++vIndex;
-				}
+				++vertexIndex;
 			}
-
-			uint topVertexIndex = vIndex;
-			uint bottomVertexIndex = vIndex + 1;
-
-			vertices[topVertexIndex].position = V3::up() * (capsuleRadius + capsuleHalfHeight);
-			vertices[topVertexIndex].uvw = V2(0, 0);
-			vertices[topVertexIndex].normal = V3(0, 1, 0);
-
-			vertices[bottomVertexIndex].position = V3::down() * (capsuleRadius + capsuleHalfHeight);
-			vertices[bottomVertexIndex].uvw = V2(0, 1);
-			vertices[bottomVertexIndex].normal = V3(0, -1, 0);
 		}
+
+		uint topVertexBeginIndex = vertexIndex;
+		uint bottomVertexBeginIndex = vertexIndex + numSpin;
+
+		for (uint i = 0; i < numSpin; ++i)
+		{
+			float spinPercent = (float(i) / float(numV));
+
+			vertices[topVertexBeginIndex + i].position = V3::up() * (radius + halfHeight);
+			vertices[topVertexBeginIndex + i].uvw = V2(spinPercent, 0.0f);
+			vertices[topVertexBeginIndex + i].normal = V3::up();
+
+			vertices[bottomVertexBeginIndex + i].position = V3::down() * (radius + halfHeight);
+			vertices[bottomVertexBeginIndex + i].uvw = V2(spinPercent, 1.0f);
+			vertices[bottomVertexBeginIndex + i].normal = V3::down();
+
+			vertexIndex += 2;
+		}
+
+		// =====================================================================================
 
 		viBuffer->UpdateVertexBuffer();
 	}

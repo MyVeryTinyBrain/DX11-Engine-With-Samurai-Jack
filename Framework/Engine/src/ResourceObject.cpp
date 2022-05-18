@@ -23,8 +23,7 @@ ResourceObject::ResourceObject(ResourceManagement* management, bool managed, con
 		IResourceManagement* iManagement = management;
 		bool ResourceNotExist = iManagement->AddManagedResource(this);
 
-		// 이미 같은 경로를 가지는 리소스가 존재합니다.
-		assert(ResourceNotExist);
+		assert(ResourceNotExist); // 이미 같은 경로를 가지는 리소스가 존재합니다.
 	}
 }
 

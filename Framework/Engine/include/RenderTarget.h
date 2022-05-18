@@ -22,21 +22,16 @@ public:
 public:
 
 	bool Resize(Com<ID3D11Device> device, unsigned int width, unsigned int height);
-
 	void Clear(Com<ID3D11DeviceContext> deviceContext, const Color& clearColor);
 
 public:
 
 	Com<ID3D11Resource> GetTexture() const override;
-
 	Com<ID3D11ShaderResourceView> GetSRV() const override;
-
 	Com<ID3D11RenderTargetView> GetRTV() const;
 
 	unsigned int GetWidth() const;
-
 	unsigned int GetHeight() const;
-
 	inline float GetAspect() const { return float(GetWidth()) / float(GetHeight()); }
 
 	_declspec(property(get = GetTexture)) Com<ID3D11Resource> texture;

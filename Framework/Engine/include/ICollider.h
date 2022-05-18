@@ -15,6 +15,7 @@ public:
 public:
 
 	virtual PxShape* GetPxShape() const = 0;
+
 };
 
 ENGINE_END

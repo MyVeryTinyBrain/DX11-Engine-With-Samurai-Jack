@@ -369,7 +369,7 @@ VI* VIUtility::CreateCapsule(float radius, float halfHeight, uint numV, uint num
 	uint triangleIndex = 0;
 	for (uint i = 0; i <= numH - 2; ++i)
 	{
-		for (uint j = 0; j < numSpin; ++j)
+		for (uint j = 0; j < numSpin - 1; ++j)
 		{
 			uint rect[4];
 			uint vertex = j + i * numSpin;
@@ -390,7 +390,7 @@ VI* VIUtility::CreateCapsule(float radius, float halfHeight, uint numV, uint num
 		}
 	}
 
-	for (uint i = 0; i < numSpin; ++i)
+	for (uint i = 0; i < numSpin - 1; ++i)
 	{
 		uint topVertex = i;
 		uint bottomVerterx = numSpin * (numH - 1) + i;

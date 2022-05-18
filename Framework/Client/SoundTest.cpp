@@ -12,7 +12,7 @@ void SoundTest::Awake()
 	m_audioSource->maxDistance = 0.0f;
 
 	MeshRenderer* meshRenderer = gameObject->AddComponent<MeshRenderer>();
-	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 }
 
 void SoundTest::Update()

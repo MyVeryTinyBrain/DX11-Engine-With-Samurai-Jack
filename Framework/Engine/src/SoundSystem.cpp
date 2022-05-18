@@ -86,6 +86,8 @@ Com<SoundChannel> SoundSystem::Play(Com<Sound> sound, const SoundPlayDesc& desc)
 		return nullptr;
 	if (FMOD_OK != FMOD_Channel_SetPitch(fmodchannel, Max(desc.Pitch, 0.0f)))
 		return nullptr;
+	if (FMOD_OK != FMOD_Channel_SetPriority(fmodchannel, desc.Priority))
+		return nullptr;
 
 	FMOD_CHANNELGROUP* channelGroup = nullptr;
 	if (!desc.Group)	{ FMOD_System_GetMasterChannelGroup(m_fmod, &channelGroup); }
@@ -184,6 +186,8 @@ bool SoundSystem::CreateFMODSystem(FMOD_SYSTEM** out_fmodsystem, int maxChannels
 
 	if (FMOD_OK != FMOD_System_Create(out_fmodsystem, FMOD_VERSION))
 		return false;
+
+	// FMOD_INIT_3D_RIGHTHANDED: 오른손 좌표계를 사용합니다. 사용하지 않는다면 왼손 좌표계를 사용합니다.
 
 	if (FMOD_OK != FMOD_System_Init(*out_fmodsystem, maxChannels, FMOD_INIT_NORMAL | FMOD_INIT_PROFILE_ENABLE, NULL))
 		return false;

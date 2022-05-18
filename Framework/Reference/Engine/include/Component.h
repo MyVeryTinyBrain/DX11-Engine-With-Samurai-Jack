@@ -17,6 +17,7 @@ protected:
 protected:
 
 	virtual inline void Awake() override {}
+	virtual inline void Awake(void* arg) override {}
 	virtual inline void Start() override {}
 	virtual inline void FixedUpdate() override {}
 	virtual inline void PostFixedUpdate() override {}
@@ -73,7 +74,7 @@ protected:
 
 private:
 
-	virtual void Initialize(GameObject* gameObject) final override;
+	virtual void Initialize(GameObject* gameObject, void* arg = nullptr) final override;
 
 	virtual void CallStartOnce() final override;
 

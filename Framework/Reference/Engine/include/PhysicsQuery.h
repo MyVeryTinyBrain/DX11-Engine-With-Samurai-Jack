@@ -19,10 +19,10 @@ class ENGINE_API PhysicsQuery
 	{
 		LAYER_ZERO = 0x00000000,
 		LAYER_ALL = 0xFFFFFFFF,
-		TYPE_ZERO = (uint)PhysicsQueryTypes::None,
-		TYPE_COLLIDER = (uint)PhysicsQueryTypes::Collider,
-		TYPE_TRIGGER = (uint)PhysicsQueryTypes::Trigger,
-		TYPE_ALL = (uint)PhysicsQueryTypes::All,
+		TYPE_ZERO = (uint)PhysicsQueryType::None,
+		TYPE_COLLIDER = (uint)PhysicsQueryType::Collider,
+		TYPE_TRIGGER = (uint)PhysicsQueryType::Trigger,
+		TYPE_ALL = (uint)PhysicsQueryType::All,
 		HIT_MAX = 128,
 	};
 
@@ -34,53 +34,53 @@ public:
 
 public:
 
-	bool RaycastTest(const PhysicsRay& ray, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	bool Raycast(PhysicsHit& hit, const PhysicsRay& ray, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<PhysicsHit> RaycastAll(const PhysicsRay& ray, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool RaycastTest(const PhysicsRay& ray, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool Raycast(PhysicsHit& hit, const PhysicsRay& ray, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<PhysicsHit> RaycastAll(const PhysicsRay& ray, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool OverlapGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	Collider* OverlapGeometry(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<Collider*> OverlapGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool OverlapGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	Collider* OverlapGeometry(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<Collider*> OverlapGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool OverlapTest(Collider* c, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL) const;
-	Collider* Overlap(Collider* c, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL) const;
-	vector<Collider*> OverlapAll(Collider* c, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL) const;
+	bool OverlapTest(Collider* c, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL) const;
+	Collider* Overlap(Collider* c, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL) const;
+	vector<Collider*> OverlapAll(Collider* c, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL) const;
 
-	bool OverlapPointTest(const V3& p, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	Collider* OverlapPoint(const V3& p, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<Collider*> OverlapPointAll(const V3& p, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool OverlapPointTest(const V3& p, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	Collider* OverlapPoint(const V3& p, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<Collider*> OverlapPointAll(const V3& p, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool OverlapSphereTest(const V3& p, float r, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	Collider* OverlapSphere(const V3& p, float r, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<Collider*> OverlapSphereAll(const V3& p, float r, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool OverlapSphereTest(const V3& p, float r, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	Collider* OverlapSphere(const V3& p, float r, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<Collider*> OverlapSphereAll(const V3& p, float r, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool OverlapBoxTest(const V3& p, const Q& r, const V3& ex, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	Collider* OverlapBox(const V3& p, const Q& r, const V3& ex, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<Collider*> OverlapBoxAll(const V3& p, const Q& r, const V3& ex, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool OverlapBoxTest(const V3& p, const Q& r, const V3& ex, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	Collider* OverlapBox(const V3& p, const Q& r, const V3& ex, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<Collider*> OverlapBoxAll(const V3& p, const Q& r, const V3& ex, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool OverlapCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	Collider* OverlapCapsule(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<Collider*> OverlapCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool OverlapCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	Collider* OverlapCapsule(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<Collider*> OverlapCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool SweepGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	bool SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<PhysicsHit> SweepGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<PhysicsHit> SweepGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool SweepTest(Collider* c, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	bool Sweep(PhysicsHit& hit, Collider* c, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<PhysicsHit> SweepAll(Collider* c, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepTest(Collider* c, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool Sweep(PhysicsHit& hit, Collider* c, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<PhysicsHit> SweepAll(Collider* c, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool SweepSphereTest(const V3& p, float r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	bool SweepSphere(PhysicsHit& hit, const V3& p, float r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<PhysicsHit> SweepSphereAll(const V3& p, float r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepSphereTest(const V3& p, float r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepSphere(PhysicsHit& hit, const V3& p, float r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<PhysicsHit> SweepSphereAll(const V3& p, float r, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool SweepBoxTest(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	bool SweepBox(PhysicsHit& hit, const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<PhysicsHit> SweepBoxAll(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepBoxTest(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepBox(PhysicsHit& hit, const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<PhysicsHit> SweepBoxAll(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
-	bool SweepCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	bool SweepCapsule(PhysicsHit& hit, const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
-	vector<PhysicsHit> SweepCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryType type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	bool SweepCapsule(PhysicsHit& hit, const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
+	vector<PhysicsHit> SweepCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask = LAYER_ALL, PhysicsQueryTypes type = TYPE_ALL, Rigidbody* ignoreRigidbody = NULL) const;
 
 private:
 

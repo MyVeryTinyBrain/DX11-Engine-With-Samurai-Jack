@@ -60,7 +60,7 @@ public:
 public:
 
 	template <class T>
-	T* AddComponent();
+	T* AddComponent(void* arg = nullptr);
 
 	template <class T>
 	bool RemoveComponent();

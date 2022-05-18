@@ -28,14 +28,14 @@ public:
 
 	inline Collider* GetBaseCollider() const { return m_baseCollider; }
 
-	inline Collider* GetCollider() const { return m_collider; }
+	inline Collider* GetHitCollider() const { return m_hitCollider; }
 
 	inline uint GetContactCount() const { return m_contactCount; }
 
 	PhysicsContact GetContact(uint index) const;
 
 	_declspec(property(get = GetBaseCollider)) Collider* baseCollider;
-	_declspec(property(get = GetCollider)) Collider* collider;
+	_declspec(property(get = GetHitCollider)) Collider* hitCollider;
 	_declspec(property(get = GetContactCount)) uint contactCount;
 
 
@@ -53,7 +53,7 @@ private:
 
 	// Base Collider 에 상대적인 콜라이더입니다.
 	// 예를 들어 충돌 시작에서는 이 콜라이더가 Base Collider에 충돌한 콜라이더가 됩니다. 
-	Collider*				m_collider;
+	Collider*				m_hitCollider;
 };
 
 ENGINE_END

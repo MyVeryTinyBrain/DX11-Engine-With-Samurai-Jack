@@ -63,6 +63,7 @@ struct SSRDesc
 	float		Thickness;			// [0~inf]
 	float		Bias;				// [0~inf]
 	float		BlurPixelDistance;	// [0~inf]
+	float		ResolutionScale;	// [0~1]
 };
 
 struct DOFDesc

@@ -80,15 +80,16 @@ std::vector<GameObject*> Component::FindGameObjectsWithTag(const tstring& tag) c
 	return gameObject->regionScene->FindGameObjectsWithTag(tag);
 }
 
-void Component::Initialize(GameObject* gameObject)
+void Component::Initialize(GameObject* gameObject, void* arg)
 {
 	m_gameObject = gameObject;
-
+	
 	// 컴포넌트 매니저에 이 이 컴포넌트를 추가합니다.
 	IScene* iScene = gameObject->regionScene;
 	iScene->RegistComponent(this);
 
-	Awake();
+	if (!arg)	{ Awake(); }
+	else		{ Awake(arg); }
 	OnEnable();
 }
 

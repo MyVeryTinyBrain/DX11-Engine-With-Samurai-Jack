@@ -4,7 +4,7 @@
 #include "Transform.h"
 
 template<class T>
-inline T * GameObject::AddComponent()
+inline T * GameObject::AddComponent(void* arg)
 {
 	if (IsShouldDestroy()) 
 	{
@@ -13,7 +13,7 @@ inline T * GameObject::AddComponent()
 
 	T* component = new T();
 	IComponent* iCom = component;
-	iCom->Initialize(this);
+	iCom->Initialize(this, arg);
 	m_components.push_back(component);
 	return component;
 }

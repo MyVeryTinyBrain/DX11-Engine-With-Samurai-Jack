@@ -34,6 +34,38 @@ void Collider::Awake()
 	ApplyLayer();
 }
 
+void Collider::Awake(void* arg)
+{
+	IPhysicsSystem* iPhysicsSystem = system->physics;
+
+	iPhysicsSystem->RegistPhysicsObject(this);
+
+	m_shape = (PxShape*)arg;
+	assert(m_shape != nullptr); // PxShape가 존재하지 않습니다.
+
+	m_isCCTComponent = true;
+
+	m_shape->userData = this;
+
+	m_shape->getMaterials(&m_material, 1, 0);
+
+	m_material->setFrictionCombineMode(PxCombineMode::eMIN);
+	m_material->setRestitutionCombineMode(PxCombineMode::eMIN);
+	m_material->setFlag(PxMaterialFlag::eDISABLE_FRICTION, false);
+	m_material->setFlag(PxMaterialFlag::eDISABLE_STRONG_FRICTION, false);
+	m_material->setFlag(PxMaterialFlag::eIMPROVED_PATCH_FRICTION, true);
+
+	m_beforeLocalPosition = V3::zero();
+	m_beforeLocalRotation = Q::identity();
+	m_beforeWorldScale = V3::one();
+
+	FindRigidbodyAndAttach();
+	ApplyFlags();
+	ApplyPose(true);
+	ApplyScale(true);
+	ApplyLayer();
+}
+
 void Collider::BeforePhysicsSimulation()
 {
 	ApplyPose(false);
@@ -67,6 +99,9 @@ void Collider::OnDestroyed()
 	IPhysicsSystem* iPhysicsSystem = system->physics;
 	iPhysicsSystem->UnregistPhysicsObject(this);
 
+	if (m_isCCTComponent)
+		return;
+
 	PxActor* actor = m_shape->getActor();
 	PxRigidBody* rigidBody = static_cast<PxRigidBody*>(actor);
 	if (rigidBody)
@@ -77,6 +112,9 @@ void Collider::OnDestroyed()
 
 Collider::~Collider()
 {
+	if (m_isCCTComponent)
+		return;
+
 	PxRelease(m_material);
 	PxRelease(m_shape);
 }
@@ -104,16 +142,14 @@ void Collider::SetIngoreLayerBits(uint32 value)
 
 bool Collider::IsIgnoreLayerIndex(uint8 layerIndex) const
 {
-	// 레이어 인덱스가 범위를 초과했습니다.
-	assert(layerIndex < PhysicsLayerManager::PhysicsLayerMax);
+	assert(layerIndex < PhysicsLayerManager::PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
 
 	return m_ignoreLayerBits & (1 << layerIndex);
 }
 
 void Collider::SetIgnoreLayerIndex(uint layerIndex, bool ignore)
 {
-	// 레이어 인덱스가 범위를 초과했습니다.
-	assert(layerIndex < PhysicsLayerManager::PhysicsLayerMax);
+	assert(layerIndex < PhysicsLayerManager::PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
 
 	if (ignore)
 		m_ignoreLayerBits |= (1 << layerIndex);
@@ -124,8 +160,7 @@ void Collider::SetIgnoreLayerIndex(uint layerIndex, bool ignore)
 
 void Collider::SetLayerIndex(uint8 layerIndex)
 {
-	// 레이어 인덱스가 범위를 초과했습니다.
-	assert(layerIndex < PhysicsLayerManager::PhysicsLayerMax);
+	assert(layerIndex < PhysicsLayerManager::PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
 
 	m_layerIndex = layerIndex;
 	ApplyLayer();
@@ -313,7 +348,7 @@ void Collider::ApplyLayer()
 	//m_shape->setQueryFilterData(queryFilterData);
 }
 
-bool Collider::IsWorking()
+bool Collider::IsWorking() const
 {
 	return active;
 }

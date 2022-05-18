@@ -26,6 +26,11 @@ public:
 
 public:
 
+	/// <summary>
+	/// 애니메이터 프로퍼티의 생성자입니다.
+	/// </summary>
+	/// <param name="name">프로퍼티 탐색에 사용될 이름입니다.</param>
+	/// <param name="type">프로퍼티가 설정될 변수의 타입입니다.</param>
 	AnimatorProperty(const tstring& name, AnimatorProperty::Type type);
 
 	virtual ~AnimatorProperty();

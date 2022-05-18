@@ -78,6 +78,8 @@ bool PhysicsSystem::Initialize(System* system, unsigned int subStepLimit)
 	if (!SetupScene())
 		return false;
 
+	m_controllerManager = PxCreateControllerManager(*m_scene);
+
 	m_physicsQuery = new PhysicsQuery(m_scene);
 	
 	return true;
@@ -92,6 +94,8 @@ bool PhysicsSystem::Release()
 	SafeDelete(m_physicsFilterShaderCallback);
 
 	SafeDelete(m_physicsLayerManager);
+
+	PxRelease(m_controllerManager);
 
 	PxRelease(m_scene);
 
@@ -121,11 +125,30 @@ bool PhysicsSystem::Release()
 
 void PhysicsSystem::Simulate(unsigned int subStep, const map<uint, vector<Component*>>& executionBuffer)
 {
+	if (!m_scene)
+		return;
+
+	for (auto& physicsObj : m_physicsObjects)
+	{
+		if (!physicsObj->IsWorking())
+			continue;
+
+		physicsObj->BeforePhysicsSimulationOnce();
+	}
+
 	subStep = subStep < m_subStepLimit ? subStep : m_subStepLimit;
 
 	for (unsigned int i = 0; i < subStep; ++i)
 	{
 		SimulateOnce(executionBuffer);
+	}
+
+	for (auto& physicsObj : m_physicsObjects)
+	{
+		if (!physicsObj->IsWorking())
+			continue;
+
+		physicsObj->AfterPhysicsSimulationOnce();
 	}
 }
 
@@ -141,6 +164,8 @@ void PhysicsSystem::SimulateOnce(const map<uint, vector<Component*>>& executionB
 
 		physicsObj->BeforePhysicsSimulation();
 	}
+
+	//m_controllerManager->computeInteractions(m_system->time->fixedDeltaTime);
 
 	m_scene->simulate(m_system->time->fixedDeltaTime);
 	m_scene->fetchResults(true);

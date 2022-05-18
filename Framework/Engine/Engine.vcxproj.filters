@@ -581,6 +581,21 @@
     <ClInclude Include="include\SoundListener.h">
       <Filter>EngineWorld\System\Sound</Filter>
     </ClInclude>
+    <ClInclude Include="include\CharacterController.h">
+      <Filter>Object\SceneObject\Component\CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CCTExtrapolate.h">
+      <Filter>Object\SceneObject\Component\CharacterController\Interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CCTInterpolate.h">
+      <Filter>Object\SceneObject\Component\CharacterController\Interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CCTInterpolateBase.h">
+      <Filter>Object\SceneObject\Component\CharacterController\Interpolate</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CCTCallback.h">
+      <Filter>Object\SceneObject\Component\CharacterController\Callback</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1117,6 +1132,21 @@
     <ClCompile Include="src\SoundListener.cpp">
       <Filter>EngineWorld\System\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="src\CharacterController.cpp">
+      <Filter>Object\SceneObject\Component\CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCTExtrapolate.cpp">
+      <Filter>Object\SceneObject\Component\CharacterController\Interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCTInterpolate.cpp">
+      <Filter>Object\SceneObject\Component\CharacterController\Interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCTInterpolateBase.cpp">
+      <Filter>Object\SceneObject\Component\CharacterController\Interpolate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCTCallback.cpp">
+      <Filter>Object\SceneObject\Component\CharacterController\Callback</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1418,6 +1448,15 @@
     </Filter>
     <Filter Include="Object\SceneObject\Component\Audio\AudioListener">
       <UniqueIdentifier>{9ed65da9-fbfa-4c45-87d6-dcffa2ee43b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\CharacterController">
+      <UniqueIdentifier>{3fa94996-b24e-4f9e-844a-d0552146f3d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\CharacterController\Interpolate">
+      <UniqueIdentifier>{1b9a9941-b081-4e71-9fbc-9ff69523ff7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\CharacterController\Callback">
+      <UniqueIdentifier>{71e916f2-a87b-4fa8-871a-76cc777c8ef9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

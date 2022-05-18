@@ -90,7 +90,7 @@ void TestScene::OnLoad()
                 texture = system->resource->Find(texturePath);
             }
 
-            ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(system->resource->builtInResources->standardShader);
+            ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(system->resource->builtIn->standardShader);
             material->SetTexture("_DiffuseTexture", texture);
 
             skinnedMeshRenderer->SetMaterialByIndex(i, material);
@@ -211,8 +211,8 @@ void TestScene::OnLoad()
         goHandlingTest->transform->position = V3(3, 3, 0);
 
         MeshRenderer* meshRenderer = goHandlingTest->AddComponent<MeshRenderer>();
-        meshRenderer->mesh = system->resource->builtInResources->boxMesh;
-        meshRenderer->material = system->resource->builtInResources->wireframeMaterial;
+        meshRenderer->mesh = system->resource->builtIn->boxMesh;
+        meshRenderer->material = system->resource->builtIn->wireframeMaterial;
 
         GameObject* goGizmo = CreateGameObject();
         Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
@@ -222,7 +222,7 @@ void TestScene::OnLoad()
 
     //{
     //    ResourceRef<MaterialTestInst> mat = system->resourceManagement->factory->CreateManagedMaterial<MaterialTestInst>(TEXT("MaterialTestInst"));
-    //    mat->diffuseTexture = system->resourceManagement->builtInResources->whiteTexture;
+    //    mat->diffuseTexture = system->resourceManagement->builtIn->whiteTexture;
 
     //    for (uint i = 0; i < 10000; ++i)
     //    {
@@ -234,7 +234,7 @@ void TestScene::OnLoad()
 
     //        MeshRenderer* meshRenderer = goCapsule->AddComponent<MeshRenderer>();
     //        meshRenderer->material = mat;
-    //        meshRenderer->mesh = system->resourceManagement->builtInResources->sphereMesh;
+    //        meshRenderer->mesh = system->resourceManagement->builtIn->sphereMesh;
     //    }
     //}
 

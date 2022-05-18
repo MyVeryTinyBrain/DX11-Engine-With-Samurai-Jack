@@ -110,7 +110,7 @@ void ShaderVariable::Apply()
 			if (!m_info->IsArray())
 			{
 				if (!m_textures[0])
-					m_textures[0] = m_material->system->resource->builtInResources->whiteTexture;
+					m_textures[0] = m_material->system->resource->builtIn->whiteTexture;
 				hSRV->SetResource(m_textures[0]->shaderResourceView.Get());
 			}
 			else
@@ -118,7 +118,7 @@ void ShaderVariable::Apply()
 				for (uint i = 0; i < m_info->Elements; ++i)
 				{
 					if (!m_textures[i])
-						m_textures[i] = m_material->system->resource->builtInResources->whiteTexture;
+						m_textures[i] = m_material->system->resource->builtIn->whiteTexture;
 					m_arrSRV[i] = m_textures[i]->shaderResourceView.Get();
 				}
 				hSRV->SetResourceArray(m_arrSRV, 0, m_info->Elements);

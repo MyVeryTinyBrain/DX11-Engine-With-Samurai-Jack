@@ -21,8 +21,8 @@ public:
 protected:
 
 	virtual void Awake() override;
+	virtual void Awake(void* arg /* PxShape */) override;
 	virtual void BeforePhysicsSimulation() override;
-	virtual void AfterPhysicsSimulation() override {}
 	virtual void OnEnable() override;
 	virtual void OnDisable() override;
 	virtual void OnDestroyed() override;
@@ -92,6 +92,10 @@ public:
 
 	_declspec(property(get = GetPxGeometry)) PxGeometryHolder pxGeometry;
 
+public:
+
+	inline virtual bool IsCCTComponent() const override { return m_isCCTComponent; }
+
 protected:
 
 	virtual PxGeometryHolder CreatePxGeometry(bool& out_invalid) const = 0;
@@ -110,7 +114,7 @@ private:
 		
 private:
 
-	virtual bool IsWorking() override;
+	virtual bool IsWorking() const override;
 
 private:
 
@@ -119,13 +123,10 @@ private:
 private:
 
 	PxMaterial*		m_material = nullptr;
-
 	PxShape*		m_shape = nullptr;
 
 	bool			m_isTrigger = false;
-
 	uint32			m_ignoreLayerBits = 0;
-
 	uint8			m_layerIndex = 0;
 
 	V3				m_beforeLocalPosition;
@@ -136,6 +137,8 @@ private:
 
 	bool			m_debugRender = false;
 
+	bool			m_isCCTComponent = false;
+
 protected:
 
 	Q				m_defaultRotation = Q::identity();
@@ -143,7 +146,7 @@ protected:
 public:
 
 	delegate<void(const Collision&)> OnCollisionEnter;
-	delegate<void(const Collision&)> OnCollisionStay;
+	delegate<void(const Collision&)> OnCollisionStay;	// Rigidbody가 Sleep 상태이면 동작하지 않습니다.
 	delegate<void(const Collision&)> OnCollisionExit;
 };
 

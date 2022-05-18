@@ -40,6 +40,11 @@
     <ClInclude Include="include\AudioSourcePlaydata.h" />
     <ClInclude Include="include\BoxCollider.h" />
     <ClInclude Include="include\CapsuleCollider.h" />
+    <ClInclude Include="include\CCTCallback.h" />
+    <ClInclude Include="include\CCTExtrapolate.h" />
+    <ClInclude Include="include\CCTInterpolate.h" />
+    <ClInclude Include="include\CCTInterpolateBase.h" />
+    <ClInclude Include="include\CharacterController.h" />
     <ClInclude Include="include\Collider.h" />
     <ClInclude Include="include\ComponentManagement.h" />
     <ClInclude Include="include\ComputeShader.h" />
@@ -232,6 +237,11 @@
     <ClCompile Include="src\AudioSourcePlaydata.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\CapsuleCollider.cpp" />
+    <ClCompile Include="src\CCTCallback.cpp" />
+    <ClCompile Include="src\CCTExtrapolate.cpp" />
+    <ClCompile Include="src\CCTInterpolate.cpp" />
+    <ClCompile Include="src\CCTInterpolateBase.cpp" />
+    <ClCompile Include="src\CharacterController.cpp" />
     <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\ComponentManagement.cpp" />
     <ClCompile Include="src\ComputeShader.cpp" />

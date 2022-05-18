@@ -33,8 +33,8 @@ void SphereCollider::Awake()
 {
 	Collider::Awake();
 
-	m_dbgMesh = system->resource->builtInResources->sphereMesh;
-	m_dbgMaterial = system->resource->builtInResources->wireframeMaterial;
+	m_dbgMesh = system->resource->builtIn->sphereMesh;
+	m_dbgMaterial = system->resource->builtIn->wireframeMaterial;
 }
 
 void SphereCollider::DebugRender()
@@ -55,30 +55,33 @@ void SphereCollider::DebugRender()
 	if (passCount == 0)
 		return;
 
-	RenderGroup renderGroup;
-	int renderGroupOrder;
-	bool instancingFlag;
+	for (uint j = 0; j < passCount; ++j)
+	{
+		RenderGroup renderGroup;
+		int renderGroupOrder;
+		bool instancingFlag;
 
-	if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroup)))
-		return;
-	if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(m_dbgMaterial->techniqueIndex, renderGroupOrder)))
-		return;
-	if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(m_dbgMaterial->techniqueIndex, instancingFlag)))
-		return;
+		if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
+			return;
+		if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
+			return;
+		if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
+			return;
 
-	RenderRequest input;
-	input.essential.worldMatrix = localToWorldMatrix;
-	input.essential.renderGroup = renderGroup;
-	input.essential.renderGroupOrder = renderGroupOrder;
-	input.essential.layerIndex = 0;
-	input.essential.material = m_dbgMaterial;
-	input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
-	input.essential.passIndex = 0;
-	input.essential.mesh = m_dbgMesh;
-	input.essential.subMeshIndex = 0;
-	input.essential.instance = instancingFlag;
+		RenderRequest input;
+		input.essential.worldMatrix = localToWorldMatrix;
+		input.essential.renderGroup = renderGroup;
+		input.essential.renderGroupOrder = renderGroupOrder;
+		input.essential.layerIndex = 0;
+		input.essential.material = m_dbgMaterial;
+		input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
+		input.essential.passIndex = j;
+		input.essential.mesh = m_dbgMesh;
+		input.essential.subMeshIndex = 0;
+		input.essential.instance = instancingFlag;
 
-	system->graphic->renderQueue->Add(input);
+		system->graphic->renderQueue->Add(input);
+	}
 }
 
 bool SphereCollider::CullTest(ICamera* camera) const

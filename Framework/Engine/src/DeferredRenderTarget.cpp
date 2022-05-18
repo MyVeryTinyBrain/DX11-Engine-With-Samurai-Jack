@@ -4,6 +4,8 @@
 #include "DepthStencil.h"
 #include "DxUtility.h"
 
+#define MulFltUIntReturnUInt(A, B) uint(float(A) * float(B))
+
 DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width, uint height)
 {
 	m_width = width;
@@ -56,9 +58,9 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 	m_postProcessingRenderTargets.push_back(m_ssao);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_bloom);
 	m_postProcessingRenderTargets.push_back(m_bloom);
-	RenderTarget::Create(device, width / 2, height / 2, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssr);
+	RenderTarget::Create(device, MulFltUIntReturnUInt(width, m_ssrResolutionScale), MulFltUIntReturnUInt(height, m_ssrResolutionScale), false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssr);
 	m_postProcessingRenderTargets.push_back(m_ssr);
-	RenderTarget::Create(device, width / 2, height / 2, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssrBlur);
+	RenderTarget::Create(device, MulFltUIntReturnUInt(width, m_ssrResolutionScale), MulFltUIntReturnUInt(height, m_ssrResolutionScale), false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_ssrBlur);
 	m_postProcessingRenderTargets.push_back(m_ssrBlur);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_dof);
 	m_postProcessingRenderTargets.push_back(m_dof);
@@ -123,9 +125,9 @@ bool DeferredRenderTarget::Resize(Com<ID3D11Device> device, uint width, uint hei
 			return false;
 		if (!m_bloom->Resize(device, width, height))
 			return false;
-		if (!m_ssr->Resize(device, width / 2, height / 2))
+		if (!m_ssr->Resize(device, MulFltUIntReturnUInt(width, m_ssrResolutionScale), MulFltUIntReturnUInt(height, m_ssrResolutionScale)))
 			return false;
-		if (!m_ssrBlur->Resize(device, width / 2, height / 2))
+		if (!m_ssrBlur->Resize(device, MulFltUIntReturnUInt(width, m_ssrResolutionScale), MulFltUIntReturnUInt(height, m_ssrResolutionScale)))
 			return false;
 		if (!m_dof->Resize(device, width, height))
 			return false;
@@ -268,4 +270,16 @@ void DeferredRenderTarget::CopyResult(Com<ID3D11DeviceContext> dc)
 {
 	dc->CopyResource(m_result[0]->texture.Get(), m_result[1]->texture.Get());
 	m_resultWasCopied = true;
+}
+
+void DeferredRenderTarget::SetSSRResolutionScale(Com<ID3D11Device> device, float value)
+{
+	value = Clamp01(value);
+	if (Abs(value - m_ssrResolutionScale) < Epsilon)
+		return;
+
+	m_ssrResolutionScale = value;
+
+	m_ssr->Resize(device, MulFltUIntReturnUInt(width, m_ssrResolutionScale), MulFltUIntReturnUInt(height, m_ssrResolutionScale));
+	m_ssrBlur->Resize(device, MulFltUIntReturnUInt(width, m_ssrResolutionScale), MulFltUIntReturnUInt(height, m_ssrResolutionScale));
 }

@@ -74,6 +74,7 @@ void AudioSource::PlayOneshot(ResourceRef<AudioClip> clip, float volume, float p
 	desc.Loop = false;
 	desc.Pitch = clip->volume * volume;
 	desc.Volume = clip->pitch * pitch;
+	desc.Priority = m_priority;
 	desc.Group = m_fmodChannelGroup;
 
 	Com<SoundChannel> channel = system->sound->Play(clip->sound, desc);
@@ -96,6 +97,7 @@ void AudioSource::Play(ResourceRef<AudioClip> clip, float volume, float pitch)
 	desc.Loop = true;
 	desc.Pitch = clip->volume * volume;
 	desc.Volume = clip->pitch * pitch;
+	desc.Priority = m_priority;
 	desc.Group = m_fmodChannelGroup;
 
 	Com<SoundChannel> channel = system->sound->Play(clip->sound, desc);

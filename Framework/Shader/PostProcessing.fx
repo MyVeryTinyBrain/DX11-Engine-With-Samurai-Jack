@@ -45,6 +45,7 @@ struct SSRDesc
 	float	Thickness;
 	float	Bias;
 	float	BlurPixelDistance;
+	float	ResolutionScale;
 };
 
 struct DOFDesc
@@ -170,8 +171,8 @@ half SSAORayMarch(float2 uv)
 	half depth = _Depth.Sample(pointSampler, uv, 0).r;
 	half occlusionMask = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, uv, 0).r;
 
-	[flatten] // Fast exit
-	if (depth == 1.0f) return 1.0f;
+	//[flatten] // Fast exit
+	//if (depth == 1.0f) return 1.0f;
 
 	half3 vPosition = ToViewSpace(uv, depth, invProjMatrix);
 	float3 worldPosition = mul(float4(vPosition, 1.0f), invProjMatrix).xyz;
@@ -286,14 +287,17 @@ half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 	return outputUV;
 }
 
-half2 SSRRayMarch(half2 uv)
+// return hit = {0, 1}
+half SSRRayMarch(inout half2 uv, out half distance)
 {
+	distance = 0.0f;
+
 	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
 
-	half depth = _Depth.Sample(pointSampler, uv).r;
+	half depth = _Depth.Sample(linearSampler, uv).r;
 
-	[flatten] // Fast exit
-	if (depth >= 1.0f) return half2(0.0f, 0.0f);
+	//[flatten] // Fast exit
+	//if (depth >= 1.0f) return 0.0f;
 
 	half3 vPos = ToViewSpace(uv, depth, invProjMatrix);
 	half3 vPixelDir = normalize(vPos);
@@ -304,19 +308,19 @@ half2 SSRRayMarch(half2 uv)
 	half3 vDir = reflect(vPixelDir, vNormal);
 	vDir = normalize(vDir);
 
-	half3 vRayPos = vPos;
 	half step = _SSRDesc.Step;
 
 	[loop]
 	for (uint i = 0; i < _SSRDesc.NumSamples; ++i)
 	{
-		vRayPos += vDir * step;
+		distance += step;
+		half3 vRayPos = vPos + vDir * distance;
 
 		half4 pSamplePos = mul(half4(vRayPos, 1.0f), _ProjectionMatrix);
 		half3 sSamplePos = pSamplePos.xyz / pSamplePos.w;
 		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
 
-		half sampleDepth = _Depth.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
+		half sampleDepth = _Depth.SampleLevel(linearSampler, sSamplePos.xy, 0).r;
 
 		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
 
@@ -324,11 +328,13 @@ half2 SSRRayMarch(half2 uv)
 
 		if (depthDiff >= _SSRDesc.Bias && depthDiff <= _SSRDesc.Thickness)
 		{
-			return SSRBinarySearch(vRayPos, vDir);
+			uv = SSRBinarySearch(vRayPos, vDir);
+			return 1.0f;
 		}
 	}
 
-	return half2(0.0f, 0.0f);
+	uv = half2(0.0f, 0.0f);
+	return 0.0f;
 }
 
 inline half SSRSideFadeFunction(half a, half w, half h, half x)
@@ -352,17 +358,21 @@ half4 PS_MAIN_SSR_Write(PS_IN In) : SV_TARGET
 {
 	half4 color = half4(0,0,0,0);
 
-	half2 uv = SSRRayMarch(In.UV);
+	half2 uv = In.UV;
+	half distance;
+	half hit = SSRRayMarch(uv, distance);
 
 	half sideFade = SSRSideFadeFunction(1.0f, 1, 0.3f, uv);
+	half distanceFade = max(1.0f - (distance / (_SSRDesc.Step * _SSRDesc.NumSamples)), 0.0f);
+	distanceFade = pow(distanceFade, 0.8f);
 
 	half4 orrr = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, In.UV);
 	half reflectMask = orrr.a;
 
 	color.rgb = _Sample.Sample(pointSampler, uv, 0).rgb;
-	color.a = reflectMask * sideFade;
+	color.a = reflectMask * sideFade * distanceFade * hit;
 
-	return color;
+	return color; 
 }
 
 half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET

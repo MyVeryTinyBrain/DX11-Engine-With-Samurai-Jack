@@ -46,54 +46,61 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Base Color.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Ambient Occlusion.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Normal.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Specular Level.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Roughness.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Base Color.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Ambient Occlusion.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Normal.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Specular Level.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Roughness.jpg"));
 
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Roughness.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Roughness.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg"));
 
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_ambient_occlusion.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_basecolor.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_normal.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_glossiness_1.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_roughness.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_ambient_occlusion.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_basecolor.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_normal.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_glossiness_1.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_roughness.jpg"));
 
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_glossiness.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
-	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_glossiness.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
+	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
 
-	GameObject* goST = CreateGameObject();
-	goST->transform->position = V3(0, 5, 0);
-	SoundTest* st = goST->AddComponent<SoundTest>();
+	//GameObject* goST = CreateGameObject();
+	//goST->transform->position = V3(0, 5, 0);
+	//SoundTest* st = goST->AddComponent<SoundTest>();
 
-	//{
-	//	GameObject* goLine = CreateGameObject();
-	//	goLine->transform->position = V3(0, 2, -5);
-	//	LineRenderer* line = goLine->AddComponent<LineRenderer>();
-	//	//line->AddPoint(V3(0, 0, 0));
-	//	//line->AddPoint(V3(0, 0, 2));
+	//GameObject* goCT = CreateGameObject(TEXT("CT"));
+	//goCT->transform->position = V3(0, 5, 0);
+	//CharacterController* ct = goCT->AddComponent<CharacterController>();
+	//MeshRenderer* ctmr = goCT->AddComponent<MeshRenderer>();
+	//ctmr->mesh = system->resource->builtIn->capsuleMesh;
 
-	//	for (int i = 0; i <= 50; ++i)
-	//	{
-	//		float p = float(i) / 50.0f;
-	//		float r = p * TAU;
-	//		float x = Cos(r);
-	//		float z = Sin(r);
-	//		line->AddPoint(V3(x, 0, z) * 3.0f);
-	//	}
+	{
+		GameObject* goLine = CreateGameObject();
+		goLine->transform->position = V3(0, 5, -5);
+		LineRenderer* line = goLine->AddComponent<LineRenderer>();
+		//line->AddPoint(V3(0, 0, 0));
+		//line->AddPoint(V3(0, 0, 2));
 
-	//	line->isLocalSpace = true;
-	//}
+		for (int i = 0; i <= 50; ++i)
+		{
+			float p = float(i) / 50.0f;
+			float r = p * TAU;
+			float x = Cos(r);
+			float z = Sin(r);
+			line->AddPoint(V3(x, 0, z) * 3.0f);
+		}
 
-	/*
+		line->isLocalSpace = true;
+		line->alignment = LineRenderer::Alignment::Local;
+	}
+
+	//*
 	{
 		thread t0(
 			[&]
@@ -120,18 +127,32 @@ void PlayerTestScene::OnLoad()
 
 				GameObject* goCharacterRender = CreateGameObjectToChild(goJack->transform);
 				goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
+				goCharacterRender->transform->localPosition = V3::down();
 				SkinnedMeshRenderer* characterRenderer = goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 				characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
 				goCharacterRender->AddComponent<JackAnimator>();
 
-				Rigidbody* rigidbody = goJack->AddComponent<Rigidbody>();
-				rigidbody->SetRotationLock(Rigidbody::Axis::All, true);
-				rigidbody->SetInterpolateMode(Rigidbody::Interpolate::Interpolate);
-				rigidbody->sleepThresholder = 5.0f;
+				CharacterController* cct = goJack->AddComponent<CharacterController>();
+			}
+		}
+#else
+		system->physics->layerManager->SetCollision(0, 1, true);
+		system->physics->layerManager->SetCollision(1, 1, false);
+		for (uint i = 0; i < 1; ++i)
+		{
+			for (uint j = 0; j < 2; ++j)
+			{
+				GameObject* goJack = CreateGameObject(TEXT("Jack"));
+				goJack->transform->position = V3(2.0f + float(i * 2), 0, 2.0f + float(j * 2.0f));
 
-				GameObject* goCollider = CreateGameObjectToChild(goJack->transform);
-				goCollider->transform->localPosition = V3::up() * 1.0f;
-				CapsuleCollider* collider = goCollider->AddComponent<CapsuleCollider>();
+				GameObject* goCharacterRender = CreateGameObjectToChild(goJack->transform);
+				goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
+				goCharacterRender->transform->localPosition = V3::down();
+				SkinnedMeshRenderer* characterRenderer = goCharacterRender->AddComponent<SkinnedMeshRenderer>();
+				characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+				goCharacterRender->AddComponent<JackAnimator>();
+
+				CharacterController* cct = goJack->AddComponent<CharacterController>();
 			}
 		}
 #endif
@@ -148,9 +169,9 @@ void PlayerTestScene::OnLoad()
 			boxCollider->restitution = 1.0f;
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
 			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-			meshRenderer->material->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
+			meshRenderer->material->SetTexture("_ReflectionTexture", system->resource->builtIn->whiteTexture);
 		}
 
 		{
@@ -164,33 +185,35 @@ void PlayerTestScene::OnLoad()
 			directionalLight->ambient = Color(0.1f, 0.1f, 0.1f, 1.0f);
 		}
 
-		//{
-		//	GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
-		//	goPointLight->transform->position = V3(0, 5, 0);
-		//	PointLight* pointLight = goPointLight->AddComponent<PointLight>();
-		//	pointLight->range = 10.0f;
-		//	pointLight->drawShadow = true;
-		//	pointLight->enable = true;
-		//}
+		{
+			GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
+			goPointLight->transform->position = V3(0, 5, 0);
+			PointLight* pointLight = goPointLight->AddComponent<PointLight>();
+			pointLight->range = 10.0f;
+			pointLight->drawShadow = true;
+			pointLight->enable = true;
+			pointLight->intensity = 0;
+		}
 
-		//{
-		//	//GameObject* goSpotLight = CreateGameObjectToChild(FindGameObject(TEXT("Camera"))->transform, TEXT("SpotLight"));
-		//	GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
-		//	goSpotLight->transform->position = V3(0, 2, -20);
-		//	goSpotLight->transform->forward = V3::forward();
-		//	SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
-		//	spotLight->range = 20.0f;
-		//	spotLight->angle = 10.0f;
-		//	spotLight->drawShadow = true;
-		//	spotLight->enable = true;
-		//}
+		{
+			//GameObject* goSpotLight = CreateGameObjectToChild(FindGameObject(TEXT("Camera"))->transform, TEXT("SpotLight"));
+			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
+			goSpotLight->transform->position = V3(0, 2, -20);
+			goSpotLight->transform->forward = V3::forward();
+			SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
+			spotLight->range = 20.0f;
+			spotLight->angle = 10.0f;
+			spotLight->drawShadow = true;
+			spotLight->enable = true;
+			spotLight->intensity = 0;
+		}
 
 		{
 			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
 			goSphere->transform->position = V3(0, 1.0f, 0);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 		}
 
 		{
@@ -205,7 +228,7 @@ void PlayerTestScene::OnLoad()
 			boxCollider->friction = 100.0f;
 
 			MeshRenderer* meshRenderer = goPriorityRender->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
 			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 		}
 	}
@@ -296,7 +319,7 @@ void PlayerTestScene::OnLoad()
 		//	{
 		//		goSky[i] = CreateGameObject();
 		//		MeshRenderer* mr = goSky[i]->AddComponent<MeshRenderer>();
-		//		mr->mesh = system->resourceManagement->builtInResources->quadMesh;
+		//		mr->mesh = system->resourceManagement->builtIn->quadMesh;
 		//		mr->material = material[i];
 		//	}
 
@@ -327,7 +350,7 @@ void PlayerTestScene::OnLoad()
 		//	GameObject* goSky;
 		//	goSky = CreateGameObject();
 		//	MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
-		//	mr->mesh = system->resource->builtInResources->skyboxMesh;
+		//	mr->mesh = system->resource->builtIn->skyboxMesh;
 		//	mr->material = material;
 		//}
 
@@ -337,19 +360,11 @@ void PlayerTestScene::OnLoad()
 			goGround->transform->localScale = V3(200, 1, 200);
 
 			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
 
-			ResourceRef<Material> standardMaterial = system->resource->factory->CopyMaterialUM(system->resource->builtInResources->standardMaterial);
+			ResourceRef<Material> standardMaterial = system->resource->factory->CopyMaterialUM(system->resource->builtIn->standardMaterial);
 			standardMaterial->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-
-			//standardMaterial->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg")));
-			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtInResources->whiteTexture);
-			//standardMaterial->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg")));
-			//standardMaterial->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg")));
-			//standardMaterial->SetFloat("_ReflectionTransparency", 0.0f);
-			//standardMaterial->SetFloat("_SpecularTransparency", 0.5f);
-			//standardMaterial->SetFloat("_SpecularPower", 20.0f); 
-			////## Test
+			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtIn->whiteTexture);
 
 			meshRenderer->material = standardMaterial;
 
@@ -365,23 +380,24 @@ void PlayerTestScene::OnLoad()
 			goBox->transform->position = V3(-2.0f, 1.5f, 0.0f);
 
 			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->boxMesh;
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
 			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 
-			//meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
-
-			//meshRenderer->material->SetTexture("_DiffuseTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg")));
-			//meshRenderer->material->SetTexture("_SpecularMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg")));
-			//meshRenderer->material->SetTexture("_OcclusionTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg")));
-			//meshRenderer->material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg")));
-			//meshRenderer->material->SetFloat("_SpecularTransparency", 0.5f);
-			//meshRenderer->material->SetFloat("_SpecularPower", 20.0f);
-			////## Test
-
-			//ResourceRef<Material> m = Material::CreateUnmanagedMaterialFromJson(system->resourceManagement, TEXT("../Resource/test.material"));
-			//meshRenderer->material = m;
-
 			goBox->AddComponent<Rigidbody>();
+			goBox->AddComponent<BoxCollider>();
+		}
+
+		{
+			GameObject* goBox = CreateGameObject(TEXT("Box"));
+			goBox->transform->position = V3(6.0f, 0.0f, 0.0f);
+			goBox->transform->localScale = V3(6, 6, 6);
+			goBox->transform->eulerAngles = V3(50, 0, 0);
+
+			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+
+			goBox->AddComponent<Rigidbody>()->kinematic = true;
 			goBox->AddComponent<BoxCollider>();
 		}
 
@@ -390,13 +406,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(2.0f, 1.5f, 0.0f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
-
-			//ResourceRef<Shader> s = system->resource->factory->CreateManagedShaderFromBinaryFolder(TEXT("PBR.cso"));
-			//ResourceRef<Material> m = system->resource->factory->CreateManagedMaterialByShader(s, TEXT("M"));
-			////m->SetTexture("_Cubemap", system->resource->Find(TEXT("../Resource/Skybox/skybox.png")));
-			//m->SetTexture("_BRDF", system->resource->Find(TEXT("../Resource/PBR/BRDF.png")));
-			//meshRenderer->material = m;
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -406,7 +416,7 @@ void PlayerTestScene::OnLoad()
 		//	m_sphere[0] = CreateGameObject(TEXT("Sphere"));
 
 		//	MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
-		//	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+		//	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 		//	m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
 
@@ -427,7 +437,7 @@ void PlayerTestScene::OnLoad()
 		//	m_sphere[1] = CreateGameObject(TEXT("Sphere"));
 
 		//	MeshRenderer* meshRenderer = m_sphere[1]->AddComponent<MeshRenderer>();
-		//	meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+		//	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 		//	m_trailRenderer[1] = m_sphere[1]->AddComponent<TrailRenderer>();
 
@@ -449,7 +459,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(-4.5f, 1.5f, +4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -460,7 +470,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(+4.5f, 1.5f, +4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -471,7 +481,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(+4.5f, 1.5f, -4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -482,7 +492,7 @@ void PlayerTestScene::OnLoad()
 			goSphere->transform->position = V3(-4.5f, 1.5f, -4.5f);
 
 			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtInResources->sphereMesh;
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
 			goSphere->AddComponent<Rigidbody>();
 			goSphere->AddComponent<SphereCollider>();
@@ -634,6 +644,10 @@ void PlayerTestScene::OnUpdate()
 		float blurPixelDistance = ssrDesc.BlurPixelDistance;
 		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
 		ssrDesc.BlurPixelDistance = blurPixelDistance;
+
+		float resolutionScale = ssrDesc.ResolutionScale;
+		ImGui::SliderFloat("ResolutionScale", &resolutionScale, 0.0f, 1.0f);
+		ssrDesc.ResolutionScale = resolutionScale;
 
 		camera->ssrDesc = ssrDesc;
 

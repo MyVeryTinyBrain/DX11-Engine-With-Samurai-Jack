@@ -44,6 +44,11 @@ public:
 
 public:
 
+	inline float GetSSRResolutionScale() const { return m_ssrResolutionScale; }
+	void SetSSRResolutionScale(Com<ID3D11Device> dc, float value);
+
+public:
+
 	inline DepthStencil* GetDepthStencil() const { return m_depthStencil; }
 
 	inline RenderTarget* GetAlbedo() const { return m_albedo; }
@@ -121,7 +126,7 @@ private:
 
 	RenderTarget*								m_albedo = nullptr;
 	RenderTarget*								m_normal = nullptr;
-	RenderTarget*								m_depth[COPYABLE] = {};
+	RenderTarget*								m_depth[COPYABLE] = {}; // R: Projection Depth, G: View Depth
 	RenderTarget*								m_light_shadow = nullptr;
 	RenderTarget*								m_roughness_metallic = nullptr;
 	RenderTarget*								m_emissive = nullptr;
@@ -142,6 +147,7 @@ private:
 	RenderTarget*								m_bloom = nullptr;
 	RenderTarget*								m_ssr = nullptr;
 	RenderTarget*								m_ssrBlur = nullptr;
+	float										m_ssrResolutionScale = 1.0f;
 	RenderTarget*								m_dof = nullptr;
 };
 

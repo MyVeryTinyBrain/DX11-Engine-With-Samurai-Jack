@@ -9,6 +9,7 @@ struct SoundPlayDesc
 	bool				Loop;
 	float				Volume;
 	float				Pitch;
+	int					Priority;
 	FMOD_CHANNELGROUP*	Group;
 };
 

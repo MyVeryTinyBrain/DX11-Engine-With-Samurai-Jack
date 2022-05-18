@@ -45,10 +45,11 @@ void Player::Update()
 	{
 		m_jackAnimator->jumpProperty->SetTriggerState();
 		m_jackAnimator->hasGroundProperty->valueAsBool = false;
-		m_rigidbody->velocity = V3(0, 7.5f, 0);
+		m_controller->Jump(V3::up() * 11.0f);
 	}
+	m_jackAnimator->hasGroundProperty->valueAsBool = m_controller->isGrounded;
 
-	m_jackAnimator->moveProperty->valueAsFloat -= system->time->deltaTime / 0.05f;
+	m_jackAnimator->moveProperty->valueAsFloat = Clamp01(m_jackAnimator->moveProperty->valueAsFloat - system->time->deltaTime / 0.05f);
 	if (layer->currentNode->name.find(TEXT("Atk")) == tstring::npos &&
 		layer->currentNode->name.find(TEXT("Land")) == tstring::npos &&
 		layer->currentNode->name.find(TEXT("Jump")) == tstring::npos)
@@ -62,27 +63,35 @@ void Player::Update()
 			transform->rotation = Q::RotateTowards(transform->rotation, q, 720.0f * dt);
 		}
 	}
-	else if (layer->currentNode->name.find(TEXT("Atk")) != tstring::npos &&
-		layer->currentNode->normalizedTime < 0.2f)
+	else if (layer->currentNode->name.find(TEXT("Atk")) != tstring::npos)
 	{
 		if (translation.sqrMagnitude > 0)
 		{
 			m_jackAnimator->moveProperty->valueAsFloat = 1.0f;
 
-			V3 up = V3(0, 1, 0);
-			Q q = Q::LookRotation(translation.normalized, up);
-			transform->rotation = Q::RotateTowards(transform->rotation, q, 720.0f * dt);
+			if (layer->currentNode->normalizedTime < 0.2f)
+			{
+				V3 up = V3(0, 1, 0);
+				Q q = Q::LookRotation(translation.normalized, up);
+				transform->rotation = Q::RotateTowards(transform->rotation, q, 720.0f * dt);
+			}
 		}
 	}
 	else if (layer->currentNode->name.find(TEXT("Jump")) != tstring::npos)
 	{
 		if (translation.sqrMagnitude > 0)
 		{
-			transform->position += translation.normalized * 5.0f * dt;
-
 			V3 up = V3(0, 1, 0);
 			Q q = Q::LookRotation(translation.normalized, up);
+			m_controller->Move(translation * 5.0f * system->time->deltaTime, system->time->deltaTime);
 			transform->rotation = Q::RotateTowards(transform->rotation, q, 720.0f * dt);
+		}
+	}
+	else if (layer->currentNode->name.find(TEXT("Land")) != tstring::npos)
+	{
+		if (translation.sqrMagnitude > 0)
+		{
+			m_jackAnimator->moveProperty->valueAsFloat = 1.0f;
 		}
 	}
 
@@ -96,33 +105,13 @@ void Player::Update()
 			(layer->currentNode->name == TEXT("AtkXXX") && layer->currentNode->normalizedTime > 0.225f))
 			m_jackAnimator->comboProperty->SetTriggerState();
 	}
-
-	//tstring currentNode = layer->currentNode->name;
-	//tstring blendNode = layer->blendNode ? layer->blendNode->name : TEXT("");
-	//if (m_jackAnimator->hasGroundProperty->valueAsBool == false &&
-	//	m_jackAnimator->jumpProperty->valueAsBool == false &&
-	//	currentNode.find(TEXT("Jump")) == tstring::npos &&
-	//	blendNode.find(TEXT("Jump")) == tstring::npos)
-	//	m_jackAnimator->jumpingProperty->SetTriggerState();
 }
 
 void Player::LateUpdate()
 {
-	transform->position += m_jackAnimator->GetLayerByIndex(0)->deltaPosition;
+	m_controller->MoveOnGround(m_jackAnimator->GetLayerByIndex(0)->deltaPosition, system->time->deltaTime);
 
 	UpdateAttachmentObjects();
-}
-
-void Player::OnCollisionEnter(const Collision& collision)
-{
-	if (V3::Angle(V3::up(), collision.GetContact(0).normal) < 40.0f)
-		m_jackAnimator->hasGroundProperty->valueAsBool = true;
-}
-
-void Player::OnCollisionExit(const Collision& collision)
-{
-	//if (V3::Angle(V3::up(), collision.GetContact(0).normal) < 40.0f)
-		m_jackAnimator->hasGroundProperty->valueAsBool = false;
 }
 
 void Player::SetupTPSCamera()
@@ -136,6 +125,7 @@ void Player::SetupTPSCamera()
 void Player::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
+	m_goCharacterRender->transform->localPosition = V3::down();
 	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
@@ -157,20 +147,12 @@ void Player::SetupAnimator()
 
 void Player::SetupPhysics()
 {
-	m_rigidbody = gameObject->AddComponent<Rigidbody>();
-	m_rigidbody->SetRotationLock(Rigidbody::Axis::All, true);
-	m_rigidbody->SetInterpolateMode(Rigidbody::Interpolate::Interpolate);
-	m_rigidbody->sleepThresholder = 5.0f;
+	m_controller = gameObject->AddComponent<CharacterController>();
+	m_controller->gravityScale = 2.0f;
 
-	m_goCollider = CreateGameObjectToChild(transform);
-	m_goCollider->transform->localPosition = V3::up() * 1.0f;
-	m_collider = m_goCollider->AddComponent<CapsuleCollider>();
-	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &Player::OnCollisionEnter);
-	m_collider->OnCollisionExit += func<void(const Collision&)>(this, &Player::OnCollisionExit);
-
-	m_goWeaponTrigger = CreateGameObjectToChild(transform);
-	m_weaponTrigger = m_goWeaponTrigger->AddComponent<SphereCollider>();
-	m_weaponTrigger->isTrigger = true;
+	//m_goWeaponTrigger = CreateGameObjectToChild(transform);
+	//m_weaponTrigger = m_goWeaponTrigger->AddComponent<SphereCollider>();
+	//m_weaponTrigger->isTrigger = true;
 }
 
 void Player::SetupWeapons()

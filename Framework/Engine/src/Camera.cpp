@@ -39,6 +39,7 @@ void Camera::Awake()
 	m_ssrDesc.Thickness = 0.5f;
 	m_ssrDesc.Bias = 0.04f;
 	m_ssrDesc.BlurPixelDistance = 1000.0f;
+	m_ssrDesc.ResolutionScale = 0.5f;
 
 	m_dofDesc.Enable = true;
 	m_dofDesc.BlurNumSamples = 8;

@@ -8,7 +8,7 @@ class Rigidbody;
 
 struct PhysicsQueryFilterCallbackDesc
 {
-	PhysicsQueryType	Type;
+	PhysicsQueryTypes	Type;
 	PxU32				LayerBitmask;
 	bool				QueryOnce;
 	Rigidbody*			IgnoreRigidbody;
@@ -37,7 +37,7 @@ private:
 private:
 
 	PxU32					m_layerBitmask;
-	PhysicsQueryType		m_queryType;
+	PhysicsQueryTypes		m_queryType;
 	PxQueryHitType::Enum	m_hitType;
 	Rigidbody*				m_ignoreRigidbody = nullptr;
 };

@@ -23,7 +23,7 @@ void TrailRenderer::Awake()
 
 	SetupMesh(512);
 
-	SetMaterial(system->resource->builtInResources->whiteMaterial);
+	SetMaterial(system->resource->builtIn->whiteMaterial);
 }
 
 void TrailRenderer::LateUpdate()

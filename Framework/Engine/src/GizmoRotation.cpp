@@ -419,7 +419,7 @@ void GizmoRotation::SetupResources()
 	//if (!m_slMat)
 	//{
 	//	m_slMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-	//	m_slMat->diffuseTexture = system->resourceManagement->builtInResources->whiteTexture;
+	//	m_slMat->diffuseTexture = system->resourceManagement->builtIn->whiteTexture;
 	//}
 }
 

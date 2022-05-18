@@ -527,6 +527,8 @@ void PostProcessing::Render_ChromaticAberration_Apply(ICamera* camera, const Chr
 void PostProcessing::Render_SSR_Write(ICamera* camera, const SSRDesc& ssrDesc)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
+	drt->SetSSRResolutionScale(m_graphicSystem->device, ssrDesc.ResolutionScale);
+
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->ssr->rtv.Get();
 	DxUtility::SetRenderTargets(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);

@@ -56,6 +56,9 @@ bool Light::IsWorking() const
 	if (V3(m_diffuse.value).magnitude == 0 && V3(m_ambient.value).magnitude == 0)
 		return false;
 
+	if (m_intensity < Epsilon)
+		return false;
+
 	return active;
 }
 

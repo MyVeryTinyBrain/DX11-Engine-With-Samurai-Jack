@@ -18,9 +18,8 @@ void PhysicsLayerManager::ResetLayers()
 
 void PhysicsLayerManager::SetCollision(uint8 layerIndexA, uint8 layerIndexB, bool collision)
 {
-	// 레이어 인덱스가 범위를 초과했습니다.
-	assert(layerIndexA < PhysicsLayerMax);
-	assert(layerIndexB < PhysicsLayerMax);
+	assert(layerIndexA < PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
+	assert(layerIndexB < PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
 
 	if (collision)
 	{
@@ -36,17 +35,15 @@ void PhysicsLayerManager::SetCollision(uint8 layerIndexA, uint8 layerIndexB, boo
 
 bool PhysicsLayerManager::IsCollision(uint8 layerIndexA, uint8 layerIndexB) const
 {
-	// 레이어 인덱스가 범위를 초과했습니다.
-	assert(layerIndexA < PhysicsLayerMax);
-	assert(layerIndexB < PhysicsLayerMax);
+	assert(layerIndexA < PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
+	assert(layerIndexB < PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
 
 	return (m_filter[layerIndexA] & (1 << layerIndexB));
 }
 
 uint32 PhysicsLayerManager::GetCollisionBits(uint8 layerIndex) const
 {
-	// 레이어 인덱스가 범위를 초과했습니다.
-	assert(layerIndex < PhysicsLayerMax);
+	assert(layerIndex < PhysicsLayerMax); // 레이어 인덱스가 범위를 초과했습니다.
 
 	return m_filter[layerIndex];
 }

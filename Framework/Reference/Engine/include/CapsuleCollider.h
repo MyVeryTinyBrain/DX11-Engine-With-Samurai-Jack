@@ -14,6 +14,7 @@ class ENGINE_API CapsuleCollider final : public Collider, public IRendererCullOp
 	virtual void ResetShape() override;
 
 	virtual void Awake() override;
+	virtual void Awake(void* arg /* PxShape */) override;
 
 	virtual void DebugRender() override;
 

@@ -16,10 +16,9 @@ Collision::Collision(const PxContactPair& pair, bool inverse)
 	pair.extractContacts(m_arrContacts, m_contactCount);
 	m_inverse = inverse;
 	m_baseCollider = (Collider*)(m_inverse ? pair.shapes[1]->userData : pair.shapes[0]->userData);
-	m_collider = (Collider*)(m_inverse ? pair.shapes[0]->userData : pair.shapes[1]->userData);
+	m_hitCollider = (Collider*)(m_inverse ? pair.shapes[0]->userData : pair.shapes[1]->userData);
 	
-	// 콜라이더가 없습니다.
-	assert(m_collider != nullptr);
+	assert(m_hitCollider != nullptr); // 콜라이더가 없습니다.
 }
 
 Collision::Collision(const Collision& rhs)
@@ -29,7 +28,7 @@ Collision::Collision(const Collision& rhs)
 	memcpy(m_arrContacts, rhs.m_arrContacts, sizeof(PxContactPairPoint) * m_contactCount);
 	m_inverse = rhs.m_inverse;
 	m_baseCollider = rhs.m_baseCollider;
-	m_collider = rhs.m_collider;
+	m_hitCollider = rhs.m_hitCollider;
 }
 
 Collision::Collision(Collision&& rhs) noexcept
@@ -38,12 +37,12 @@ Collision::Collision(Collision&& rhs) noexcept
 	m_arrContacts = rhs.m_arrContacts;
 	m_inverse = rhs.m_inverse;
 	m_baseCollider = rhs.m_baseCollider;
-	m_collider = rhs.m_collider;
+	m_hitCollider = rhs.m_hitCollider;
 
 	rhs.m_contactCount = 0;
 	rhs.m_arrContacts = nullptr;
 	rhs.m_baseCollider;
-	rhs.m_collider = nullptr;
+	rhs.m_hitCollider = nullptr;
 }
 
 Collision::~Collision()

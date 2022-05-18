@@ -27,13 +27,6 @@ public:
 		AnimatorTransition::Compare		compare;	// Type::Trigger -> always equals to true
 	};
 
-private:
-
-	AnimatorTransition(
-		AnimatorNode* startNode, AnimatorNode* nextNode,
-		const vector<PropertyValue>& propertyValues,
-		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f);
-
 public:
 
 	/// <summary>
@@ -64,7 +57,7 @@ public:
 	/// 타겟 노드의 정규화된 시간의 시작값입니다.<para>
 	/// 블렌딩을 사용하는 경우에는 이 시간부터 블렌딩이 진행됩니다.
 	/// </para></param>
-	static AnimatorTransition* Create(
+	AnimatorTransition(
 		AnimatorNode* startNode, AnimatorNode* nextNode,
 		const vector<PropertyValue>& propertyValues,
 		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f);

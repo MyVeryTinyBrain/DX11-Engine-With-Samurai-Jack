@@ -18,33 +18,26 @@ public:
 public:
 
 	bool Exist(const tstring& path) const;
-
 	ResourceRef<ResourceObject> Find(const tstring& path) const;
 
 public:
 
 	System* GetSystem() const;
-
 	ResourceFactory* GetFactory() const;
-
-	BuiltInResources* GetBuiltInResource() const;
+	BuiltInResources* GetBuiltIn() const;
 
 	_declspec(property(get = GetSystem)) System* system;
 	_declspec(property(get = GetFactory)) ResourceFactory* factory;
-	_declspec(property(get = GetBuiltInResource)) BuiltInResources* builtInResources;
+	_declspec(property(get = GetBuiltIn)) BuiltInResources* builtIn;
 
 private:
 
 	virtual bool Initialize(System* system) final override;
 
 	virtual bool AddManagedResource(ResourceRef<ResourceObject> resource) final override;
-
 	virtual bool RemoveManagedResource(const tstring& path) final override;
-
 	virtual ResourceRef<ResourceObject> FindManagedResource(const tstring& path) const final override;
-
 	virtual void RemoveAllManagedResource() final override;
-
 	virtual unsigned int RemoveGroupedManagedResource(const tstring& groupName) final override;
 
 private:

@@ -13,7 +13,7 @@ PhysicsQuery::PhysicsQuery(PxScene* pxScene)
 	m_queryFilter = PxQueryFilterData(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER);
 }
 
-bool PhysicsQuery::RaycastTest(const PhysicsRay& ray, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::RaycastTest(const PhysicsRay& ray, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -26,7 +26,7 @@ bool PhysicsQuery::RaycastTest(const PhysicsRay& ray, uint32 layermask, PhysicsQ
 	return m_scene->raycast(ToPxVec3(ray.Point), ToPxVec3(ray.Direction), ray.Length, buffer, m_flags, m_testFilter, &callback);
 }
 
-bool PhysicsQuery::Raycast(PhysicsHit& hit, const PhysicsRay& ray, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::Raycast(PhysicsHit& hit, const PhysicsRay& ray, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -47,7 +47,7 @@ bool PhysicsQuery::Raycast(PhysicsHit& hit, const PhysicsRay& ray, uint32 layerm
 	return true;
 }
 
-vector<PhysicsHit> PhysicsQuery::RaycastAll(const PhysicsRay& ray, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<PhysicsHit> PhysicsQuery::RaycastAll(const PhysicsRay& ray, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -75,7 +75,7 @@ vector<PhysicsHit> PhysicsQuery::RaycastAll(const PhysicsRay& ray, uint32 layerm
 	return hits;
 }
 
-bool PhysicsQuery::OverlapGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::OverlapGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -91,7 +91,7 @@ bool PhysicsQuery::OverlapGeometryTest(const PxGeometryHolder& g, const V3& p, c
 	//return m_scene->overlap(g.any(), t, buffer, m_testFilter, &callback);
 }
 
-Collider* PhysicsQuery::OverlapGeometry(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+Collider* PhysicsQuery::OverlapGeometry(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -110,7 +110,7 @@ Collider* PhysicsQuery::OverlapGeometry(const PxGeometryHolder& g, const V3& p, 
 	return (Collider*)data.shape->userData;
 }
 
-vector<Collider*> PhysicsQuery::OverlapGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<Collider*> PhysicsQuery::OverlapGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -137,100 +137,100 @@ vector<Collider*> PhysicsQuery::OverlapGeometryAll(const PxGeometryHolder& g, co
 	return hits;
 }
 
-bool PhysicsQuery::OverlapTest(Collider* c, uint32 layermask, PhysicsQueryType type) const
+bool PhysicsQuery::OverlapTest(Collider* c, uint32 layermask, PhysicsQueryTypes type) const
 {
 	ICollider* ic = c;
 	PxShape* shape = ic->GetPxShape();
 	return OverlapGeometryTest(shape->getGeometry(), c->transform->position, c->transform->rotation, layermask, type);
 }
 
-Collider* PhysicsQuery::Overlap(Collider* c, uint32 layermask, PhysicsQueryType type) const
+Collider* PhysicsQuery::Overlap(Collider* c, uint32 layermask, PhysicsQueryTypes type) const
 {
 	ICollider* ic = c;
 	PxShape* shape = ic->GetPxShape();
 	return OverlapGeometry(shape->getGeometry(), c->transform->position, c->transform->rotation, layermask, type);
 }
 
-vector<Collider*> PhysicsQuery::OverlapAll(Collider* c, uint32 layermask, PhysicsQueryType type) const
+vector<Collider*> PhysicsQuery::OverlapAll(Collider* c, uint32 layermask, PhysicsQueryTypes type) const
 {
 	ICollider* ic = c;
 	PxShape* shape = ic->GetPxShape();
 	return OverlapGeometryAll(shape->getGeometry(), c->transform->position, c->transform->rotation, layermask, type);
 }
 
-bool PhysicsQuery::OverlapPointTest(const V3& p, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::OverlapPointTest(const V3& p, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(0.001f);
 	return OverlapGeometryTest(g, p, m_qI, layermask, type, ignoreRigidbody);
 }
 
-Collider* PhysicsQuery::OverlapPoint(const V3& p, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+Collider* PhysicsQuery::OverlapPoint(const V3& p, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(0.001f);
 	return OverlapGeometry(g, p, m_qI, layermask, type, ignoreRigidbody);
 }
 
-vector<Collider*> PhysicsQuery::OverlapPointAll(const V3& p, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<Collider*> PhysicsQuery::OverlapPointAll(const V3& p, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(0.001f);
 	return OverlapGeometryAll(g, p, m_qI, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::OverlapSphereTest(const V3& p, float r, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::OverlapSphereTest(const V3& p, float r, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(r);
 	return OverlapGeometryTest(g, p, m_qI, layermask, type, ignoreRigidbody);
 }
 
-Collider* PhysicsQuery::OverlapSphere(const V3& p, float r, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+Collider* PhysicsQuery::OverlapSphere(const V3& p, float r, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(r);
 	return OverlapGeometry(g, p, m_qI, layermask, type, ignoreRigidbody);
 }
 
-vector<Collider*> PhysicsQuery::OverlapSphereAll(const V3& p, float r, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<Collider*> PhysicsQuery::OverlapSphereAll(const V3& p, float r, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(r);
 	return OverlapGeometryAll(g, p, m_qI, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::OverlapBoxTest(const V3& p, const Q& r, const V3& ex, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::OverlapBoxTest(const V3& p, const Q& r, const V3& ex, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxBoxGeometry g(ToPxVec3(ex));
 	return OverlapGeometryTest(g, p, r, layermask, type, ignoreRigidbody);
 }
 
-Collider* PhysicsQuery::OverlapBox(const V3& p, const Q& r, const V3& ex, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+Collider* PhysicsQuery::OverlapBox(const V3& p, const Q& r, const V3& ex, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxBoxGeometry g(ToPxVec3(ex));
 	return OverlapGeometry(g, p, r, layermask, type, ignoreRigidbody);
 }
 
-vector<Collider*> PhysicsQuery::OverlapBoxAll(const V3& p, const Q& r, const V3& ex, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<Collider*> PhysicsQuery::OverlapBoxAll(const V3& p, const Q& r, const V3& ex, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxBoxGeometry g(ToPxVec3(ex));
 	return OverlapGeometryAll(g, p, r, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::OverlapCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::OverlapCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxCapsuleGeometry g(rad, halfHeight);
 	return OverlapGeometryTest(g, p, m_qZ180 * r, layermask, type, ignoreRigidbody);
 }
 
-Collider* PhysicsQuery::OverlapCapsule(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+Collider* PhysicsQuery::OverlapCapsule(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxCapsuleGeometry g(rad, halfHeight);
 	return OverlapGeometry(g, p, m_qZ180 * r, layermask, type, ignoreRigidbody);
 }
 
-vector<Collider*> PhysicsQuery::OverlapCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<Collider*> PhysicsQuery::OverlapCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxCapsuleGeometry g(rad, halfHeight);
 	return OverlapGeometryAll(g, p, m_qZ180 * r, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepGeometryTest(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -245,7 +245,7 @@ bool PhysicsQuery::SweepGeometryTest(const PxGeometryHolder& g, const V3& p, con
 	return m_scene->sweep(g.any(), t, ToPxVec3(dir), length, buffer, m_flags, m_testFilter, &callback);
 }
 
-bool PhysicsQuery::SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -268,7 +268,7 @@ bool PhysicsQuery::SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, con
 	return true;
 }
 
-vector<PhysicsHit> PhysicsQuery::SweepGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<PhysicsHit> PhysicsQuery::SweepGeometryAll(const PxGeometryHolder& g, const V3& p, const Q& r, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PhysicsQueryFilterCallbackDesc desc;
 	desc.LayerBitmask = layermask;
@@ -298,76 +298,76 @@ vector<PhysicsHit> PhysicsQuery::SweepGeometryAll(const PxGeometryHolder& g, con
 	return hits;
 }
 
-bool PhysicsQuery::SweepTest(Collider* c, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepTest(Collider* c, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	ICollider* ic = c;
 	PxShape* shape = ic->GetPxShape();
 	return SweepGeometryTest(shape->getGeometry(), c->transform->position, c->transform->rotation, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::Sweep(PhysicsHit& hit, Collider* c, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::Sweep(PhysicsHit& hit, Collider* c, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	ICollider* ic = c;
 	PxShape* shape = ic->GetPxShape();
 	return SweepGeometry(hit, shape->getGeometry(), c->transform->position, c->transform->rotation, dir, length, layermask, type, ignoreRigidbody);
 }
 
-vector<PhysicsHit> PhysicsQuery::SweepAll(Collider* c, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<PhysicsHit> PhysicsQuery::SweepAll(Collider* c, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	ICollider* ic = c;
 	PxShape* shape = ic->GetPxShape();
 	return SweepGeometryAll(shape->getGeometry(), c->transform->position, c->transform->rotation, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepSphereTest(const V3& p, float r, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepSphereTest(const V3& p, float r, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(r);
 	return SweepGeometryTest(g, p, m_qI, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepSphere(PhysicsHit& hit, const V3& p, float r, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepSphere(PhysicsHit& hit, const V3& p, float r, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(r);
 	return SweepGeometry(hit, g, p, m_qI, dir, length, layermask, type, ignoreRigidbody);
 }
 
-vector<PhysicsHit> PhysicsQuery::SweepSphereAll(const V3& p, float r, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<PhysicsHit> PhysicsQuery::SweepSphereAll(const V3& p, float r, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxSphereGeometry g(r);
 	return SweepGeometryAll(g, p, m_qI, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepBoxTest(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepBoxTest(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxBoxGeometry g(ToPxVec3(ex));
 	return SweepGeometryTest(g, p, r, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepBox(PhysicsHit& hit, const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepBox(PhysicsHit& hit, const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxBoxGeometry g(ToPxVec3(ex));
 	return SweepGeometry(hit, g, p, r, dir, length, layermask, type, ignoreRigidbody);
 }
 
-vector<PhysicsHit> PhysicsQuery::SweepBoxAll(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<PhysicsHit> PhysicsQuery::SweepBoxAll(const V3& p, const Q& r, const V3& ex, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxBoxGeometry g(ToPxVec3(ex));
 	return SweepGeometryAll(g, p, r, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepCapsuleTest(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxCapsuleGeometry g(rad, halfHeight);
 	return SweepGeometryTest(g, p, m_qZ180 * r, dir, length, layermask, type, ignoreRigidbody);
 }
 
-bool PhysicsQuery::SweepCapsule(PhysicsHit& hit, const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+bool PhysicsQuery::SweepCapsule(PhysicsHit& hit, const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxCapsuleGeometry g(rad, halfHeight);
 	return SweepGeometry(hit, g, p, m_qZ180 * r, dir, length, layermask, type, ignoreRigidbody);
 }
 
-vector<PhysicsHit> PhysicsQuery::SweepCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask, PhysicsQueryType type, Rigidbody* ignoreRigidbody) const
+vector<PhysicsHit> PhysicsQuery::SweepCapsuleAll(const V3& p, const Q& r, float rad, float halfHeight, const V3& dir, float length, uint32 layermask, PhysicsQueryTypes type, Rigidbody* ignoreRigidbody) const
 {
 	PxCapsuleGeometry g(rad, halfHeight);
 	return SweepGeometryAll(g, p, m_qZ180 * r, dir, length, layermask, type, ignoreRigidbody);

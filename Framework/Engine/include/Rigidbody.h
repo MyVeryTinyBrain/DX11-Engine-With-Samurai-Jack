@@ -29,23 +29,15 @@ public:
 private:
 
 	virtual void Awake() override;
-
+	virtual void Awake(void* arg/* PxRigidDynamic from CCT */) override;
 	virtual void Start() override;
-
 	virtual void BeforePhysicsSimulation() override;
-
 	virtual void AfterPhysicsSimulation() override;
-
 	virtual void PostFixedUpdate() override;
-
 	virtual void PreUpdate() override;
-
 	virtual void PostUpdate() override;
-
 	virtual void OnEnable() override;
-
 	virtual void OnDisable() override;
-
 	virtual void OnDestroyed() override;
 
 protected:
@@ -55,33 +47,24 @@ protected:
 public:
 
 	inline bool IsUseGravity() const { return !m_body->getActorFlags().isSet(PxActorFlag::eDISABLE_GRAVITY); }
-
 	inline void SetUseGravity(bool value) { m_body->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !value); }
 
 	inline bool IsKinematic() const { return m_body->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC); }
-
 	inline void SetKienmatic(bool value) { m_body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, value); }
 
 	inline bool IsContinousDetectionMode() const { return m_continous; }
-
 	void SetContinousDetctionMode(bool value);
 
 	inline void Sleep() { if (!IsKinematic()) { m_body->putToSleep(); } }
-
 	inline void WakeUp() { if (!IsKinematic()) { m_body->wakeUp(); } }
-
 	inline bool IsSleep() const { return m_body->isSleeping(); }
 
 	bool IsLockedRotate(Rigidbody::Axis axes);
-
 	void SetRotationLock(Rigidbody::Axis axes, bool value);
-
 	bool IsLockedTranslate(Rigidbody::Axis axes);
-
 	void SetTranslationLock(Rigidbody::Axis axes, bool value);
 
 	Rigidbody::Interpolate GetInterpolateMode() const;
-
 	void SetInterpolateMode(Rigidbody::Interpolate mode);
 
 	_declspec(property(get = IsUseGravity, put = SetUseGravity)) bool useGravity;
@@ -93,27 +76,21 @@ public:
 public:
 
 	inline float GetSleepThresholder() const { return m_body->getSleepThreshold(); }
-
 	inline void SetSleepThresholder(float value) { m_body->setSleepThreshold(Saturate(value)); }
 
 	inline float GetMass() const { return m_body->getMass(); }
-
 	inline void SetMass(float value) { m_body->setMass(Saturate(value)); }
 
 	inline float GetLinearDamping() const { return m_body->getLinearDamping(); }
-
 	inline void SetLinearDamping(float value) { m_body->setLinearDamping(Saturate(value)); }
 
 	inline float GetAngularDamping() const { return m_body->getAngularDamping(); }
-
 	inline void SetAngularDamping(float value) { m_body->setAngularDamping(value); }
 
 	inline float GetMaxLinearVelocity() const { return m_body->getMaxLinearVelocity(); }
-
 	inline void SetMaxLinearVelocity(float value) { m_body->setMaxLinearVelocity(Saturate(value)); }
 
 	inline float GetMaxAngularVelocity() const { return m_body->getMaxAngularVelocity(); }
-
 	inline void SetMaxAngularVelocity(float value) { m_body->setMaxAngularVelocity(Saturate(value)); }
 
 	_declspec(property(get = GetSleepThresholder, put = SetSleepThresholder)) float sleepThresholder;
@@ -126,15 +103,12 @@ public:
 public:
 
 	V3 GetVelocity() const;
-
 	void SetVelocity(const V3& velocity);
 
 	V3 GetAngularVelocity() const;
-
 	void SetAngularVelocity(const V3& angularVelocity);
 
 	void AddForce(const V3& force, Rigidbody::ForceMode forceMode);
-
 	void ClearForce(Rigidbody::ForceMode forceMode);
 
 	_declspec(property(get = GetVelocity, put = SetVelocity)) V3 velocity;
@@ -143,21 +117,19 @@ public:
 public:
 
 	inline void ReAttachColliders() { AttachAll(); }
-
 	inline void UpdateTransformToRigidbody() { ApplyBodyTransformFromGameObject(); }
-
 	inline void UpdateTransformToGameObject() { ApplyGameObjectTransfromFromBody(); }
+
+public:
+
+	inline virtual bool IsCCTComponent() const override { return m_isCCTComponent; }
 
 private:
 
 	void AttachAll();
-
 	void DetachAll();
-
 	void ApplyFlags();
-
 	void ApplyBodyTransformFromGameObject();
-
 	void ApplyGameObjectTransfromFromBody();
 
 private:
@@ -166,7 +138,7 @@ private:
 
 private:
 
-	virtual bool IsWorking() override;
+	virtual bool IsWorking() const override;
 
 private:
 
@@ -177,6 +149,8 @@ private:
 	RigidbodyInterpolateBase* m_currentInterpolate = nullptr;
 	RigidbodyInterpolateBase* m_interpolater = nullptr;
 	RigidbodyInterpolateBase* m_extrapolater = nullptr;
+
+	bool m_isCCTComponent = false;
 };
 
 ENGINE_END

@@ -7,6 +7,10 @@ ENGINE_BEGIN
 
 class ENGINE_API LineRenderer : public Renderer, public IRendererCullOp
 {
+public:
+
+	enum class Alignment { View, Local };
+
 private:
 
 	virtual void Awake() override;
@@ -27,9 +31,13 @@ public:
 	inline bool IsLocalSpace() const { return m_localSpace; }
 	inline void SetLocalSpace(bool value) { m_localSpace = value; }
 
+	inline LineRenderer::Alignment GetAlignment() const { return m_alignment; }
+	inline void SetAlignment(LineRenderer::Alignment value) { m_alignment = value; }
+
 	_declspec(property(get = GetNumPoints)) uint numPoints;
 	_declspec(property(get = GetWidth, put = SetWidth)) float width;
 	_declspec(property(get = IsLocalSpace, put = SetLocalSpace)) bool isLocalSpace;
+	_declspec(property(get = GetAlignment, put = SetAlignment)) LineRenderer::Alignment alignment;
 
 public:
 
@@ -55,6 +63,8 @@ private:
 	float						m_width = 0.5f;
 	bool						m_localSpace = false;
 	vector<V3>					m_points;
+
+	LineRenderer::Alignment		m_alignment = LineRenderer::Alignment::View;
 
 	/*
 

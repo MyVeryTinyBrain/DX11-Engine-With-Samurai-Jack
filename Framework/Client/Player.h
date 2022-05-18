@@ -13,10 +13,6 @@ private:
 
 	virtual void LateUpdate() override;
 
-	void OnCollisionEnter(const Collision& collision);
-
-	void OnCollisionExit(const Collision& collision);
-
 private:
 
 	void SetupTPSCamera();
@@ -54,10 +50,7 @@ private:
 
 	// Physics
 
-	Rigidbody*				m_rigidbody;
-
-	GameObject*				m_goCollider;
-	CapsuleCollider*		m_collider;
+	CharacterController*	m_controller;
 
 	GameObject*				m_goWeaponTrigger;
 	SphereCollider*			m_weaponTrigger;

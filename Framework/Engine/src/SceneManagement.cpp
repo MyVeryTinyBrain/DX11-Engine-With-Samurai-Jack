@@ -79,11 +79,7 @@ void SceneManagement::ChangeScene(Scene* scene)
 	IScene* iNextScene = m_next;
 	bool result = iNextScene->Initialize(m_system);
 	if (!result)
-	{
 		ERROR_MESSAGE("SceneManagement::ChangeScene::Failed to initialize next scene");
-		bool NextSceneInitialize = false;
-		assert(NextSceneInitialize);
-	}
 
 	// 현재 씬이 null이라면 씬 전환을 즉시 실행합니다.
 	if (!m_current)

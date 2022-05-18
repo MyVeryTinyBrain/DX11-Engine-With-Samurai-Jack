@@ -40,6 +40,9 @@ public:
 
 public:
 
+	int GetPriority() const { return m_priority; }
+	void SetPriority(int value) { m_priority = value; }
+
 	float GetVolume() const;
 	void SetVolume(float value);
 
@@ -57,6 +60,8 @@ public:
 	void Set3DDopplerLevel(float value);
 	float GetNormalized3DLevel() const;
 	void SetNormalized3DLevel(float value);
+
+	_declspec(property(get = GetPriority, put = SetPriority)) int priority;
 
 	_declspec(property(get = GetVolume, put = SetVolume)) float volume;
 	_declspec(property(get = GetPitch, put = SetPitch)) float pitch;
@@ -77,6 +82,8 @@ private:
 
 	ResourceRef<AudioClip>			m_clip;
 	list<AudioSourcePlaydata*>		m_playdatas;
+
+	int m_priority = 100;
 };
 
 ENGINE_END

@@ -18,7 +18,7 @@ void LineRenderer::Awake()
 
 	SetupMesh(512);
 
-	SetMaterial(system->resource->builtInResources->whiteMaterial);
+	SetMaterial(system->resource->builtIn->whiteMaterial);
 }
 
 void LineRenderer::Render()
@@ -241,10 +241,21 @@ void LineRenderer::SetupVertexPair(uint pointIndex, const V3& camDir, const V3& 
 	//V3 c2p = (curPoint - camPos).normalized;
 
 	V3 right, up;
+
+	Q q;
+
+	switch (m_alignment)
 	{
-		right = V3::Cross(camDir, forward).normalized;
-		//right = V3::Cross(c2p, forward).normalized;
-		up = V3::Cross(right, forward).normalized;
+		case LineRenderer::Alignment::View:
+			right = V3::Cross(camDir, forward).normalized;
+			//right = V3::Cross(c2p, forward).normalized;
+			up = V3::Cross(right, forward).normalized;
+			break;
+		case LineRenderer::Alignment::Local:
+			q = Q::FromToRotation(transform->forward, forward);
+			right = q.MultiplyVector(transform->right).normalized;
+			up = transform->up;
+			break;
 	}
 
 	// Set positions of pair
