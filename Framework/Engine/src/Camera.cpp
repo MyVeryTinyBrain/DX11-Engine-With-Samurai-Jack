@@ -10,6 +10,8 @@
 
 void Camera::Awake()
 {
+	m_drawGBuffer = false;
+
 	Reset();
 
 	ICameraManager* iCameraManager = system->graphic->cameraManager;
@@ -57,8 +59,8 @@ void Camera::Awake()
 	m_bloomDesc.Enable = true;
 	m_bloomDesc.Type = BloomType::Add;
 	m_bloomDesc.BlurNumSamples = 8;
-	m_bloomDesc.Intensity = 1.5f;
-	m_bloomDesc.Threshold = 0.1f;
+	m_bloomDesc.Intensity = 1.15f;
+	m_bloomDesc.Threshold = 0.075f;
 	m_bloomDesc.BlurPixelDistance = 50.0f;
 
 	m_chromaticAberrationDesc.Enable = true;

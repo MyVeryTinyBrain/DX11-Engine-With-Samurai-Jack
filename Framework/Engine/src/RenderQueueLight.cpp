@@ -178,7 +178,7 @@ void RenderQueueLight::Clear()
         m_shadowPassInstanceRequests.clear();
 }
 
-bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest& request, const BoundingHolder& boundingHolder) const
+bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const LightDesc& light, const RenderRequest& request, const BoundingHolder& boundingHolder) const
 {
     if (!request.shadow.draw)
         return false;
@@ -188,6 +188,15 @@ bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const RenderRequest
 
     if (request.essential.cull && !CullOp(request, boundingHolder))
         return false;
+
+    if (request.op.boundsOp)
+    {
+        V3 p = camera->GetPosition();
+        Bounds bounds = request.op.boundsOp->GetBounds();
+        float distance = bounds.GetDistanceBetweenPoint(p);
+        if (distance > light.ShadowFadeDistance)
+            return false;
+    }
 
     return true;
 }
@@ -366,7 +375,7 @@ void RenderQueueLight::Render_DepthOfLight_Static(ICamera* camera, const LightDe
         {
             for (auto& request : requests)
             {
-                if (!IsValidShadowRequest(camera, request, boundings[i]))
+                if (!IsValidShadowRequest(camera, lightDesc, request, boundings[i]))
                     continue;
 
                 InstanceData data;
@@ -421,7 +430,7 @@ void RenderQueueLight::Render_DepthOfLight_Skinned(ICamera* camera, const LightD
 
         for (auto& request : requests)
         {
-            if (!IsValidShadowRequest(camera, request, boundings[i]))
+            if (!IsValidShadowRequest(camera, lightDesc, request, boundings[i]))
                 continue;
 
             m_CBufferManager->BeginApply(m_shaderLightDepthWrite->GetEffect());

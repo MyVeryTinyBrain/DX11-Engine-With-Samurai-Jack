@@ -33,6 +33,8 @@ LightDesc SpotLight::GetLightDesc(ICamera* camera) const
     desc.Range = m_range;
     desc.Angle = m_angle;
     desc.ShadowBias = shadowBias;
+    desc.ShadowFadeDistance = shadowFadeDistance;
+    desc.ShadowFadeBeginPercent = shadowFadeBeginPercent;
     desc.Diffuse = diffuse;
     desc.Ambient = ambient;
     desc.Near = m_near;

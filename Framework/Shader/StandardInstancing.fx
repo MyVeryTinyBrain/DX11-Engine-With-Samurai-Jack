@@ -41,8 +41,8 @@ texture2D		_AlbedoTexture < string Default = "White"; > ;
 texture2D		_NormalMapTexture < string Default = "Normal"; > ;
 texture2D		_LightMaskTexture < string Default = "White"; > ;
 texture2D		_ShadowMaskTexture < string Default = "White"; > ;
-texture2D		_RoughnessTexture < string Default = "Roughness"; > ;
-texture2D		_MetallicTexture < string Default = "Black"; > ;
+texture2D		_RoughnessTexture < string Default = "Roughness"; > ; // Green Channel
+texture2D		_MetallicTexture < string Default = "Black"; > ; // Red Channel
 texture2D		_EmissiveTexture < string Default = "Clear"; > ;
 texture2D		_OcclusionTexture < string Default = "White"; > ;
 texture2D		_ReflectionTexture < string Default = "Clear"; > ;
@@ -118,7 +118,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	half shadowMask = _ShadowMaskTexture.Sample(diffuseSampler, In.UV).r;
 	output.Light_Shadow = half4(lightMask, shadowMask, 0.0f, 1.0f);
 
-	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).r;
+	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).g;
 	half metallic = _MetallicTexture.Sample(diffuseSampler, In.UV).r;
 	output.Roughness_Metallic = half4(roughness, metallic, 0.0f, 1.0f);
 

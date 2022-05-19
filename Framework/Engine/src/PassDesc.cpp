@@ -352,8 +352,6 @@ bool PassDesc::ExtractCullingFlag(ID3DX11EffectPass* pass, bool* out_flag)
 	if (!pass || !out_flag)
 		return false;
 
-	*out_flag = false;
-
 	D3DX11_PASS_DESC passDesc = {};
 	if (FAILED(pass->GetDesc(&passDesc)))
 		return false;

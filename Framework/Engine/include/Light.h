@@ -33,6 +33,12 @@ public:
 	virtual inline float GetShadowBias() const { return m_shadowBias; }
 	inline void SetShadowBias(float value) { m_shadowBias = value; }
 
+	virtual inline float GetShadowFadeDistance() const { return m_shadowFadeDistance; }
+	inline void SetShadowFadeDistance(float value) { m_shadowFadeDistance = value; }
+
+	virtual inline float GetShadowBeginFadePercent() const { return m_shadowFadeBeginPercent; }
+	inline void GetShadowBeginFadePercent(float value) { m_shadowFadeBeginPercent = value; }
+
 	virtual inline uint GetDepthSize() const override { return m_depthSize; }
 
 	_declspec(property(get = GetIntensity, put = SetIntensity)) float intensity;
@@ -41,6 +47,8 @@ public:
 	_declspec(property(get = IsDrawShadow, put = SetDrawShadowMode)) bool drawShadow;
 	_declspec(property(get = GetShadowWhiteness, put = SetShadowWhiteness)) float shadowWhiteness;
 	_declspec(property(get = GetShadowBias, put = SetShadowBias)) float shadowBias;
+	_declspec(property(get = GetShadowFadeDistance, put = SetShadowFadeDistance)) float shadowFadeDistance;
+	_declspec(property(get = GetShadowBeginFadePercent, put = GetShadowBeginFadePercent)) float shadowFadeBeginPercent;
 	_declspec(property(get = GetDepthSize)) uint depthSize;
 
 public:
@@ -81,8 +89,10 @@ private:
 	Color					m_ambient = Color::black();
 
 	bool					m_drawShadow = false;
-	float					m_shadowWhiteness = 0.5f;
+	float					m_shadowWhiteness = 0.2f;
 	float					m_shadowBias = 0.0001f;
+	float					m_shadowFadeDistance = 25.0f;
+	float					m_shadowFadeBeginPercent = 0.8f;
 
 	bool					m_volumetricLightState = false;
 	uint					m_volumetricNumSamples = 50;

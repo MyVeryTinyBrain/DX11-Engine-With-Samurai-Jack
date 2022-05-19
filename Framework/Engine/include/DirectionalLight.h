@@ -44,8 +44,8 @@ private:
 	float	m_near = 0.1f;
 	float	m_far = 500;
 
-	float	m_camNear[3] = { 0.0f, 0.0f, 0.0f };
-	float	m_camFar[3] = { 2.0f, 10.0f, 50.0f };
+	float	m_camNear[3] = { 0.0f, 3.0f, 6.0f };
+	float	m_camFar[3] = { 3.0f, 6.0f, 30.0f };
 };
 
 ENGINE_END

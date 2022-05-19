@@ -37,16 +37,6 @@ PS_IN VS_MAIN(VS_IN In)
 	return output;
 }
 
-inline half3 HDRTonemapping(half3 color)
-{
-	return color / (color + 1.0f);
-}
-
-inline half3 GammaCorrection(half3 color)
-{
-	return pow(color, 1.0f / 2.2f);
-}
-
 float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
 	float4 color = (float4)0;
@@ -55,9 +45,6 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	half4 ls = _Light_Shadow.Sample(pointSampler, In.UV);
 	half lightMask = ls.r;
 	half4 light = _Light.Sample(pointSampler, In.UV);
-
-	//light.rgb = HDRTonemapping(light.rgb);
-	//light.rgb = GammaCorrection(light.rgb);
 
 	half3 lightedColor = saturate(light.rgb);
 	half3 unlighttedColor = saturate(albedo.rgb);

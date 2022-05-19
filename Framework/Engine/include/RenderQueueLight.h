@@ -68,7 +68,7 @@ public:
 private:
 
 	bool IsValidLight(ICamera* camera, ILight* light) const;
-	bool IsValidShadowRequest(ICamera* camera, const RenderRequest& request, const BoundingHolder& boundingHolder) const;
+	bool IsValidShadowRequest(ICamera* camera, const LightDesc& light, const RenderRequest& request, const BoundingHolder& boundingHolder) const;
 	void ApplyCBufferForLight(Com<ID3D11DeviceContext> deviceContext, const RenderRequest& request, const LightDesc& lightDesc, uint projectionIndex);
 
 	bool CullOp(const RenderRequest& request, const BoundingHolder& boundingHolder) const;

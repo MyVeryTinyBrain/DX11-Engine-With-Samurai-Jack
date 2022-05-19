@@ -22,8 +22,8 @@ namespace XmMathPlus
 		inline void SetCenter(const V3& center) { m_aabb.Center = center; }
 		inline void SetExtents(const V3& extents) { m_aabb.Extents = V3::Abs(extents); }
 
-		inline const V3& GetMin() const { return center - extents; }
-		inline const V3& GetMax() const { return center + extents; }
+		inline V3 GetMax() const { return center + extents; }
+		inline V3 GetMin() const { return center - extents; }
 		inline V3 GetSize() const { return GetExtents() * 2.0f; }
 
 		void GetCorners(V3* out_arrCorners);
@@ -35,6 +35,7 @@ namespace XmMathPlus
 		_declspec(property(get = GetMax)) V3 max;
 
 		V3 ClosetPoint(V3 point) const;
+		Real GetDistanceBetweenPoint(const V3& point) const;
 
 		inline void Transform(Real scale, const Q& rotation, const V3& position) { m_aabb.Transform(m_aabb, scale, rotation, position); }
 		inline void Transform(const M4& transformation) { m_aabb.Transform(m_aabb, transformation); }

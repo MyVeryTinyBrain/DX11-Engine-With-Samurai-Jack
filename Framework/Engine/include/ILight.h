@@ -18,11 +18,13 @@ struct LightDesc
 	BOOL		DrawShadow;
 	LightType	Type;
 	uint		DepthSize;
-	float		ShadowWhiteness;
+	float		ShadowWhiteness;		// [0~1]
 	float		Intensity;
 	float		Range;					// [0~inf]
 	float		Angle;					// [0~90]
 	float		ShadowBias;				// [0~1]
+	float		ShadowFadeDistance;
+	float		ShadowFadeBeginPercent;	// [0~1]
 	float		Near;
 	float		Far;
 	V4			Position;

@@ -27,6 +27,16 @@ V3 XmMathPlus::Bounds::ClosetPoint(V3 point) const
 	return min + center;
 }
 
+Real XmMathPlus::Bounds::GetDistanceBetweenPoint(const V3& point) const
+{
+	Real dx = Max(min.x - point.x, point.x - max.x);
+	Real dy = Max(min.y - point.y, point.y - max.y);
+	dx = Max(dx, 0.0f);
+	dy = Max(dy, 0.0f);
+	Real distance = sqrt(dx * dx + dy * dy);
+	return distance;
+}
+
 bool XmMathPlus::Bounds::RaycastIn90Degrees(const Ray& ray, Real& out_distance) const
 {
 	if (m_aabb.Intersects(ray.origin, ray.direction, out_distance))

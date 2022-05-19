@@ -33,11 +33,13 @@ struct LightDesc
 	bool		DrawShadow;
 	uint		Type;
 	uint		DepthSize;
-	float		ShadowWhiteness;
+	float		ShadowWhiteness;		// [0~1]
 	float		Intensity;
 	float		Range;					// [0~inf]
 	float		Angle;					// [0~90]
 	float		ShadowBias;				// [0~1]
+	float		ShadowFadeDistance;
+	float		ShadowFadeBeginPercent;	// [0~1]
 	float		Near;
 	float		Far;
 	float4		Position;
@@ -476,7 +478,7 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 	float3 L = normalize(world2Light);
 	float3 H = normalize(V + L);
 
-	float3 radiance = light.Diffuse.rgb * light.Intensity * atten;
+	float3 radiance = light.Diffuse.rgb * light.Intensity;
 
 	// Cook-Torrance BRDF
 	float NDF = distributionGGX(N, H, roughness);
@@ -497,12 +499,15 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 
 	intensity = light.Intensity * atten * NdotL;
 
-	return (kD * albedo / PI + specular) * NdotL * radiance;
+	float3 Lo = (kD * albedo / PI + specular) * NdotL * radiance;
+	Lo = max(Lo, 0.0f); // Disable warning
 
-	//// HDR tonemapping
-	//Lo = Lo / (Lo + 1.0f);
-	//// Gamma correction
-	//Lo = pow(Lo, 1.0f / 2.2f);
+	// HDR tonemapping
+	Lo = Lo / (Lo + 1.0f);
+	// Gamma correction
+	Lo = pow(Lo, 1.0f / 2.2f);
+
+	return Lo * atten;
 }
 
 inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], half3 albedo, half3 normal, float3 worldPosition, half depth, half shadowMask, half roughness, half metallic)
@@ -519,7 +524,9 @@ inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDes
 	if (light.DrawShadow && shadowMask > 0.0f)
 	{
 		shadow = ComputeShadow_Directional(light, lightDepthMap, light.ShadowWhiteness, worldPosition);
-		shadow = lerp(1.0f, shadow, shadowMask);
+		half dist = length(world2Camera);
+		half distFade = saturate(((light.ShadowFadeDistance - dist) / light.ShadowFadeDistance) / light.ShadowFadeBeginPercent);
+		shadow = lerp(1.0f, shadow, shadowMask * distFade);
 	}
 
 	Lo *= shadow;
@@ -546,7 +553,9 @@ inline LightCalculateDesc ComputePointLight(LightDesc light, VolumetricDesc volu
 	if (light.DrawShadow && shadowMask > 0.0f)
 	{
 		shadow = ComputeShadow_Point(light, lightDepthMap, lightToPixel, light.ShadowWhiteness, worldPosition);
-		shadow = lerp(1.0f, shadow, shadowMask);
+		half dist = length(world2Camera);
+		half distFade = saturate(((light.ShadowFadeDistance - dist) / light.ShadowFadeDistance) / light.ShadowFadeBeginPercent);
+		shadow = lerp(1.0f, shadow, shadowMask * distFade);
 	}
 
 	Lo *= shadow;
@@ -581,7 +590,9 @@ inline LightCalculateDesc ComputeSpotLight(LightDesc light, VolumetricDesc volum
 	if (light.DrawShadow && shadowMask > 0.0f)
 	{
 		shadow = ComputeShadow_Spot(light, lightDepthMap, light.ShadowWhiteness, worldPosition);
-		shadow = lerp(1.0f, shadow, shadowMask);
+		half dist = length(world2Camera);
+		half distFade = saturate(((light.ShadowFadeDistance - dist) / light.ShadowFadeDistance) / light.ShadowFadeBeginPercent);
+		shadow = lerp(1.0f, shadow, shadowMask * distFade);
 	}
 
 	Lo *= shadow;

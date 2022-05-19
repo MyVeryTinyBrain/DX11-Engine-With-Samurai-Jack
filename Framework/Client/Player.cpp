@@ -14,12 +14,6 @@ void Player::Awake()
 
 void Player::Update()
 {
-	ImGui::Begin("Angles");
-	V3 angles = m_goTrail->transform->localEulerAngles;
-	ImGui::SliderFloat3("angles", (float*)&angles, -360, +360);
-	m_goTrail->transform->localEulerAngles = angles;
-	ImGui::End();
-
 	float dt = system->time->deltaTime;
 	auto layer = m_jackAnimator->GetLayerByIndex(0);
 
