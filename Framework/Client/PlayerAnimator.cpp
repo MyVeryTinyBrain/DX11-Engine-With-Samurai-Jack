@@ -114,7 +114,7 @@ void PlayerAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, false, AnimatorTransition::Compare::EQUAL));
-		Layer->AddTransition(BH_AIR_JUMP, BH_FALL, values, 0.6f, 1.0f, 0.0f);
+		Layer->AddTransition(BH_AIR_JUMP, BH_FALL, values, 0.6f, 2.0f, 0.0f);
 	}
 
 	// BH_IDLE -> BH_FALL
