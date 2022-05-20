@@ -17,5 +17,7 @@ public:
 public:
 
 	virtual void SetSkinnedMeshRenderer(Ref<SkinnedMeshRenderer> skinnedMeshRenderer) = 0;
+	virtual void ClearTransitionEvents() = 0;
+	virtual void ClearAnimationEvents() = 0;
 };
 ENGINE_END

@@ -2,7 +2,6 @@
 #include "PlayerTestScene.h"
 #include "Player.h"
 #include "FreeCamera.h"
-#include "JackAnimator.h"
 #include "SoundTest.h"
 
 Scene* PlayerTestScene::Clone()
@@ -46,30 +45,6 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Base Color.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Ambient Occlusion.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Normal.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Specular Level.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Stone 03/Stone03_Roughness.jpg"));
-
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Ambient Occlusion.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_BaseColor.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Normal.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Roughness.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Ground Stones/GroundStones_Specular Level.jpg"));
-
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_ambient_occlusion.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_basecolor.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_normal.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_glossiness_1.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Painted/WoodPlanksPainted_roughness.jpg"));
-
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_ambient_occlusion.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_basecolor.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_glossiness.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_normal.jpg"));
-	//system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Wood Wall/Wood_wall_roughness.jpg"));
-
 	//GameObject* goST = CreateGameObject();
 	//goST->transform->position = V3(0, 5, 0);
 	//SoundTest* st = goST->AddComponent<SoundTest>();
@@ -84,8 +59,6 @@ void PlayerTestScene::OnLoad()
 		GameObject* goLine = CreateGameObject();
 		goLine->transform->position = V3(0, 5, -5);
 		LineRenderer* line = goLine->AddComponent<LineRenderer>();
-		//line->AddPoint(V3(0, 0, 0));
-		//line->AddPoint(V3(0, 0, 2));
 
 		for (int i = 0; i <= 50; ++i)
 		{
@@ -105,7 +78,7 @@ void PlayerTestScene::OnLoad()
 		thread t0(
 			[&]
 			{
-				system->resource->factory->LoadMeshM(TEXT("../Resource/Character/Jack/Jack.FBX"));
+				system->resource->factory->LoadMeshM(TEXT("../Resource/Jack/jack.FBX"));
 				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
 				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
 			});
@@ -113,49 +86,10 @@ void PlayerTestScene::OnLoad()
 			t0.join();
 
 		{
-			GameObject* goPlayer = CreateGameObject(TEXT("Jack"));
-			goPlayer->AddComponent<Player>();
+			GameObject* go = CreateGameObject();
+			go->transform->position = V3(0, 5, 0);
+			go->AddComponent<Player>();
 		}
-
-#ifndef _DEBUG
-		for (uint i = 0; i < 10; ++i)
-		{
-			for (uint j = 0; j < 2; ++j)
-			{
-				GameObject* goJack = CreateGameObject(TEXT("Jack"));
-				goJack->transform->position = V3(2.0f + float(i * 2), 0, 2.0f + float(j * 2.0f));
-
-				GameObject* goCharacterRender = CreateGameObjectToChild(goJack->transform);
-				goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
-				goCharacterRender->transform->localPosition = V3::down();
-				SkinnedMeshRenderer* characterRenderer = goCharacterRender->AddComponent<SkinnedMeshRenderer>();
-				characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
-				goCharacterRender->AddComponent<JackAnimator>();
-
-				CharacterController* cct = goJack->AddComponent<CharacterController>();
-			}
-		}
-#else
-		system->physics->layerManager->SetCollision(0, 1, true);
-		system->physics->layerManager->SetCollision(1, 1, false);
-		for (uint i = 0; i < 1; ++i)
-		{
-			for (uint j = 0; j < 2; ++j)
-			{
-				GameObject* goJack = CreateGameObject(TEXT("Jack"));
-				goJack->transform->position = V3(2.0f + float(i * 2), 0, 2.0f + float(j * 2.0f));
-
-				GameObject* goCharacterRender = CreateGameObjectToChild(goJack->transform);
-				goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
-				goCharacterRender->transform->localPosition = V3::down();
-				SkinnedMeshRenderer* characterRenderer = goCharacterRender->AddComponent<SkinnedMeshRenderer>();
-				characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
-				goCharacterRender->AddComponent<JackAnimator>();
-
-				CharacterController* cct = goJack->AddComponent<CharacterController>();
-			}
-		}
-#endif
 
 		{
 			GameObject* goGround = CreateGameObject();
@@ -196,7 +130,6 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			//GameObject* goSpotLight = CreateGameObjectToChild(FindGameObject(TEXT("Camera"))->transform, TEXT("SpotLight"));
 			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
 			goSpotLight->transform->position = V3(0, 2, -20);
 			goSpotLight->transform->forward = V3::forward();

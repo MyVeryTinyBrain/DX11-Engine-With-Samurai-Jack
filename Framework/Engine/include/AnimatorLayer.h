@@ -18,15 +18,12 @@ public:
 public:
 
 	AnimatorLayer();
-
 	AnimatorLayer(const tstring& name, AnimatorLayer::AnimateType type = AnimatorLayer::AnimateType::Override);
-
 	virtual ~AnimatorLayer();
 
 public:
 
 	void Accumulate(float deltaTime, float speed);
-
 	void Animate(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer);
 
 public:
@@ -69,25 +66,24 @@ public:
 	/// 타겟 노드의 정규화된 시간의 시작값입니다.<para>
 	/// 블렌딩을 사용하는 경우에는 이 시간부터 블렌딩이 진행됩니다.
 	/// </para></param>
+	/// <param name="cantRecursive">
+	/// 같은 애니메이션끼리의 전환을 금지합니다.(nextNode가 currentNode이면 이 트랜지션은 동작하지 않습니다.)
+	/// </param>
 	AnimatorTransition* AddTransition(
 		AnimatorNode* startNode, AnimatorNode* nextNode,
 		const vector<AnimatorTransition::PropertyValue>& propertyValues,
-		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f);
+		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f,
+		bool cantRecursive = false);
 
 public:
 
 	inline Ref<AnimatorNode> GetCurrentNode() const { return m_currentNode; }
-
 	inline Ref<AnimatorNode> GetBlendNode() const { return m_blendNode; }
-
 	inline Ref<AnimatorTransition> GetCurrentTransition() const { return m_currentTransition; }
-
 	inline const Ref<NodeTransform>& GetRootNode() const { return m_rootNode; }
 
 	void SetRootNodeByName(const tstring& rootNodeName);
-
 	V3 GetDeltaPosition() const;
-
 	Q  GetDeltaRotation() const;
 
 	void SetType(AnimatorLayer::AnimateType type) { m_type = type; }
@@ -101,6 +97,14 @@ public:
 	_declspec(property(get = GetDeltaRotation)) Q deltaRotation;
 	_declspec(property(get = GetType, put = SetType)) AnimatorLayer::AnimateType type;
 
+public:
+
+	Ref<AnimatorNode> GetBeginChangingNode() const;
+	Ref<AnimatorNode> GetEndChangedNode() const;
+	Ref<AnimatorNode> GetPreviousNode() const;
+
+	const vector<string>& GetEventMessages() const { return m_eventMessages; }
+
 private:
 
 	void AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer);
@@ -110,6 +114,8 @@ private:
 private:
 
 	virtual void SetSkinnedMeshRenderer(Ref<SkinnedMeshRenderer> skinnedMeshRenderer) override;
+	virtual void ClearTransitionEvents() override;
+	virtual void ClearAnimationEvents() override;
 
 private:
 
@@ -131,6 +137,16 @@ private:
 	Ref<NodeTransform>											m_rootNode;
 	V3															m_deltaPosition = V3::zero();
 	Q															m_deltaRotation = Q::identity();
+
+	// Result Data for Transition Events
+
+	AnimatorNode*												m_beginChangingNode = nullptr;
+	AnimatorNode*												m_endChangedNode = nullptr;
+	AnimatorNode*												m_prevNode = nullptr;
+
+	// Context message for Animation Evnets
+
+	vector<string>												m_eventMessages;
 };
 
 ENGINE_END

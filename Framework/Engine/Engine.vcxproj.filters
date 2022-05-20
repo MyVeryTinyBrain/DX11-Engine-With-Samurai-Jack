@@ -596,6 +596,9 @@
     <ClInclude Include="include\CCTCallback.h">
       <Filter>Object\SceneObject\Component\CharacterController\Callback</Filter>
     </ClInclude>
+    <ClInclude Include="include\AnimationEventType.h">
+      <Filter>Object\SceneObject\Component\Animator\AnimationEvent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1147,6 +1150,9 @@
     <ClCompile Include="src\CCTCallback.cpp">
       <Filter>Object\SceneObject\Component\CharacterController\Callback</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimationEventType.cpp">
+      <Filter>Object\SceneObject\Component\Animator\AnimationEvent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1457,6 +1463,9 @@
     </Filter>
     <Filter Include="Object\SceneObject\Component\CharacterController\Callback">
       <UniqueIdentifier>{71e916f2-a87b-4fa8-871a-76cc777c8ef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\SceneObject\Component\Animator\AnimationEvent">
+      <UniqueIdentifier>{c8b3769d-e3c6-41ec-97b4-1d540e8681b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -54,7 +54,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 		for (auto& currentTransition : anyTransitions)
 		{
-			if (currentTransition->IsTransferable())
+			if (currentTransition->IsTransferable(m_currentNode))
 			{
 				transition = currentTransition;
 				break;
@@ -70,7 +70,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 		for (auto& currentTransition : transitionsOfNode)
 		{
-			if (currentTransition->IsTransferable())
+			if (currentTransition->IsTransferable(m_currentNode))
 			{
 				transition = currentTransition;
 				break;
@@ -92,10 +92,17 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 			nextNode->normalizedTime = m_currentTransition->offset;
 
 		m_blendNode = nextNode;
+
+		// 이 노드로 변경되려고 하는것을 이 노드에 알립니다.
+		IAnimatorNode* iBlendNode = m_blendNode;
+		iBlendNode->OnTransition();
+
+		// For event notification
+		m_beginChangingNode = m_blendNode;
 	}
 	else if(m_currentTransition)
 	{
-		m_blendNode->Accumulate(dt);
+		m_blendNode->Accumulate(dt, m_eventMessages);
 	}
 
 	// 유효한 트랜지션이 있다면 전환을 시작합니다.
@@ -109,17 +116,22 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 		if (m_blendPercent >= 1.0f)
 		{
+			// For event notification
+			m_endChangedNode = m_blendNode;
+			m_prevNode = m_currentNode;
+
 			// 블렌딩을 종료하고 블렌딩 대상을 현재 노드로 설정합니다.
 			m_currentTransition->Used();
 			m_currentNode = m_blendNode;
 			m_blendNode = nullptr;
 			m_blendPercent = 0.0f;
 			m_currentTransition = nullptr;
+
 			return;
 		}
 	}
 
-	m_currentNode->Accumulate(dt);
+	m_currentNode->Accumulate(dt, m_eventMessages);
 }
 
 void AnimatorLayer::Animate(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
@@ -170,9 +182,13 @@ AnimatorProperty* AnimatorLayer::AddProperty(const tstring& name, AnimatorProper
 	return property;
 }
 
-AnimatorTransition* AnimatorLayer::AddTransition(AnimatorNode* startNode, AnimatorNode* nextNode, const vector<AnimatorTransition::PropertyValue>& propertyValues, float exitTime, float duration, float offset)
+AnimatorTransition* AnimatorLayer::AddTransition(
+	AnimatorNode* startNode, AnimatorNode* nextNode, 
+	const vector<AnimatorTransition::PropertyValue>& propertyValues, 
+	float exitTime, float duration, float offset,
+	bool cantRecursive)
 {
-	AnimatorTransition* transition = new AnimatorTransition(startNode, nextNode, propertyValues, exitTime, duration, offset);
+	AnimatorTransition* transition = new AnimatorTransition(startNode, nextNode, propertyValues, exitTime, duration, offset, cantRecursive);
 
 	vector<AnimatorTransition*>& transitionsOfNode = m_transitions[startNode];
 	transitionsOfNode.push_back(transition);
@@ -202,6 +218,21 @@ V3 AnimatorLayer::GetDeltaPosition() const
 Q AnimatorLayer::GetDeltaRotation() const
 {
 	return m_skinnedMeshRenderer->transform->rotation * m_deltaRotation;
+}
+
+Ref<AnimatorNode> AnimatorLayer::GetBeginChangingNode() const
+{
+	return m_beginChangingNode;
+}
+
+Ref<AnimatorNode> AnimatorLayer::GetEndChangedNode() const
+{
+	return m_endChangedNode;
+}
+
+Ref<AnimatorNode> AnimatorLayer::GetPreviousNode() const
+{
+	return m_prevNode;
 }
 
 void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
@@ -300,4 +331,19 @@ void AnimatorLayer::AnimateNodeTransform(const Ref<NodeTransform>& nodeTransform
 void AnimatorLayer::SetSkinnedMeshRenderer(Ref<SkinnedMeshRenderer> skinnedMeshRenderer)
 {
 	m_skinnedMeshRenderer = skinnedMeshRenderer;
+}
+
+void AnimatorLayer::ClearTransitionEvents()
+{
+	m_beginChangingNode = nullptr;
+	m_endChangedNode = nullptr;
+	m_prevNode = nullptr;
+}
+
+void AnimatorLayer::ClearAnimationEvents()
+{
+	if (!m_eventMessages.empty())
+	{
+		m_eventMessages.clear();
+	}
 }

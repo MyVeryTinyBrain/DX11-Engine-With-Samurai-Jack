@@ -35,6 +35,8 @@
       <Filter>Player</Filter>
     </ClInclude>
     <ClInclude Include="SoundTest.h" />
+    <ClInclude Include="PlayerAnimator.h" />
+    <ClInclude Include="Character.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -72,6 +74,9 @@
     <Filter Include="Sound">
       <UniqueIdentifier>{95cc7fd1-24f1-4eaa-8133-20d449e30aa3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Character">
+      <UniqueIdentifier>{510733be-c035-4d7a-a3a4-bf459b70d63a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -104,6 +109,8 @@
       <Filter>Player</Filter>
     </ClCompile>
     <ClCompile Include="SoundTest.cpp" />
+    <ClCompile Include="PlayerAnimator.cpp" />
+    <ClCompile Include="Character.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">

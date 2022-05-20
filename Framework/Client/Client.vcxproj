@@ -163,11 +163,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="FreeCamera.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="JackAnimator.h" />
+    <ClInclude Include="PlayerAnimator.h" />
     <ClInclude Include="PlayerTestScene.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SoundTest.h" />
@@ -182,10 +184,12 @@
     <ClInclude Include="TPSCamera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="FreeCamera.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="JackAnimator.cpp" />
+    <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="PlayerTestScene.cpp" />
     <ClCompile Include="SoundTest.cpp" />
     <ClCompile Include="stdafx.cpp">

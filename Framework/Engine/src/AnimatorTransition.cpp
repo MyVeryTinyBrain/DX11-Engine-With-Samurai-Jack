@@ -4,14 +4,16 @@
 AnimatorTransition::AnimatorTransition(
 	AnimatorNode* startNode, AnimatorNode* nextNode,
 	const vector<PropertyValue>& propertyValues,
-	float exitTime, float duration, float offset) :
+	float exitTime, float duration, float offset,
+	bool cantRecursive) :
 	Object((startNode ? startNode->name : TEXT("AnyNode")) + TEXT("->") + (nextNode ? nextNode->name : TEXT("ExitNode"))),
 	m_startNode(startNode),
 	m_nextNode(nextNode),
 	m_propertyValues(propertyValues),
 	m_exitTime(exitTime),
 	m_duration(duration),
-	m_offset(offset)
+	m_offset(offset),
+	m_cantRecursive(cantRecursive)
 {
 	for (auto& propValue : m_propertyValues)
 	{
@@ -32,11 +34,20 @@ void AnimatorTransition::Used()
 		trigger->valueAsBool = false;
 }
 
-bool AnimatorTransition::IsTransferable() const
+bool AnimatorTransition::IsTransferable(AnimatorNode* fromNode) const
 {
+	if (m_cantRecursive)
+	{
+		if (fromNode == m_nextNode)
+			return false;
+	}
+
 	if (m_exitTime > 0)
 	{
-		if (m_startNode->normalizedTime < m_exitTime)
+		if (m_startNode && m_startNode->normalizedTime < m_exitTime)
+			return false;
+
+		if (!m_startNode && fromNode && fromNode->normalizedTime < m_exitTime)
 			return false;
 	}
 

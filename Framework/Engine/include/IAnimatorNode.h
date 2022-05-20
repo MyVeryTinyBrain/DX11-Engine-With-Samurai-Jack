@@ -15,6 +15,8 @@ public:
 public:
 
 	virtual void SetRootNode(const Ref<NodeTransform>& rootNode) = 0;
+
+	virtual void OnTransition() = 0;
 };
 
 ENGINE_END

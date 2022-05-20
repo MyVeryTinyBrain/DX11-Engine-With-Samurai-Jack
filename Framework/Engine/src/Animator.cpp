@@ -27,6 +27,44 @@ void Animator::AnimationUpdate()
 	ForceUpdate();
 }
 
+void Animator::LateUpdate()
+{
+	for (auto& layer : m_layers)
+	{
+		const Ref<AnimatorNode>& beginChangineNode = layer->GetBeginChangingNode();
+		const Ref<AnimatorNode>& endChangedNode = layer->GetEndChangedNode();
+		const Ref<AnimatorNode>& previousNode = layer->GetPreviousNode();
+
+		// 트랜지션 이벤트 알림
+
+		if (beginChangineNode)
+		{
+			OnBeginChanging(layer, beginChangineNode);
+		}
+		if (endChangedNode)
+		{
+			OnEndChanged(layer, endChangedNode, previousNode);
+		}
+
+		// 애니메이션 이벤트 알림
+
+		for (auto& eventMessage : layer->GetEventMessages())
+		{
+			OnAnimationEvent(layer, eventMessage);
+		}
+	}
+}
+
+void Animator::PostUpdate()
+{
+	for (auto& layer : m_layers)
+	{
+		IAnimatorLayer* iAnimatorLayer = layer;
+		iAnimatorLayer->ClearTransitionEvents();
+		iAnimatorLayer->ClearAnimationEvents();
+	}
+}
+
 void Animator::OnDestroyed()
 {
 	for (auto& layer : m_layers)
@@ -66,6 +104,9 @@ Ref<AnimatorLayer> Animator::GetLayerByName(const tstring& name) const
 void Animator::ForceUpdate()
 {
 	if (!m_skinnedMeshRenderer)
+		return;
+
+	if (m_skinnedMeshRenderer && !m_skinnedMeshRenderer->mesh)
 		return;
 
 	float dt = system->time->deltaTime;

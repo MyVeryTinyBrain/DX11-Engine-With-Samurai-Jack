@@ -57,10 +57,14 @@ public:
 	/// 타겟 노드의 정규화된 시간의 시작값입니다.<para>
 	/// 블렌딩을 사용하는 경우에는 이 시간부터 블렌딩이 진행됩니다.
 	/// </para></param>
+	/// <param name="cantRecursive">
+	/// 같은 애니메이션끼리의 전환을 금지합니다.(nextNode가 currentNode이면 이 트랜지션은 동작하지 않습니다.)
+	/// </param>
 	AnimatorTransition(
 		AnimatorNode* startNode, AnimatorNode* nextNode,
 		const vector<PropertyValue>& propertyValues,
-		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f);
+		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f,
+		bool cantRecursive = false);
 
 	virtual ~AnimatorTransition();
 
@@ -71,18 +75,20 @@ public:
 	inline float GetExitTime() const { return m_exitTime; }
 	inline float GetDuration() const { return m_duration; }
 	inline float GetOffset() const { return m_offset; }
+	inline bool IsCantRecursive() const { return m_cantRecursive; }
 
 	_declspec(property(get = GetStartNode)) AnimatorNode* startNode;
 	_declspec(property(get = GetNextNode)) AnimatorNode* nextNode;
 	_declspec(property(get = GetExitTime)) float exitTime;
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = GetOffset)) float offset;
+	_declspec(property(get = IsCantRecursive)) bool isCantRecursive;
 
 public:
 
 	void Used();
 
-	bool IsTransferable() const;
+	bool IsTransferable(AnimatorNode* fromNode) const;
 
 private:
 
@@ -103,6 +109,8 @@ private:
 	float											m_duration = 0.0f;
 
 	float											m_offset = 0.0f;
+
+	bool											m_cantRecursive = false;
 };
 
 ENGINE_END

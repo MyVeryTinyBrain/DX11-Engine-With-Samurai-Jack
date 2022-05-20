@@ -1,37 +1,36 @@
 #pragma once
 
-class TPSCamera;
-class JackAnimator;
+#include "Character.h"
 
-class Player : public Component
+class TPSCamera;
+class PlayerAnimator;
+
+class Player : public Character
 {
 private:
 
 	virtual void Awake() override;
-
 	virtual void Update() override;
-
 	virtual void LateUpdate() override;
 
 private:
 
 	void SetupTPSCamera();
-
 	void SetupCharacterRenderers();
-
 	void SetupAnimator();
-
-	void SetupPhysics();
-
 	void SetupWeapons();
 
+	void UpdateCCT();
 	void UpdateAttachmentObjects();
+
+	void RotateToDirection(const V3& delta);
+
+	V3 GetTranslateDirection();
 
 private:
 
 	// TPS Camera
 
-	GameObject*				m_goTPSCamera;
 	TPSCamera*				m_tpsCamera;
 
 	// Character Renderers
@@ -46,14 +45,7 @@ private:
 
 	// Animator
 
-	JackAnimator*			m_jackAnimator;
-
-	// Physics
-
-	CharacterController*	m_controller;
-
-	GameObject*				m_goWeaponTrigger;
-	SphereCollider*			m_weaponTrigger;
+	PlayerAnimator*			m_animator;
 
 	// Katana
 

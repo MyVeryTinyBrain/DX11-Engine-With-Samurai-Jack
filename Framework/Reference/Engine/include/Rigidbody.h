@@ -76,22 +76,22 @@ public:
 public:
 
 	inline float GetSleepThresholder() const { return m_body->getSleepThreshold(); }
-	inline void SetSleepThresholder(float value) { m_body->setSleepThreshold(Saturate(value)); }
+	inline void SetSleepThresholder(float value) { m_body->setSleepThreshold(Max(0.0f, value)); }
 
 	inline float GetMass() const { return m_body->getMass(); }
-	inline void SetMass(float value) { m_body->setMass(Saturate(value)); }
+	inline void SetMass(float value) { m_body->setMass(Max(0.0f, value)); }
 
 	inline float GetLinearDamping() const { return m_body->getLinearDamping(); }
-	inline void SetLinearDamping(float value) { m_body->setLinearDamping(Saturate(value)); }
+	inline void SetLinearDamping(float value) { m_body->setLinearDamping(Max(0.0f, value)); }
 
 	inline float GetAngularDamping() const { return m_body->getAngularDamping(); }
 	inline void SetAngularDamping(float value) { m_body->setAngularDamping(value); }
 
 	inline float GetMaxLinearVelocity() const { return m_body->getMaxLinearVelocity(); }
-	inline void SetMaxLinearVelocity(float value) { m_body->setMaxLinearVelocity(Saturate(value)); }
+	inline void SetMaxLinearVelocity(float value) { m_body->setMaxLinearVelocity(Max(0.0f, value)); }
 
 	inline float GetMaxAngularVelocity() const { return m_body->getMaxAngularVelocity(); }
-	inline void SetMaxAngularVelocity(float value) { m_body->setMaxAngularVelocity(Saturate(value)); }
+	inline void SetMaxAngularVelocity(float value) { m_body->setMaxAngularVelocity(Max(0.0f, value)); }
 
 	_declspec(property(get = GetSleepThresholder, put = SetSleepThresholder)) float sleepThresholder;
 	_declspec(property(get = GetMass, put = SetMass)) float mass;

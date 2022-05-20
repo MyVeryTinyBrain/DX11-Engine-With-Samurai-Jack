@@ -37,16 +37,16 @@ public:
 	void SetRectCount(uint value);
 
 	inline float GetWidth() const { return m_width; }
-	inline void SetWidth(float value) { m_width = Saturate(value); }
+	inline void SetWidth(float value) { m_width = Max(0.0f, value); }
 
 	inline float GetMinVertexDistance() const { return m_minVertexDistance; }
-	inline void SetMinVertexDistance(float value) { m_minVertexDistance = Saturate(value); }
+	inline void SetMinVertexDistance(float value) { m_minVertexDistance = Max(0.0f, value); }
 
 	inline float GetBeginShrinkDelay() const { return m_beginShrinkDelay; }
-	inline void SetBeginShrinkDelay(float value) { m_beginShrinkDelay = Saturate(value); }
+	inline void SetBeginShrinkDelay(float value) { m_beginShrinkDelay = Max(0.0f, value); }
 
 	inline float GetShrinkDistance() const { return m_shrinkDistance; }
-	inline void SetShrinkDistance(float value) { m_shrinkDistance = Saturate(value); }
+	inline void SetShrinkDistance(float value) { m_shrinkDistance = Max(0.0f, value); }
 
 	inline bool IsApplyWidthByLength() const { return m_applyWidthByLength; }
 	inline void SetApplyWidthByLength(bool value) { m_applyWidthByLength = value; }

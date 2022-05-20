@@ -24,6 +24,7 @@
     <ClInclude Include="..\..\..\imgui-1.85\imstb_truetype.h" />
     <ClInclude Include="include\Animation.h" />
     <ClInclude Include="include\AnimationClip.h" />
+    <ClInclude Include="include\AnimationEventType.h" />
     <ClInclude Include="include\AnimationSet.h" />
     <ClInclude Include="include\Animator.h" />
     <ClInclude Include="include\AnimatorBlendNode.h" />
@@ -222,6 +223,7 @@
   <ItemGroup>
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\AnimationClip.cpp" />
+    <ClCompile Include="src\AnimationEventType.cpp" />
     <ClCompile Include="src\AnimationSet.cpp" />
     <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\AnimatorBlendNode.cpp" />

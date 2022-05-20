@@ -487,7 +487,7 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 
 	float3 numerator = NDF * G * F;
 	// + 0.0001 to prevent divide by zero
-	float specularStrength = 2.0f; // Default = 4.0
+	float specularStrength = 4.0f; // Default = 4.0
 	float denominator = specularStrength * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f) + 0.0001f;
 	float3 specular = numerator / denominator;
 

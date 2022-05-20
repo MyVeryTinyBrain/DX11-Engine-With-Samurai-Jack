@@ -53,7 +53,7 @@ bool AnimatorSingleNode::AnimateNodeImpl(
 	if (m_rootNode && m_rootNode->node->index == out_nodeIndex)
 	{
 		float duration = GetDurationImpl();
-		float prevNormalizedTime = Saturate(m_normalizedTime - (m_dt / duration));
+		float prevNormalizedTime = Max(0.0f, m_normalizedTime - (m_dt / duration));
 
 		uint beforeLoopCount = uint(Abs(prevNormalizedTime));
 		uint currentLoopCount = uint(Abs(m_normalizedTime));

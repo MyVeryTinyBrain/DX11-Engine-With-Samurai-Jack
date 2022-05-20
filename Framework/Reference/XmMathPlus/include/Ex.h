@@ -34,10 +34,6 @@ namespace XmMathPlus
 		
 		XMMATHPLUS_API inline uint Clamp01(uint value) { return Clamp(value, 0u, 1u); }
 
-		XMMATHPLUS_API inline Real Saturate(Real value) { return value > 0.0f ? value : 0.0f; }
-
-		XMMATHPLUS_API inline int Saturate(int value) { return value > 0 ? value : 0; }
-
 		XMMATHPLUS_API Real Closet(Real value, Real min, Real max);
 
 		XMMATHPLUS_API int Closet(int value, int min, int max);
