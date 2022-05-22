@@ -41,13 +41,13 @@ public:
 	inline float GetNormalizedTime() const { return m_normalizedTime; }
 	void SetNormalizedTime(float value);
 
-	inline float GetSpeed() const { return m_speed; }
-	inline void SetSpeed(float value) { m_speed = Max(0.0f, value); };
+	inline float SetSpeed() const { return m_speed; }
+	inline void SetSpeed(float value) { m_speed = Max(0.0f, value); }
 
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = IsLoop)) bool isLoop;
 	_declspec(property(get = GetNormalizedTime, put = SetNormalizedTime)) float normalizedTime;
-	_declspec(property(get = GetSpeed, put = SetSpeed)) float speed;
+	_declspec(property(get = SetSpeed, put = SetSpeed)) float speed;
 
 protected:
 

@@ -464,7 +464,7 @@ inline float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness
 	return F0 + (max(1.0f - roughness, F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
-inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo, half3 normal, float3 world2Light, float3 world2Camera, half roughness, half metallic, out half intensity)
+inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo, half3 normal, float3 world2Light, float3 world2Camera, half roughness, half metallic, out half intensity, out half3 ambient)
 {
 	roughness = min(roughness, 0.995f);
 
@@ -502,10 +502,12 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 	float3 Lo = (kD * albedo / PI + specular) * NdotL * radiance;
 	Lo = max(Lo, 0.0f); // Disable warning
 
-	// HDR tonemapping
-	Lo = Lo / (Lo + 1.0f);
-	// Gamma correction
-	Lo = pow(Lo, 1.0f / 2.2f);
+	ambient = (kD * albedo * atten * light.Ambient.rgb) / PI;
+
+	//// HDR tonemapping
+	//Lo = Lo / (Lo + 1.0f);
+	//// Gamma correction
+	//Lo = pow(Lo, 1.0f / 2.2f);
 
 	return Lo * atten;
 }
@@ -517,7 +519,8 @@ inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDes
 	float3 world2Light = -light.Direction.xyz;
 	float3 world2Camera = _ViewPosition.xyz - worldPosition;
 	half lightIntensity;
-	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
+	half3 ambient;
+	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity, ambient);
 
 	half shadow = 1.0f;
 	[branch]
@@ -532,7 +535,7 @@ inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDes
 	Lo *= shadow;
 
 	LightCalculateDesc result;
-	result.Light = half4(Lo + light.Ambient.rgb * albedo, 1.0f);
+	result.Light = half4(Lo + ambient, 1.0f);
 	result.Volumetric = half4(0, 0, 0, 1);
 
 	return result;
@@ -546,7 +549,8 @@ inline LightCalculateDesc ComputePointLight(LightDesc light, VolumetricDesc volu
 	float3 world2Light = light.Position.xyz - worldPosition;
 	float3 world2Camera = _ViewPosition.xyz - worldPosition;
 	half lightIntensity;
-	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
+	half3 ambient;
+	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity, ambient);
 
 	half shadow = 1.0f;
 	[branch]
@@ -568,7 +572,7 @@ inline LightCalculateDesc ComputePointLight(LightDesc light, VolumetricDesc volu
 	}
 
 	LightCalculateDesc output;
-	output.Light = half4(Lo + light.Ambient.rgb * albedo * atten, 1.0f);
+	output.Light = half4(Lo + ambient, 1.0f);
 	output.Volumetric = volumetric;
 	return output;
 }
@@ -583,7 +587,8 @@ inline LightCalculateDesc ComputeSpotLight(LightDesc light, VolumetricDesc volum
 	float3 world2Light = light.Position.xyz - worldPosition;
 	float3 world2Camera = _ViewPosition.xyz - worldPosition;
 	half lightIntensity;
-	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity);
+	half3 ambient;
+	half3 Lo = ComputePBRLightIntensity(light, atten, albedo, normal, world2Light, world2Camera, roughness, metallic, lightIntensity, ambient);
 
 	half shadow = 1.0f;
 	[branch]
@@ -605,7 +610,7 @@ inline LightCalculateDesc ComputeSpotLight(LightDesc light, VolumetricDesc volum
 	}
 
 	LightCalculateDesc output;
-	output.Light = half4(Lo + light.Ambient.rgb * albedo * atten, 1.0f);
+	output.Light = half4(Lo + ambient, 1.0f);
 	output.Volumetric = volumetric;
 	return output;
 }

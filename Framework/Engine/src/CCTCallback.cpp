@@ -75,8 +75,14 @@ PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxShape& shape, co
     cctPose.q = ToPxQuat(cctQ);
     targetPose.q = ToPxQuat(targetQ);
 
+    PxVec3 toRayPoint;
+    float rayDistance = PxGeometryQuery::pointDistance(ToPxVec3(foot), targetGeometry.any(), targetPose, &toRayPoint);
+    PxVec3 rayDir = toRayPoint - ToPxVec3(foot);
+    rayDir.normalize();
+
     PxRaycastHit hit;
-    if (PxGeometryQuery::raycast(ToPxVec3(foot), ToPxVec3(down), targetGeometry.any(), targetPose, contactOffset + 1.0f, PxHitFlag::eDEFAULT, 1, &hit))
+    //if (PxGeometryQuery::raycast(ToPxVec3(foot), ToPxVec3(down), targetGeometry.any(), targetPose, contactOffset + 10.0f, PxHitFlag::eDEFAULT, 1, &hit))
+    if (PxGeometryQuery::raycast(ToPxVec3(foot), rayDir, targetGeometry.any(), targetPose, rayDistance + 10.0f, PxHitFlag::eDEFAULT, 1, &hit))
     {
         V3 worldNormal = targetQ.MultiplyVector(FromPxVec3(hit.normal));
         V3 worldDown = FromPxVec3(down);
@@ -170,6 +176,10 @@ bool CCTCallback::filter(const PxController& a, const PxController& b)
 
     assert(cct0 && cct1); // 캐릭터 컨트롤러가 존재하지 않습니다
     if (!cct0 || !cct1)
+        return false;
+
+    // 둘 중 하나라도 CCT 충돌이 꺼져있으면 서로 충돌하지 않습니다.
+    if (!cct0->collisionWithCCT || !cct1->collisionWithCCT)
         return false;
 
     Collider* c0 = cct0->capsuleCollider;

@@ -13,6 +13,8 @@ public:
 
 	virtual bool Release() = 0;
 
+	virtual void OnUpate() = 0;
+
 	virtual void Simulate(unsigned int subStep, const map<uint, vector<Component*>>& executionBuffer) = 0;
 
 	virtual PxPhysics* GetPhysics() const = 0;

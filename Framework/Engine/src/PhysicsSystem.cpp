@@ -128,27 +128,33 @@ void PhysicsSystem::Simulate(unsigned int subStep, const map<uint, vector<Compon
 	if (!m_scene)
 		return;
 
-	for (auto& physicsObj : m_physicsObjects)
-	{
-		if (!physicsObj->IsWorking())
-			continue;
-
-		physicsObj->BeforePhysicsSimulationOnce();
-	}
-
 	subStep = subStep < m_subStepLimit ? subStep : m_subStepLimit;
+
+	if (subStep > 0)
+	{
+		for (auto& physicsObj : m_physicsObjects)
+		{
+			if (!physicsObj->IsWorking())
+				continue;
+
+			physicsObj->BeforePhysicsSimulationOnce();
+		}
+	}
 
 	for (unsigned int i = 0; i < subStep; ++i)
 	{
 		SimulateOnce(executionBuffer);
 	}
 
-	for (auto& physicsObj : m_physicsObjects)
+	if (subStep > 0)
 	{
-		if (!physicsObj->IsWorking())
-			continue;
+		for (auto& physicsObj : m_physicsObjects)
+		{
+			if (!physicsObj->IsWorking())
+				continue;
 
-		physicsObj->AfterPhysicsSimulationOnce();
+			physicsObj->AfterPhysicsSimulationOnce();
+		}
 	}
 }
 
@@ -164,8 +170,6 @@ void PhysicsSystem::SimulateOnce(const map<uint, vector<Component*>>& executionB
 
 		physicsObj->BeforePhysicsSimulation();
 	}
-
-	//m_controllerManager->computeInteractions(m_system->time->fixedDeltaTime);
 
 	m_scene->simulate(m_system->time->fixedDeltaTime);
 	m_scene->fetchResults(true);
@@ -204,6 +208,11 @@ void PhysicsSystem::SimulateOnce(const map<uint, vector<Component*>>& executionB
 
 	m_physicsSimulationEventCallback->ExecuteNotify();
 	m_physicsSimulationEventCallback->ClearBuffers();
+}
+
+void PhysicsSystem::OnUpate()
+{
+	m_controllerManager->computeInteractions(m_system->time->deltaTime);
 }
 
 void PhysicsSystem::RegistPhysicsObject(IPhysicsObject* physicsObject)

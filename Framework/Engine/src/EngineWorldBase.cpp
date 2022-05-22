@@ -136,6 +136,9 @@ bool EngineWorldBase::Step()
 			iInput->SetEnable(!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 			iInput->Fetch();
 
+			IPhysicsSystem* iPhysics = m_system->physics;
+			iPhysics->OnUpate();
+
 			for (auto& coms : componentsByExecutionOrder)
 			{
 				for (auto& com : coms.second)

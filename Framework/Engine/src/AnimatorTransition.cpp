@@ -5,7 +5,7 @@ AnimatorTransition::AnimatorTransition(
 	AnimatorNode* startNode, AnimatorNode* nextNode,
 	const vector<PropertyValue>& propertyValues,
 	float exitTime, float duration, float offset,
-	bool cantRecursive) :
+	AnimatorTransition::Interrupt interrupt, bool noRecursive) :
 	Object((startNode ? startNode->name : TEXT("AnyNode")) + TEXT("->") + (nextNode ? nextNode->name : TEXT("ExitNode"))),
 	m_startNode(startNode),
 	m_nextNode(nextNode),
@@ -13,7 +13,8 @@ AnimatorTransition::AnimatorTransition(
 	m_exitTime(exitTime),
 	m_duration(duration),
 	m_offset(offset),
-	m_cantRecursive(cantRecursive)
+	m_interrupt(interrupt),
+	m_noRecursive(noRecursive)
 {
 	for (auto& propValue : m_propertyValues)
 	{
@@ -34,11 +35,62 @@ void AnimatorTransition::Used()
 		trigger->valueAsBool = false;
 }
 
-bool AnimatorTransition::IsTransferable(AnimatorNode* fromNode) const
+bool AnimatorTransition::IsTransferable(AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition, StartNode& out_startNode) const
 {
-	if (m_cantRecursive)
+	out_startNode = StartNode::Current;
+
+	if (currentTransition)
 	{
-		if (fromNode == m_nextNode)
+		switch (m_interrupt)
+		{
+			case AnimatorTransition::Interrupt::None:
+			{
+				return false;
+			}
+			break;
+			case AnimatorTransition::Interrupt::Current:
+			{
+				if (m_startNode && currentNode != m_startNode)
+					return false;
+				else
+					out_startNode = StartNode::Current;
+			}
+			break;
+			case AnimatorTransition::Interrupt::Next:
+			{
+				if (m_startNode && blendingNode != m_startNode)
+					return false;
+				else
+					out_startNode = StartNode::Next;
+			}
+			break;
+			case AnimatorTransition::Interrupt::CurrentNext:
+			{
+				if (m_startNode)
+				{
+					if (currentNode == m_startNode)
+					{
+						out_startNode = StartNode::Current;
+						break;
+					}
+					else if (blendingNode == m_startNode)
+					{
+						out_startNode = StartNode::Next;
+						break;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	if (m_noRecursive)
+	{
+		if (currentNode == m_nextNode)
 			return false;
 	}
 
@@ -47,7 +99,7 @@ bool AnimatorTransition::IsTransferable(AnimatorNode* fromNode) const
 		if (m_startNode && m_startNode->normalizedTime < m_exitTime)
 			return false;
 
-		if (!m_startNode && fromNode && fromNode->normalizedTime < m_exitTime)
+		if (!m_startNode && currentNode && currentNode->normalizedTime < m_exitTime)
 			return false;
 	}
 

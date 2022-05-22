@@ -14,7 +14,7 @@ struct CCTCollision
 {
 	V3			point;
 	V3			normal;
-	Collider*	HitCollider;
+	Collider* HitCollider;
 };
 
 class ICharacterController abstract
@@ -133,6 +133,11 @@ public:
 	inline float GetGravityScale() const { return m_gravityScale; }
 	inline void SetGravityScale(float value) { m_gravityScale = value; }
 
+	// 중력 사용 여부입니다.
+
+	inline bool IsUseGravity() const { return m_useGravity; }
+	inline void SetUseGravity(bool value) { m_useGravity = value; }
+
 	// 속도 사용시 보간을 설정합니다.
 	// 보간은 fixedUpdate 모드에서만 동작합니다.
 
@@ -142,15 +147,20 @@ public:
 	inline bool IsFixedUpdate() const { return m_fixedUpdate; }
 	inline void SetFixedUpdateMode(bool value) { m_fixedUpdate = value; }
 
+	inline bool IsCollisionWithCCT() const { return m_collisionWithCCT; }
+	inline void SetCollisionWithCCT(bool value) { m_collisionWithCCT = value; }
+
 	_declspec(property(get = GetVelocity, put = SetVelocity)) const V3& velocity;
 	_declspec(property(get = GetDamping, put = SetDamping)) float damping;
 	_declspec(property(get = GetGravityScale, put = SetGravityScale)) float gravityScale;
+	_declspec(property(get = IsUseGravity, put = SetUseGravity)) bool useGravity;
 	_declspec(property(get = GetInterpolateMode, put = SetInterpolateMode)) CharacterController::Interpolate interpolate;
 	_declspec(property(get = IsFixedUpdate, put = SetFixedUpdateMode)) bool fixedUpdate;
+	_declspec(property(get = IsCollisionWithCCT, put = SetCollisionWithCCT)) bool collisionWithCCT;
 
 public:
 
-	bool IsGrounded() const { return m_groundHit; }
+	bool IsGrounded() const { return m_prevGroundHit; }
 
 	_declspec(property(get = IsGrounded)) bool isGrounded;
 
@@ -158,7 +168,7 @@ private:
 
 	// Simulation마다 호출됩니다.
 
-	virtual void OnHitShape(const PxControllerShapeHit& hit) override;	
+	virtual void OnHitShape(const PxControllerShapeHit& hit) override;
 	virtual void OnGroundHit(const V3& normal) override;
 	inline virtual PxCapsuleController* GetController() const override { return m_controller; }
 
@@ -188,10 +198,11 @@ private:
 	Ref<Rigidbody>			m_rigidbody;
 	Ref<CapsuleCollider>	m_collider;
 	class CCTCallback*		m_callback = nullptr;
-
+		
 	bool					m_fixedUpdate = false;
 	V3						m_velocity;
 	float					m_damping = 1.0f;
+	bool					m_useGravity = true;
 	float					m_gravityScale = 1.0f;
 	CCTInterpolateBase*		m_currentInterpolate = nullptr;
 	CCTInterpolateBase*		m_interpolater = nullptr;
@@ -201,6 +212,8 @@ private:
 	bool					m_prevGroundHit = true;
 	bool					m_isJump = false;
 	bool					m_isJumpFrame = false;
+
+	bool					m_collisionWithCCT = true;
 
 	vector<CCTCollision>	m_collisions;
 

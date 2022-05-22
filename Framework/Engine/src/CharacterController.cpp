@@ -506,7 +506,7 @@ PxCapsuleControllerDesc CharacterController::CreateInitDesc(PxPhysics* physics)
 
 	// 캐릭터가 걸을 수 있는 최대 경사입니다.
 	// 원하는 한계 각도의 코사인 값을 사용합니다.
-	desc.slopeLimit = cos(45.0f * Deg2Rad);
+	desc.slopeLimit = cos(46.0f * Deg2Rad);
 
 	// 걸을수 없는 삼각형 주위에 생성된 보이지 않는 벽의 높이입니다.
 	// 0.0이면 추가 삼각형이 생성되지 않습니다.
@@ -543,7 +543,7 @@ void CharacterController::UpdateController(float deltaTime)
 	m_controller->setUpDirection(ToPxVec3(up));
 
 	// 중력 적용
-	if(!m_groundHit)
+	if(m_useGravity && !m_groundHit)
 	{
 		m_velocity += system->physics->gravity * deltaTime * m_gravityScale;
 	}

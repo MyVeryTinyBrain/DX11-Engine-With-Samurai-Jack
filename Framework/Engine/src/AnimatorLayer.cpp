@@ -45,42 +45,74 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 	float dt = deltaTime * speed;
 
 	AnimatorTransition* transition = nullptr;
+	AnimatorTransition::StartNode startNode;
 
 	// 모든 노드에서 전환 가능한 트랜지션을 먼저 검사합니다.
-	auto any_find_it = m_transitions.find(nullptr);
-	if (!transition && any_find_it != m_transitions.end())
 	{
-		const vector<AnimatorTransition*>& anyTransitions = any_find_it->second;
-
-		for (auto& currentTransition : anyTransitions)
+		auto any_find_it = m_transitions.find(nullptr);
 		{
-			if (currentTransition->IsTransferable(m_currentNode))
+			if (!transition && any_find_it != m_transitions.end())
 			{
-				transition = currentTransition;
-				break;
+				const vector<AnimatorTransition*>& anyTransitions = any_find_it->second;
+
+				for (auto& currentTransition : anyTransitions)
+				{
+					if (currentTransition->IsTransferable(m_currentNode, m_blendNode, m_currentTransition, startNode))
+					{
+						transition = currentTransition;
+						break;
+					}
+				}
 			}
 		}
 	}
 
 	// 현재 노드에서의 트랜지션을 검사합니다.
-	auto find_it = m_transitions.find(m_currentNode);
-	if (!transition && find_it != m_transitions.end())
 	{
-		const vector<AnimatorTransition*>& transitionsOfNode = find_it->second;
-
-		for (auto& currentTransition : transitionsOfNode)
+		auto find_it = m_transitions.find(m_currentNode);
+		if (!transition && find_it != m_transitions.end())
 		{
-			if (currentTransition->IsTransferable(m_currentNode))
+			const vector<AnimatorTransition*>& transitionsOfNode = find_it->second;
+
+			for (auto& currentTransition : transitionsOfNode)
 			{
-				transition = currentTransition;
-				break;
+				if (currentTransition->IsTransferable(m_currentNode, m_blendNode, m_currentTransition, startNode))
+				{
+					transition = currentTransition;
+					break;
+				}
 			}
 		}
 	}
 
-	if (/*!m_currentTransition && */transition && m_currentTransition != transition)
+	// 블렌딩중인 노드에서의 트랜지션을 검사합니다.
+	if (m_blendNode)
 	{
+		auto find_it = m_transitions.find(m_blendNode);
+		if (!transition && find_it != m_transitions.end())
+		{
+			const vector<AnimatorTransition*>& transitionsOfNode = find_it->second;
+
+			for (auto& currentTransition : transitionsOfNode)
+			{
+				if (currentTransition->IsTransferable(m_currentNode, m_blendNode, m_currentTransition, startNode))
+				{
+					transition = currentTransition;
+					break;
+				}
+			}
+		}
+	}
+
+	if (transition && m_currentTransition != transition)
+	{
+		if (startNode == AnimatorTransition::StartNode::Next)
+		{
+			m_currentNode = m_blendNode;
+		}
+
 		m_currentTransition = transition;
+		m_currentTransition->Used();
 
 		// nextNode == nullptr 이면 다음 노드는 default 노드가 됩니다.
 		// 유니티의 Exit 노드와 같습니다.
@@ -121,7 +153,6 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 			m_prevNode = m_currentNode;
 
 			// 블렌딩을 종료하고 블렌딩 대상을 현재 노드로 설정합니다.
-			m_currentTransition->Used();
 			m_currentNode = m_blendNode;
 			m_blendNode = nullptr;
 			m_blendPercent = 0.0f;
@@ -186,14 +217,61 @@ AnimatorTransition* AnimatorLayer::AddTransition(
 	AnimatorNode* startNode, AnimatorNode* nextNode, 
 	const vector<AnimatorTransition::PropertyValue>& propertyValues, 
 	float exitTime, float duration, float offset,
-	bool cantRecursive)
+	AnimatorTransition::Interrupt interrupt, bool noRecursive)
 {
-	AnimatorTransition* transition = new AnimatorTransition(startNode, nextNode, propertyValues, exitTime, duration, offset, cantRecursive);
+	AnimatorTransition* transition = new AnimatorTransition(startNode, nextNode, propertyValues, exitTime, duration, offset, interrupt, noRecursive);
 
 	vector<AnimatorTransition*>& transitionsOfNode = m_transitions[startNode];
 	transitionsOfNode.push_back(transition);
 
 	return transition;
+}
+
+void AnimatorLayer::Play(Ref<AnimatorNode> node, float normalizedTime)
+{
+	m_prevNode = m_currentNode;
+	m_currentNode = node;
+	m_blendNode = nullptr;
+	m_currentTransition = nullptr;
+	m_blendPercent = 0.0f;
+	m_deltaPosition = V3::zero();
+	m_deltaRotation = Q::identity();
+	m_beginChangingNode = nullptr;
+	m_endChangedNode = node;
+
+	m_currentNode->normalizedTime = normalizedTime;
+
+	// 이 노드로 변경되려고 하는것을 이 노드에 알립니다.
+	IAnimatorNode* targetNode = m_currentNode;
+	targetNode->OnTransition();
+}
+
+bool AnimatorLayer::IsPlaying(const tstring& nodeName) const
+{
+	if (m_currentNode)
+	{
+		if (m_currentNode->name == nodeName)
+			return true;
+	}
+
+	if (m_blendNode)
+	{
+		if (m_blendNode->name == nodeName)
+			return true;
+	}
+
+	return false;
+}
+
+bool AnimatorLayer::IsPlaying(Ref<AnimatorNode> node) const
+{
+	if (node.GetPointer() == m_currentNode)
+		return true;
+
+	if (node.GetPointer() == m_blendNode)
+		return true;
+
+	return false;
 }
 
 void AnimatorLayer::SetRootNodeByName(const tstring& rootNodeName)

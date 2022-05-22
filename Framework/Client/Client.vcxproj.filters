@@ -37,6 +37,9 @@
     <ClInclude Include="SoundTest.h" />
     <ClInclude Include="PlayerAnimator.h" />
     <ClInclude Include="Character.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBeetleDrone.h" />
+    <ClInclude Include="EnemyBeetleDroneAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -111,6 +114,9 @@
     <ClCompile Include="SoundTest.cpp" />
     <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="Character.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBeetleDrone.cpp" />
+    <ClCompile Include="EnemyBeetleDroneAnimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">

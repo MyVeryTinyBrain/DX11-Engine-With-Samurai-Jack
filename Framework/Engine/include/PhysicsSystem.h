@@ -37,8 +37,10 @@ private:
 	virtual bool Initialize(System* system, unsigned int subStepLimit) override;
 	virtual bool Release() override;
 
-	void Simulate(unsigned int subStep, const map<uint, vector<Component*>>& executionBuffer) override;
+	virtual void Simulate(unsigned int subStep, const map<uint, vector<Component*>>& executionBuffer) override;
 	void SimulateOnce(const map<uint, vector<Component*>>& executionBuffer);
+
+	virtual void OnUpate() override;
 
 private:
 

@@ -497,18 +497,23 @@ half4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 {
-	const static half4 BLACK = half4(0, 0, 0, 1);
+	//const static half4 BLACK = half4(0, 0, 0, 1);
+
+	//half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
+	//half brightness = Max(sampleColor.rgb);
+	////half brightness = saturate(length(sampleColor.rgb));
+
+	////half percent = _BloomDesc.Threshold * brightness;
+	////half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
+	//half percent = step(1.0f - _BloomDesc.Threshold, brightness);
+	//half4 brightedColor = normalize(sampleColor);
+
+	//return lerp(BLACK, brightedColor, percent);
 
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	half brightness = Max(sampleColor.rgb);
-	//half brightness = saturate(length(sampleColor.rgb));
-
-	//half percent = _BloomDesc.Threshold * brightness;
-	//half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
-	half percent = step(1.0f - _BloomDesc.Threshold, brightness);
-	half4 brightedColor = normalize(sampleColor);
-
-	return lerp(BLACK, brightedColor, percent);
+	half4 ex = saturate((sampleColor - _BloomDesc.Threshold) / (1.0f - _BloomDesc.Threshold));
+	ex.a = 1.0f;
+	return ex;
 }
 
 // Middle Step ==================
@@ -516,31 +521,46 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 // Vertical Blur
 // ==============================
 
+float4 AdjustSaturation(half4 color, half saturation)
+{
+	half3 grayscale = half3(0.2125f, 0.7154f, 0.0721f);
+	half gray = dot(color.rgb, grayscale);
+	return lerp(gray, color, saturation);
+}
+
 half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
 {
+	//half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
+
+	//half4 color;
+	//color.rgb = sampleColor.rgb;
+	//color.a = 1.0f;
+	//color *= _BloomDesc.Intensity;
+	//color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
+
+	//return color;
+
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-
-	half4 color;
-	color.rgb = sampleColor.rgb;
-	color.a = 1.0f;
-	color *= _BloomDesc.Intensity;
-	color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
-
-	return color;
+	sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Threshold) * _BloomDesc.Intensity;
+	return sampleColor;
 }
 
 half4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
 {
+	//half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
+	//half brightness = Max(sampleColor.rgb);
+
+	//half4 color;
+	//color.rgb = normalize(sampleColor.rgb);
+	//color.a = brightness;
+	//color *= _BloomDesc.Intensity;
+	//color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
+
+	//return color;
+
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	half brightness = Max(sampleColor.rgb);
-
-	half4 color;
-	color.rgb = normalize(sampleColor.rgb);
-	color.a = brightness;
-	color *= _BloomDesc.Intensity;
-	color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
-
-	return color;
+	sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Threshold) * _BloomDesc.Intensity;
+	return sampleColor;
 }
 
 // Chromatic Aberration ============================================================================================

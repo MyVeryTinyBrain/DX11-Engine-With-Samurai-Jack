@@ -21,9 +21,9 @@ void AnimatorNode::AddEvent(float noramlizedTime, const string& context)
 
 void AnimatorNode::Accumulate(float deltaTime, vector<string>& out_eventNotifications)
 {
-	deltaTime *= m_speed;
-
 	uint prevLoop = uint(m_normalizedTime);
+
+	deltaTime *= m_speed;
 
 	float duration = GetDurationImpl();
 	float normalizedDeltaTime = deltaTime / duration;

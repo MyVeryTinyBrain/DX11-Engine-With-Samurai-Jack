@@ -47,6 +47,11 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	half4 light = _Light.Sample(pointSampler, In.UV);
 
 	half3 lightedColor = saturate(light.rgb);
+	// HDR tonemapping
+	lightedColor = lightedColor / (lightedColor + 1.0f);
+	// Gamma correction
+	lightedColor = pow(lightedColor, 1.0f / 2.2f);
+
 	half3 unlighttedColor = saturate(albedo.rgb);
 
 	color.rgb = lerp(unlighttedColor, lightedColor, lightMask);

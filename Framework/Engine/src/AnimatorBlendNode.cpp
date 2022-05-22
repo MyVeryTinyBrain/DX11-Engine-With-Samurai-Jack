@@ -176,8 +176,10 @@ bool AnimatorBlendNode::AnimateNodeImpl(
 	{
 		uint index = m_weightA > m_weightB ? m_indexA : m_indexB;
 		float timeScale = m_weightA > m_weightB ? m_timescaleA : m_timescaleB;
-		m_elements[index]->node->m_normalizedTime = m_normalizedTime * timeScale * m_elements[index]->node->speed;
-		m_elements[index]->node->m_dt = m_dt * m_elements[index]->node->speed;
+		float indexSpeed = m_elements[index]->node->speed;
+
+		m_elements[index]->node->m_normalizedTime = m_normalizedTime * timeScale * indexSpeed;
+		m_elements[index]->node->m_dt = m_dt * indexSpeed;
 		return m_elements[index]->node->AnimateNodeImpl(
 			channelIndex, out_nodeIndex,
 			out_position, out_rotation, out_scale, 
@@ -185,10 +187,13 @@ bool AnimatorBlendNode::AnimateNodeImpl(
 	}
 	else
 	{
-		m_elements[m_indexA]->node->m_normalizedTime = m_normalizedTime * m_timescaleA * m_elements[m_indexA]->node->speed;
-		m_elements[m_indexA]->node->m_dt = m_dt * m_elements[m_indexA]->node->speed;
-		m_elements[m_indexB]->node->m_normalizedTime = m_normalizedTime * m_timescaleB * m_elements[m_indexB]->node->speed;
-		m_elements[m_indexB]->node->m_dt = m_dt * m_elements[m_indexB]->node->speed;
+		float ASpeed = m_elements[m_indexA]->node->speed;
+		float BSpeed = m_elements[m_indexB]->node->speed;
+
+		m_elements[m_indexA]->node->m_normalizedTime = m_normalizedTime * m_timescaleA * ASpeed;
+		m_elements[m_indexA]->node->m_dt = m_dt * ASpeed;
+		m_elements[m_indexB]->node->m_normalizedTime = m_normalizedTime * m_timescaleB * BSpeed;
+		m_elements[m_indexB]->node->m_dt = m_dt * BSpeed;
 
 		uint nodeIndex;
 		V3   position[2];

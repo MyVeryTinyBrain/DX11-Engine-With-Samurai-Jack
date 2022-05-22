@@ -3,38 +3,12 @@
 #include "Player.h"
 #include "FreeCamera.h"
 #include "SoundTest.h"
+#include "EnemyBeetleDrone.h"
 
 Scene* PlayerTestScene::Clone()
 {
 	return new PlayerTestScene;
 }
-
-//V2 ts(V3 v)
-//{
-//	uint faceIndex;
-//	V3 vAbs = V3::Abs(v);
-//	float ma;
-//	V2 uv;
-//	if (vAbs.z >= vAbs.x && vAbs.z >= vAbs.y)
-//	{
-//		faceIndex = v.z < 0.0 ? 5.0 : 4.0;
-//		ma = 0.5 / vAbs.z;
-//		uv = V2(v.z < 0.0 ? -v.x : v.x, -v.y);
-//	}
-//	else if (vAbs.y >= vAbs.x)
-//	{
-//		faceIndex = v.y < 0.0 ? 3.0 : 2.0;
-//		ma = 0.5 / vAbs.y;
-//		uv = V2(v.x, v.y < 0.0 ? -v.z : v.z);
-//	}
-//	else
-//	{
-//		faceIndex = v.x < 0.0 ? 1.0 : 0.0;
-//		ma = 0.5 / vAbs.x;
-//		uv = V2(v.x < 0.0 ? v.z : -v.z, -v.y);
-//	}
-//	return uv * ma + V2(0.5f, 0.5f);
-//}
 
 void PlayerTestScene::OnLoad()
 {
@@ -44,16 +18,6 @@ void PlayerTestScene::OnLoad()
 
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
-
-	//GameObject* goST = CreateGameObject();
-	//goST->transform->position = V3(0, 5, 0);
-	//SoundTest* st = goST->AddComponent<SoundTest>();
-
-	//GameObject* goCT = CreateGameObject(TEXT("CT"));
-	//goCT->transform->position = V3(0, 5, 0);
-	//CharacterController* ct = goCT->AddComponent<CharacterController>();
-	//MeshRenderer* ctmr = goCT->AddComponent<MeshRenderer>();
-	//ctmr->mesh = system->resource->builtIn->capsuleMesh;
 
 	{
 		GameObject* goLine = CreateGameObject();
@@ -78,9 +42,10 @@ void PlayerTestScene::OnLoad()
 		thread t0(
 			[&]
 			{
-				system->resource->factory->LoadMeshM(TEXT("../Resource/Jack/jack.FBX"));
+				system->resource->factory->LoadMeshM(TEXT("../Resource/Jack/Jack.FBX"));
 				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
 				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+				system->resource->factory->LoadMeshM(TEXT("../Resource/BeetleDrone/BeetleDrone.FBX"));
 			});
 		if (t0.joinable())
 			t0.join();
@@ -89,6 +54,12 @@ void PlayerTestScene::OnLoad()
 			GameObject* go = CreateGameObject();
 			go->transform->position = V3(0, 5, 0);
 			go->AddComponent<Player>();
+		}
+
+		{
+			GameObject* go = CreateGameObject();
+			go->transform->position = V3(0, 5, 5);
+			go->AddComponent<EnemyBeetleDrone>();
 		}
 
 		{
@@ -142,25 +113,49 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
-			goSphere->transform->position = V3(0, 1.0f, 0);
+			GameObject* box = CreateGameObject();
+			box->transform->eulerAngles = V3(-20, 0, 10);
+			box->transform->localScale = V3::one() * 5;
+			box->transform->position = V3(0, 0, -5);
 
-			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
+			Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
+			boxCollider->friction = 100.0f;
+
+			MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 		}
 
 		{
-			GameObject* goPriorityRender = CreateGameObject();
-			goPriorityRender->transform->eulerAngles = V3(-20, 0, 0);
-			goPriorityRender->transform->localScale = V3::one() * 5;
-			goPriorityRender->transform->position = V3(0, 0, -5);
+			GameObject* box = CreateGameObject();
+			box->transform->eulerAngles = V3(0, 0, 0);
+			box->transform->localScale = V3::one() * 5;
+			box->transform->position = V3(20, 0, -5);
 
-			Rigidbody* rigidbody = goPriorityRender->AddComponent<Rigidbody>();
+			Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
 			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goPriorityRender->AddComponent<BoxCollider>();
+			BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
 			boxCollider->friction = 100.0f;
 
-			MeshRenderer* meshRenderer = goPriorityRender->AddComponent<MeshRenderer>();
+			MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+		}
+
+		{
+			GameObject* box = CreateGameObject();
+			box->transform->eulerAngles = V3(45, 0, 0);
+			box->transform->localScale = V3::one() * 5;
+			box->transform->position = V3(-20, -1.0f, -5);
+
+			Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
+			boxCollider->friction = 100.0f;
+
+			MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
 			meshRenderer->mesh = system->resource->builtIn->boxMesh;
 			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 		}
@@ -351,7 +346,7 @@ void PlayerTestScene::OnLoad()
 		//	MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
 		//	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
-		//	m_trailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
+		//	m_katanaTrailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
 
 		//	m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
 		//	m_rigidbody->sleepThresholder = 1000;
@@ -361,7 +356,7 @@ void PlayerTestScene::OnLoad()
 		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-		//	m_trailRenderer[0]->material = material;
+		//	m_katanaTrailRenderer[0]->material = material;
 
 		//	m_sphere[0]->activeSelf = true;
 		//}
@@ -372,7 +367,7 @@ void PlayerTestScene::OnLoad()
 		//	MeshRenderer* meshRenderer = m_sphere[1]->AddComponent<MeshRenderer>();
 		//	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
-		//	m_trailRenderer[1] = m_sphere[1]->AddComponent<TrailRenderer>();
+		//	m_katanaTrailRenderer[1] = m_sphere[1]->AddComponent<TrailRenderer>();
 
 		//	m_rigidbody = m_sphere[1]->AddComponent<Rigidbody>();
 		//	m_rigidbody->sleepThresholder = 1000;
@@ -382,7 +377,7 @@ void PlayerTestScene::OnLoad()
 		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
 
-		//	m_trailRenderer[1]->material = system->resource->Find(TEXT("TrailMaterial"));
+		//	m_katanaTrailRenderer[1]->material = system->resource->Find(TEXT("TrailMaterial"));
 
 		//	m_sphere[1]->activeSelf = true;
 		//}

@@ -63,7 +63,10 @@ void TPSCamera::UpdatePosition()
 
     V3 camPos = transform->position;
     V3 targetPos = m_target->position + V3::up() * m_height;
-    V3 newCamPos = V3::Lerp(camPos, targetPos, m_tracePower * system->time->deltaTime);
+    V3 newCamPos;
+    newCamPos.x = Lerp(camPos.x, targetPos.x, m_xztracePower * system->time->deltaTime);
+    newCamPos.z = Lerp(camPos.z, targetPos.z, m_xztracePower * system->time->deltaTime);
+    newCamPos.y = Lerp(camPos.y, targetPos.y, m_ytracePower * system->time->deltaTime);
 
     transform->position = newCamPos;
 }
