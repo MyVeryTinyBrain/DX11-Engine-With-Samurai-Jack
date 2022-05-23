@@ -7,6 +7,9 @@ void PointLight::Awake()
 {
     Light::Awake();
     SetupRotations();
+
+    shadowFadeDistance = 50.0f;
+    shadowFadeBeginPercent = 0.9f;
 }
 
 void PointLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const

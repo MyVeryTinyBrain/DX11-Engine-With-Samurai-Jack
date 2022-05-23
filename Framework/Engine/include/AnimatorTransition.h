@@ -6,6 +6,11 @@
 #include "AnimatorProperty.h"
 
 ENGINE_BEGIN
+
+class Animator;
+class AnimatorLayer;
+class AnimatorTransitionCallback;
+
 /// <summary>
 /// 애니메이션 노드간의 전환을 표현하는 객체입니다.<para>
 /// </para>
@@ -82,6 +87,8 @@ public:
 
 	virtual ~AnimatorTransition();
 
+	void SetCallback(AnimatorTransitionCallback* callback);
+
 public:
 
 	inline AnimatorNode* GetStartNode() const { return m_startNode; }
@@ -105,7 +112,10 @@ public:
 	void Used();
 
 	enum class StartNode { Current, Next };
-	bool IsTransferable(AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition, StartNode& out_startNode) const;
+	bool IsTransferable(
+		Animator* animator, AnimatorLayer* layer, 
+		AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition, 
+		StartNode& out_startNode) const;
 
 private:
 
@@ -126,6 +136,8 @@ private:
 	AnimatorTransition::Interrupt	m_interrupt = AnimatorTransition::Interrupt::Current;
 
 	bool							m_noRecursive = false;
+	AnimatorTransitionCallback*		m_callback = nullptr;
+
 };
 
 ENGINE_END

@@ -2,10 +2,19 @@
 #include "Player.h"
 #include "TPSCamera.h"
 #include "PlayerAnimator.h"
+#include "Config.h"
+#include "Enemy.h"
+
+#define BLOWUP_VELOCITY		V3(0,15,0)
+#define BLOWDOWN_VELOCITY	V3(0,-40,0)
+
+Player* Player::g_player = nullptr;
 
 void Player::Awake()
 {
 	Character::Awake();
+
+	CCT->capsuleCollider->layerIndex = PhysicsLayer_Player;
 
 	SetupTPSCamera();
 	SetupCharacterRenderers();
@@ -14,15 +23,19 @@ void Player::Awake()
 	SetupKatana();
 	SetupFootCnt();
 	SetupAttackTrigger();
+
+	g_player = this;
 }
 
 void Player::Update()
 {
+	Character::Update();
+
 	UpdateKeyTimes();
 
 	V3 translation = GetTranslateDirection();
 
-	RotateOnYAxisToDirection(translation, system->time->deltaTime);
+	RotateOnYAxisToDirection(translation, 720.0f, system->time->deltaTime);
 
 	float targetDashState = float(system->input->GetKey(Key::LShift) && IsLongKeyPressing(m_lShiftPressingTime));
 	m_animator->DashStateFProperty->valueAsFloat = Lerp(m_animator->DashStateFProperty->valueAsFloat, targetDashState, system->time->deltaTime * 10.0f);
@@ -30,20 +43,15 @@ void Player::Update()
 	if (!m_animator->Layer->IsPlaying(m_animator->BH_RUN_BH_DASH))
 		m_animator->DashStateFProperty->valueAsFloat = 0.0f;
 
-	bool isAirAction =
-		m_animator->Layer->IsPlaying(m_animator->ATK_AIR_X) ||
-		m_animator->Layer->IsPlaying(m_animator->ATK_AIR_XX) ||
-		m_animator->Layer->IsPlaying(m_animator->ATK_AIR_XXX) ||
-		m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_START) ||
-		m_animator->Layer->IsPlaying(m_animator->ATK_XY);
+	bool airAction = m_animator->IsPlayingAirAction();
 
-	CCT->useGravity = !isAirAction;
+	CCT->useGravity = !airAction;
 
 	if (CCT->isGrounded)
 	{
 		m_animator->MoveStateFProperty->valueAsFloat = translation.magnitude > 0.0f;
 	}
-	else if (!isAirAction)
+	else if (!airAction)
 	{
 		V3 xzTranslation = translation;
 		xzTranslation.y = 0;
@@ -51,152 +59,47 @@ void Player::Update()
 		CCT->Move(translation * 5.0f * system->time->deltaTime, system->time->deltaTime);
 	}
 
-	if (system->input->GetKeyDown(Key::Space))
-	{
-		if (CCT->isGrounded)
-		{
-			m_animator->JumpTProperty->SetTriggerState();
-			CCT->Jump(V3::up() * 11.0f);
-		}
-		else
-		{
-			m_animator->AirJumpTProperty->SetTriggerState();
-			CCT->Jump(V3::up() * 13.0f);
-		}
-	}
+	JumpInput();
 
 	if (system->input->GetKeyUp(Key::LShift) && IsShortKeyPressed(m_lShiftPressedTime))
 	{
 		m_animator->RollTProperty->SetTriggerState();
 	}
 
-	bool isPlayingJump =
-		m_animator->Layer->IsPlaying(m_animator->BH_JUMP) ||
-		m_animator->Layer->IsPlaying(m_animator->BH_AIR_JUMP) ||
-		m_animator->Layer->IsPlaying(m_animator->BH_LAND);
 
-	bool isPlayingGuard =
-		m_animator->Layer->IsPlaying(m_animator->GAD_LOOP) ||
-		m_animator->Layer->IsPlaying(m_animator->GAD_START) ||
-		m_animator->Layer->IsPlaying(m_animator->GAD_HIT) ||
-		m_animator->Layer->IsPlaying(m_animator->GAD_BREAK);
-
-	if (system->input->GetKeyDown(Key::RightMouse))
-	{
-		m_animator->LastDashStateFProperty->valueAsFloat = m_animator->DashStateFProperty->valueAsFloat > 0.4f ? 1.0f : 0.0f;
-		m_animator->DashStateFProperty->valueAsFloat = 0.0f;
-	}
-	m_animator->GuardStateBProperty->valueAsBool = system->input->GetKey(Key::RightMouse) && !isPlayingJump;
-	m_animator->IsPlayingGuardBProperty->valueAsBool = isPlayingGuard;
-
-	if (system->input->GetKeyDown(Key::One))
-		m_animator->GuardHitTProperty->SetTriggerState();
-	if (system->input->GetKeyDown(Key::Two))
-		m_animator->GuardBreakTProperty->SetTriggerState();
-
-	if (system->input->GetKeyDown(Key::Three))
-	{
-		m_animator->DamageTProperty->SetTriggerState();
-		m_animator->DamageTypeIProperty->valueAsInt = 0;
-	}
-	if (system->input->GetKeyDown(Key::Four))
-	{
-		m_animator->DamageTProperty->SetTriggerState();
-		m_animator->DamageTypeIProperty->valueAsInt = 1;
-	}
-	if (system->input->GetKeyDown(Key::Five))
-	{
-		m_animator->DamageTProperty->SetTriggerState();
-		m_animator->DamageTypeIProperty->valueAsInt = 2;
-	}
+	GuardInput();
 
 	if (m_animator->Layer->IsPlaying(m_animator->DMG_BLOW_LOOP))
 	{
 		CCT->Move(-transform->forward * 5.0f * system->time->deltaTime, system->time->deltaTime);
 	}
 
-		m_animator->LightAttackTProperty->OffTriggerState();
-		m_animator->LightAttackComboTProperty->OffTriggerState();
-		m_animator->HeavyAttackTProperty->OffTriggerState();
-		m_animator->HeavyAttackComboTProperty->OffTriggerState();
-		m_animator->LightToHeavtAttackTProperty->OffTriggerState();
-
-		bool isPlayingHeavyAttack =
-			m_animator->Layer->IsPlaying(m_animator->ATK_Y) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_YY) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_YYY) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_XY) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_XXXXY) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_XXXXXY) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_START) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_LOOP) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_END) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_ONDASH_UPPER);
-
-	if (system->input->GetKeyUp(Key::LeftMouse) && IsShortKeyPressed(m_leftMousePressedTime) && !isPlayingHeavyAttack)
-	{
-		bool first =
-			!m_animator->Layer->IsPlaying(m_animator->ATK_X) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XX) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XXX) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XXXX) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XXXXX) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_AIR_X) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_AIR_XX) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_AIR_XXX);
-
-		if (first)
-			m_animator->LightAttackTProperty->SetTriggerState();
-		else
-			m_animator->LightAttackComboTProperty->SetTriggerState();
-
-		m_animator->LastDashStateFProperty->valueAsFloat = m_animator->DashStateFProperty->valueAsFloat > 0.4f ? 1.0f : 0.0f;
-	}
-	else if (system->input->GetKey(Key::LeftMouse) && IsLongKeyPressing(m_leftMousePressingTime))
-	{
-		bool first =
-			!m_animator->Layer->IsPlaying(m_animator->ATK_Y) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_YY) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_YYY) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XY) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XXXXY) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_XXXXXY) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_START) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_LOOP) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_END) &&
-			!m_animator->Layer->IsPlaying(m_animator->ATK_ONDASH_UPPER);
-
-		bool fromX =
-			m_animator->Layer->IsPlaying(m_animator->ATK_X) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_XX) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_XXXX) ||
-			m_animator->Layer->IsPlaying(m_animator->ATK_XXXXX);
-
-		if (first)
-			m_animator->HeavyAttackTProperty->SetTriggerState();
-		else if (fromX)
-			m_animator->LightToHeavtAttackTProperty->SetTriggerState();
-		else
-			m_animator->HeavyAttackComboTProperty->SetTriggerState();
-
-		m_animator->LastDashStateFProperty->valueAsFloat = m_animator->DashStateFProperty->valueAsFloat > 0.4f ? 1.0f : 0.0f;
-	}
+	AttackInput();
 
 	if (m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_LOOP))
 	{
 		CCT->Move(V3::down() * 40.0f * system->time->deltaTime, system->time->deltaTime);
 	}
+
+	AttackTriggerQuery();
 }
 
 void Player::FixedUpdate()
 {
+	Character::FixedUpdate();
 	m_animator->HasGroundBProperty->valueAsBool = CCT->isGrounded;
 }
 
 void Player::LateUpdate()
 {
+	Character::LateUpdate();
 	UpdateCCT();
 	UpdateAttachmentObjects();
+}
+
+void Player::OnDestroyed()
+{
+	Character::OnDestroyed();
 }
 
 void Player::SetupTPSCamera()
@@ -224,8 +127,9 @@ void Player::SetupCharacterRenderers()
 void Player::SetupAnimator()
 {
 	m_animator = m_goCharacterRender->AddComponent<PlayerAnimator>();
+	m_animator->OnBeginChanging += func<void(Ref<AnimatorLayer>, Ref<AnimatorNode>)>(this, &Player::OnBeginChanging);
 	m_animator->OnEndChanged += func<void(Ref<AnimatorLayer>, Ref<AnimatorNode>, Ref<AnimatorNode>)>(this, &Player::OnEndChanged);
-	m_animator->OnAnimationEvent += func<void(Ref<AnimatorLayer>, const string&)>(this, &Player::OnAnimationEvent);
+	m_animator->OnAnimationEvent += func<void(Ref<AnimatorLayer>, const AnimationEventDesc&)>(this, &Player::OnAnimationEvent);
 }
 
 void Player::SetupKatanaSheet()
@@ -266,31 +170,27 @@ void Player::SetupFootCnt()
 
 void Player::SetupAttackTrigger()
 {
-	m_goAttackTrigger[FORWARD_TRIGGER] = CreateGameObjectToChild(transform);
-	m_goAttackTrigger[FORWARD_TRIGGER]->transform->localPosition = V3(0, 0, 1.2f);
-	m_attackTrigger[FORWARD_TRIGGER] = m_goAttackTrigger[FORWARD_TRIGGER]->AddComponent<SphereCollider>();
-	m_attackTrigger[FORWARD_TRIGGER]->radius = 1.5f;
-	m_attackTrigger[FORWARD_TRIGGER]->isTrigger = true;
-	m_attackTrigger[FORWARD_TRIGGER]->enable = false;
-
 	m_goAttackTrigger[KATANA_TRIGGER] = CreateGameObjectToChild(m_katanaTrailRenderer->transform);
 	m_goAttackTrigger[KATANA_TRIGGER]->transform->localPosition = V3(0/*forward*/, 0, 0);
 	m_attackTrigger[KATANA_TRIGGER] = m_goAttackTrigger[KATANA_TRIGGER]->AddComponent<SphereCollider>();
 	m_attackTrigger[KATANA_TRIGGER]->radius = 1.5f;
 	m_attackTrigger[KATANA_TRIGGER]->isTrigger = true;
-	m_attackTrigger[FORWARD_TRIGGER]->enable = false;
+	m_attackTrigger[KATANA_TRIGGER]->enable = false;
 
 	m_goAttackTrigger[FOOT_TRIGGER] = CreateGameObjectToChild(m_footTrailRenderer->transform);
 	m_goAttackTrigger[FOOT_TRIGGER]->transform->localPosition = V3(0, 0/*back*/, 0);
 	m_attackTrigger[FOOT_TRIGGER] = m_goAttackTrigger[FOOT_TRIGGER]->AddComponent<SphereCollider>();
 	m_attackTrigger[FOOT_TRIGGER]->radius = 1.5f;
 	m_attackTrigger[FOOT_TRIGGER]->isTrigger = true;
-	m_attackTrigger[FORWARD_TRIGGER]->enable = false;
+	m_attackTrigger[FOOT_TRIGGER]->enable = false;
 }
 
 void Player::UpdateCCT()
 {
-	CCT->MoveOnGround(m_animator->Layer->deltaPosition, system->time->deltaTime);
+	if (CCT->isGrounded)
+	{
+		CCT->MoveOnGround(m_animator->Layer->deltaPosition, system->time->deltaTime);
+	}
 }
 
 void Player::UpdateAttachmentObjects()
@@ -312,6 +212,99 @@ void Player::UpdateAttachmentObjects()
 		m_goFootCnt->transform->position = m_leftToeBaseNode->position - m_leftToeBaseNode->up * 1.0f + transform->up * 0.25f;
 		m_goFootCnt->transform->rotation = m_leftToeBaseNode->rotation;
 	}
+}
+
+void Player::JumpInput()
+{
+	if (system->input->GetKeyDown(Key::Space) && !m_animator->IsPlayingNonJumpableAnimation())
+	{
+		if (CCT->isGrounded)
+		{
+			m_animator->JumpTProperty->SetTriggerState();
+			CCT->Jump(V3::up() * 11.0f);
+		}
+		else
+		{
+			m_animator->AirJumpTProperty->SetTriggerState();
+			CCT->Jump(V3::up() * 13.0f);
+		}
+	}
+}
+
+void Player::AttackInput()
+{
+	m_animator->LightAttackTProperty->OffTriggerState();
+	m_animator->HeavyAttackTProperty->OffTriggerState();
+
+	if (!m_animator->IsPlayingNonAttackableAnimation())
+	{
+		if (system->input->GetKeyUp(Key::LeftMouse) && IsShortKeyPressed(m_leftMousePressedTime))
+		{
+			m_animator->LightAttackTProperty->SetTriggerState();
+			m_animator->LastDashStateFProperty->valueAsFloat = m_animator->DashStateFProperty->valueAsFloat > 0.4f ? 1.0f : 0.0f;
+		}
+		else if (system->input->GetKey(Key::LeftMouse) && IsLongKeyPressing(m_leftMousePressingTime))
+		{
+			m_animator->HeavyAttackTProperty->SetTriggerState();
+			m_animator->LastDashStateFProperty->valueAsFloat = m_animator->DashStateFProperty->valueAsFloat > 0.4f ? 1.0f : 0.0f;
+		}
+	}
+}
+
+void Player::GuardInput()
+{
+	if (system->input->GetKeyDown(Key::RightMouse))
+	{
+		m_animator->DashStateFProperty->valueAsFloat = 0.0f;
+	}
+	m_animator->GuardStateBProperty->valueAsBool = system->input->GetKey(Key::RightMouse);
+}
+
+void Player::AttackTriggerQuery()
+{
+	for (int i = 0; i < MAX_TRIGGERS; ++i)
+	{
+		if (!m_attackTrigger[i]->enable)
+			continue;
+
+		vector<Collider*> overlaps = system->physics->query->OverlapAll(m_attackTrigger[i], 1 << PhysicsLayer_Enemy, PhysicsQueryType::Collider);
+		for (auto& overlap : overlaps)
+		{
+			Rigidbody* rigidbody = overlap->rigidbody;
+			if (!rigidbody) continue;
+
+			Enemy* enemy = rigidbody->gameObject->GetComponent<Enemy>();
+			if (!enemy) continue;
+
+			auto result = m_hitBuffer.insert(rigidbody);
+			if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.
+
+			DamageDesc desc;
+			desc.FromCharacter = this;
+			desc.FromDirection = enemy->transform->position - transform->position;
+			switch (m_attackType)
+			{
+				case ANIM_ATK_LIGHT: desc.Type = DamageDesc::Type::LIGHT; break;
+				case ANIM_ATK_HEAVY: desc.Type = DamageDesc::Type::HEAVY; break;
+				case ANIM_ATK_BLOW: desc.Type = DamageDesc::Type::BLOW; desc.Velocity = transform->forward * 5.0f + V3(0, 5, 0); desc.SetVelocity = true; break;
+				case ANIM_ATK_BLOWUP: desc.Type = DamageDesc::Type::BLOWUP; desc.Velocity = BLOWUP_VELOCITY; desc.SetVelocity = true; break;
+				case ANIM_ATK_BLOWDOWN: desc.Type = DamageDesc::Type::BLOWDOWN; desc.Velocity = BLOWDOWN_VELOCITY; desc.SetVelocity = true; break;
+			}
+			enemy->Damage(desc);
+		}
+	}
+}
+
+void Player::OffAttackTriggers()
+{
+	for (int i = 0; i < MAX_TRIGGERS; ++i)
+		m_attackTrigger[i]->enable = false;
+}
+
+void Player::ClearHitBuffer()
+{
+	if (!m_hitBuffer.empty())
+		m_hitBuffer.clear();
 }
 
 void Player::UpdateKeyTimes()
@@ -360,6 +353,8 @@ bool Player::IsLongKeyPressing(float pressingTime) const
 
 void Player::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
 {
+	if (changing.GetPointer() == m_animator->GAD_START)
+		m_animator->LastDashStateFProperty->valueAsFloat = m_animator->DashStateFProperty->valueAsFloat > 0.4f ? 1.0f : 0.0f;
 }
 
 void Player::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
@@ -368,19 +363,122 @@ void Player::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged
 	{
 		m_katanaTrailRenderer->autoTrail = false;
 		m_footTrailRenderer->autoTrail = false;
+		OffAttackTriggers();
+		ClearHitBuffer();
 	}
 }
 
-void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const string& context)
+void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
 {
-	if (context == ATK_KT_START)
+	if (desc.ContextInt & ANIM_ATK_KT_START)
+	{
 		m_katanaTrailRenderer->autoTrail = true;
-	else if (context == ATK_KT_END)
+		m_attackTrigger[KATANA_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextInt);
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_KT_END)
+	{
 		m_katanaTrailRenderer->autoTrail = false;
-	else if (context == ATK_FOOT_START)
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_FOOT_START)
+	{
 		m_footTrailRenderer->autoTrail = true;
-	else if (context == ATK_FOOT_END)
+		m_attackTrigger[FOOT_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextInt);
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_FOOT_END)
+	{
 		m_footTrailRenderer->autoTrail = false;
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_KT_STING_START)
+	{
+		m_attackTrigger[KATANA_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextInt);
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_KT_STING_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+
+	if (desc.ContextInt & ANIM_JUMP)
+	{
+		CCT->velocity = BLOWUP_VELOCITY;
+	}
+}
+
+void Player::SetAttackType(int contextInt)
+{
+	if (contextInt & ANIM_ATK_LIGHT)
+		m_attackType = ANIM_ATK_LIGHT;
+	else if (contextInt & ANIM_ATK_HEAVY)
+		m_attackType = ANIM_ATK_HEAVY;
+	else if (contextInt & ANIM_ATK_BLOW)
+		m_attackType = ANIM_ATK_BLOW;
+	else if (contextInt & ANIM_ATK_BLOWUP)
+		m_attackType = ANIM_ATK_BLOWUP;
+	else if (contextInt & ANIM_ATK_BLOWDOWN)
+		m_attackType = ANIM_ATK_BLOWDOWN;
+	else
+		m_attackType = ANIM_ATK_LIGHT;
+}
+
+bool Player::IsGuarding() const
+{
+	return m_animator->IsPlayingGuardableAnimation();
+}
+
+DamageResult Player::Damage(const DamageDesc& desc)
+{
+	bool backAttack = false;
+	bool guarded = false;
+
+	float cosine = V3::Dot(transform->forward, -desc.FromDirection);
+
+	if (cosine < 0.0f)
+	{
+		backAttack = true;
+	}
+
+	if (desc.Guardable && !backAttack)
+	{
+		if (isGuarding)
+		{
+			guarded = true;
+		}
+	}
+
+	if (guarded)
+	{
+		m_animator->GuardHitTProperty->SetTriggerState();
+		return DamageResult::GUARDED;
+	}
+	else
+	{
+		m_animator->DamageTProperty->SetTriggerState();
+		m_animator->DamageDirectionFProperty->valueAsFloat = backAttack ? 1.0f : 0.0f;
+		switch (desc.Type)
+		{
+			case DamageDesc::Type::LIGHT:
+				m_animator->DamageTypeIProperty->valueAsInt = 0;
+				break;
+			case DamageDesc::Type::HEAVY:
+				m_animator->DamageTypeIProperty->valueAsInt = 1;
+				break;
+			case DamageDesc::Type::BLOW:
+			case DamageDesc::Type::BLOWUP:
+				m_animator->DamageTypeIProperty->valueAsInt = 2;
+				break;
+		}
+		return DamageResult::HIT;
+	}
 }
 
 V3 Player::GetTranslateDirection() const

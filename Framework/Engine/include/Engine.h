@@ -47,6 +47,7 @@
 #include "Animator.h"
 #include "AnimatorSingleNode.h"
 #include "AnimatorBlendNode.h"
+#include "AnimatorTransitionCallback.h"
 
 #include "PhysicsSimulationCallbackType.h"
 #include "Rigidbody.h"

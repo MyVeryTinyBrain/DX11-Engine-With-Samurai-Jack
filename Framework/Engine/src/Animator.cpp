@@ -48,9 +48,9 @@ void Animator::LateUpdate()
 
 		// 애니메이션 이벤트 알림
 
-		for (auto& eventMessage : layer->GetEventMessages())
+		for (auto& eventDesc : layer->GetEventDescs())
 		{
-			OnAnimationEvent(layer, eventMessage);
+			OnAnimationEvent(layer, eventDesc);
 		}
 	}
 }
@@ -79,6 +79,7 @@ void Animator::AddLayer(AnimatorLayer* layer)
 
 	IAnimatorLayer* iAnimatorLayer = layer;
 	iAnimatorLayer->SetSkinnedMeshRenderer(m_skinnedMeshRenderer);
+	iAnimatorLayer->SetAnimator(this);
 
 	m_layers.push_back(layer);
 }

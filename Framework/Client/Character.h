@@ -4,17 +4,22 @@ class Character;
 
 struct DamageDesc
 {
-	enum class Type { LIGHT, HEAVY, BLOW, BLOWUP };
+	enum class Type { LIGHT, HEAVY, BLOW, BLOWUP, BLOWDOWN };
 	static const uint MAX_CONTEXT = 64;
 
 	float		Damage;
 	V3			FromDirection;
 	Type		Type;
 	bool		Guardable;
+	bool		IgnoreHitableFlag;
+	bool		SetVelocity;
+	V3			Velocity;
 
 	Character*	FromCharacter; // Nullable
 	CHAR		Context[MAX_CONTEXT]; // Nullable
 };
+
+enum class DamageResult { HIT, GUARDED, IGNORED, SUPERARMOR };
 
 class Character abstract : public Component
 {
@@ -27,11 +32,18 @@ public:
 	virtual float GetHP() const { return 0.0f; }
 	virtual void SetHP(float value) {}
 	
+	virtual bool IsHitable() const { return true; }
+	virtual bool IsGuarding() const { return false; }
+	virtual bool IsSuperarmor() const { return false; }
+
 	_declspec(property(get = GetHP, put = SetHP)) float hp;
+	_declspec(property(get = IsHitable)) bool isHitable;
+	_declspec(property(get = IsGuarding)) bool isGuarding;
+	_declspec(property(get = IsSuperarmor)) bool isSuperarmor;
 
 public:
 
-	virtual void Damage(const DamageDesc& desc) {}
+	virtual DamageResult Damage(const DamageDesc& desc) { return DamageResult::IGNORED; }
 
 public:
 
@@ -41,7 +53,7 @@ public:
 
 protected:
 
-	void RotateOnYAxisToDirection(const V3& direction, float dt);
+	void RotateOnYAxisToDirection(const V3& direction, float anglePerSec, float dt);
 
 private:
 

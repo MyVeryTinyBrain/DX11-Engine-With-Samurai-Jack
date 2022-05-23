@@ -57,7 +57,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 				for (auto& currentTransition : anyTransitions)
 				{
-					if (currentTransition->IsTransferable(m_currentNode, m_blendNode, m_currentTransition, startNode))
+					if (currentTransition->IsTransferable(m_animator, this, m_currentNode, m_blendNode, m_currentTransition, startNode))
 					{
 						transition = currentTransition;
 						break;
@@ -76,7 +76,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 			for (auto& currentTransition : transitionsOfNode)
 			{
-				if (currentTransition->IsTransferable(m_currentNode, m_blendNode, m_currentTransition, startNode))
+				if (currentTransition->IsTransferable(m_animator, this, m_currentNode, m_blendNode, m_currentTransition, startNode))
 				{
 					transition = currentTransition;
 					break;
@@ -95,7 +95,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 			for (auto& currentTransition : transitionsOfNode)
 			{
-				if (currentTransition->IsTransferable(m_currentNode, m_blendNode, m_currentTransition, startNode))
+				if (currentTransition->IsTransferable(m_animator, this, m_currentNode, m_blendNode, m_currentTransition, startNode))
 				{
 					transition = currentTransition;
 					break;
@@ -134,7 +134,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 	}
 	else if(m_currentTransition)
 	{
-		m_blendNode->Accumulate(dt, m_eventMessages);
+		m_blendNode->Accumulate(dt, m_eventDescs);
 	}
 
 	// 유효한 트랜지션이 있다면 전환을 시작합니다.
@@ -162,7 +162,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 		}
 	}
 
-	m_currentNode->Accumulate(dt, m_eventMessages);
+	m_currentNode->Accumulate(dt, m_eventDescs);
 }
 
 void AnimatorLayer::Animate(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
@@ -269,6 +269,17 @@ bool AnimatorLayer::IsPlaying(Ref<AnimatorNode> node) const
 		return true;
 
 	if (node.GetPointer() == m_blendNode)
+		return true;
+
+	return false;
+}
+
+bool AnimatorLayer::IsContains(const tstring& str) const
+{
+	if (m_currentNode && m_currentNode->name.find(str) != tstring::npos)
+		return true;
+
+	if (m_blendNode && m_blendNode->name.find(str) != tstring::npos)
 		return true;
 
 	return false;
@@ -420,8 +431,13 @@ void AnimatorLayer::ClearTransitionEvents()
 
 void AnimatorLayer::ClearAnimationEvents()
 {
-	if (!m_eventMessages.empty())
+	if (!m_eventDescs.empty())
 	{
-		m_eventMessages.clear();
+		m_eventDescs.clear();
 	}
+}
+
+void AnimatorLayer::SetAnimator(Animator* animator)
+{
+	m_animator = animator;
 }

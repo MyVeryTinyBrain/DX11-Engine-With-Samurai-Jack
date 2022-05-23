@@ -6,6 +6,9 @@
 void SpotLight::Awake()
 {
     Light::Awake();
+
+    shadowFadeDistance = 50.0f;
+    shadowFadeBeginPercent = 0.9f;
 }
 
 void SpotLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const

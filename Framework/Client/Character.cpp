@@ -6,13 +6,13 @@ void Character::Awake()
 	SetupCharacterController();
 }
 
-void Character::RotateOnYAxisToDirection(const V3& direction, float dt)
+void Character::RotateOnYAxisToDirection(const V3& direction, float anglePerSec, float dt)
 {
 	if (direction.magnitude > 0.0f)
 	{
 		V3 up = V3(0, 1, 0);
 		Q q = Q::LookRotation(direction.normalized, up);
-		transform->rotation = Q::RotateTowards(transform->rotation, q, 720.0f * dt);
+		transform->rotation = Q::RotateTowards(transform->rotation, q, anglePerSec * dt);
 	}
 }
 

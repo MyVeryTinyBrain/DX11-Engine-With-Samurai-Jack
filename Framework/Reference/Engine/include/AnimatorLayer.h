@@ -101,6 +101,10 @@ public:
 	// CurrentNode, BlendNode 모두 검사합니다.
 	bool IsPlaying(const tstring& nodeName) const;
 	bool IsPlaying(Ref<AnimatorNode> node) const;
+	
+	// CurrentNode, BlendNode 모두 검사합니다.
+	// 이 노드들의 이름에 str이 포함되어 있는지 검사합니다.
+	bool IsContains(const tstring& str) const;
 
 	void SetRootNodeByName(const tstring& rootNodeName);
 	V3 GetDeltaPosition() const;
@@ -123,7 +127,7 @@ public:
 	Ref<AnimatorNode> GetEndChangedNode() const;
 	Ref<AnimatorNode> GetPreviousNode() const;
 
-	const vector<string>& GetEventMessages() const { return m_eventMessages; }
+	const vector<AnimationEventDesc>& GetEventDescs() const { return m_eventDescs; }
 
 private:
 
@@ -136,6 +140,7 @@ private:
 	virtual void SetSkinnedMeshRenderer(Ref<SkinnedMeshRenderer> skinnedMeshRenderer) override;
 	virtual void ClearTransitionEvents() override;
 	virtual void ClearAnimationEvents() override;
+	virtual void SetAnimator(Animator* animator) override;
 
 private:
 
@@ -164,9 +169,13 @@ private:
 	AnimatorNode*												m_endChangedNode = nullptr;
 	AnimatorNode*												m_prevNode = nullptr;
 
-	// Context message for Animation Evnets
+	// ContextStr message for Animation Evnets
 
-	vector<string>												m_eventMessages;
+	vector<AnimationEventDesc>									m_eventDescs;
+
+	// ...
+
+	Animator*													m_animator = nullptr;
 };
 
 ENGINE_END

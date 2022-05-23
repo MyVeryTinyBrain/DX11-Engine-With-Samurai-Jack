@@ -1,0 +1,26 @@
+#pragma once
+
+enum
+{
+	PhysicsLayer_Default = 0,
+	PhysicsLayer_Player = 1,
+	PhysicsLayer_Enemy = 2,
+};
+
+#define ANIM_ATK_KT_START		0b000000000001
+#define ANIM_ATK_KT_END			0b000000000010
+#define ANIM_ATK_FOOT_START		0b000000000100
+#define ANIM_ATK_FOOT_END		0b000000001000
+#define ANIM_ATK_LIGHT			0b000000010000
+#define ANIM_ATK_HEAVY			0b000000100000
+#define ANIM_ATK_BLOW			0b000001000000
+#define ANIM_ATK_BLOWUP			0b000010000000
+#define ANIM_JUMP				0b000100000000
+#define ANIM_ATK_KT_STING_START	0b001000000000
+#define ANIM_ATK_KT_STING_END	0b010000000000
+#define ANIM_ATK_BLOWDOWN		0b100000000000
+
+#define LOOP		true
+#define NOLOOP		false
+#define EXIT		nullptr
+#define ANY			nullptr

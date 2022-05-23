@@ -40,6 +40,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBeetleDrone.h" />
     <ClInclude Include="EnemyBeetleDroneAnimator.h" />
+    <ClInclude Include="Config.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

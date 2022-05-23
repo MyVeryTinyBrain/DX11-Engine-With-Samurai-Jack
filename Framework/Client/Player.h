@@ -13,6 +13,7 @@ private:
 	virtual void Update() override;
 	virtual void FixedUpdate() override;
 	virtual void LateUpdate() override;
+	virtual void OnDestroyed() override;
 
 private:
 
@@ -27,6 +28,14 @@ private:
 	void UpdateCCT();
 	void UpdateAttachmentObjects();
 
+	void JumpInput();
+	void AttackInput();
+	void GuardInput();
+
+	void AttackTriggerQuery();
+	void OffAttackTriggers();
+	void ClearHitBuffer();
+
 private:
 
 	void UpdateKeyTimes();
@@ -38,7 +47,17 @@ private:
 
 	void OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing);
 	void OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev);
-	void OnAnimationEvent(Ref<AnimatorLayer> layer, const string& context);
+	void OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc);
+	void SetAttackType(int contextInt);
+
+public:
+
+	virtual bool IsGuarding() const override;
+	virtual DamageResult Damage(const DamageDesc& desc) override;
+
+public:
+
+	TPSCamera* GetTPSCamera() const { return m_tpsCamera; }
 
 private:
 
@@ -76,11 +95,17 @@ private:
 
 	// Attack
 
-#define FORWARD_TRIGGER		0
-#define KATANA_TRIGGER		1
-#define FOOT_TRIGGER		2
-	GameObject*				m_goAttackTrigger[3];
-	SphereCollider*			m_attackTrigger[3];
+	enum
+	{
+		KATANA_TRIGGER = 0,
+		FOOT_TRIGGER = 1,
+		MAX_TRIGGERS,
+	};
+
+	GameObject*					m_goAttackTrigger[2];
+	SphereCollider*				m_attackTrigger[2];
+	int							m_attackType = 0;
+	unordered_set<Rigidbody*>	m_hitBuffer;
 
 	// Input
 
@@ -88,5 +113,13 @@ private:
 	float					m_lShiftPressingTime;
 	float					m_leftMousePressedTime;
 	float					m_leftMousePressingTime;
+
+	// Static
+
+	static Player*			g_player;
+
+public:
+
+	static Player* GetInstance() { return g_player; }
 };
 

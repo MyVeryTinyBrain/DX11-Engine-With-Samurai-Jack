@@ -21,11 +21,16 @@ public:
 
 public:
 
-	void AddEvent(float noramlizedTime, const string& context);
+	void AddEvent(float normalizedTime, const string& strContext);
+	void AddEvent(float normalizedTime, int intContext);
+	void AddEvent(float normalizedTime, const V4& v4Context);
+	void AddEvent(float normalizedTime, const string& strContext, int intContext);
+	void AddEvent(float normalizedTime, const string& strContext, const V4& v4Context);
+	void AddEvent(float normalizedTime, const string& strContext, int intContext, const V4& v4Context);
 
 public:
 
-	void Accumulate(float deltaTime, vector<string>& out_eventNotifications);
+	void Accumulate(float deltaTime, vector<AnimationEventDesc>& out_eventNotifications);
 
 	bool Animate(
 		uint channelIndex, uint& out_nodeIndex, 
@@ -65,7 +70,7 @@ private:
 
 	void SortEvents();
 	void ClearEventUsed();
-	void EventProcess(vector<string>& out_notifications);
+	void EventProcess(vector<AnimationEventDesc>& out_notifications);
 
 protected:
 

@@ -4,6 +4,7 @@
 #include "FreeCamera.h"
 #include "SoundTest.h"
 #include "EnemyBeetleDrone.h"
+#include "Config.h"
 
 Scene* PlayerTestScene::Clone()
 {
@@ -12,6 +13,10 @@ Scene* PlayerTestScene::Clone()
 
 void PlayerTestScene::OnLoad()
 {
+	system->physics->layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Player, true);
+	system->physics->layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Enemy, true);
+	system->physics->layerManager->SetCollision(PhysicsLayer_Player, PhysicsLayer_Enemy, true);
+
 	TextureOptionDesc loadDesc = {};
 	TextureOptionDesc loadMipDesc = {};
 	loadMipDesc.GenerateMipmap = true;
@@ -51,15 +56,15 @@ void PlayerTestScene::OnLoad()
 			t0.join();
 
 		{
-			GameObject* go = CreateGameObject();
-			go->transform->position = V3(0, 5, 0);
-			go->AddComponent<Player>();
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(0, 5, 5);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
 		}
 
 		{
 			GameObject* go = CreateGameObject();
-			go->transform->position = V3(0, 5, 5);
-			go->AddComponent<EnemyBeetleDrone>();
+			go->transform->position = V3(0, 5, 0);
+			go->AddComponent<Player>();
 		}
 
 		{

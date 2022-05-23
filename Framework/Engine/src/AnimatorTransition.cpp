@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "AnimatorTransition.h"
+#include "AnimatorTransitionCallback.h"
 
 AnimatorTransition::AnimatorTransition(
 	AnimatorNode* startNode, AnimatorNode* nextNode,
@@ -29,15 +30,29 @@ AnimatorTransition::~AnimatorTransition()
 {
 }
 
+void AnimatorTransition::SetCallback(AnimatorTransitionCallback* callback)
+{
+	m_callback = callback;
+}
+
 void AnimatorTransition::Used()
 {
 	for (auto& trigger : m_propertyTriggers)
 		trigger->valueAsBool = false;
 }
 
-bool AnimatorTransition::IsTransferable(AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition, StartNode& out_startNode) const
+bool AnimatorTransition::IsTransferable(
+	Animator* animator, AnimatorLayer* layer, 
+	AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition, 
+	StartNode& out_startNode) const
 {
 	out_startNode = StartNode::Current;
+
+	if (m_callback)
+	{
+		if (!m_callback->Transferable(animator, layer, this, currentNode, blendingNode, currentTransition))
+			return false;
+	}
 
 	if (currentTransition)
 	{
@@ -91,6 +106,8 @@ bool AnimatorTransition::IsTransferable(AnimatorNode* currentNode, AnimatorNode*
 	if (m_noRecursive)
 	{
 		if (currentNode == m_nextNode)
+			return false;
+		if (blendingNode == m_nextNode)
 			return false;
 	}
 

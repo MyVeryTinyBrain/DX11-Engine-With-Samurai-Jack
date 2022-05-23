@@ -8,18 +8,45 @@ AnimatorNode::AnimatorNode(const tstring& name, bool loop) :
 {
 }
 
-void AnimatorNode::AddEvent(float noramlizedTime, const string& context)
+void AnimatorNode::AddEvent(float normalizedTime, const string& strContext)
+{
+	AddEvent(normalizedTime, strContext, 0, V4::zero());
+}
+
+void AnimatorNode::AddEvent(float normalizedTime, int intContext)
+{
+	AddEvent(normalizedTime, "", intContext, V4::zero());
+}
+
+void AnimatorNode::AddEvent(float normalizedTime, const V4& v4Context)
+{
+	AddEvent(normalizedTime, "", 0, v4Context);
+}
+
+void AnimatorNode::AddEvent(float normalizedTime, const string& strContext, int intContext)
+{
+	AddEvent(normalizedTime, strContext, intContext, V4::zero());
+}
+
+void AnimatorNode::AddEvent(float normalizedTime, const string& strContext, const V4& v4Context)
+{
+	AddEvent(normalizedTime, strContext, 0, v4Context);
+}
+
+void AnimatorNode::AddEvent(float noramlizedTime, const string& strContext, int intContext, const V4& v4Context)
 {
 	AnimationEvent animationEvent = {};
 	animationEvent.Desc.NormalizedTime = noramlizedTime;
-	strcpy_s(animationEvent.Desc.Context, context.c_str());
+	strcpy_s(animationEvent.Desc.ContextStr, strContext.c_str());
+	animationEvent.Desc.ContextInt = intContext;
+	animationEvent.Desc.ContextV4 = v4Context;
 	animationEvent.used = false;
 	m_events.push_back(animationEvent);
 
 	SortEvents();
 }
 
-void AnimatorNode::Accumulate(float deltaTime, vector<string>& out_eventNotifications)
+void AnimatorNode::Accumulate(float deltaTime, vector<AnimationEventDesc>& out_eventNotifications)
 {
 	uint prevLoop = uint(m_normalizedTime);
 
@@ -79,7 +106,7 @@ void AnimatorNode::ClearEventUsed()
 	}
 }
 
-void AnimatorNode::EventProcess(vector<string>& out_notifications)
+void AnimatorNode::EventProcess(vector<AnimationEventDesc>& out_notifications)
 {
 	uint numEvents = uint(m_events.size());
 	for (uint i = 0; i < numEvents; ++i)
@@ -92,7 +119,7 @@ void AnimatorNode::EventProcess(vector<string>& out_notifications)
 		if (!animationEvent.used && animationEvent.Desc.NormalizedTime < m_normalizedTime)
 		{
 			animationEvent.used = true;
-			out_notifications.push_back(animationEvent.Desc.Context);
+			out_notifications.push_back(animationEvent.Desc);
 		}
 	}
 }

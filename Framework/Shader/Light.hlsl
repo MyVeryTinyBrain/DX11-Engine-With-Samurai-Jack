@@ -512,6 +512,16 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 	return Lo * atten;
 }
 
+inline half CalculateShadowDistFade(LightDesc light, float3 world2Camera)
+{
+	half dist = length(world2Camera);
+	half deltaDist = light.ShadowFadeDistance - dist;
+	half distPercent = deltaDist / light.ShadowFadeDistance;
+	half beginFadePercent = max(0.0f, 1.0f - light.ShadowFadeBeginPercent);
+	half distFade = smoothstep(0.0f, beginFadePercent, distPercent);
+	return distFade;
+}
+
 inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDesc volumetricDesc, texture2D lightDepthMap[6], half3 albedo, half3 normal, float3 worldPosition, half depth, half shadowMask, half roughness, half metallic)
 {
 	half atten = 1.0f;
@@ -527,8 +537,7 @@ inline LightCalculateDesc ComputeDirectionalLight(LightDesc light, VolumetricDes
 	if (light.DrawShadow && shadowMask > 0.0f)
 	{
 		shadow = ComputeShadow_Directional(light, lightDepthMap, light.ShadowWhiteness, worldPosition);
-		half dist = length(world2Camera);
-		half distFade = saturate(((light.ShadowFadeDistance - dist) / light.ShadowFadeDistance) / light.ShadowFadeBeginPercent);
+		half distFade = CalculateShadowDistFade(light, world2Camera);
 		shadow = lerp(1.0f, shadow, shadowMask * distFade);
 	}
 
@@ -557,8 +566,7 @@ inline LightCalculateDesc ComputePointLight(LightDesc light, VolumetricDesc volu
 	if (light.DrawShadow && shadowMask > 0.0f)
 	{
 		shadow = ComputeShadow_Point(light, lightDepthMap, lightToPixel, light.ShadowWhiteness, worldPosition);
-		half dist = length(world2Camera);
-		half distFade = saturate(((light.ShadowFadeDistance - dist) / light.ShadowFadeDistance) / light.ShadowFadeBeginPercent);
+		half distFade = CalculateShadowDistFade(light, world2Camera);
 		shadow = lerp(1.0f, shadow, shadowMask * distFade);
 	}
 
@@ -595,8 +603,7 @@ inline LightCalculateDesc ComputeSpotLight(LightDesc light, VolumetricDesc volum
 	if (light.DrawShadow && shadowMask > 0.0f)
 	{
 		shadow = ComputeShadow_Spot(light, lightDepthMap, light.ShadowWhiteness, worldPosition);
-		half dist = length(world2Camera);
-		half distFade = saturate(((light.ShadowFadeDistance - dist) / light.ShadowFadeDistance) / light.ShadowFadeBeginPercent);
+		half distFade = CalculateShadowDistFade(light, world2Camera);
 		shadow = lerp(1.0f, shadow, shadowMask * distFade);
 	}
 

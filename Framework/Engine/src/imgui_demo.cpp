@@ -4759,7 +4759,7 @@ static void ShowDemoWindowTables()
         ImGui::CheckboxFlags("ImGuiTableFlags_ContextMenuInBody", &flags1, ImGuiTableFlags_ContextMenuInBody);
         PopStyleCompact();
 
-        // Context Menus: first example
+        // ContextStr Menus: first example
         // [1.1] Right-click on the TableHeadersRow() line to open the default table context menu.
         // [1.2] Right-click in columns also open the default table context menu (if ImGuiTableFlags_ContextMenuInBody is set)
         const int COLUMNS_COUNT = 3;
@@ -4785,7 +4785,7 @@ static void ShowDemoWindowTables()
             ImGui::EndTable();
         }
 
-        // Context Menus: second example
+        // ContextStr Menus: second example
         // [2.1] Right-click on the TableHeadersRow() line to open the default table context menu.
         // [2.2] Right-click on the ".." to open a custom popup
         // [2.3] Right-click in columns to open another custom popup
@@ -7332,7 +7332,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
                 scrolling.y += io.MouseDelta.y;
             }
 
-            // Context menu (under default mouse threshold)
+            // ContextStr menu (under default mouse threshold)
             ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
             if (opt_enable_context_menu && ImGui::IsMouseReleased(ImGuiMouseButton_Right) && drag_delta.x == 0.0f && drag_delta.y == 0.0f)
                 ImGui::OpenPopupOnItemClick("context");

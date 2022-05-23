@@ -1,11 +1,6 @@
 #pragma once
 
-#define ATK_KT_START	"ATK_KT_START"
-#define ATK_KT_END		"ATK_KT_END"
-#define ATK_FOOT_START	"ATK_FOOT_START"
-#define ATK_FOOT_END	"ATK_FOOT_END"
-
-class PlayerAnimator : public Animator
+class PlayerAnimator : public Animator, public AnimatorTransitionCallback
 {
 private:
 
@@ -20,6 +15,18 @@ private:
 	void SetupProperties();
 	void SetupNodes();
 	void SetupTransitions();
+
+public:
+
+	bool IsPlayingJump() const;
+	bool IsPlayingGuard() const;
+	bool IsPlayingAttack() const;
+	bool IsPlayingDamage() const;
+	bool IsPlayingAirAction() const;
+
+	bool IsPlayingGuardableAnimation(bool withoutGuardHit = false) const;
+	bool IsPlayingNonAttackableAnimation() const;
+	bool IsPlayingNonJumpableAnimation() const;
 
 public:
 
@@ -43,11 +50,8 @@ public:
 	// 0(Forward) 1(Back)
 	AnimatorProperty* DamageDirectionFProperty;
 
-	// 0(Normal) 1(Back Large) 2(Blow)
+	// 0(Normal) 1(Large) 2(Blow)
 	AnimatorProperty* DamageTypeIProperty;
-
-	// (Dead)
-	AnimatorProperty* DeadBProperty;
 
 	// (Roll)
 	AnimatorProperty* RollTProperty;
@@ -58,20 +62,8 @@ public:
 	// (Heavy Attack)
 	AnimatorProperty* HeavyAttackTProperty;
 
-	// (Light Attack Combo)
-	AnimatorProperty* LightAttackComboTProperty;
-
-	// (Heavy Attack Combo)
-	AnimatorProperty* HeavyAttackComboTProperty;
-
-	// (Light To Heavy Attack)
-	AnimatorProperty* LightToHeavtAttackTProperty;
-
 	// (Guard)
 	AnimatorProperty* GuardStateBProperty;
-
-	// (Is Playing Guard Loop Animation)
-	AnimatorProperty* IsPlayingGuardBProperty;
 
 	// (Guard Break)
 	AnimatorProperty* GuardBreakTProperty;
@@ -133,9 +125,10 @@ public:
 	AnimatorNode* ATK_AIR_Y_LOOP; // Loop
 	AnimatorNode* ATK_AIR_Y_END;
 
-	AnimatorNode* ATK_ONDASH_UPPER; // DASH_Y
+private:
 
-	AnimatorNode* ATK_PARRY;
-
+	virtual bool Transferable(
+		Animator* animator, AnimatorLayer* layer, const AnimatorTransition* transition,
+		AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition) const;
 };
 

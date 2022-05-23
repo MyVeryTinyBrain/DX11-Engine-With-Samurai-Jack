@@ -170,6 +170,7 @@
     <ClInclude Include="EnemyBeetleDroneAnimator.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="FreeCamera.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="JackAnimator.h" />
     <ClInclude Include="PlayerAnimator.h" />

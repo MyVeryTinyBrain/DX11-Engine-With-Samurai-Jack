@@ -7,6 +7,9 @@ void DirectionalLight::Awake()
 {
 	Light::Awake();
 	SetDrawShadowMode(true);
+
+	shadowFadeDistance = 25.0f;
+	shadowFadeBeginPercent = 0.8f;
 }
 
 V3 DirectionalLight::CalculateViewPosition(ICamera* camera, float camNear, float camFar) const

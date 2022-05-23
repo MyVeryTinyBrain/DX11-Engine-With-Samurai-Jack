@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Ref.h"
 #include "AnimatorLayer.h"
+#include "AnimationEventType.h"
 
 ENGINE_BEGIN
 class SkinnedMeshRenderer;
@@ -65,7 +66,7 @@ public:
 	// 애니메이션 이벤트가 발생하면 호출됩니다.
 	// Ref<AnimatorLayer> Layer: 이벤트가 생성된 레이어입니다.
 	// const string& Message: 이벤트 메시지입니다.
-	delegate<void(Ref<AnimatorLayer>, const string&)> OnAnimationEvent;
+	delegate<void(Ref<AnimatorLayer>, const AnimationEventDesc&)> OnAnimationEvent;
 };
 
 ENGINE_END

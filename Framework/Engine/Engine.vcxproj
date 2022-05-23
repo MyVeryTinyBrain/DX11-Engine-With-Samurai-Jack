@@ -34,6 +34,7 @@
     <ClInclude Include="include\AnimatorProperty.h" />
     <ClInclude Include="include\AnimatorSingleNode.h" />
     <ClInclude Include="include\AnimatorTransition.h" />
+    <ClInclude Include="include\AnimatorTransitionCallback.h" />
     <ClInclude Include="include\AnimatorType.h" />
     <ClInclude Include="include\AudioClip.h" />
     <ClInclude Include="include\AudioListener.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="src\AnimatorProperty.cpp" />
     <ClCompile Include="src\AnimatorSingleNode.cpp" />
     <ClCompile Include="src\AnimatorTransition.cpp" />
+    <ClCompile Include="src\AnimatorTransitionCallback.cpp" />
     <ClCompile Include="src\AudioClip.cpp" />
     <ClCompile Include="src\AudioListener.cpp" />
     <ClCompile Include="src\AudioSource.cpp" />
