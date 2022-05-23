@@ -70,7 +70,7 @@ void EnemyBeetleDrone::UpdateCCT()
 void EnemyBeetleDrone::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
 {
 	if (changing.GetPointer() == m_animator->DMG_STD_AIR)
-		CCT->velocity = V3::up() * 3.0f;
+		CCT->velocity = V3::up() * 5.0f;
 }
 
 void EnemyBeetleDrone::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
@@ -132,7 +132,8 @@ DamageResult EnemyBeetleDrone::Damage(const DamageDesc& desc)
 		}
 		if (desc.SetVelocity)
 		{
-			CCT->velocity = desc.Velocity;
+			//CCT->velocity = desc.Velocity;
+			CCT->Jump(desc.Velocity);
 		}
 		return DamageResult::HIT;
 	}

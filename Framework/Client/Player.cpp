@@ -5,7 +5,7 @@
 #include "Config.h"
 #include "Enemy.h"
 
-#define BLOWUP_VELOCITY		V3(0,15,0)
+#define BLOWUP_VELOCITY		V3(0,17,0)
 #define BLOWDOWN_VELOCITY	V3(0,-40,0)
 
 Player* Player::g_player = nullptr;
@@ -180,9 +180,12 @@ void Player::SetupAttackTrigger()
 	m_goAttackTrigger[FOOT_TRIGGER] = CreateGameObjectToChild(m_footTrailRenderer->transform);
 	m_goAttackTrigger[FOOT_TRIGGER]->transform->localPosition = V3(0, 0/*back*/, 0);
 	m_attackTrigger[FOOT_TRIGGER] = m_goAttackTrigger[FOOT_TRIGGER]->AddComponent<SphereCollider>();
-	m_attackTrigger[FOOT_TRIGGER]->radius = 1.5f;
+	m_attackTrigger[FOOT_TRIGGER]->radius = 2.0f;
 	m_attackTrigger[FOOT_TRIGGER]->isTrigger = true;
 	m_attackTrigger[FOOT_TRIGGER]->enable = false;
+
+	m_goAttackTrigger[KATANA_TRIGGER]->name = TEXT("KATANA");
+	m_goAttackTrigger[FOOT_TRIGGER]->name = TEXT("FOOT");
 }
 
 void Player::UpdateCCT()
@@ -410,7 +413,8 @@ void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc
 
 	if (desc.ContextInt & ANIM_JUMP)
 	{
-		CCT->velocity = BLOWUP_VELOCITY;
+		//CCT->velocity = BLOWUP_VELOCITY;
+		CCT->Jump(BLOWUP_VELOCITY);
 	}
 }
 

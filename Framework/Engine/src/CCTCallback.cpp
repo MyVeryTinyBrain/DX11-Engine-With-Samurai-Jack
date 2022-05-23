@@ -140,6 +140,10 @@ PxQueryHitType::Enum CCTCallback::preFilter(const PxFilterData& filterData, cons
     if (c0->IsTrigger())
         return PxQueryHitType::eNONE;
 
+    // 다른 콜라이더가 트리거라면 충돌하지 않습니다.
+    if(c1->IsTrigger())
+        return PxQueryHitType::eNONE;
+
     ICollider* ic0 = c0;
     PxFilterData filterData0 = ic0->GetPxShape()->getSimulationFilterData();
     ICollider* ic1 = c1;
@@ -197,7 +201,7 @@ bool CCTCallback::filter(const PxController& a, const PxController& b)
         return false;
 
     // 캐릭터 컨트롤러의 콜라이더가 트리거라면 충돌하지 않습니다.
-    if (c0->IsTrigger())
+    if (c0->IsTrigger() || c1->IsTrigger())
         return false;
 
     ICollider* ic0 = c0;

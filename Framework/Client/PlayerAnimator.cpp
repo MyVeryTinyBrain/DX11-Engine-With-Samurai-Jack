@@ -183,7 +183,7 @@ void PlayerAnimator::SetupNodes()
 
 	ATK_AIR_XXX = AnimatorSingleNode::Create(GetClip(TEXT("ATK_AIR_XXX")), NOLOOP);
 	ATK_AIR_XXX->speed = 1.2f;
-	ATK_AIR_XXX->AddEvent(8 / 34.0f, ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY);
+	ATK_AIR_XXX->AddEvent(8 / 34.0f, ANIM_ATK_FOOT_START | ANIM_ATK_LIGHT);
 	ATK_AIR_XXX->AddEvent(20 / 34.0f, ANIM_ATK_FOOT_END);
 	Layer->AddNode(ATK_AIR_XXX);
 
@@ -566,7 +566,7 @@ void PlayerAnimator::SetupTransitions()
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, false, AnimatorTransition::Compare::EQUAL));
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(LightAttackTProperty));
-		Layer->AddTransition(ATK_AIR_X, ATK_AIR_XX, values, 0.4f, 0.1f, 0.0f, AnimatorTransition::Interrupt::Current, true);
+		Layer->AddTransition(ATK_AIR_X, ATK_AIR_XX, values, 0.3f, 0.1f, 0.0f, AnimatorTransition::Interrupt::Current, true);
 	}
 
 	// ATK_AIR_XX -> BH_FALL
@@ -580,7 +580,7 @@ void PlayerAnimator::SetupTransitions()
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, false, AnimatorTransition::Compare::EQUAL));
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(LightAttackTProperty));
-		Layer->AddTransition(ATK_AIR_XX, ATK_AIR_XXX, values, 0.45f, 0.1f, 0.0f, AnimatorTransition::Interrupt::Current, true);
+		Layer->AddTransition(ATK_AIR_XX, ATK_AIR_XXX, values, 0.4f, 0.1f, 0.0f, AnimatorTransition::Interrupt::Current, true);
 	}
 
 	// ATK_AIR_XXX -> BH_FALL
@@ -686,7 +686,7 @@ void PlayerAnimator::SetupTransitions()
 	// ATK_XY -> BH_FALL
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(ATK_XY, BH_FALL, values, 0.6f, 0.3f);
+		Layer->AddTransition(ATK_XY, BH_FALL, values, 0.5f, 0.2f);
 	}
 
 	// ATK_XXXX -> ATK_XXXXY

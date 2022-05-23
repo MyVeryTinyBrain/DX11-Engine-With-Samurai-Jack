@@ -111,7 +111,7 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		blendNodeElements.push_back(AnimatorBlendNodeElement::Create(DMG_STD_BLOW_B, 1.0f));
 
 		DMG_STD_BLOW = AnimatorBlendNode::Create(TEXT("DMG_STD_BLOW"), blendNodeElements, DamageDirectionFProperty, NOLOOP);
-		Layer->AddNode(DMG_STD_HEAVY);
+		Layer->AddNode(DMG_STD_BLOW);
 	}
 
 	{
@@ -179,7 +179,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK1 -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(STD_ATK1, EXIT, values, 0.8f, 0.1f);
+		Layer->AddTransition(STD_ATK1, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// STD_ATK1 -> STD_ATK2
@@ -193,7 +193,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK2 -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(STD_ATK2, EXIT, values, 0.8f, 0.1f);
+		Layer->AddTransition(STD_ATK2, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// STD_ATK2 -> STD_ATK3A
@@ -208,7 +208,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK3A -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(STD_ATK3A, EXIT, values, 0.8f, 0.1f);
+		Layer->AddTransition(STD_ATK3A, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// STD_ATK2 -> STD_ATK3B
@@ -223,7 +223,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK3B -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(STD_ATK3B, EXIT, values, 0.8f, 0.1f);
+		Layer->AddTransition(STD_ATK3B, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// ANY -> DMG_STD_AIR
@@ -231,7 +231,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(DamageTProperty));
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, false, AnimatorTransition::Compare::EQUAL));
-		values.push_back(AnimatorTransition::PropertyValue(DamageTypeIProperty, 0, AnimatorTransition::Compare::EQUAL));
+		values.push_back(AnimatorTransition::PropertyValue(DamageTypeIProperty, 1, AnimatorTransition::Compare::LESS_EQAUL));
 		Layer->AddTransition(ANY, DMG_STD_AIR, values, 0.0f, 0.1f);
 	}
 
@@ -289,7 +289,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// DMG_STD_GETUP -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(DMG_STD_GETUP, EXIT, values, 0.8f, 0.1f);
+		Layer->AddTransition(DMG_STD_GETUP, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// ANY -> DMG_STD_BLOWUP_START

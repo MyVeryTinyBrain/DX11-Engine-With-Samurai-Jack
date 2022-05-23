@@ -79,9 +79,9 @@ bool PhysicsSystem::Initialize(System* system, unsigned int subStepLimit)
 		return false;
 
 	m_controllerManager = PxCreateControllerManager(*m_scene);
-	m_controllerManager->setOverlapRecoveryModule(true);
-	m_controllerManager->setPreciseSweeps(true);
-	m_controllerManager->setPreventVerticalSlidingAgainstCeiling(true);
+	//m_controllerManager->setOverlapRecoveryModule(true);
+	//m_controllerManager->setPreciseSweeps(true);
+	//m_controllerManager->setPreventVerticalSlidingAgainstCeiling(true);
 
 	m_physicsQuery = new PhysicsQuery(m_scene);
 	
@@ -215,7 +215,7 @@ void PhysicsSystem::SimulateOnce(const map<uint, vector<Component*>>& executionB
 
 void PhysicsSystem::OnUpate()
 {
-	m_controllerManager->computeInteractions(m_system->time->deltaTime);
+	//m_controllerManager->computeInteractions(m_system->time->deltaTime);
 }
 
 void PhysicsSystem::RegistPhysicsObject(IPhysicsObject* physicsObject)
