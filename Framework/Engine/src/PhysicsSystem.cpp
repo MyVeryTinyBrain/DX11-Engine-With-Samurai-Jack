@@ -79,6 +79,9 @@ bool PhysicsSystem::Initialize(System* system, unsigned int subStepLimit)
 		return false;
 
 	m_controllerManager = PxCreateControllerManager(*m_scene);
+	m_controllerManager->setOverlapRecoveryModule(true);
+	m_controllerManager->setPreciseSweeps(true);
+	m_controllerManager->setPreventVerticalSlidingAgainstCeiling(true);
 
 	m_physicsQuery = new PhysicsQuery(m_scene);
 	
