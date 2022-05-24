@@ -20,9 +20,5 @@ protected:
 	float XZDistanceBetweenPlayer() const;
 
 	_declspec(property(get = GetPlayer)) Player* player;
-
-protected:
-
-
 };
 

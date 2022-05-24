@@ -102,7 +102,7 @@ namespace XmMathPlus
 
 		inline static Color magenta() { return Color(1, 0, 1, 1); }
 
-		inline static Color grey() { return Color(0.5f, 0.5f, 0.5f, 1); }
+		inline static Color gray() { return Color(0.5f, 0.5f, 0.5f, 1); }
 
 		inline static Color yellow() { return Color(1, 0.92f, 0.016f, 1); }
 

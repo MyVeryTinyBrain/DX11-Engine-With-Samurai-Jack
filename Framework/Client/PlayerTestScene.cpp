@@ -16,6 +16,7 @@ void PlayerTestScene::OnLoad()
 	system->physics->layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Player, true);
 	system->physics->layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Enemy, true);
 	system->physics->layerManager->SetCollision(PhysicsLayer_Player, PhysicsLayer_Enemy, true);
+	system->physics->layerManager->SetCollision(PhysicsLayer_Enemy, PhysicsLayer_Enemy, true);
 
 	TextureOptionDesc loadDesc = {};
 	TextureOptionDesc loadMipDesc = {};
@@ -23,6 +24,7 @@ void PlayerTestScene::OnLoad()
 
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
+
 
 	{
 		GameObject* goLine = CreateGameObject();
@@ -57,7 +59,73 @@ void PlayerTestScene::OnLoad()
 
 		{
 			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 5, 5);
+			goEnemy->transform->position = V3(0, 5, 8);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(0, 5, 10);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(0, 5, 12);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(0, 5, 14);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(2, 5, 8);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(2, 5, 10);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(2, 5, 12);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(2, 5, 14);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(4, 5, 8);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(4, 5, 10);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(4, 5, 12);
+			goEnemy->AddComponent<EnemyBeetleDrone>();
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(4, 5, 14);
 			goEnemy->AddComponent<EnemyBeetleDrone>();
 		}
 

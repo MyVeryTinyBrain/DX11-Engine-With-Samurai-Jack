@@ -636,6 +636,10 @@ HRESULT AssimpData::SetupMaterials(const aiScene* scene, const tstring& path, ve
 		desc.numSucceeded += StoreToDescFilename(aiTextureType_REFLECTION, desc.reflection);
 		desc.numSucceeded += StoreToDescFilename(aiTextureType_BASE_COLOR, desc.baseColor);
 		desc.numSucceeded += StoreToDescFilename(aiTextureType_UNKNOWN, desc.unknown);
+		desc.numSucceeded += StoreToDescFilename(aiTextureType_EMISSION_COLOR, desc.emissionColor);
+		desc.numSucceeded += StoreToDescFilename(aiTextureType_DIFFUSE_ROUGHNESS, desc.metalness);
+		desc.numSucceeded += StoreToDescFilename(aiTextureType_DIFFUSE_ROUGHNESS, desc.diffuseRoughness);
+		desc.numSucceeded += StoreToDescFilename(aiTextureType_AMBIENT_OCCLUSION, desc.ambientOcclusion);
 
 		out_materials.push_back(std::move(desc));
 	}

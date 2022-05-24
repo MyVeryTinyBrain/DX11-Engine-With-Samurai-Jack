@@ -423,10 +423,33 @@ void CharacterController::OnHitShape(const PxControllerShapeHit& hit)
 	if (!IsValid())
 		return;
 
-	CCTCollision collision;
+	if (OnCollision.Empty())
+		return;
+
+	CCTCollision collision = {};
 	collision.HitCollider = (Collider*)hit.shape->userData;
 	collision.point = V3(float(hit.worldPos.x), float(hit.worldPos.y), float(hit.worldPos.z));
 	collision.normal = FromPxVec3(hit.worldNormal);
+	collision.IsCCT = false;
+	m_collisions.push_back(collision);
+}
+
+void CharacterController::OnHitCCT(const PxControllersHit& hit)
+{
+	if (!IsValid())
+		return;
+
+	if (OnCollision.Empty())
+		return;
+
+	CCTCollision collision;
+	CharacterController* collisionCCT = (CharacterController*)hit.other->getUserData();
+	if (!collisionCCT)
+		return;
+	collision.HitCollider = collisionCCT->m_collider;
+	collision.point = V3(float(hit.worldPos.x), float(hit.worldPos.y), float(hit.worldPos.z));
+	collision.normal = FromPxVec3(hit.worldNormal);
+	collision.IsCCT = true;
 	m_collisions.push_back(collision);
 }
 

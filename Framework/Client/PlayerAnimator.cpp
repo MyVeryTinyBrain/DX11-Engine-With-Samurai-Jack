@@ -86,6 +86,7 @@ void PlayerAnimator::SetupNodes()
 		vector<Ref<AnimatorBlendNodeElement>> blendNodeElements;
 
 		AnimatorSingleNode* GAD_START_NODASH = AnimatorSingleNode::Create(GetClip(TEXT("GAD_START_NODASH")), NOLOOP);
+		GAD_START_NODASH->speed = 1.5f;
 		AnimatorSingleNode* GAD_START_DASH = AnimatorSingleNode::Create(GetClip(TEXT("GAD_START_DASH")), NOLOOP);
 
 		blendNodeElements.push_back(AnimatorBlendNodeElement::Create(GAD_START_NODASH, 0.0f));
@@ -114,6 +115,7 @@ void PlayerAnimator::SetupNodes()
 		blendNodeElements.push_back(AnimatorBlendNodeElement::Create(DMG_BACK, 1.0f));
 
 		DMG_LIGHT = AnimatorBlendNode::Create(TEXT("DMG_LIGHT"), blendNodeElements, DamageDirectionFProperty, NOLOOP);
+		DMG_LIGHT->speed = 2.0f;
 		Layer->AddNode(DMG_LIGHT);
 	}
 
@@ -172,19 +174,19 @@ void PlayerAnimator::SetupNodes()
 	ATK_AIR_X->AddEvent(4 / 40.0f, ANIM_ATK_KT_START | ANIM_ATK_LIGHT);
 	ATK_AIR_X->AddEvent(8 / 40.0f, ANIM_ATK_KT_END);
 	ATK_AIR_X->AddEvent(12 / 40.0f, ANIM_ATK_KT_START | ANIM_ATK_LIGHT);
-	ATK_AIR_X->AddEvent(18 / 40.0f, ANIM_ATK_KT_END);
+	ATK_AIR_X->AddEvent(16 / 40.0f, ANIM_ATK_KT_END);
 	Layer->AddNode(ATK_AIR_X);
 
 	ATK_AIR_XX = AnimatorSingleNode::Create(GetClip(TEXT("ATK_AIR_XX")), NOLOOP);
 	ATK_AIR_XX->speed = 1.2f;
 	ATK_AIR_XX->AddEvent(11 / 40.0f, ANIM_ATK_KT_START | ANIM_ATK_LIGHT);
-	ATK_AIR_XX->AddEvent(20 / 40.0f, ANIM_ATK_KT_END);
+	ATK_AIR_XX->AddEvent(19 / 40.0f, ANIM_ATK_KT_END);
 	Layer->AddNode(ATK_AIR_XX);
 
 	ATK_AIR_XXX = AnimatorSingleNode::Create(GetClip(TEXT("ATK_AIR_XXX")), NOLOOP);
 	ATK_AIR_XXX->speed = 1.2f;
 	ATK_AIR_XXX->AddEvent(8 / 34.0f, ANIM_ATK_FOOT_START | ANIM_ATK_LIGHT);
-	ATK_AIR_XXX->AddEvent(20 / 34.0f, ANIM_ATK_FOOT_END);
+	ATK_AIR_XXX->AddEvent(14 / 34.0f, ANIM_ATK_FOOT_END);
 	Layer->AddNode(ATK_AIR_XXX);
 
 	ATK_Y = AnimatorSingleNode::Create(GetClip(TEXT("ATK_Y")), NOLOOP);
@@ -208,6 +210,13 @@ void PlayerAnimator::SetupNodes()
 	ATK_XY->AddEvent(5 / 30.0f, ANIM_ATK_KT_START | ANIM_ATK_BLOWUP | ANIM_JUMP);
 	ATK_XY->AddEvent(14 / 30.0f, ANIM_ATK_KT_END);
 	Layer->AddNode(ATK_XY);
+
+	ATK_XXXY = AnimatorSingleNode::Create(GetClip(TEXT("ATK_XXXY")), NOLOOP);
+	ATK_XXXY->AddEvent(8 / 68.0f, ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY);
+	ATK_XXXY->AddEvent(18 / 68.0f, ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY);
+	ATK_XXXY->AddEvent(26 / 68.0f, ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY);
+	ATK_XXXY->AddEvent(32 / 68.0f, ANIM_ATK_FOOT_END);
+	Layer->AddNode(ATK_XXXY);
 
 	ATK_XXXXY = AnimatorSingleNode::Create(GetClip(TEXT("ATK_XXXXY")), NOLOOP);
 	ATK_XXXXY->AddEvent(11 / 42.0f, ANIM_ATK_KT_START | ANIM_ATK_HEAVY);
@@ -366,7 +375,7 @@ void PlayerAnimator::SetupTransitions()
 	// GAD_START -> GAD_LOOP
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		auto transition = Layer->AddTransition(GAD_START, GAD_LOOP, values, 1.0f, 0.0f);
+		auto transition = Layer->AddTransition(GAD_START, GAD_LOOP, values, 0.5f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 		transition->SetCallback(this);
 	}
 
@@ -374,7 +383,7 @@ void PlayerAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(GuardStateBProperty, false, AnimatorTransition::Compare::EQUAL));
-		Layer->AddTransition(GAD_LOOP, EXIT, values, 0.0f, 0.05f);
+		Layer->AddTransition(GAD_LOOP, EXIT, values, 0.0f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// ANY -> GAD_HIT
@@ -673,14 +682,14 @@ void PlayerAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(HeavyAttackTProperty));
-		Layer->AddTransition(ATK_X, ATK_XY, values, 0.0f, 0.1f);
+		Layer->AddTransition(ATK_X, ATK_XY, values, 0.1f, 0.1f);
 	}
 
 	// ATK_XX -> ATK_XY
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(HeavyAttackTProperty));
-		Layer->AddTransition(ATK_XX, ATK_XY, values, 0.0f, 0.1f);
+		Layer->AddTransition(ATK_XX, ATK_XY, values, 0.1f, 0.1f);
 	}
 
 	// ATK_XY -> BH_FALL
@@ -689,11 +698,24 @@ void PlayerAnimator::SetupTransitions()
 		Layer->AddTransition(ATK_XY, BH_FALL, values, 0.5f, 0.2f);
 	}
 
+	// ATK_XXX -> ATK_XXXY
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue::Trigger(HeavyAttackTProperty));
+		Layer->AddTransition(ATK_XXX, ATK_XXXY, values, 0.2f, 0.1f);
+	}
+
+	// ATK_XXXY -> EXIT
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		Layer->AddTransition(ATK_XXXY, EXIT, values, 0.85f, 0.1f);
+	}
+
 	// ATK_XXXX -> ATK_XXXXY
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(HeavyAttackTProperty));
-		Layer->AddTransition(ATK_XXXX, ATK_XXXXY, values, 0.0f, 0.1f);
+		Layer->AddTransition(ATK_XXXX, ATK_XXXXY, values, 0.2f, 0.1f);
 	}
 
 	// ATK_XXXXY -> EXIT
@@ -706,7 +728,7 @@ void PlayerAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(HeavyAttackTProperty));
-		Layer->AddTransition(ATK_XXXXX, ATK_XXXXXY, values, 0.0f, 0.1f);
+		Layer->AddTransition(ATK_XXXXX, ATK_XXXXXY, values, 0.2f, 0.1f);
 	}
 
 	// ATK_XXXXXY -> EXIT
@@ -822,6 +844,36 @@ bool PlayerAnimator::IsPlayingNonAttackableAnimation() const
 bool PlayerAnimator::IsPlayingNonJumpableAnimation() const
 {
 	if (IsPlayingAttack())
+		return true;
+
+	return false;
+}
+
+bool PlayerAnimator::IsPlayingNonMovableAnimation() const
+{
+	if (IsPlayingAttack())
+		return true;
+
+	if (IsPlayingDamage())
+		return true;
+
+	return false;
+}
+
+bool PlayerAnimator::IsPlayingNonRollableAnimation() const
+{
+	if (IsPlayingDamage())
+		return true;
+
+	return false;
+}
+
+bool PlayerAnimator::IsPlayingNonGuardableAnimation() const
+{
+	if (IsPlayingAttack())
+		return true;
+
+	if (Layer->IsPlaying(BH_ROLL))
 		return true;
 
 	return false;

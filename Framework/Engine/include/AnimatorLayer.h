@@ -98,6 +98,9 @@ public:
 	inline Ref<AnimatorTransition> GetCurrentTransition() const { return m_currentTransition; }
 	inline const Ref<NodeTransform>& GetRootNode() const { return m_rootNode; }
 
+	inline Ref<AnimatorNode> GetDefaultNode() const { return m_defaultNode; }
+	inline void SetDefaultNode(Ref<AnimatorNode> node) { m_defaultNode = node; }
+
 	// CurrentNode, BlendNode 모두 검사합니다.
 	bool IsPlaying(const tstring& nodeName) const;
 	bool IsPlaying(Ref<AnimatorNode> node) const;
@@ -117,6 +120,7 @@ public:
 	_declspec(property(get = GetBlendNode)) Ref<AnimatorNode> blendNode;
 	_declspec(property(get = GetCurrentTransition)) Ref<AnimatorTransition> currentTransition;
 	_declspec(property(get = GetRootNode)) const Ref<NodeTransform>& rootNode;
+	_declspec(property(get = GetDefaultNode, put = SetDefaultNode)) Ref<AnimatorNode> defaultNode;
 	_declspec(property(get = GetDeltaPosition)) V3 deltaPosition;
 	_declspec(property(get = GetDeltaRotation)) Q deltaRotation;
 	_declspec(property(get = GetType, put = SetType)) AnimatorLayer::AnimateType type;

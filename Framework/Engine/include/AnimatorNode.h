@@ -21,12 +21,9 @@ public:
 
 public:
 
-	void AddEvent(float normalizedTime, const string& strContext);
 	void AddEvent(float normalizedTime, int intContext);
-	void AddEvent(float normalizedTime, const V4& v4Context);
-	void AddEvent(float normalizedTime, const string& strContext, int intContext);
-	void AddEvent(float normalizedTime, const string& strContext, const V4& v4Context);
-	void AddEvent(float normalizedTime, const string& strContext, int intContext, const V4& v4Context);
+	void AddEvent(float normalizedTime, const string& strContext);
+	void AddEvent(float normalizedTime, int intContext, const string& strContext);
 
 public:
 

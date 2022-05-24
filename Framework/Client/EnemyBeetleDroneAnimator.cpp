@@ -37,10 +37,13 @@ void EnemyBeetleDroneAnimator::SetupProperties()
 	 ATKTProperty = Layer->AddProperty(TEXT("ATKT"), AnimatorProperty::Type::TRIGGER);
 	 ATK3TypeIProperty = Layer->AddProperty(TEXT("ATK3TypeI"), AnimatorProperty::Type::INT);
 	 GuardBProperty = Layer->AddProperty(TEXT("GuardB"), AnimatorProperty::Type::BOOL);
+	 GuardHitTProperty = Layer->AddProperty(TEXT("GuardHitT"), AnimatorProperty::Type::TRIGGER);
+	 GuardBreakTProperty = Layer->AddProperty(TEXT("GuardBreakT"), AnimatorProperty::Type::TRIGGER);
 	 DamageTProperty = Layer->AddProperty(TEXT("DamageT"), AnimatorProperty::Type::TRIGGER);
 	 DamageDirectionFProperty = Layer->AddProperty(TEXT("DamageDirectionFProperty"), AnimatorProperty::Type::FLOAT);
 	 DamageTypeIProperty = Layer->AddProperty(TEXT("DamageTypeI"), AnimatorProperty::Type::INT);
 	 HasGroundBProperty = Layer->AddProperty(TEXT("HasGroundB"), AnimatorProperty::Type::BOOL);
+	 HPFProperty = Layer->AddProperty(TEXT("HPF"), AnimatorProperty::Type::FLOAT);
 }
 
 void EnemyBeetleDroneAnimator::SetupNodes()
@@ -61,15 +64,23 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 	Layer->AddNode(BH_STD_LAND);
 
 	STD_ATK1 = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK1")), NOLOOP);
+	STD_ATK1->AddEvent(18 / 45.0f, ANIM_ATK_RH_START | ANIM_ATK_LIGHT);
+	STD_ATK1->AddEvent(20 / 45.0f, ANIM_ATK_RH_END);
 	Layer->AddNode(STD_ATK1);
 
 	STD_ATK2 = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK2")), NOLOOP);
+	STD_ATK2->AddEvent(8 / 50.0f, ANIM_ATK_LH_START | ANIM_ATK_LIGHT);
+	STD_ATK2->AddEvent(11 / 50.0f, ANIM_ATK_LH_END);
 	Layer->AddNode(STD_ATK2);
 
 	STD_ATK3A = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK3A")), NOLOOP);
+	STD_ATK3A->AddEvent(5 / 51.0f, ANIM_ATK_RH_START | ANIM_ATK_HEAVY);
+	STD_ATK3A->AddEvent(9 / 51.0f, ANIM_ATK_RH_END);
 	Layer->AddNode(STD_ATK3A);
 
 	STD_ATK3B = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK3B")), NOLOOP);
+	STD_ATK3B->AddEvent(20 / 45.0f, ANIM_ATK_RH_START | ANIM_ATK_LH_START | ANIM_ATK_BLOW);
+	STD_ATK3B->AddEvent(23 / 45.0f, ANIM_ATK_RH_END | ANIM_ATK_LH_END);
 	Layer->AddNode(STD_ATK3B);
 
 	DMG_STD_AIR = AnimatorSingleNode::Create(GetClip(TEXT("DMG_STD_AIR")), NOLOOP);
@@ -202,7 +213,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(ATKTProperty));
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
 		values.push_back(AnimatorTransition::PropertyValue(ATK3TypeIProperty, 0, AnimatorTransition::Compare::EQUAL));
-		Layer->AddTransition(STD_ATK2, STD_ATK3A, values, 0.5f, 0.1f);
+		Layer->AddTransition(STD_ATK2, STD_ATK3A, values, 0.5f, 0.05f);
 	}
 
 	// STD_ATK3A -> EXIT
@@ -283,6 +294,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
+		values.push_back(AnimatorTransition::PropertyValue(HPFProperty, 0.0f, AnimatorTransition::Compare::GREATER));
 		Layer->AddTransition(DMG_STD_BLOW, DMG_STD_GETUP, values, 0.8f, 0.1f);
 	}
 
@@ -318,6 +330,61 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 		vector<AnimatorTransition::PropertyValue> values;
 		Layer->AddTransition(DMG_STD_BLOWUP_END, DMG_STD_GETUP, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
+
+	// ETC_APPEAR -> EXIT
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		Layer->AddTransition(ETC_APPEAR, EXIT, values, 0.9f, 0.1f);
+	}
+
+	// ANY -> GAD_STD_LOOP
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue(GuardBProperty, true, AnimatorTransition::Compare::EQUAL));
+		auto transition = Layer->AddTransition(ANY, GAD_STD_LOOP, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::Current, true);
+		transition->SetCallback(this);
+	}
+
+	// ANY -> GAD_STD_HIT
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue::Trigger(GuardHitTProperty));
+		Layer->AddTransition(ANY, GAD_STD_HIT, values);
+	}
+
+	// ANY -> GAD_STD_BREAK
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue::Trigger(GuardBreakTProperty));
+		Layer->AddTransition(ANY, GAD_STD_BREAK, values);
+	}
+
+	// GAD_STD_LOOP -> EXIT
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue(GuardBProperty, false, AnimatorTransition::Compare::EQUAL));
+		Layer->AddTransition(GAD_STD_LOOP, EXIT, values, 0.0f, 0.05f);
+	}
+
+	// GAD_STD_HIT -> EXIT
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue(GuardBProperty, false, AnimatorTransition::Compare::EQUAL));
+		Layer->AddTransition(GAD_STD_HIT, EXIT, values, 0.9f, 0.05f);
+	}
+
+	// GAD_STD_HIT -> GAD_STD_LOOP
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		values.push_back(AnimatorTransition::PropertyValue(GuardBProperty, true, AnimatorTransition::Compare::EQUAL));
+		Layer->AddTransition(GAD_STD_HIT, GAD_STD_LOOP, values, 0.9f, 0.05f);
+	}
+
+	// GAD_STD_BREAK -> EXIT
+	{
+		vector<AnimatorTransition::PropertyValue> values;
+		Layer->AddTransition(GAD_STD_BREAK, EXIT, values, 0.9f, 0.1f);
+	}
 }
 
 bool EnemyBeetleDroneAnimator::IsPlayingAirAction() const
@@ -325,16 +392,87 @@ bool EnemyBeetleDroneAnimator::IsPlayingAirAction() const
 	return false;
 }
 
+bool EnemyBeetleDroneAnimator::IsPlayingDamage() const
+{
+	return
+		Layer->IsPlaying(DMG_STD_AIR) ||
+		Layer->IsPlaying(DMG_STD_LIGHT) ||
+		Layer->IsPlaying(DMG_STD_HEAVY) ||
+		Layer->IsPlaying(DMG_STD_BLOW) ||
+		Layer->IsPlaying(DMG_STD_GETUP) ||
+		Layer->IsPlaying(DMG_STD_BLOWUP_START) ||
+		Layer->IsPlaying(DMG_STD_BLOWUP_FALL) ||
+		Layer->IsPlaying(DMG_STD_BLOWUP_END);
+}
+
+bool EnemyBeetleDroneAnimator::IsPlayingDamageDuringLookPlayerAnimation() const
+{
+	return
+		Layer->IsPlaying(DMG_STD_AIR) ||
+		Layer->IsPlaying(DMG_STD_LIGHT) ||
+		Layer->IsPlaying(DMG_STD_HEAVY) ||
+		Layer->IsPlaying(DMG_STD_BLOWUP_START) ||
+		Layer->IsPlaying(GAD_STD_HIT);
+}
+
+bool EnemyBeetleDroneAnimator::IsPlayingGuardableAnimation() const
+{
+	if (Layer->IsPlaying(GAD_STD_LOOP) ||
+		Layer->IsPlaying(GAD_STD_HIT))
+		return true;
+
+	return false;
+}
+
+bool EnemyBeetleDroneAnimator::IsPlayingAttack() const
+{
+	if (Layer->IsPlaying(STD_ATK1) ||
+		Layer->IsPlaying(STD_ATK2) ||
+		Layer->IsPlaying(STD_ATK3A) ||
+		Layer->IsPlaying(STD_ATK3B))
+		return true;
+
+	return false;
+}
+
 bool EnemyBeetleDroneAnimator::Transferable(
 	Animator* animator, AnimatorLayer* layer, const AnimatorTransition* transition, 
 	AnimatorNode* currentNode, AnimatorNode* blendingNode, AnimatorTransition* currentTransition) const
 {
+	if (currentNode == ETC_APPEAR)
+	{
+		bool toIdle = transition->nextNode == nullptr || transition->nextNode == BH_STD_IDLE;
+		if (!toIdle)
+			return false;
+	}
+
 	if (transition->nextNode == STD_ATK1)
 	{
 		if (layer->IsPlaying(STD_ATK1) || 
 			layer->IsPlaying(STD_ATK2) ||
 			layer->IsPlaying(STD_ATK3A) ||
 			layer->IsPlaying(STD_ATK3B))
+			return false;
+	}
+
+	if (transition->nextNode == STD_ATK1 ||
+		transition->nextNode == STD_ATK2 ||
+		transition->nextNode == STD_ATK3A ||
+		transition->nextNode == STD_ATK3B)
+	{
+		if (IsPlayingDamage())
+			return false;
+	}
+
+	if (transition->nextNode == GAD_STD_LOOP)
+	{
+		if (IsPlayingDamage() ||
+			IsPlayingAttack())
+			return false;
+
+		if (layer->IsPlaying(GAD_STD_LOOP) ||
+			layer->IsPlaying(GAD_STD_HIT) ||
+			layer->IsPlaying(GAD_STD_BREAK))
 			return false;
 	}
 

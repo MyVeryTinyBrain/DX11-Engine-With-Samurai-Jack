@@ -14,7 +14,8 @@ struct CCTCollision
 {
 	V3			point;
 	V3			normal;
-	Collider* HitCollider;
+	Collider*	HitCollider;
+	bool		IsCCT;
 };
 
 class ICharacterController abstract
@@ -22,6 +23,7 @@ class ICharacterController abstract
 public:
 
 	virtual void OnHitShape(const PxControllerShapeHit& hit) = 0;
+	virtual void OnHitCCT(const PxControllersHit& hit) = 0;
 	virtual void OnGroundHit(const V3& normal) = 0;
 	virtual PxCapsuleController* GetController() const = 0;
 };
@@ -169,6 +171,7 @@ private:
 	// Simulation마다 호출됩니다.
 
 	virtual void OnHitShape(const PxControllerShapeHit& hit) override;
+	virtual void OnHitCCT(const PxControllersHit& hit) override;
 	virtual void OnGroundHit(const V3& normal) override;
 	inline virtual PxCapsuleController* GetController() const override { return m_controller; }
 

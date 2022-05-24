@@ -37,6 +37,9 @@ void CCTCallback::onShapeHit(const PxControllerShapeHit& hit)
 
 void CCTCallback::onControllerHit(const PxControllersHit& hit)
 {
+    ICharacterController* iCharacterController = m_characterController;
+
+    iCharacterController->OnHitCCT(hit);
 }
 
 void CCTCallback::onObstacleHit(const PxControllerObstacleHit& hit)

@@ -8,38 +8,22 @@ AnimatorNode::AnimatorNode(const tstring& name, bool loop) :
 {
 }
 
-void AnimatorNode::AddEvent(float normalizedTime, const string& strContext)
-{
-	AddEvent(normalizedTime, strContext, 0, V4::zero());
-}
-
 void AnimatorNode::AddEvent(float normalizedTime, int intContext)
 {
-	AddEvent(normalizedTime, "", intContext, V4::zero());
+	AddEvent(normalizedTime, intContext, "");
 }
 
-void AnimatorNode::AddEvent(float normalizedTime, const V4& v4Context)
+void AnimatorNode::AddEvent(float normalizedTime, const string& strContext)
 {
-	AddEvent(normalizedTime, "", 0, v4Context);
+	AddEvent(normalizedTime, 0, strContext);
 }
 
-void AnimatorNode::AddEvent(float normalizedTime, const string& strContext, int intContext)
-{
-	AddEvent(normalizedTime, strContext, intContext, V4::zero());
-}
-
-void AnimatorNode::AddEvent(float normalizedTime, const string& strContext, const V4& v4Context)
-{
-	AddEvent(normalizedTime, strContext, 0, v4Context);
-}
-
-void AnimatorNode::AddEvent(float noramlizedTime, const string& strContext, int intContext, const V4& v4Context)
+void AnimatorNode::AddEvent(float normalizedTime, int intContext, const string& strContext)
 {
 	AnimationEvent animationEvent = {};
-	animationEvent.Desc.NormalizedTime = noramlizedTime;
+	animationEvent.Desc.NormalizedTime = normalizedTime;
 	strcpy_s(animationEvent.Desc.ContextStr, strContext.c_str());
 	animationEvent.Desc.ContextInt = intContext;
-	animationEvent.Desc.ContextV4 = v4Context;
 	animationEvent.used = false;
 	m_events.push_back(animationEvent);
 

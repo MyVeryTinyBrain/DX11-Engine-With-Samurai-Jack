@@ -5,6 +5,7 @@ void TPSCamera::Awake()
 {
 	m_goCamera = CreateGameObjectToChild(transform);
     m_camera = m_goCamera->AddComponent<Camera>();
+    m_camera->drawGBuffer = true;
 }
 
 void TPSCamera::Start()

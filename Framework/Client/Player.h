@@ -28,7 +28,10 @@ private:
 	void UpdateCCT();
 	void UpdateAttachmentObjects();
 
+	void XZInput();
+	void DashInput();
 	void JumpInput();
+	void RollInput();
 	void AttackInput();
 	void GuardInput();
 
@@ -52,8 +55,16 @@ private:
 
 public:
 
+	virtual float GetHP() const override;
+	virtual void SetHP(float value) override;
+
+	virtual V3 GetDirection() const override;
+	virtual void SetDirection(const V3& direction) override;
 	virtual bool IsGuarding() const override;
-	virtual DamageResult Damage(const DamageDesc& desc) override;
+	virtual bool IsGuardBreakableByBackattack() const override;
+	virtual bool IsInvisible() const override;
+	virtual bool IsSuperarmor() const override;
+	virtual DamageOutType OnDamage(const DamageOut& out) override;
 
 public:
 

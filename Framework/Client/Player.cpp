@@ -5,9 +5,6 @@
 #include "Config.h"
 #include "Enemy.h"
 
-#define BLOWUP_VELOCITY		V3(0,17,0)
-#define BLOWDOWN_VELOCITY	V3(0,-40,0)
-
 Player* Player::g_player = nullptr;
 
 void Player::Awake()
@@ -33,39 +30,13 @@ void Player::Update()
 
 	UpdateKeyTimes();
 
-	V3 translation = GetTranslateDirection();
+	XZInput();
 
-	RotateOnYAxisToDirection(translation, 720.0f, system->time->deltaTime);
-
-	float targetDashState = float(system->input->GetKey(Key::LShift) && IsLongKeyPressing(m_lShiftPressingTime));
-	m_animator->DashStateFProperty->valueAsFloat = Lerp(m_animator->DashStateFProperty->valueAsFloat, targetDashState, system->time->deltaTime * 10.0f);
-
-	if (!m_animator->Layer->IsPlaying(m_animator->BH_RUN_BH_DASH))
-		m_animator->DashStateFProperty->valueAsFloat = 0.0f;
-
-	bool airAction = m_animator->IsPlayingAirAction();
-
-	CCT->useGravity = !airAction;
-
-	if (CCT->isGrounded)
-	{
-		m_animator->MoveStateFProperty->valueAsFloat = translation.magnitude > 0.0f;
-	}
-	else if (!airAction)
-	{
-		V3 xzTranslation = translation;
-		xzTranslation.y = 0;
-		xzTranslation.Normalize();
-		CCT->Move(translation * 5.0f * system->time->deltaTime, system->time->deltaTime);
-	}
+	DashInput();
 
 	JumpInput();
 
-	if (system->input->GetKeyUp(Key::LShift) && IsShortKeyPressed(m_lShiftPressedTime))
-	{
-		m_animator->RollTProperty->SetTriggerState();
-	}
-
+	RollInput();
 
 	GuardInput();
 
@@ -79,6 +50,11 @@ void Player::Update()
 	if (m_animator->Layer->IsPlaying(m_animator->ATK_AIR_Y_LOOP))
 	{
 		CCT->Move(V3::down() * 40.0f * system->time->deltaTime, system->time->deltaTime);
+		CCT->collisionWithCCT = false;
+	}
+	else
+	{
+		CCT->collisionWithCCT = true;
 	}
 
 	AttackTriggerQuery();
@@ -183,9 +159,6 @@ void Player::SetupAttackTrigger()
 	m_attackTrigger[FOOT_TRIGGER]->radius = 2.0f;
 	m_attackTrigger[FOOT_TRIGGER]->isTrigger = true;
 	m_attackTrigger[FOOT_TRIGGER]->enable = false;
-
-	m_goAttackTrigger[KATANA_TRIGGER]->name = TEXT("KATANA");
-	m_goAttackTrigger[FOOT_TRIGGER]->name = TEXT("FOOT");
 }
 
 void Player::UpdateCCT()
@@ -198,23 +171,49 @@ void Player::UpdateCCT()
 
 void Player::UpdateAttachmentObjects()
 {
-	if (m_goKatanaSheathRenderer->active)
-	{
-		m_goKatanaSheathRenderer->transform->position = m_scabbardCntNode->position;
-		m_goKatanaSheathRenderer->transform->rotation = m_scabbardCntNode->rotation;
-	}
+	m_goKatanaSheathRenderer->transform->position = m_scabbardCntNode->position;
+	m_goKatanaSheathRenderer->transform->rotation = m_scabbardCntNode->rotation;
 
-	if (m_goKatana->active)
-	{
-		m_goKatana->transform->position = m_rightHandWeaponCntNode->position;
-		m_goKatana->transform->rotation = m_rightHandWeaponCntNode->rotation;
-	}
+	m_goKatana->transform->position = m_rightHandWeaponCntNode->position;
+	m_goKatana->transform->rotation = m_rightHandWeaponCntNode->rotation;
 
-	if (m_goFootCnt->active)
+	m_goFootCnt->transform->position = m_leftToeBaseNode->position - m_leftToeBaseNode->up * 1.0f + transform->up * 0.25f;
+	m_goFootCnt->transform->rotation = m_leftToeBaseNode->rotation;
+}
+
+void Player::XZInput()
+{
+	V3 translation = GetTranslateDirection();
+
+	float spinPower = 1.0f;
+	if (m_animator->Layer->IsPlaying(m_animator->BH_ROLL))
+		spinPower = 2.0f;
+	RotateOnYAxisToDirection(translation, 720.0f * spinPower, system->time->deltaTime);
+
+	bool airAction = m_animator->IsPlayingAirAction();
+
+	CCT->useGravity = !airAction;
+
+	if (CCT->isGrounded)
 	{
-		m_goFootCnt->transform->position = m_leftToeBaseNode->position - m_leftToeBaseNode->up * 1.0f + transform->up * 0.25f;
-		m_goFootCnt->transform->rotation = m_leftToeBaseNode->rotation;
+		m_animator->MoveStateFProperty->valueAsFloat = translation.magnitude > 0.0f;
 	}
+	else if (!airAction)
+	{
+		V3 xzTranslation = translation;
+		xzTranslation.y = 0;
+		xzTranslation.Normalize();
+		CCT->Move(translation * 5.0f * system->time->deltaTime, system->time->deltaTime);
+	}
+}
+
+void Player::DashInput()
+{
+	float targetDashState = float(system->input->GetKey(Key::LShift) && IsLongKeyPressing(m_lShiftPressingTime));
+	m_animator->DashStateFProperty->valueAsFloat = Lerp(m_animator->DashStateFProperty->valueAsFloat, targetDashState, system->time->deltaTime * 10.0f);
+
+	if (!m_animator->Layer->IsPlaying(m_animator->BH_RUN_BH_DASH))
+		m_animator->DashStateFProperty->valueAsFloat = 0.0f;
 }
 
 void Player::JumpInput()
@@ -231,6 +230,14 @@ void Player::JumpInput()
 			m_animator->AirJumpTProperty->SetTriggerState();
 			CCT->Jump(V3::up() * 13.0f);
 		}
+	}
+}
+
+void Player::RollInput()
+{
+	if (system->input->GetKeyUp(Key::LShift) && IsShortKeyPressed(m_lShiftPressedTime) && !m_animator->IsPlayingNonRollableAnimation())
+	{
+		m_animator->RollTProperty->SetTriggerState();
 	}
 }
 
@@ -260,7 +267,7 @@ void Player::GuardInput()
 	{
 		m_animator->DashStateFProperty->valueAsFloat = 0.0f;
 	}
-	m_animator->GuardStateBProperty->valueAsBool = system->input->GetKey(Key::RightMouse);
+	m_animator->GuardStateBProperty->valueAsBool = system->input->GetKey(Key::RightMouse) && !m_animator->IsPlayingNonGuardableAnimation();
 }
 
 void Player::AttackTriggerQuery()
@@ -282,18 +289,40 @@ void Player::AttackTriggerQuery()
 			auto result = m_hitBuffer.insert(rigidbody);
 			if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.
 
-			DamageDesc desc;
-			desc.FromCharacter = this;
-			desc.FromDirection = enemy->transform->position - transform->position;
+			DamageIn damage = {};
+			damage.FromCharacter = this;
+			damage.FromDirection = enemy->transform->position - transform->position;
+			damage.Guardable = true;
 			switch (m_attackType)
 			{
-				case ANIM_ATK_LIGHT: desc.Type = DamageDesc::Type::LIGHT; break;
-				case ANIM_ATK_HEAVY: desc.Type = DamageDesc::Type::HEAVY; break;
-				case ANIM_ATK_BLOW: desc.Type = DamageDesc::Type::BLOW; desc.Velocity = transform->forward * 5.0f + V3(0, 5, 0); desc.SetVelocity = true; break;
-				case ANIM_ATK_BLOWUP: desc.Type = DamageDesc::Type::BLOWUP; desc.Velocity = BLOWUP_VELOCITY; desc.SetVelocity = true; break;
-				case ANIM_ATK_BLOWDOWN: desc.Type = DamageDesc::Type::BLOWDOWN; desc.Velocity = BLOWDOWN_VELOCITY; desc.SetVelocity = true; break;
+				case ANIM_ATK_LIGHT:
+					damage.Type = DamageInType::LIGHT;
+					damage.Damage = 1.0f;
+					break;
+				case ANIM_ATK_HEAVY:
+					damage.Type = DamageInType::HEAVY;
+					damage.Damage = 2.5f;
+					break;
+				case ANIM_ATK_BLOW:
+					damage.Type = DamageInType::BLOW;
+					damage.Damage = 3.0f;
+					damage.Velocity = transform->forward * 5.0f + V3(0, 5, 0);
+					damage.SetVelocity = true;
+					break;
+				case ANIM_ATK_BLOWUP:
+					damage.Damage = 2.0f;
+					damage.Type = DamageInType::BLOWUP;
+					damage.Velocity = BLOWUP_VELOCITY;
+					damage.SetVelocity = true;
+					break;
+				case ANIM_ATK_BLOWDOWN:
+					damage.Damage = 3.0f;
+					damage.Type = DamageInType::BLOWDOWN;
+					damage.Velocity = BLOWDOWN_VELOCITY;
+					damage.SetVelocity = true;
+					break;
 			}
-			enemy->Damage(desc);
+			enemy->Damage(damage);
 		}
 	}
 }
@@ -434,54 +463,91 @@ void Player::SetAttackType(int contextInt)
 		m_attackType = ANIM_ATK_LIGHT;
 }
 
+float Player::GetHP() const
+{
+	return 0.0f;
+}
+
+void Player::SetHP(float value)
+{
+}
+
+V3 Player::GetDirection() const
+{
+	return transform->forward;
+}
+
+void Player::SetDirection(const V3& direction)
+{
+	transform->forward = direction;
+}
+
 bool Player::IsGuarding() const
 {
 	return m_animator->IsPlayingGuardableAnimation();
 }
 
-DamageResult Player::Damage(const DamageDesc& desc)
+bool Player::IsGuardBreakableByBackattack() const
 {
-	bool backAttack = false;
-	bool guarded = false;
+	return true;
+}
 
-	float cosine = V3::Dot(transform->forward, -desc.FromDirection);
+bool Player::IsInvisible() const
+{
+	return false;
+}
 
-	if (cosine < 0.0f)
+bool Player::IsSuperarmor() const
+{
+	return false;
+}
+
+DamageOutType Player::OnDamage(const DamageOut& out)
+{
+	switch (out.Type) 
 	{
-		backAttack = true;
-	}
-
-	if (desc.Guardable && !backAttack)
-	{
-		if (isGuarding)
+		case DamageOutType::GUARDED:
 		{
-			guarded = true;
+			m_animator->GuardHitTProperty->SetTriggerState();
+			return DamageOutType::GUARDED;
 		}
-	}
-
-	if (guarded)
-	{
-		m_animator->GuardHitTProperty->SetTriggerState();
-		return DamageResult::GUARDED;
-	}
-	else
-	{
-		m_animator->DamageTProperty->SetTriggerState();
-		m_animator->DamageDirectionFProperty->valueAsFloat = backAttack ? 1.0f : 0.0f;
-		switch (desc.Type)
+		break;
+		case DamageOutType::GUARD_BREAKED:
 		{
-			case DamageDesc::Type::LIGHT:
-				m_animator->DamageTypeIProperty->valueAsInt = 0;
-				break;
-			case DamageDesc::Type::HEAVY:
-				m_animator->DamageTypeIProperty->valueAsInt = 1;
-				break;
-			case DamageDesc::Type::BLOW:
-			case DamageDesc::Type::BLOWUP:
-				m_animator->DamageTypeIProperty->valueAsInt = 2;
-				break;
+			m_animator->GuardBreakTProperty->SetTriggerState();
+			return DamageOutType::GUARD_BREAKED;
 		}
-		return DamageResult::HIT;
+		break;
+		case DamageOutType::HIT:
+		{
+			m_animator->DamageTProperty->SetTriggerState();
+			m_animator->DamageDirectionFProperty->valueAsFloat = out.Backattack ? 1.0f : 0.0f;
+			switch (out.In.Type)
+			{
+				case DamageInType::LIGHT:
+					m_animator->DamageTypeIProperty->valueAsInt = 0;
+					break;
+				case DamageInType::HEAVY:
+					m_animator->DamageTypeIProperty->valueAsInt = 1;
+					break;
+				case DamageInType::BLOW:
+				case DamageInType::BLOWUP:
+					m_animator->DamageTypeIProperty->valueAsInt = 2;
+					break;
+			}
+			if (out.In.SetVelocity)
+			{
+				//CCT->velocity = desc.Velocity;
+				CCT->Jump(out.In.Velocity);
+			}
+			return DamageOutType::HIT;
+		}
+		break;
+		default:
+		{
+			return DamageOutType::IGNORED; 
+		}
+		break;
 	}
 }
 
@@ -496,14 +562,17 @@ V3 Player::GetTranslateDirection() const
 
 	V3 translation = V3::zero();
 
-	if (system->input->GetKey(Key::W))
-		translation += forward;
-	if (system->input->GetKey(Key::S))
-		translation -= forward;
-	if (system->input->GetKey(Key::D))
-		translation += right;
-	if (system->input->GetKey(Key::A))
-		translation -= right;
+	if (!m_animator->IsPlayingNonMovableAnimation())
+	{
+		if (system->input->GetKey(Key::W))
+			translation += forward;
+		if (system->input->GetKey(Key::S))
+			translation -= forward;
+		if (system->input->GetKey(Key::D))
+			translation += right;
+		if (system->input->GetKey(Key::A))
+			translation -= right;
+	}
 
 	return translation;
 }

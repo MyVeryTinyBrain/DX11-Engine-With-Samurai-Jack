@@ -46,7 +46,7 @@ texture2D		_MetallicTexture < string Default = "Black"; > ; // Red Channel
 texture2D		_EmissiveTexture < string Default = "Clear"; > ;
 texture2D		_OcclusionTexture < string Default = "White"; > ;
 texture2D		_ReflectionTexture < string Default = "Clear"; > ;
-float			_ReflectionTransparency <float Default = 0.5f; > ;
+float			_ReflectionTransparency <float Default = 0.2f; > ;
 float			_ReflectionBlur <float Default = 1.0f; > ;
 float			_ReflectMask <float Default = 1.0f; > ;
 SamplerState	diffuseSampler

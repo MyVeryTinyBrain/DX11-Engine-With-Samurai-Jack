@@ -123,4 +123,16 @@ inline bool delegate<Ret(Args...)>::Find(const func& function, unsigned long* pI
 	return false;
 }
 
+template<class Ref, class ...Args>
+inline size_t delegate<Ref(Args...)>::GetNumFuncs() const
+{
+	return m_funcs.size();
+}
+
+template<class Ref, class ...Args>
+inline bool delegate<Ref(Args...)>::Empty() const
+{
+	return m_funcs.empty();
+}
+
 ENGINE_END

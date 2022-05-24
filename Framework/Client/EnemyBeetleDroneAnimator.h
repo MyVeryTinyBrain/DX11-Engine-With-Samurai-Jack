@@ -19,10 +19,14 @@ private:
 public:
 
 	bool IsPlayingAirAction() const;
+	bool IsPlayingDamage() const;
+	bool IsPlayingDamageDuringLookPlayerAnimation() const;
+	bool IsPlayingGuardableAnimation() const;
+	bool IsPlayingAttack() const;
 
 public:
 
-	ResourceRef<Mesh>	Mesh;
+	ResourceRef<Mesh> Mesh;
 	AnimatorLayer* Layer;
 
 public:
@@ -35,6 +39,8 @@ public:
 
 	AnimatorProperty* ATK3TypeIProperty;
 	AnimatorProperty* GuardBProperty;
+	AnimatorProperty* GuardHitTProperty;
+	AnimatorProperty* GuardBreakTProperty;
 
 	// (Damaged)
 	AnimatorProperty* DamageTProperty;
@@ -47,6 +53,8 @@ public:
 
 	// 0(No Grunded) 1(Grounded)
 	AnimatorProperty* HasGroundBProperty;
+
+	AnimatorProperty* HPFProperty;
 
 public:
 

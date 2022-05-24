@@ -47,6 +47,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateTexture2D(Color::white(), 2, 2, TEXT("white"), &m_white)))
 		return hr;
 
+	if (FAILED(hr = CreateTexture2D(Color::gray(), 2, 2, TEXT("gray"), &m_gray)))
+		return hr;
+
 	if (FAILED(hr = CreateTexture2D(Color::black(), 2, 2, TEXT("black"), &m_black)))
 		return hr;
 
@@ -123,6 +126,11 @@ void BuiltInResources::ReleaseBuiltInResources()
 const ResourceRef<Texture2D>& BuiltInResources::GetWhiteTexture() const
 {
 	return m_white;
+}
+
+const ResourceRef<Texture2D>& BuiltInResources::GetGrayTexture() const
+{
+	return m_gray;
 }
 
 const ResourceRef<Texture2D>& BuiltInResources::GetBlackTexture() const

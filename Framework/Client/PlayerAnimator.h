@@ -27,6 +27,9 @@ public:
 	bool IsPlayingGuardableAnimation(bool withoutGuardHit = false) const;
 	bool IsPlayingNonAttackableAnimation() const;
 	bool IsPlayingNonJumpableAnimation() const;
+	bool IsPlayingNonMovableAnimation() const;
+	bool IsPlayingNonRollableAnimation() const;
+	bool IsPlayingNonGuardableAnimation() const;
 
 public:
 
@@ -118,6 +121,7 @@ public:
 	// YYY -> XXXXXY
 
 	AnimatorNode* ATK_XY;
+	AnimatorNode* ATK_XXXY;
 	AnimatorNode* ATK_XXXXY;
 	AnimatorNode* ATK_XXXXXY;
 

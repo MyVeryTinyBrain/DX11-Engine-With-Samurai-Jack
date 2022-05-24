@@ -84,7 +84,8 @@ ResourceRef<Mesh> ResourceFactory::LoadMeshM(const tstring& path, bool withTextu
 		for (uint i = 0; i < materialDescs.size(); ++i)
 		{
 			TextureOptionDesc desc = {};
-			LoadTexture2DM(desc, materialDescs[i].diffuse);
+			if (materialDescs[i].HasDiffuse()) LoadTexture2DM(desc, materialDescs[i].diffuse);
+			//if (materialDescs[i].HasNormals()) LoadTexture2DM(desc, materialDescs[i].normals);
 		}
 	}
 

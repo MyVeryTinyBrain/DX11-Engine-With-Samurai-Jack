@@ -62,6 +62,22 @@ struct ENGINE_API ModelMaterialDesc
 	TCHAR unknown[MAX_PATH] = {};
 	inline bool HasUnknown() const { return unknown[0] != 0; }
 
+	// aiTextureType_EMISSION_COLOR
+	TCHAR emissionColor[MAX_PATH] = {};
+	inline bool HasEmissionColor() const { return emissionColor[0] != 0; }
+
+	// aiTextureType_METALNESS
+	TCHAR metalness[MAX_PATH] = {};
+	inline bool HasMetalness() const { return metalness[0] != 0; }
+
+	// aiTextureType_DIFFUSE_ROUGHNESS
+	TCHAR diffuseRoughness[MAX_PATH] = {};
+	inline bool HasDiffuseRoughness() const { return diffuseRoughness[0] != 0; }
+
+	// aiTextureType_AMBIENT_OCCLUSION
+	TCHAR ambientOcclusion[MAX_PATH] = {};
+	inline bool HasAmbientOcclusion() const { return ambientOcclusion[0] != 0; }
+
 	uint numSucceeded = 0;
 };
 

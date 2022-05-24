@@ -55,6 +55,10 @@ public:
 
 	bool Find(const func& function, unsigned long* pIndex) const;
 
+	size_t GetNumFuncs() const;
+
+	bool Empty() const;
+
 private:
 
 	std::vector<func> m_funcs;
