@@ -443,7 +443,7 @@ void AnimatorLayer::AnimateNodeTransform(const Ref<NodeTransform>& nodeTransform
 
 			nodeTransform->SetLocalTransformation(
 				nodeTransform->localPosition + deltaPos,
-				/*r **/ nodeTransform->localRotation * deltaRot,
+				deltaRot * nodeTransform->localRotation,
 				nodeTransform->localScale + deltaScale
 			);
 		}

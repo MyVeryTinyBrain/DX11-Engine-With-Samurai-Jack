@@ -17,6 +17,7 @@ private:
 
 	void SetupCharacterRenderers();
 	void SetupAnimator();
+	void SetupLight();
 	void SetupHammer();
 	void SetupAttackTrigger();
 
@@ -56,10 +57,16 @@ private:
 	GameObject* m_goCharacterRender;
 	SkinnedMeshRenderer* m_characterRenderer;
 	Ref<NodeTransform> m_L_Hand_Weapon_cnt_tr;
+	Ref<NodeTransform> m_Head;
 
 	// Animator
 
 	BossAncientKingAnimator* m_animator;
+
+	// Light
+
+	GameObject* m_goLight;
+	PointLight* m_pointLight;
 
 	// Hammer
 

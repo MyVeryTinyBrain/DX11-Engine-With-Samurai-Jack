@@ -8,10 +8,12 @@ void BossAncientKing::Awake()
 	Boss::Awake();
 	SetupCharacterRenderers();
 	SetupAnimator();
+	SetupLight();
 	SetupHammer();
 	SetupAttackTrigger();
 
-	transform->localScale = V3::one() * 3.0f;
+	CCT->radius = 2.85f;
+	CCT->height = 0.01f;
 }
 
 void BossAncientKing::Start()
@@ -42,13 +44,15 @@ void BossAncientKing::FixedUpdate()
 void BossAncientKing::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
-	m_goCharacterRender->transform->localPosition = V3(0, -1.0f, 0);
+	m_goCharacterRender->transform->localPosition = V3(0, -3.05f, 0);
 	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
+	m_goCharacterRender->transform->localScale = V3::one() * 1.5f;
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(MESH_ANCIENT_KING);
 	m_characterRenderer->SetupStandardMaterials();
 
 	m_L_Hand_Weapon_cnt_tr = m_characterRenderer->GetNodeTransformByName(TEXT("L_Hand_Weapon_cnt_tr"));
+	m_Head = m_characterRenderer->GetNodeTransformByName(TEXT("Head"));
 }
 
 void BossAncientKing::SetupAnimator()
@@ -59,9 +63,19 @@ void BossAncientKing::SetupAnimator()
 	m_animator->OnAnimationEvent += func<void(Ref<AnimatorLayer>, const AnimationEventDesc&)>(this, &BossAncientKing::OnAnimationEvent);
 }
 
+void BossAncientKing::SetupLight()
+{
+	m_goLight = CreateGameObjectToChild(transform);
+	m_pointLight = m_goLight->AddComponent<PointLight>();
+	m_pointLight->diffuse = Color::red();
+	m_pointLight->ambient = Color::red() * 0.1f;
+	m_pointLight->range = 15.0f;
+	m_pointLight->intensity = 1.0f;
+}
+
 void BossAncientKing::SetupHammer()
 {
-	m_goHammer = CreateGameObjectToChild(transform);
+	m_goHammer = CreateGameObjectToChild(m_goCharacterRender->transform);
 	m_goHammer->transform->localScale = V3::one() * 5.0f;
 	m_hammerRenderer = m_goHammer->AddComponent<MeshRenderer>();
 	m_hammerRenderer->mesh = system->resource->Find(MESH_ANCIENT_KING_HAMMER);
@@ -72,8 +86,8 @@ void BossAncientKing::SetupHammer()
 	//m_goHammerTrail->transform->localEulerAngles = V3(0, -96.0f, 0);
 	m_hammerTrailRenderer = m_goHammerTrail->AddComponent<TrailRenderer>();
 	m_hammerTrailRenderer->alignment = TrailRenderer::Alignment::View;
-	m_hammerTrailRenderer->shrinkDistance = 20.0f;
-	m_hammerTrailRenderer->width = 6.0f;
+	m_hammerTrailRenderer->shrinkDistance = 50.0f;
+	m_hammerTrailRenderer->width = 4.0f;
 	m_hammerTrailRenderer->autoTrail = true;
 }
 
@@ -83,12 +97,19 @@ void BossAncientKing::SetupAttackTrigger()
 
 void BossAncientKing::UpdateCCT()
 {
+	if (CCT->isGrounded)
+	{
+		CCT->MoveOnGround(m_animator->Layer->deltaPosition, system->time->deltaTime);
+	}
 }
 
 void BossAncientKing::UpdateAttachmentObjects()
 {
 	m_goHammer->transform->position = m_L_Hand_Weapon_cnt_tr->position;
 	m_goHammer->transform->rotation = m_L_Hand_Weapon_cnt_tr->rotation;
+
+	m_goLight->transform->position = m_Head->position;
+	m_goLight->transform->rotation = m_Head->rotation;
 }
 
 void BossAncientKing::AttackTriggerQuery()
