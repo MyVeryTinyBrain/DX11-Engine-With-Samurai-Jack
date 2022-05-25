@@ -163,6 +163,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BossAncientKingAnimator.h" />
+    <ClInclude Include="Boss.h" />
+    <ClInclude Include="BossAncientKing.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Enemy.h" />
@@ -188,6 +191,9 @@
     <ClInclude Include="TPSCamera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BossAncientKingAnimator.cpp" />
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossAncientKing.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Enemy.cpp" />

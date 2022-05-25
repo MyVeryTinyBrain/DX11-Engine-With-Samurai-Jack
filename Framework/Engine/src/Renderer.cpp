@@ -102,6 +102,7 @@ void Renderer::SetupStandardMaterials()
 
         ResourceRef<Texture> albedoTexture;
         ResourceRef<Texture> normalMapTexture;
+        ResourceRef<Texture> emissiveTexture;
 
         if (materialDesc.HasDiffuse())
         {
@@ -110,6 +111,10 @@ void Renderer::SetupStandardMaterials()
         if (materialDesc.HasNormals())
         {
             normalMapTexture = system->resource->Find(materialDesc.normals);
+        }
+        if (materialDesc.HasEmission())
+        {
+            emissiveTexture = system->resource->Find(materialDesc.emission);
         }
 
         ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(standardShader);
@@ -121,6 +126,10 @@ void Renderer::SetupStandardMaterials()
         if (normalMapTexture)
         {
             material->SetTexture("_NormalMapTexture", normalMapTexture);
+        }
+        if (emissiveTexture)
+        {
+            material->SetTexture("_EmissiveTexture", emissiveTexture);
         }
 
         SetMaterialByIndex(i, material);

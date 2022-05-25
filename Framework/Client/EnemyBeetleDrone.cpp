@@ -11,14 +11,17 @@ void EnemyBeetleDrone::Awake()
 	SetupAnimator();
 	SetupAttackTrigger();
 
-	hp = 15;
 	CCT->radius = 0.8f;
 	CCT->height = 0.675f;
 	//CCT->height = 0.01f; // Bug mode
+
+	m_characterRenderer->enable = false;
+	CCT->rigidbody->enable = false;
 }
 
 void EnemyBeetleDrone::Start()
 {
+	Enemy::Start();
 	//DoAppear();
 }
 
@@ -81,9 +84,8 @@ void EnemyBeetleDrone::SetupCharacterRenderers()
 	m_goCharacterRender->transform->localPosition = V3(0, -1.0f, 0);
 	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
-	m_characterRenderer->mesh = system->resource->Find(TEXT("../Resource/BeetleDrone/BeetleDrone.FBX"));
+	m_characterRenderer->mesh = system->resource->Find(MESH_BEETLE_DRONE);
 	m_characterRenderer->SetupStandardMaterials();
-	m_characterRenderer->enable = false;
 
 	m_rightFoot1Node = m_characterRenderer->GetNodeTransformByName(TEXT("RightFoot1"));
 	m_leftFoot1Node = m_characterRenderer->GetNodeTransformByName(TEXT("LeftFoot1"));
@@ -375,5 +377,15 @@ void EnemyBeetleDrone::DoAppear()
 
 	m_appeared = true;
 	m_characterRenderer->enable = true;
+	CCT->rigidbody->enable = true;
+	PhysicsRay ray;
+	ray.Direction = V3::down();
+	ray.Length = 100.0f;
+	ray.Point = CCT->footPosition;
+	PhysicsHit hit;
+	if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider, CCT->rigidbody))
+	{
+		CCT->footPosition = hit.Point;
+	}
 	m_animator->Layer->Play(m_animator->ETC_APPEAR);
 }

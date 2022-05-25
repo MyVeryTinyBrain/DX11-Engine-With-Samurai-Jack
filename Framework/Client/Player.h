@@ -94,7 +94,6 @@ private:
 	// Katana
 
 	GameObject*				m_goKatana;
-	GameObject*				m_goKatanaRenderer;
 	MeshRenderer*			m_katanaRenderer;
 	GameObject*				m_goKatanaTrail;
 	TrailRenderer*			m_katanaTrailRenderer;

@@ -33,3 +33,10 @@ enum
 #define NOLOOP		false
 #define EXIT		nullptr
 #define ANY			nullptr
+
+#define MESH_JACK						TEXT("../Resource/Jack/Jack.FBX")
+#define MESH_KATANA						TEXT("../Resource/Jack/Katana.FBX")
+#define MESH_KATANA_SHEATH				TEXT("../Resource/Jack/KatanaSheath.FBX")
+#define MESH_BEETLE_DRONE				TEXT("../Resource/BeetleDrone/BeetleDrone.FBX")
+#define MESH_ANCIENT_KING				TEXT("../Resource/AncientKing/AncientKing.FBX")
+#define MESH_ANCIENT_KING_HAMMER		TEXT("../Resource/AncientKing/AncientKingHammer.FBX")

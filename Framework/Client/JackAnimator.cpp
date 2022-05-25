@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "JackAnimator.h"
+#include "Config.h"
 
 void JackAnimator::Awake()
 {
@@ -26,7 +27,7 @@ bool JackAnimator::Initialize()
 
 bool JackAnimator::FindJackMesh()
 {
-	m_jackMesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+	m_jackMesh = system->resource->Find(MESH_JACK);
 	return nullptr != m_jackMesh;
 }
 

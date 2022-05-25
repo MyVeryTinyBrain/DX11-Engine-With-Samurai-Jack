@@ -41,6 +41,9 @@
     <ClInclude Include="EnemyBeetleDrone.h" />
     <ClInclude Include="EnemyBeetleDroneAnimator.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Boss.h" />
+    <ClInclude Include="BossAncientKing.h" />
+    <ClInclude Include="BossAncientKingAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -118,6 +121,9 @@
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBeetleDrone.cpp" />
     <ClCompile Include="EnemyBeetleDroneAnimator.cpp" />
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossAncientKing.cpp" />
+    <ClCompile Include="BossAncientKingAnimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">

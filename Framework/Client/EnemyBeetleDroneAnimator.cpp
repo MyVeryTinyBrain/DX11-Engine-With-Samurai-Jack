@@ -20,7 +20,7 @@ SubResourceRef<AnimationClip> EnemyBeetleDroneAnimator::GetClip(const tstring& n
 
 void EnemyBeetleDroneAnimator::SetupMesh()
 {
-	Mesh = system->resource->Find(TEXT("../Resource/BeetleDrone/BeetleDrone.FBX"));
+	Mesh = system->resource->Find(MESH_BEETLE_DRONE);
 }
 
 void EnemyBeetleDroneAnimator::SetupLayer()

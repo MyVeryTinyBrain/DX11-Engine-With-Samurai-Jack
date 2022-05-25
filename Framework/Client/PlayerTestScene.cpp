@@ -4,6 +4,7 @@
 #include "FreeCamera.h"
 #include "SoundTest.h"
 #include "EnemyBeetleDrone.h"
+#include "BossAncientKing.h"
 #include "Config.h"
 
 Scene* PlayerTestScene::Clone()
@@ -49,85 +50,93 @@ void PlayerTestScene::OnLoad()
 		thread t0(
 			[&]
 			{
-				system->resource->factory->LoadMeshM(TEXT("../Resource/Jack/Jack.FBX"));
-				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
-				system->resource->factory->LoadMeshM(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
-				system->resource->factory->LoadMeshM(TEXT("../Resource/BeetleDrone/BeetleDrone.FBX"));
+				system->resource->factory->LoadMeshM(MESH_JACK);
+				system->resource->factory->LoadMeshM(MESH_KATANA);
+				system->resource->factory->LoadMeshM(MESH_KATANA_SHEATH);
+				system->resource->factory->LoadMeshM(MESH_BEETLE_DRONE);
+				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING);
+				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING_HAMMER);
 			});
 		if (t0.joinable())
 			t0.join();
 
 		{
 			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 5, 8);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
+			goEnemy->transform->position = V3(0, 20, 10);
+			goEnemy->AddComponent<BossAncientKing>();
 		}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 5, 10);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(0, 5, 8);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 5, 12);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(0, 5, 10);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 5, 14);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(0, 5, 12);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(2, 5, 8);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(0, 5, 14);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(2, 5, 10);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(2, 5, 8);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(2, 5, 12);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(2, 5, 10);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(2, 5, 14);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(2, 5, 12);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(4, 5, 8);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(2, 5, 14);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(4, 5, 10);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(4, 5, 8);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(4, 5, 12);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(4, 5, 10);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(4, 5, 14);
-			goEnemy->AddComponent<EnemyBeetleDrone>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(4, 5, 12);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
+
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(4, 5, 14);
+		//	goEnemy->AddComponent<EnemyBeetleDrone>();
+		//}
 
 		{
 			GameObject* go = CreateGameObject();

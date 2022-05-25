@@ -20,7 +20,7 @@ SubResourceRef<AnimationClip> PlayerAnimator::GetClip(const tstring& name)
 
 void PlayerAnimator::SetupMesh()
 {
-	Mesh = system->resource->Find(TEXT("../Resource/Jack/Jack.FBX"));
+	Mesh = system->resource->Find(MESH_JACK);
 }
 
 void PlayerAnimator::SetupLayer()

@@ -92,7 +92,7 @@ void Player::SetupCharacterRenderers()
 	m_goCharacterRender->transform->localPosition = V3(0, -1, 0);
 	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
-	m_characterRenderer->mesh = system->resource->Find(TEXT("../Resource/Jack/Jack.FBX"));
+	m_characterRenderer->mesh = system->resource->Find(MESH_JACK);
 	m_characterRenderer->SetupStandardMaterials();
 
 	m_rightHandWeaponCntNode = m_characterRenderer->GetNodeTransformByName(TEXT("R_Hand_Weapon_cnt_tr"));
@@ -112,17 +112,15 @@ void Player::SetupKatanaSheet()
 {
 	m_goKatanaSheathRenderer = CreateGameObjectToChild(transform);
 	m_katanaSheathRenderer = m_goKatanaSheathRenderer->AddComponent<MeshRenderer>();
-	m_katanaSheathRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+	m_katanaSheathRenderer->mesh = system->resource->Find(MESH_KATANA_SHEATH);
 	m_katanaSheathRenderer->SetupStandardMaterials();
 }
 
 void Player::SetupKatana()
 {
 	m_goKatana = CreateGameObjectToChild(transform);
-
-	m_goKatanaRenderer = CreateGameObjectToChild(m_goKatana->transform);
-	m_katanaRenderer = m_goKatanaRenderer->AddComponent<MeshRenderer>();
-	m_katanaRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+	m_katanaRenderer = m_goKatana->AddComponent<MeshRenderer>();
+	m_katanaRenderer->mesh = system->resource->Find(MESH_KATANA);
 	m_katanaRenderer->SetupStandardMaterials();
 
 	m_goKatanaTrail = CreateGameObjectToChild(m_goKatana->transform);

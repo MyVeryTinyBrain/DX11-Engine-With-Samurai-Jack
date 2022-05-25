@@ -52,6 +52,7 @@ public:
 	virtual uint2 GetSize() const = 0;
 
 	virtual bool IsDrawingGBuffer() const = 0;
+
 	virtual bool GetPostProcessingState() const = 0;
 	virtual const SSAODesc& GetSSAODesc() const = 0;
 	virtual const SSRDesc& GetSSRDesc() const = 0;
