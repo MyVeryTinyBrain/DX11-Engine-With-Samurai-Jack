@@ -196,6 +196,8 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::Deferred);
 
 	m_light->PostProcessing(camera);
+
+	Render_Emissive(camera);
 }
 
 void RenderQueue::Render_Forward(ICamera* camera)
@@ -206,7 +208,7 @@ void RenderQueue::Render_Forward(ICamera* camera)
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
 
-	Render_Emissive(camera);
+	//Render_Emissive(camera);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::After);
 
