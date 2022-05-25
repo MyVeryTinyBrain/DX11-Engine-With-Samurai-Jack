@@ -69,11 +69,14 @@ void PostProcessing::PostProcess(ICamera* camera, PostProcessing::Step step)
 		{
 			switch (step)
 			{
-				case PostProcessing::Step::Deferred:
-					PostProcess_Deferred(camera);
+				case PostProcessing::Step::AfterDeferred:
+					PostProcess_AfterDeferred(camera);
 					break;
-				case PostProcessing::Step::After:
-					PostProcess_After(camera);
+				case PostProcessing::Step::AfterEmissive:
+					PostProcess_AfterEmissive(camera);
+					break;
+				case PostProcessing::Step::AfterTransparent:
+					PostProcess_AfterTransparent(camera);
 					break;
 			}
 		}
@@ -142,7 +145,7 @@ void PostProcessing::DrawToTextrue(Com<ID3D11ShaderResourceView> src, Com<ID3D11
 	DxUtility::SetViewport(m_graphicSystem->deviceContext, prevViewport);
 }
 
-void PostProcessing::PostProcess_Deferred(ICamera* camera)
+void PostProcessing::PostProcess_AfterDeferred(ICamera* camera)
 {
 	const SSAODesc& ssaoDesc = camera->GetSSAODesc();
 	if (ssaoDesc.Enable)
@@ -157,7 +160,10 @@ void PostProcessing::PostProcess_Deferred(ICamera* camera)
 		Render_SSR_Write(camera, ssrDesc);
 		Render_SSR_Apply(camera, ssrDesc);
 	}
+}
 
+void PostProcessing::PostProcess_AfterEmissive(ICamera* camera)
+{
 	const DOFDesc& dofDesc = camera->GetDOFDesc();
 	if (dofDesc.Enable)
 	{
@@ -166,7 +172,7 @@ void PostProcessing::PostProcess_Deferred(ICamera* camera)
 	}
 }
 
-void PostProcessing::PostProcess_After(ICamera* camera)
+void PostProcessing::PostProcess_AfterTransparent(ICamera* camera)
 {
 	const FogDesc& fogDesc = camera->GetFogDesc();
 	if (fogDesc.Enable)

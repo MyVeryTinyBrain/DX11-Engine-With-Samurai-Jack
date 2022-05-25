@@ -54,8 +54,9 @@ public:
 
 	enum class Step 
 	{
-		Deferred,
-		After,
+		AfterDeferred,
+		AfterEmissive,
+		AfterTransparent,
 	};
 
 public:
@@ -75,8 +76,9 @@ public:
 
 private:
 
-	void PostProcess_Deferred(ICamera* camera);
-	void PostProcess_After(ICamera* camera);
+	void PostProcess_AfterDeferred(ICamera* camera);
+	void PostProcess_AfterEmissive(ICamera* camera);
+	void PostProcess_AfterTransparent(ICamera* camera);
 
 private:
 
