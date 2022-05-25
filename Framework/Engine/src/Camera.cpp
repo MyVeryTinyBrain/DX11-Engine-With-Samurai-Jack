@@ -35,10 +35,10 @@ void Camera::Awake()
 	m_ssrDesc.Enable = true;
 	m_ssrDesc.BlurEnable = true;
 	m_ssrDesc.BlurType = BlurType::InvDepth;
-	m_ssrDesc.NumSamples = 50;
+	m_ssrDesc.NumSamples = 120;
 	m_ssrDesc.BlurNumSamples = 4;
-	m_ssrDesc.Step = 0.2f;
-	m_ssrDesc.Thickness = 0.5f;
+	m_ssrDesc.Step = 0.4f;
+	m_ssrDesc.Thickness = 0.7f;
 	m_ssrDesc.Bias = 0.04f;
 	m_ssrDesc.BlurPixelDistance = 1000.0f;
 	m_ssrDesc.ResolutionScale = 0.5f;
@@ -59,9 +59,9 @@ void Camera::Awake()
 	m_bloomDesc.Enable = true;
 	m_bloomDesc.Type = BloomType::Add;
 	m_bloomDesc.BlurNumSamples = 8;
-	m_bloomDesc.Intensity = 1.15f;
-	m_bloomDesc.Threshold = 0.075f;
-	m_bloomDesc.BlurPixelDistance = 50.0f;
+	m_bloomDesc.Intensity = 1.75f;
+	m_bloomDesc.Threshold = 0.155f;
+	m_bloomDesc.BlurPixelDistance = 30.0f;
 
 	m_chromaticAberrationDesc.Enable = true;
 	m_chromaticAberrationDesc.Blend = V4::one();

@@ -602,6 +602,9 @@
     <ClInclude Include="include\AnimatorTransitionCallback.h">
       <Filter>Object\SceneObject\Component\Animator\Layer\Transition</Filter>
     </ClInclude>
+    <ClInclude Include="include\AnimatorEmptyNode.h">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1158,6 +1161,9 @@
     </ClCompile>
     <ClCompile Include="src\AnimatorTransitionCallback.cpp">
       <Filter>Object\SceneObject\Component\Animator\Layer\Transition</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatorEmptyNode.cpp">
+      <Filter>Object\SceneObject\Component\Animator\Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

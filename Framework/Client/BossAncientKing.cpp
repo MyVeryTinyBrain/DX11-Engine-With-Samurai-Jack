@@ -22,6 +22,9 @@ void BossAncientKing::Start()
 void BossAncientKing::Update()
 {
 	Boss::Update();
+
+	if (system->input->GetKeyDown(Key::One))
+		m_animator->AdditiveDamageTProperty->SetTriggerState();
 }
 
 void BossAncientKing::LateUpdate()
@@ -65,12 +68,12 @@ void BossAncientKing::SetupHammer()
 	m_hammerRenderer->SetupStandardMaterials();
 
 	m_goHammerTrail = CreateGameObjectToChild(m_goHammer->transform);
-	//m_goHammerTrail->transform->localPosition = V3(0, 0, -1.0f);
+	m_goHammerTrail->transform->localPosition = V3(0, 0, -0.72f);
 	//m_goHammerTrail->transform->localEulerAngles = V3(0, -96.0f, 0);
 	m_hammerTrailRenderer = m_goHammerTrail->AddComponent<TrailRenderer>();
 	m_hammerTrailRenderer->alignment = TrailRenderer::Alignment::View;
-	m_hammerTrailRenderer->shrinkDistance = 10.0f;
-	m_hammerTrailRenderer->width = 2.0f;
+	m_hammerTrailRenderer->shrinkDistance = 20.0f;
+	m_hammerTrailRenderer->width = 6.0f;
 	m_hammerTrailRenderer->autoTrail = true;
 }
 

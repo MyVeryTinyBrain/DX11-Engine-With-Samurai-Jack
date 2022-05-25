@@ -2,9 +2,10 @@
 #include "AnimatorNode.h"
 #include "NodeTransform.h"
 
-AnimatorNode::AnimatorNode(const tstring& name, bool loop) :
+AnimatorNode::AnimatorNode(const tstring& name, bool loop, bool isEmpty) :
 	Object(name),
-	m_isLoop(loop)
+	m_isLoop(loop),
+	m_isEmpty(isEmpty)
 {
 }
 

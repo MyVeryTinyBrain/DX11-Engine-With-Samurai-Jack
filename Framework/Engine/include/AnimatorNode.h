@@ -17,7 +17,7 @@ class ENGINE_API AnimatorNode abstract : public Object, public IAnimatorNode
 
 public:
 
-	AnimatorNode(const tstring& name, bool loop);
+	AnimatorNode(const tstring& name, bool loop, bool isEmpty = false);
 
 public:
 
@@ -46,10 +46,13 @@ public:
 	inline float SetSpeed() const { return m_speed; }
 	inline void SetSpeed(float value) { m_speed = Max(0.0f, value); }
 
+	inline bool IsEmpty() const { return m_isEmpty; }
+
 	_declspec(property(get = GetDuration)) float duration;
 	_declspec(property(get = IsLoop)) bool isLoop;
 	_declspec(property(get = GetNormalizedTime, put = SetNormalizedTime)) float normalizedTime;
 	_declspec(property(get = SetSpeed, put = SetSpeed)) float speed;
+	_declspec(property(get = IsEmpty)) bool isEmpty;
 
 protected:
 
@@ -83,6 +86,8 @@ protected:
 
 	// NormalizedTime이 오름차순으로 정렬된 이벤트 벡터입니다.
 	vector<AnimationEvent>	m_events;
+
+	bool					m_isEmpty = false;
 };
 
 ENGINE_END

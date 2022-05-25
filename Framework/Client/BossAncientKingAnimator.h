@@ -28,6 +28,13 @@ public:
 
 public:
 
+	AnimatorProperty* AdditiveDamageTProperty;
+
+public:
+
+	AnimatorNode* ADDITIVE_EMPTY; 
+	AnimatorNode* ADDITIVE_DMG_ADDITIVE; // DMG_ADDITIVE
+
 	AnimatorNode* BH_IDLE; // Loop
 };
 

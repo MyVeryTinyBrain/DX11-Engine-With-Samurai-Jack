@@ -29,6 +29,7 @@
     <ClInclude Include="include\Animator.h" />
     <ClInclude Include="include\AnimatorBlendNode.h" />
     <ClInclude Include="include\AnimatorBlendNodeElement.h" />
+    <ClInclude Include="include\AnimatorEmptyNode.h" />
     <ClInclude Include="include\AnimatorLayer.h" />
     <ClInclude Include="include\AnimatorNode.h" />
     <ClInclude Include="include\AnimatorProperty.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\AnimatorBlendNode.cpp" />
     <ClCompile Include="src\AnimatorBlendNodeElement.cpp" />
+    <ClCompile Include="src\AnimatorEmptyNode.cpp" />
     <ClCompile Include="src\AnimatorLayer.cpp" />
     <ClCompile Include="src\AnimatorNode.cpp" />
     <ClCompile Include="src\AnimatorProperty.cpp" />

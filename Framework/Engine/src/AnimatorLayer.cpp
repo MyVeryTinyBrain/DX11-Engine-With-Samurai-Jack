@@ -162,7 +162,10 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 		}
 	}
 
-	m_currentNode->Accumulate(dt, m_eventDescs);
+	if (m_currentNode) 
+	{
+		m_currentNode->Accumulate(dt, m_eventDescs);
+	}
 }
 
 void AnimatorLayer::Animate(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
@@ -324,10 +327,16 @@ Ref<AnimatorNode> AnimatorLayer::GetPreviousNode() const
 	return m_prevNode;
 }
 
-void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
+void AnimatorLayer::AnimateSingleNode(AnimatorNode* node, const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
 {
 	m_deltaPosition = V3::zero();
 	m_deltaRotation = Q::identity();
+
+	if (!node)
+		return;
+
+	if (node->IsEmpty())
+		return;
 
 	for (uint channelIndex = 0; channelIndex < skinnedMeshRenderer->nodeTransformCount; ++channelIndex)
 	{
@@ -337,7 +346,7 @@ void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 		V3 scale;
 		V3 deltaPosition;
 		Q  deltaRotation;
-		if (!m_currentNode->Animate(channelIndex, nodeIndex, position, rotation, scale, deltaPosition, deltaRotation))
+		if (!node->Animate(channelIndex, nodeIndex, position, rotation, scale, deltaPosition, deltaRotation))
 			continue;
 
 		const Ref<NodeTransform>& nodeTransform = skinnedMeshRenderer->GetNodeTransformByIndex(nodeIndex);
@@ -357,10 +366,27 @@ void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 	}
 }
 
+void AnimatorLayer::AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
+{
+	AnimateSingleNode(m_currentNode, skinnedMeshRenderer);
+}
+
 void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer)
 {
 	m_deltaPosition = V3::zero();
 	m_deltaRotation = Q::identity();
+
+	if (!m_currentNode)
+		return;
+	if (!m_blendNode)
+		return;
+
+	if (m_currentNode->IsEmpty() && m_blendNode->IsEmpty())
+		return;
+	else if (m_currentNode->IsEmpty())
+		AnimateSingleNode(m_blendNode, skinnedMeshRenderer);
+	else if(m_blendNode->IsEmpty())
+		AnimateSingleNode(m_currentNode, skinnedMeshRenderer);
 
 	for (uint channelIndex = 0; channelIndex < skinnedMeshRenderer->nodeTransformCount; ++channelIndex)
 	{
@@ -405,15 +431,23 @@ void AnimatorLayer::AnimateNodeTransform(const Ref<NodeTransform>& nodeTransform
 	switch (m_type)
 	{
 		case AnimatorLayer::AnimateType::Override:
+		{
 			nodeTransform->SetLocalTransformation(t, r, s);
-			break;
+		}
+		break;
 		case AnimatorLayer::AnimateType::Additive:
+		{
+			V3 deltaPos = t - nodeTransform->defaultLocalPosition;
+			Q deltaRot = r * nodeTransform->defaultLocalRotation.inversed;
+			V3 deltaScale = s - nodeTransform->defaultLocalScale;
+
 			nodeTransform->SetLocalTransformation(
-				t + nodeTransform->localPosition, 
-				nodeTransform->localRotation * r, 
-				s + nodeTransform->localScale
+				nodeTransform->localPosition + deltaPos,
+				/*r **/ nodeTransform->localRotation * deltaRot,
+				nodeTransform->localScale + deltaScale
 			);
-			break;
+		}
+		break;
 	}
 }
 

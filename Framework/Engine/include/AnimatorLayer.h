@@ -135,6 +135,7 @@ public:
 
 private:
 
+	void AnimateSingleNode(AnimatorNode* node, const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer); // 특정 노드를 애니메이트합니다.
 	void AnimateSingleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer);
 	void AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMeshRenderer);
 	void AnimateNodeTransform(const Ref<NodeTransform>& nodeTransform, const V3& t, const Q& r, const V3& s);
