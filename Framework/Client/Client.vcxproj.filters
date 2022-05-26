@@ -44,6 +44,7 @@
     <ClInclude Include="Boss.h" />
     <ClInclude Include="BossAncientKing.h" />
     <ClInclude Include="BossAncientKingAnimator.h" />
+    <ClInclude Include="IDamagable.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -124,6 +125,7 @@
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="BossAncientKing.cpp" />
     <ClCompile Include="BossAncientKingAnimator.cpp" />
+    <ClCompile Include="IDamagable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">

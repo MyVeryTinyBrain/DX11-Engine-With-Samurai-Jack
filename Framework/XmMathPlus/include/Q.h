@@ -122,6 +122,8 @@ namespace XmMathPlus
 
 		static Q LookRotation(const V3& forward, V3& up);
 
+		static Q RightHandedToLeftHanded(const Q& rh);
+
 		// Static Variables ============================================================================
 
 		inline static Q identity() { return Q(0, 0, 0, 1); };

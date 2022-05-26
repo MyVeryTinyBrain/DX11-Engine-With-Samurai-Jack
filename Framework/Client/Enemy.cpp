@@ -45,3 +45,11 @@ float Enemy::XZDistanceBetweenPlayer() const
     delta.y = 0.0f;
     return delta.magnitude;
 }
+
+float Enemy::XZAngleBetweenPlayer() const
+{
+    V3 xzForard = transform->forward;
+    xzForard.y = 0;
+    xzForard.Normalize();
+    return V3::Angle(ToPlayerDirectionXZ(), xzForard);
+}

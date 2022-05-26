@@ -309,7 +309,8 @@ V3 AnimatorLayer::GetDeltaPosition() const
 
 Q AnimatorLayer::GetDeltaRotation() const
 {
-	return m_skinnedMeshRenderer->transform->rotation * m_deltaRotation;
+	//return m_skinnedMeshRenderer->transform->rotation * m_deltaRotation;
+	return m_deltaRotation;
 }
 
 Ref<AnimatorNode> AnimatorLayer::GetBeginChangingNode() const

@@ -153,7 +153,7 @@ void EnemyBeetleDrone::AttackTriggerQuery()
 			if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.
 
 			DamageIn damage = {};
-			damage.FromCharacter = this;
+			damage.FromComponent = this;
 			damage.FromDirection = player->transform->position - transform->position;
 			damage.Guardable = true;
 			switch (m_attackType)

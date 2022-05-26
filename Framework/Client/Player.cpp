@@ -51,10 +51,14 @@ void Player::Update()
 	{
 		CCT->Move(V3::down() * 40.0f * system->time->deltaTime, system->time->deltaTime);
 		CCT->collisionWithCCT = false;
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, true);
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_VirtualEnemy, true);
 	}
 	else
 	{
 		CCT->collisionWithCCT = true;
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, false);
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_VirtualEnemy, false);
 	}
 
 	AttackTriggerQuery();
@@ -302,7 +306,7 @@ void Player::AttackTriggerQuery()
 			if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.
 
 			DamageIn damage = {};
-			damage.FromCharacter = this;
+			damage.FromComponent = this;
 			damage.FromDirection = enemy->transform->position - transform->position;
 			damage.Guardable = true;
 			switch (m_attackType)
@@ -387,12 +391,12 @@ bool Player::IsShortKeyPressed(float pressedTime) const
 		return true;
 
 	float delta = system->time->unscaledAccumulatedSinceStartup - pressedTime;
-	return delta <= 0.2f;
+	return delta <= 0.25f;
 }
 
 bool Player::IsLongKeyPressing(float pressingTime) const
 {
-	return pressingTime > 0.2f;
+	return pressingTime > 0.25f;
 }
 
 void Player::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)

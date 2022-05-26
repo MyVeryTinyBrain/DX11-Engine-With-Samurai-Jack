@@ -6,9 +6,15 @@
 #include "AnimationEventType.h"
 
 ENGINE_BEGIN
+
 class SkinnedMeshRenderer;
+
 class ENGINE_API Animator : public Component
 {
+public:
+
+	enum class UpdateMode { DeltaTime, UnscaledDeltaTime };
+
 protected:
 
 	virtual void Awake() override;
@@ -34,8 +40,12 @@ public:
 	inline bool IsPaused() const { return m_pause; }
 	void SetPause(bool value);
 
+	inline Animator::UpdateMode GetUpdateMode() const { return m_updateMode; }
+	inline void SetUpdateMode(Animator::UpdateMode value) { m_updateMode = value; }
+
 	_declspec(property(get = GetSpeed, put = SetSpeed)) float speed;
 	_declspec(property(get = IsPaused, put = SetPuase)) bool pause;
+	_declspec(property(get = GetUpdateMode, put = SetUpdateMode)) Animator::UpdateMode updateMode;
 
 private:
 
@@ -49,6 +59,8 @@ private:
 
 	float								m_speed = 1.0f;
 	bool								m_pause = false;
+
+	UpdateMode							m_updateMode = Animator::UpdateMode::DeltaTime;
 
 public:
 

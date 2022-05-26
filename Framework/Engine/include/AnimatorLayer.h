@@ -111,6 +111,7 @@ public:
 
 	void SetRootNodeByName(const tstring& rootNodeName);
 	V3 GetDeltaPosition() const;
+	// 주의: 모델이 제작된 프로그램의 좌표계에 따라 변환후 사용해야 할수도 있습니다.
 	Q  GetDeltaRotation() const;
 
 	void SetType(AnimatorLayer::AnimateType type) { m_type = type; }
@@ -122,6 +123,7 @@ public:
 	_declspec(property(get = GetRootNode)) const Ref<NodeTransform>& rootNode;
 	_declspec(property(get = GetDefaultNode, put = SetDefaultNode)) Ref<AnimatorNode> defaultNode;
 	_declspec(property(get = GetDeltaPosition)) V3 deltaPosition;
+	// 주의: 모델이 제작된 프로그램의 좌표계에 따라 변환후 사용해야 할수도 있습니다.
 	_declspec(property(get = GetDeltaRotation)) Q deltaRotation;
 	_declspec(property(get = GetType, put = SetType)) AnimatorLayer::AnimateType type;
 

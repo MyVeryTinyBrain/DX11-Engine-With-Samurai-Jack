@@ -18,6 +18,7 @@ protected:
 	V3 ToPlayerDirectionXZ() const;
 	float DistanceBetweenPlayer() const;
 	float XZDistanceBetweenPlayer() const;
+	float XZAngleBetweenPlayer() const;
 
 	_declspec(property(get = GetPlayer)) Player* player;
 };

@@ -159,6 +159,67 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
+			GameObject* goWall = CreateGameObject();
+			goWall->transform->position = V3(50, 4.5f, 0);
+			goWall->transform->localScale = V3(1, 10, 100);
+
+			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+			boxCollider->friction = 1.0f;
+			boxCollider->restitution = 1.0f;
+
+			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->SetupStandardMaterials();
+		}
+		{
+			GameObject* goWall = CreateGameObject();
+			goWall->transform->position = V3(-50, 4.5f, 0);
+			goWall->transform->localScale = V3(1, 10, 100);
+
+			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+			boxCollider->friction = 1.0f;
+			boxCollider->restitution = 1.0f;
+
+			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->SetupStandardMaterials();
+		}
+		{
+			GameObject* goWall = CreateGameObject();
+			goWall->transform->position = V3(0, 4.5f, 50);
+			goWall->transform->localScale = V3(100, 10, 1);
+
+			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+			boxCollider->friction = 1.0f;
+			boxCollider->restitution = 1.0f;
+
+			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->SetupStandardMaterials();
+		}
+		{
+			GameObject* goWall = CreateGameObject();
+			goWall->transform->position = V3(0, 4.5f, -50);
+			goWall->transform->localScale = V3(100, 10, 1);
+
+			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+			boxCollider->friction = 1.0f;
+			boxCollider->restitution = 1.0f;
+
+			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->SetupStandardMaterials();
+		}
+
+		{
 			GameObject* goDirectionalLight = CreateGameObject(TEXT("DirectionalLight"));
 			goDirectionalLight->transform->position = V3(9.0f, 8.0f, -0.1f);
 			goDirectionalLight->transform->forward = -V3(9.0f, 8.0f, -0.1f).normalized;

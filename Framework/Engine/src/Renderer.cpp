@@ -97,24 +97,27 @@ void Renderer::SetupStandardMaterials()
 
     for (uint i = 0; i < numMaterials; ++i)
     {
-        const uint& materialIndex = materialIndices[i];
-        const ModelMaterialDesc& materialDesc = materialDescs[materialIndex];
-
         ResourceRef<Texture> albedoTexture;
         ResourceRef<Texture> normalMapTexture;
         ResourceRef<Texture> emissiveTexture;
 
-        if (materialDesc.HasDiffuse())
+        if (i < (uint)materialIndices.size())
         {
-            albedoTexture = system->resource->Find(materialDesc.diffuse);
-        }
-        if (materialDesc.HasNormals())
-        {
-            normalMapTexture = system->resource->Find(materialDesc.normals);
-        }
-        if (materialDesc.HasEmission())
-        {
-            emissiveTexture = system->resource->Find(materialDesc.emission);
+            const uint& materialIndex = materialIndices[i];
+            const ModelMaterialDesc& materialDesc = materialDescs[materialIndex];
+
+            if (materialDesc.HasDiffuse())
+            {
+                albedoTexture = system->resource->Find(materialDesc.diffuse);
+            }
+            if (materialDesc.HasNormals())
+            {
+                normalMapTexture = system->resource->Find(materialDesc.normals);
+            }
+            if (materialDesc.HasEmission())
+            {
+                emissiveTexture = system->resource->Find(materialDesc.emission);
+            }
         }
 
         ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(standardShader);

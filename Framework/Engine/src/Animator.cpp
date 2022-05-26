@@ -110,7 +110,17 @@ void Animator::ForceUpdate()
 	if (m_skinnedMeshRenderer && !m_skinnedMeshRenderer->mesh)
 		return;
 
-	float dt = system->time->deltaTime;
+	float dt = 0.0f;
+	
+	switch (m_updateMode)
+	{
+		case UpdateMode::DeltaTime:
+			dt = system->time->deltaTime;
+			break;
+		case UpdateMode::UnscaledDeltaTime:
+			dt = system->time->unscaledDeltaTime;
+			break;
+	}
 
 	for (auto& layer : m_layers)
 	{

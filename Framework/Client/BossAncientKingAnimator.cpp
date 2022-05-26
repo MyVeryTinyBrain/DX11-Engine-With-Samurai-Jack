@@ -36,9 +36,24 @@ void BossAncientKingAnimator::SetupLayer()
 
 void BossAncientKingAnimator::SetupProperties()
 {
-    AdditiveDamageTProperty = AdditiveLayer->AddProperty(TEXT("AdditiveDamageT"), AnimatorProperty::Type::TRIGGER);
     TurnBProperty = AdditiveLayer->AddProperty(TEXT("TurnB"), AnimatorProperty::Type::BOOL);
     WalkBProperty = AdditiveLayer->AddProperty(TEXT("WalkB"), AnimatorProperty::Type::BOOL);
+    
+    KeepAttackBProperty = AdditiveLayer->AddProperty(TEXT("KeepAttackB"), AnimatorProperty::Type::BOOL);
+
+    ATK_TURN_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_TURN_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_SWING_H_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_SWING_H_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_SWING_V_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_SWING_V_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_STOMP_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_STOMP_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_STEPON_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_STEPON_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_RUSH_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_RUSH_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_JUMP_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_JUMP_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_ELECTRIC_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_ELECTRIC_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_DOWNSTRIKE_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_DOWNSTRIKE_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_BEAM_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_BEAM_T"), AnimatorProperty::Type::TRIGGER);
+    // Additive ===============================================================================================================
+
+    AdditiveDamageTProperty = AdditiveLayer->AddProperty(TEXT("AdditiveDamageT"), AnimatorProperty::Type::TRIGGER);
 }
 
 void BossAncientKingAnimator::SetupNodes()
@@ -46,8 +61,11 @@ void BossAncientKingAnimator::SetupNodes()
     BH_IDLE = AnimatorSingleNode::Create(GetClip(TEXT("BH_IDLE")), LOOP);
     Layer->AddNode(BH_IDLE);
 
-    BH_TURN = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN")), LOOP);
-    Layer->AddNode(BH_TURN);
+    BH_TURN_ROTATE = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN_ROTATE")), NOLOOP);
+    Layer->AddNode(BH_TURN_ROTATE);
+
+    BH_TURN_WAIT = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN_WAIT")), NOLOOP);
+    Layer->AddNode(BH_TURN_WAIT);
 
     BH_WLK_ST = AnimatorSingleNode::Create(GetClip(TEXT("BH_WLK_ST")), NOLOOP);
     Layer->AddNode(BH_WLK_ST);
@@ -132,18 +150,39 @@ void BossAncientKingAnimator::SetupNodes()
 
 void BossAncientKingAnimator::SetupTransitions()
 {
-    // BH_IDLE -> BH_TURN
+    // BH_IDLE -> BH_TURN_ROTATE
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue(TurnBProperty, true, AnimatorTransition::Compare::EQUAL));
-        Layer->AddTransition(BH_IDLE, BH_TURN, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+        Layer->AddTransition(BH_IDLE, BH_TURN_ROTATE, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
-    // BH_TURN -> BH_IDLE
+    // BH_TURN_ROTATE -> BH_TURN_WAIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(TurnBProperty, true, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(BH_TURN_ROTATE, BH_TURN_WAIT, values, 1.0f, 0.0f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // BH_TURN_ROTATE -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue(TurnBProperty, false, AnimatorTransition::Compare::EQUAL));
-        Layer->AddTransition(BH_TURN, BH_IDLE, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+        Layer->AddTransition(BH_TURN_ROTATE, EXIT, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // BH_TURN_WAIT -> BH_TURN_ROTATE
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(TurnBProperty, true, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(BH_TURN_WAIT, BH_TURN_ROTATE, values, 1.0f, 0.0f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // BH_TURN_WAIT -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(TurnBProperty, false, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(BH_TURN_WAIT, EXIT, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // BH_IDLE -> BH_WLK_ST
@@ -160,11 +199,206 @@ void BossAncientKingAnimator::SetupTransitions()
         Layer->AddTransition(BH_WLK_ST, BH_WLK_LP, values, 1.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
+    // BH_WLK_ST -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(WalkBProperty, false, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(BH_WLK_ST, EXIT, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
     // BH_WLK_LP -> BH_WLK_ED
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue(WalkBProperty, false, AnimatorTransition::Compare::EQUAL));
         Layer->AddTransition(BH_WLK_LP, BH_WLK_ED, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // BH_WLK_ED -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(BH_WLK_ED, EXIT, values, 1.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_TURN
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_TURN_TProperty));
+        Layer->AddTransition(ANY, ATK_TURN, values, 0.0f, 0.05f);
+    }
+
+    // ATK_TURN -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_TURN, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_SWING_L
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_SWING_H_TProperty));
+        Layer->AddTransition(ANY, ATK_SWING_L, values, 0.0f, 0.05f);
+    }
+
+    // ATK_SWING_L -> ATK_SWING_R
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(KeepAttackBProperty, true, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(ATK_SWING_L, ATK_SWING_R, values, 0.4f, 0.05f);
+    }
+
+    // ATK_SWING_L -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_SWING_L, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ATK_SWING_R -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_SWING_R, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_SWING_V
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_SWING_V_TProperty));
+        Layer->AddTransition(ANY, ATK_SWING_V, values, 0.0f, 0.05f);
+    }
+
+    // ATK_SWING_V -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_SWING_V, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_STOMP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_STOMP_TProperty));
+        Layer->AddTransition(ANY, ATK_STOMP, values, 0.0f, 0.05f);
+    }
+
+    // ATK_STOMP -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_STOMP, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_STEPON_R
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_STEPON_TProperty));
+        Layer->AddTransition(ANY, ATK_STEPON_R, values, 0.0f, 0.05f);
+    }
+
+    // ATK_STEPON_R -> ATK_STEPON_L
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(KeepAttackBProperty, true, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(ATK_STEPON_R, ATK_STEPON_L, values, 0.6f, 0.05f);
+    }
+
+    // ATK_STEPON_R -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_STEPON_R, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ATK_STEPON_L -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_STEPON_L, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_RUSH_ST
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_RUSH_TProperty));
+        Layer->AddTransition(ANY, ATK_RUSH_ST, values, 0.0f, 0.05f);
+    }
+
+    // ATK_RUSH_ST -> ATK_RUSH_LP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_RUSH_ST, ATK_RUSH_LP, values, 0.9f, 0.05f);
+    }
+
+    // ATK_RUSH_LP -> ATK_RUSH_ED
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(KeepAttackBProperty, false, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(ATK_RUSH_LP, ATK_RUSH_ED, values, 0.0f, 0.05f, 0.3f);
+    }
+
+    // ATK_RUSH_ED -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_RUSH_ED, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_JUMP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_JUMP_TProperty));
+        Layer->AddTransition(ANY, ATK_JUMP, values, 0.0f, 0.05f);
+    }
+
+    // ATK_JUMP -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_JUMP, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_ELECTRIC
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_ELECTRIC_TProperty));
+        Layer->AddTransition(ANY, ATK_ELECTRIC, values, 0.0f, 0.05f);
+    }
+
+    // ATK_ELECTRIC -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_ELECTRIC, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_DOWNSTRIKE_L
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_DOWNSTRIKE_TProperty));
+        Layer->AddTransition(ANY, ATK_DOWNSTRIKE_L, values, 0.0f, 0.05f);
+    }
+
+    // ATK_DOWNSTRIKE_L -> ATK_DOWNSTRIKE_R
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(KeepAttackBProperty, true, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(ATK_DOWNSTRIKE_L, ATK_DOWNSTRIKE_R, values, 0.5f, 0.05f);
+    }
+
+    // ATK_DOWNSTRIKE_L -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_DOWNSTRIKE_L, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ATK_DOWNSTRIKE_R -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_DOWNSTRIKE_R, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_BEAM
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_BEAM_TProperty));
+        Layer->AddTransition(ANY, ATK_BEAM, values, 0.0f, 0.05f);
+    }
+
+    // ATK_BEAM -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_BEAM, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // Additive ===============================================================================================================

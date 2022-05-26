@@ -629,6 +629,11 @@ Q XmMathPlus::Q::LookRotation(const V3& forward, V3& up)
 	return quaternion;
 }
 
+Q XmMathPlus::Q::RightHandedToLeftHanded(const Q& rh)
+{
+	return Q(-rh.x, -rh.z, -rh.y, rh.w);
+}
+
 Q XmMathPlus::operator*(Real scala, const Q& quaternion)
 {
 	return quaternion * scala;

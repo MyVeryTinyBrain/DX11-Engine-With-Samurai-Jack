@@ -1,32 +1,8 @@
 #pragma once
 
-class Character;
+#include "IDamagable.h"
 
-enum class DamageInType { NONE, LIGHT, HEAVY, BLOW, BLOWUP, BLOWDOWN };
-enum class DamageOutType { FAILED, HIT, GUARDED, GUARD_BREAKED, IGNORED, SUPERARMORED };
-
-struct DamageIn
-{
-	static const uint MAX_CONTEXT = 64;
-
-	float			Damage;
-	V3				FromDirection;
-	DamageInType	Type;
-	bool			Guardable;
-	bool			SetVelocity;
-	V3				Velocity;
-	Character*		FromCharacter; // Nullable
-};
-
-struct DamageOut
-{
-	bool			Backattack;
-	float			Cosine;
-	DamageOutType	Type;
-	DamageIn		In;
-};
-
-class Character abstract : public Component
+class Character abstract : public Component, public IDamagable
 {
 protected:
 
@@ -54,7 +30,7 @@ public:
 
 public:
 
-	DamageOutType Damage(const DamageIn& in);
+	virtual DamageOutType Damage(const DamageIn& in) override;
 
 protected:
 

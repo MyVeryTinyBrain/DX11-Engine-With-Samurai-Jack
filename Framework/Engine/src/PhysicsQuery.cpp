@@ -40,7 +40,7 @@ bool PhysicsQuery::Raycast(PhysicsHit& hit, const PhysicsRay& ray, uint32 layerm
 	if (!result) return false;
 
 	const PxRaycastHit& data = buffer.getAnyHit(0);
-	hit.Collider = (Collider*)data.actor;
+	hit.Collider = (Collider*)data.shape->userData;
 	hit.Distance = data.distance;
 	hit.Normal = FromPxVec3(data.normal);
 	hit.Point = FromPxVec3(data.position);
@@ -66,7 +66,7 @@ vector<PhysicsHit> PhysicsQuery::RaycastAll(const PhysicsRay& ray, uint32 layerm
 
 	for(uint i = 0; i < numHits; ++i)
 	{
-		hits[i].Collider = (Collider*)datas[i].actor;
+		hits[i].Collider = (Collider*)datas[i].shape->userData;
 		hits[i].Distance = datas[i].distance;
 		hits[i].Normal = FromPxVec3(datas[i].normal);
 		hits[i].Point = FromPxVec3(datas[i].position);
@@ -261,7 +261,7 @@ bool PhysicsQuery::SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, con
 	if (!result) return false;
 
 	const PxSweepHit& data = buffer.getAnyHit(0);
-	hit.Collider = (Collider*)data.shape;
+	hit.Collider = (Collider*)data.shape->userData;
 	hit.Distance = data.distance;
 	hit.Normal = FromPxVec3(data.normal);
 	hit.Point = FromPxVec3(data.position);
@@ -289,7 +289,7 @@ vector<PhysicsHit> PhysicsQuery::SweepGeometryAll(const PxGeometryHolder& g, con
 
 	for (uint i = 0; i < numHits; ++i)
 	{
-		hits[i].Collider = (Collider*)datas[i].actor;
+		hits[i].Collider = (Collider*)datas[i].shape->userData;
 		hits[i].Distance = datas[i].distance;
 		hits[i].Normal = FromPxVec3(datas[i].normal);
 		hits[i].Point = FromPxVec3(datas[i].position);

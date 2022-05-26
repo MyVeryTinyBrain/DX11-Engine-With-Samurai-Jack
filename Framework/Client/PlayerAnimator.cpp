@@ -147,11 +147,13 @@ void PlayerAnimator::SetupNodes()
 	ATK_X = AnimatorSingleNode::Create(GetClip(TEXT("ATK_X")), NOLOOP);
 	ATK_X->AddEvent(7 / 34.0f, ANIM_ATK_KT_START | ANIM_ATK_LIGHT);
 	ATK_X->AddEvent(10 / 34.0f, ANIM_ATK_KT_END);
+	ATK_X->speed = 1.25f;
 	Layer->AddNode(ATK_X);
 
 	ATK_XX = AnimatorSingleNode::Create(GetClip(TEXT("ATK_XX")), NOLOOP);
 	ATK_XX->AddEvent(12 / 45.0f, ANIM_ATK_KT_START | ANIM_ATK_LIGHT);
 	ATK_XX->AddEvent(17 / 45.0f, ANIM_ATK_KT_END);
+	ATK_XX->speed = 1.25f;
 	Layer->AddNode(ATK_XX);
 
 	ATK_XXX = AnimatorSingleNode::Create(GetClip(TEXT("ATK_XXX")), NOLOOP);
@@ -297,14 +299,14 @@ void PlayerAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
-		Layer->AddTransition(BH_JUMP, BH_LAND, values, 0.0f, 0.05f);
+		Layer->AddTransition(BH_JUMP, BH_LAND, values, 0.0f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// BH_AIR_JUMP -> BH_LAND
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
-		Layer->AddTransition(BH_AIR_JUMP, BH_LAND, values, 0.0f, 0.05f);
+		Layer->AddTransition(BH_AIR_JUMP, BH_LAND, values, 0.0f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// BH_FALL -> BH_LAND
@@ -317,21 +319,21 @@ void PlayerAnimator::SetupTransitions()
 	// BH_LAND -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(BH_LAND, EXIT, values, 1.0f, 0.2f);
+		Layer->AddTransition(BH_LAND, EXIT, values, 1.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// BH_LAND -> BH_RUN_BH_DASH
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue(MoveStateFProperty, 0.0f, AnimatorTransition::Compare::GREATER));
-		Layer->AddTransition(BH_LAND, BH_RUN_BH_DASH, values, 0.0f, 0.2f);
+		Layer->AddTransition(BH_LAND, BH_RUN_BH_DASH, values, 0.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// ANY -> BH_JUMP
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(JumpTProperty));
-		auto transition = Layer->AddTransition(ANY, BH_JUMP, values, 0.0f, 0.1f);
+		auto transition = Layer->AddTransition(ANY, BH_JUMP, values, 0.0f, 0.05f);
 		transition->SetCallback(this);
 	}
 
