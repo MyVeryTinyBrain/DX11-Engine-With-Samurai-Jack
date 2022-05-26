@@ -53,6 +53,10 @@ private:
 	void OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc);
 	void SetAttackType(int contextInt);
 
+private:
+
+	bool GroundCheck(float dist);
+
 public:
 
 	virtual float GetHP() const override;
@@ -123,6 +127,10 @@ private:
 	float					m_lShiftPressingTime;
 	float					m_leftMousePressedTime;
 	float					m_leftMousePressingTime;
+
+	// Second groundhit
+
+	bool m_hasGround = false;
 
 	// Static
 

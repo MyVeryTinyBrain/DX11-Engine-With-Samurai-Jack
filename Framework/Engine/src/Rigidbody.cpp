@@ -376,7 +376,7 @@ void Rigidbody::ApplyGameObjectTransfromFromBody()
 	if (!m_isCCTComponent)
 	{
 		// PhsX::Controller가 Simulation 이후에 각도가 변경됩니다.
-		// 이 현상을 적용하지 않기 위함입니다.
+		// 조건문은 이 현상을 적용하지 않기 위함입니다.
 		transform->rotation = FromPxQuat(pose.q);
 	}
 }

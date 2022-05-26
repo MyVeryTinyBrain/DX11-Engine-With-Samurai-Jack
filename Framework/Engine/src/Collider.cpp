@@ -304,17 +304,30 @@ void Collider::ApplyPose(bool unconditionally)
 
 	if (unconditionally ||
 		distance > Epsilon ||
-		radian > Epsilon)
+		radian > 0.0009765625f/*멈춰있어도 이 값이 계산되었음*/)
 	{
 		m_beforeLocalPosition = localPositionFromBody;
 		m_beforeLocalRotation = localRotationFromBody;
 
-		Q localRotationFromBody_WithDefaultRotation = m_defaultRotation * localRotationFromBody;
+		if (!IsCCTComponent() && rigidBody->IsCCTComponent())
+		{
+			localPositionFromBody = Q::Euler(0, 0, -90).MultiplyVector(localPositionFromBody);
+			Q localRotationFromBody_WithDefaultRotation = Q::Euler(0,0,-90) * m_defaultRotation * localRotationFromBody;
 
-		PxTransform pose;
-		pose.p = ToPxVec3(localPositionFromBody);
-		pose.q = ToPxQuat(localRotationFromBody_WithDefaultRotation);
-		m_shape->setLocalPose(pose);
+			PxTransform pose;
+			pose.p = ToPxVec3(localPositionFromBody);
+			pose.q = ToPxQuat(localRotationFromBody_WithDefaultRotation);
+			m_shape->setLocalPose(pose);
+		}
+		else
+		{
+			Q localRotationFromBody_WithDefaultRotation = m_defaultRotation * localRotationFromBody;
+
+			PxTransform pose;
+			pose.p = ToPxVec3(localPositionFromBody);
+			pose.q = ToPxQuat(localRotationFromBody_WithDefaultRotation);
+			m_shape->setLocalPose(pose);
+		}
 	}
 }
 

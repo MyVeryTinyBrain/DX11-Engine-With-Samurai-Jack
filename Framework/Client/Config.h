@@ -1,11 +1,23 @@
 #pragma once
+#ifndef __GAME__CONFIG__
+#define __GAME__CONFIG__
 
 enum
 {
 	PhysicsLayer_Default = 0,
 	PhysicsLayer_Player = 1,
 	PhysicsLayer_Enemy = 2,
+	PhysicsLayer_VirtualEnemy = 3,
 };
+
+inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
+{
+	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Player, true);
+	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Enemy, true);
+	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_VirtualEnemy, true);
+	layerManager->SetCollision(PhysicsLayer_Player, PhysicsLayer_Enemy, true);
+	layerManager->SetCollision(PhysicsLayer_Enemy, PhysicsLayer_Enemy, true);
+}
 
 #define ANIM_ATK_KT_START		0b000000000001
 #define ANIM_ATK_KT_END			0b000000000010
@@ -40,3 +52,5 @@ enum
 #define MESH_BEETLE_DRONE				TEXT("../Resource/BeetleDrone/BeetleDrone.FBX")
 #define MESH_ANCIENT_KING				TEXT("../Resource/AncientKing/AncientKing.FBX")
 #define MESH_ANCIENT_KING_HAMMER		TEXT("../Resource/AncientKing/AncientKingHammer.FBX")
+
+#endif

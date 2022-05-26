@@ -331,7 +331,8 @@ void PlayerAnimator::SetupTransitions()
 	{
 		vector<AnimatorTransition::PropertyValue> values;
 		values.push_back(AnimatorTransition::PropertyValue::Trigger(JumpTProperty));
-		Layer->AddTransition(ANY, BH_JUMP, values, 0.0f, 0.1f);
+		auto transition = Layer->AddTransition(ANY, BH_JUMP, values, 0.0f, 0.1f);
+		transition->SetCallback(this);
 	}
 
 	// ANY -> BH_AIR_JUMP
@@ -912,6 +913,12 @@ bool PlayerAnimator::Transferable(
 		if (IsPlayingDamage() ||
 			IsPlayingAttack() ||
 			IsPlayingJump())
+			return false;
+	}
+
+	if (transition->nextNode == BH_JUMP)
+	{
+		if (layer->IsPlaying(BH_LAND))
 			return false;
 	}
 

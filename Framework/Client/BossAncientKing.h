@@ -15,6 +15,7 @@ private:
 
 private:
 
+	void SetupCollider();
 	void SetupCharacterRenderers();
 	void SetupAnimator();
 	void SetupLight();
@@ -56,8 +57,18 @@ private:
 
 	GameObject* m_goCharacterRender;
 	SkinnedMeshRenderer* m_characterRenderer;
-	Ref<NodeTransform> m_L_Hand_Weapon_cnt_tr;
+	Ref<NodeTransform> m_R_Hand_Weapon_cnt_tr;
+	Ref<NodeTransform> m_L_Hand_Weapon_cnt_tr; // Hammer controll
 	Ref<NodeTransform> m_Head;
+	Ref<NodeTransform> m_RightFoot;
+	Ref<NodeTransform> m_LeftFoot;
+	Ref<NodeTransform> m_RightLeg;
+	Ref<NodeTransform> m_LeftLeg;
+	Ref<NodeTransform> m_Spine1;
+	Ref<NodeTransform> m_RightArmRoll;
+	Ref<NodeTransform> m_LeftArmRoll;
+	Ref<NodeTransform> m_RightForeArmRoll;
+	Ref<NodeTransform> m_LeftForeArmRoll;
 
 	// Animator
 
@@ -74,6 +85,10 @@ private:
 	MeshRenderer* m_hammerRenderer;
 	GameObject* m_goHammerTrail;
 	TrailRenderer* m_hammerTrailRenderer;
+
+	// Collider for push the player
+	GameObject* m_goCollider;
+	CapsuleCollider* m_collider;
 
 	// Stat
 

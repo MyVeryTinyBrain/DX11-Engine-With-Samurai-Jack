@@ -46,7 +46,7 @@ void Camera::Awake()
 	m_dofDesc.Enable = true;
 	m_dofDesc.BlurNumSamples = 8;
 	m_dofDesc.MinZ = 15.0f;
-	m_dofDesc.RangeZ = 5.0f;
+	m_dofDesc.RangeZ = 10.0f;
 	m_dofDesc.Power = 1.0f;
 	m_dofDesc.BlurPixelDistance = 10.0f;
 
@@ -65,7 +65,7 @@ void Camera::Awake()
 
 	m_chromaticAberrationDesc.Enable = true;
 	m_chromaticAberrationDesc.Blend = V4::one();
-	m_chromaticAberrationDesc.Offset = V4::one() * 2.5f;
+	m_chromaticAberrationDesc.Offset = V4::one() * 2.0f;
 	m_chromaticAberrationDesc.Angle = V4(0, 120, 240, 0);
 }
 

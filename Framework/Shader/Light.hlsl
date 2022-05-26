@@ -500,7 +500,7 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 	intensity = light.Intensity * atten * NdotL;
 
 	float3 Lo = (kD * albedo / PI + specular) * NdotL * radiance;
-	Lo = max(Lo, 0.0f); // Disable warning
+	//Lo = max(Lo, 0.0f); // Disable warning
 
 	ambient = (kD * albedo * atten * light.Ambient.rgb) / PI;
 

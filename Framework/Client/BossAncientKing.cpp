@@ -6,14 +6,17 @@
 void BossAncientKing::Awake()
 {
 	Boss::Awake();
+
+	CCT->radius = 2.85f;
+	CCT->height = 0.01f;
+	CCT->capsuleCollider->layerIndex = PhysicsLayer_VirtualEnemy;
+
+	SetupCollider();
 	SetupCharacterRenderers();
 	SetupAnimator();
 	SetupLight();
 	SetupHammer();
 	SetupAttackTrigger();
-
-	CCT->radius = 2.85f;
-	CCT->height = 0.01f;
 }
 
 void BossAncientKing::Start()
@@ -41,6 +44,15 @@ void BossAncientKing::FixedUpdate()
 	Boss::FixedUpdate();
 }
 
+void BossAncientKing::SetupCollider()
+{
+	GameObject* goCollider = CreateGameObjectToChild(transform);
+	m_collider = goCollider->AddComponent<CapsuleCollider>();
+	m_collider->layerIndex = PhysicsLayer_Enemy;
+	m_collider->radius = CCT->radius;
+	m_collider->halfHeight = CCT->height * 0.5f;
+}
+
 void BossAncientKing::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
@@ -52,7 +64,17 @@ void BossAncientKing::SetupCharacterRenderers()
 	m_characterRenderer->SetupStandardMaterials();
 
 	m_L_Hand_Weapon_cnt_tr = m_characterRenderer->GetNodeTransformByName(TEXT("L_Hand_Weapon_cnt_tr"));
+	m_R_Hand_Weapon_cnt_tr = m_characterRenderer->GetNodeTransformByName(TEXT("R_Hand_Weapon_cnt_tr"));
 	m_Head = m_characterRenderer->GetNodeTransformByName(TEXT("Head"));
+	m_RightFoot = m_characterRenderer->GetNodeTransformByName(TEXT("RightFoot"));
+	m_LeftFoot = m_characterRenderer->GetNodeTransformByName(TEXT("LeftFoot"));
+	m_RightLeg = m_characterRenderer->GetNodeTransformByName(TEXT("RightLeg"));
+	m_LeftLeg = m_characterRenderer->GetNodeTransformByName(TEXT("LeftLeg"));
+	m_Spine1 = m_characterRenderer->GetNodeTransformByName(TEXT("Spine1"));
+	m_RightArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("RightArmRoll"));
+	m_LeftArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("LeftArmRoll"));
+	m_RightForeArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("RightForeArmRoll"));
+	m_LeftForeArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("LeftForeArmRoll"));
 }
 
 void BossAncientKing::SetupAnimator()
@@ -182,5 +204,23 @@ bool BossAncientKing::IsSuperarmor() const
 
 DamageOutType BossAncientKing::OnDamage(const DamageOut& out)
 {
-	return DamageOutType::FAILED;
+	if (isDead)
+		return DamageOutType::IGNORED;
+
+	switch (out.Type)
+	{
+		case DamageOutType::GUARDED:
+		case DamageOutType::GUARD_BREAKED:
+		case DamageOutType::HIT:
+		{
+			m_animator->AdditiveDamageTProperty->SetTriggerState();
+			return DamageOutType::HIT;
+		}
+		break;
+		default:
+		{
+			return DamageOutType::IGNORED;
+		}
+		break;
+	}
 }

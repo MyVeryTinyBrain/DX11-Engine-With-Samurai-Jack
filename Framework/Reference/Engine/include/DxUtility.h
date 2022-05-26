@@ -17,6 +17,7 @@ namespace DxUtility
 	ENGINE_API void ExecuteDeferredContext(Com<ID3D11DeviceContext> immediate, Com<ID3D11DeviceContext> deferred);
 	ENGINE_API void CopyContextState(Com<ID3D11DeviceContext> dest, Com<ID3D11DeviceContext> src);
 
+	ENGINE_API IDXGIAdapter* GetBestAdapter();
 	ENGINE_API HRESULT CreateSwapChain(
 		ID3D11Device* device,
 		HWND hWnd, unsigned int width, unsigned int height,

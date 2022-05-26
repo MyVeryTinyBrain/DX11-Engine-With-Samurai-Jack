@@ -14,10 +14,7 @@ Scene* PlayerTestScene::Clone()
 
 void PlayerTestScene::OnLoad()
 {
-	system->physics->layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Player, true);
-	system->physics->layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Enemy, true);
-	system->physics->layerManager->SetCollision(PhysicsLayer_Player, PhysicsLayer_Enemy, true);
-	system->physics->layerManager->SetCollision(PhysicsLayer_Enemy, PhysicsLayer_Enemy, true);
+	INIT_PHYSICS_LAYER(system->physics->layerManager);
 
 	TextureOptionDesc loadDesc = {};
 	TextureOptionDesc loadMipDesc = {};

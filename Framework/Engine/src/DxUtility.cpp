@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "DxUtility.h"
-#include "..\include\DxUtility.h"
+
+#pragma comment(lib, "dxgi")
+#include <dxgi.h>
 
 void DxUtility::ResetShaderResource(Com<ID3D11DeviceContext> dc)
 {
@@ -124,6 +126,38 @@ void DxUtility::CopyContextState(Com<ID3D11DeviceContext> dest, Com<ID3D11Device
 
 	uint2 viewport = DxUtility::GetViewport(src);
 	DxUtility::SetViewport(dest, viewport);
+}
+
+IDXGIAdapter* DxUtility::GetBestAdapter()
+{
+	IDXGIFactory* dxgiFactory = nullptr;
+	if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&dxgiFactory)))
+		return false;
+
+	IDXGIAdapter* adapter = nullptr;
+	SIZE_T maxAdapterVideoMemory = 0;
+	for (UINT i = 0; i < 16; ++i)
+	{
+		IDXGIAdapter* currentAdapater = nullptr;
+
+		if (FAILED(dxgiFactory->EnumAdapters(i, &currentAdapater)))
+			break;
+
+		DXGI_ADAPTER_DESC desc;
+		if (FAILED(currentAdapater->GetDesc(&desc)))
+			break;
+
+		if (desc.DedicatedVideoMemory > maxAdapterVideoMemory)
+		{
+			maxAdapterVideoMemory = desc.DedicatedVideoMemory;
+			SafeRelease(adapter);
+			adapter = currentAdapater;
+		}
+	}
+
+	SafeRelease(dxgiFactory);
+
+	return adapter;
 }
 
 HRESULT DxUtility::CreateSwapChain(ID3D11Device* device, HWND hWnd, unsigned int width, unsigned int height, unsigned int refreshPerSec, bool vsync, bool fullScreen, IDXGISwapChain** out_swapChain)

@@ -63,7 +63,21 @@ void Player::Update()
 void Player::FixedUpdate()
 {
 	Character::FixedUpdate();
-	m_animator->HasGroundBProperty->valueAsBool = CCT->isGrounded;
+
+	if (CCT->isGrounded)
+	{
+		m_hasGround = true;
+	}
+	else if (GroundCheck(0.2f))
+	{
+		m_hasGround = true;
+	}
+	else
+	{
+		m_hasGround = false;
+	}
+
+	m_animator->HasGroundBProperty->valueAsBool = m_hasGround;
 }
 
 void Player::LateUpdate()
@@ -161,7 +175,7 @@ void Player::SetupAttackTrigger()
 
 void Player::UpdateCCT()
 {
-	if (CCT->isGrounded)
+	if (m_hasGround)
 	{
 		CCT->MoveOnGround(m_animator->Layer->deltaPosition, system->time->deltaTime);
 	}
@@ -192,7 +206,7 @@ void Player::XZInput()
 
 	CCT->useGravity = !airAction;
 
-	if (CCT->isGrounded)
+	if (m_hasGround)
 	{
 		m_animator->MoveStateFProperty->valueAsFloat = translation.magnitude > 0.0f;
 	}
@@ -459,6 +473,23 @@ void Player::SetAttackType(int contextInt)
 		m_attackType = ANIM_ATK_BLOWDOWN;
 	else
 		m_attackType = ANIM_ATK_LIGHT;
+}
+
+bool Player::GroundCheck(float dist)
+{
+	PhysicsRay ray;
+	PhysicsHit hit;
+	ray.Direction = -transform->up;
+	ray.Length = dist;
+	ray.Point = CCT->footPosition;
+	if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 float Player::GetHP() const

@@ -49,7 +49,7 @@ PS_IN VS_MAIN(VS_IN In)
 
 float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
-	const static float power = 0.25f;
+	const static float power = 0.5f;
 
 	float3 packedNormalMap = _NormalMapTexture.Sample(linearSampler, In.UV).rgb;
 	float3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
@@ -68,7 +68,7 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 RasterizerState RasterizerState0
 {
 	FillMode = Solid;
-	Cullmode = Back;
+	Cullmode = None;
 };
 
 DepthStencilState DepthStencilState0

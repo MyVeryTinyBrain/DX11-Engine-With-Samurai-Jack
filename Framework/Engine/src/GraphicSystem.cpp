@@ -31,9 +31,26 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 	flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	D3D_FEATURE_LEVEL feature;
-	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, flag, nullptr, 0, D3D11_SDK_VERSION, &m_device, &feature, &m_deviceContext)))
+	IDXGIFactory* dxgiFactory = nullptr;
+	if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&dxgiFactory)))
 		return false;
+
+	IDXGIAdapter* adapter = DxUtility::GetBestAdapter();
+	D3D_FEATURE_LEVEL feature;
+	if (!adapter)
+	{
+		if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, flag, nullptr, 0, D3D11_SDK_VERSION, &m_device, &feature, &m_deviceContext)))
+			return false;
+	}
+	else
+	{
+		if (FAILED(D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, 0, flag, nullptr, 0, D3D11_SDK_VERSION, &m_device, &feature, &m_deviceContext)))
+		{
+			SafeRelease(adapter);
+			return false;
+		}
+	}
+	SafeRelease(adapter);
 
 	if (FAILED(DxUtility::CreateSwapChain(m_device, hWnd, width, height, refreshPerSec, vsync, fullScreen, &m_swapChain)))
 		return false;

@@ -22,6 +22,7 @@ AnimatorSingleNode* AnimatorSingleNode::Create(const tstring& name, const SubRes
 
 AnimatorSingleNode* AnimatorSingleNode::Create(const SubResourceRef<AnimationClip>& animationClip, bool loop)
 {
+	assert(animationClip != nullptr); // 애니메이션 클립이 nullptr입니다.
 	return new AnimatorSingleNode(animationClip, loop);
 }
 
