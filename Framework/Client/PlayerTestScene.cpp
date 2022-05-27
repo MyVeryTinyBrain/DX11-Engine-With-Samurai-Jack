@@ -57,11 +57,11 @@ void PlayerTestScene::OnLoad()
 		if (t0.joinable())
 			t0.join();
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 20, 10);
-			goEnemy->AddComponent<BossAncientKing>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(0, 20, 10);
+		//	goEnemy->AddComponent<BossAncientKing>();
+		//}
 
 		//{
 		//	GameObject* goEnemy = CreateGameObject();

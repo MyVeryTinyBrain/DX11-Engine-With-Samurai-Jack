@@ -23,7 +23,8 @@ void Player::Awake()
 
 	g_player = this;
 }
-
+#include "EnemyBeetleDrone.h"
+#include "BossAncientKing.h"
 void Player::Update()
 {
 	Character::Update();
@@ -62,6 +63,32 @@ void Player::Update()
 	}
 
 	AttackTriggerQuery();
+
+	ImGui::Begin("Mobspawn");
+	static vector<GameObject*> mobs;
+	float rangle = float(rand() % 360) * Deg2Rad;
+	V3 dir = V3(Cos(rangle), 0.0f, Sin(rangle));
+	if (ImGui::Button("Beetle"))
+	{
+		GameObject* goEnemy = CreateGameObject();
+		goEnemy->transform->position = CCT->transform->position + dir * 4.0f;
+		goEnemy->AddComponent<EnemyBeetleDrone>();
+		mobs.push_back(goEnemy);
+	}
+	if (ImGui::Button("King"))
+	{
+		GameObject* goEnemy = CreateGameObject();
+		goEnemy->transform->position = CCT->transform->position + CCT->transform->forward * 3.0f + V3::up() * 6.0f;
+		goEnemy->AddComponent<BossAncientKing>();
+		mobs.push_back(goEnemy);
+	}
+	if (ImGui::Button("Destroy"))
+	{
+		for (auto& mob : mobs)
+			mob->Destroy();
+		mobs.clear();
+	}
+	ImGui::End();
 }
 
 void Player::FixedUpdate()

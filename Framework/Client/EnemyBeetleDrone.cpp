@@ -15,8 +15,8 @@ void EnemyBeetleDrone::Awake()
 	CCT->height = 0.675f;
 	//CCT->height = 0.01f; // Bug mode
 
-	m_characterRenderer->enable = false;
-	CCT->rigidbody->enable = false;
+	//m_characterRenderer->enable = false;
+	//CCT->rigidbody->enable = false;
 }
 
 void EnemyBeetleDrone::Start()
@@ -54,7 +54,7 @@ void EnemyBeetleDrone::Update()
 	if (isDead && CCT->isGrounded)
 	{
 		CCT->enable = false;
-		CCT->rigidbody->enable = false;
+		//CCT->rigidbody->enable = false;
 	}
 
 	if (m_animator->DamageDirectionFProperty->valueAsFloat == 0.0f && m_animator->IsPlayingDamageDuringLookPlayerAnimation())
@@ -376,8 +376,8 @@ void EnemyBeetleDrone::DoAppear()
 		return;
 
 	m_appeared = true;
-	m_characterRenderer->enable = true;
-	CCT->rigidbody->enable = true;
+	//m_characterRenderer->enable = true;
+	//CCT->rigidbody->enable = true;
 	PhysicsRay ray;
 	ray.Direction = V3::down();
 	ray.Length = 100.0f;

@@ -125,6 +125,8 @@ private:
 
 	bool						m_autoTrail = true;
 
+	//uint						m_numInterpolate = 0;
+
 	/*
 
 	8---9	..uvw.y = 4 * vScale, uvw.z = 1

@@ -421,6 +421,20 @@ void TrailRenderer::ApplyVertices()
 		SetupVertexPair(i, camDir, camPos, m_width, minV, maxV);
 	}
 
+	//bool drawCanInterpolate = m_datas.size() >= 4;
+	//for (int i = 0; i < int(m_datas.size()); ++i)
+	//{
+	//	if (i > 0) // 1번째 데이터부터 CatMulRom 보간 적용이 가능합니다.
+	//	{
+	//		for (int j = 0; j < m_numInterpolate; ++j)
+	//		{
+
+	//		}
+	//	}
+	//	//SetupVertexPair(i, camDir, camPos, m_width, minV, maxV);
+	//	// 인덱스 i대신 두 개의 데이터를 입력받아야 함
+	//}
+
 	Bounds bounds;
 	bounds.extents = (maxV - minV) * 0.5f;
 	bounds.center = (minV + maxV) * 0.5f;

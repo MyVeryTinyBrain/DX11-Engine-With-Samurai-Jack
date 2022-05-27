@@ -49,7 +49,7 @@ PS_IN VS_MAIN(VS_IN In)
 
 float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
-	const static float power = 0.5f;
+	const static float power = 0.75f;
 
 	float3 packedNormalMap = _NormalMapTexture.Sample(linearSampler, In.UV).rgb;
 	float3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
@@ -59,6 +59,7 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	float4 ndcPosition = mul(vPosition, _ProjectionMatrix);
 	ndcPosition /= ndcPosition.w;
 	float2 sPosition = ndcPosition.xy * float2(1.0f, -1.0f) * 0.5f + 0.5f;
+	sPosition = saturate(sPosition); // dddddd
 
 	half4 grab = _Grab.Sample(linearSampler, sPosition);
 	//grab.a = 1.0f;

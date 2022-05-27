@@ -383,7 +383,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// GAD_STD_BREAK -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(GAD_STD_BREAK, EXIT, values, 0.9f, 0.1f);
+		Layer->AddTransition(GAD_STD_BREAK, EXIT, values, 0.9f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 }
 
