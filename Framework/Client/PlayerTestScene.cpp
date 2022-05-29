@@ -91,15 +91,16 @@ void PlayerTestScene::OnLoad()
 		if (t0.joinable())
 			t0.join();
 
-		{
-			GameObject* goAnim = CreateGameObject();
-			goAnim->transform->position = V3(0, 2, 8);
-			goAnim->transform->localScale = V3::one() * 3.0f;
-			BillboardAnimation* anim = goAnim->AddComponent<BillboardAnimation>();
-			anim->SetTexture(system->resource->Find(TEX_ANIM_FLAME04));
-			anim->SetSliced(uint2(8, 8));
-			anim->SetColor(Color::RGBA255(255, 0, 68, 255));
-		}
+		//{
+		//	GameObject* goAnim = CreateGameObject();
+		//	goAnim->transform->position = V3(0, 2, 8);
+		//	goAnim->transform->localScale = V3::one() * 3.0f;
+		//	BillboardAnimation* billboardAnimation = goAnim->AddComponent<BillboardAnimation>();
+		//	billboardAnimation->SetMesh(system->resource->Find(MESH_RING_HALF));
+		//	billboardAnimation->SetTexture(system->resource->Find(TEX_ANIM_FLAME04));
+		//	billboardAnimation->SetSliced(uint2(8, 8));
+		//	billboardAnimation->SetColor(Color::RGBA255(255, 0, 68, 255));
+		//}
 
 		{
 			GameObject* goEnemy = CreateGameObject();

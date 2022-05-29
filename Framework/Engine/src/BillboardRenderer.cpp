@@ -91,17 +91,18 @@ void BillboardRenderer::Render()
 void BillboardRenderer::OnCamera(ICamera* camera, RenderRequest* inout_prequest)
 {
 	Q camRotation = camera->GetRotation();
-	V3 camEulerAngles = camRotation.eulerAngles;
 
+	V3 camEulerAngles = camRotation.eulerAngles;
 	if (IsLock(BillboardRenderer::LockFlag::X))
 		camEulerAngles.x = 0;
 	if (IsLock(BillboardRenderer::LockFlag::Y))
 		camEulerAngles.y = 0;
 	if (IsLock(BillboardRenderer::LockFlag::Z))
 		camEulerAngles.z = 0;
+	camEulerAngles += m_adjustLocalEulerAngles;
 
-	M4 camRotationMatrix = M4::Rotate(camEulerAngles);
-	M4 billboardWorldMatrix = camRotationMatrix * inout_prequest->essential.worldMatrix;
+	M4 camAdjustMatrix = M4::SRT(V3::one(), camEulerAngles, m_adjustLocalPosition);
+	M4 billboardWorldMatrix = camAdjustMatrix * inout_prequest->essential.worldMatrix;
 	inout_prequest->essential.worldMatrix = billboardWorldMatrix;
 }
 

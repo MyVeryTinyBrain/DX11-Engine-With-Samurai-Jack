@@ -14,6 +14,7 @@ public:
 	void IncreaseIndex();
 	void SetColor(const Color& color);
 	void SetTexture(ResourceRef<Texture> texture);
+	void SetMesh(ResourceRef<Mesh> mesh);
 	BillboardRenderer* GetBillboardRenderer() const { return m_renderer; }
 
 private:

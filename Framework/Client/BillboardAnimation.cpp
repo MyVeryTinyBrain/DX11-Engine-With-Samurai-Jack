@@ -71,3 +71,10 @@ void BillboardAnimation::SetTexture(ResourceRef<Texture> texture)
 {
 	m_renderer->material->SetTexture("_Texture", texture);
 }
+
+void BillboardAnimation::SetMesh(ResourceRef<Mesh> mesh)
+{
+	ResourceRef<Material> material = m_renderer->material;
+	m_renderer->mesh = mesh;
+	m_renderer->material = material;
+}
