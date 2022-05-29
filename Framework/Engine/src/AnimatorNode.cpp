@@ -9,22 +9,10 @@ AnimatorNode::AnimatorNode(const tstring& name, bool loop, bool isEmpty) :
 {
 }
 
-void AnimatorNode::AddEvent(float normalizedTime, int intContext)
-{
-	AddEvent(normalizedTime, intContext, "");
-}
-
-void AnimatorNode::AddEvent(float normalizedTime, const string& strContext)
-{
-	AddEvent(normalizedTime, 0, strContext);
-}
-
-void AnimatorNode::AddEvent(float normalizedTime, int intContext, const string& strContext)
+void AnimatorNode::AddEvent(const AnimationEventDesc& eventDesc)
 {
 	AnimationEvent animationEvent = {};
-	animationEvent.Desc.NormalizedTime = normalizedTime;
-	strcpy_s(animationEvent.Desc.ContextStr, strContext.c_str());
-	animationEvent.Desc.ContextInt = intContext;
+	animationEvent.Desc = eventDesc;
 	animationEvent.used = false;
 	m_events.push_back(animationEvent);
 

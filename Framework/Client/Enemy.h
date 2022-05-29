@@ -9,6 +9,7 @@ class Enemy : public Character
 protected:
 
 	virtual void Awake() override;
+	virtual void OnDestroyed() override;
 
 protected:
 
@@ -21,5 +22,19 @@ protected:
 	float XZAngleBetweenPlayer() const;
 
 	_declspec(property(get = GetPlayer)) Player* player;
+
+private:
+
+	static vector<Enemy*> g_enemies;
+
+protected:
+
+	static void RegistEnemy(Enemy* enemy);
+	static void UnregistEnemy(Enemy* enemy);
+
+public:
+
+	static inline uint GetEnemyCount() { return (uint)g_enemies.size(); }
+	static inline Enemy* GetEnemyByIndex(uint index) { return g_enemies[index]; }
 };
 

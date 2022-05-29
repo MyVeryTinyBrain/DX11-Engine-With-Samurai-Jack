@@ -93,6 +93,42 @@ HRESULT Material::SetFloat(const string& name, float value)
 	return S_OK;
 }
 
+HRESULT Material::SetInt(const string& name, int value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->SetRawValue(&value, sizeof(int));
+
+	return S_OK;
+}
+
+HRESULT Material::SetUInt(const string& name, uint value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->SetRawValue(&value, sizeof(uint));
+
+	return S_OK;
+}
+
 HRESULT Material::SetVector(const string& name, const V4& value)
 {
 	if (!m_shader)
@@ -213,6 +249,42 @@ HRESULT Material::GetFloat(const string& name, float* out_value)
 		return E_FAIL;
 
 	(*find_it)->GetRawValue(out_value, sizeof(float));
+
+	return S_OK;
+}
+
+HRESULT Material::GetInt(const string& name, int* out_value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_value, sizeof(int));
+
+	return S_OK;
+}
+
+HRESULT Material::GetUInt(const string& name, uint* out_value)
+{
+	if (!m_shader)
+		return E_FAIL;
+
+	auto find_it = std::find_if(m_shaderVariables.begin(), m_shaderVariables.end(), [&](const ShaderVariable* var)
+		{
+			return var->info->Name == name;
+		});
+
+	if (find_it == m_shaderVariables.end())
+		return E_FAIL;
+
+	(*find_it)->GetRawValue(out_value, sizeof(uint));
 
 	return S_OK;
 }

@@ -19,6 +19,7 @@ public:
 
 	bool Exist(const tstring& path) const;
 	ResourceRef<ResourceObject> Find(const tstring& path) const;
+	ResourceRef<ResourceObject> FindBinrayShader(const tstring& path) const;
 
 public:
 

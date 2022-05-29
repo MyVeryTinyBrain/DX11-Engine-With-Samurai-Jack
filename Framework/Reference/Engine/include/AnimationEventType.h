@@ -6,9 +6,11 @@ struct AnimationEventDesc
 {
 	static const unsigned int MAX_CONTEXT = 64;
 
-	float	NormalizedTime;
-	char	ContextStr[MAX_CONTEXT];
-	int		ContextInt;
+	float	NormalizedTime = 0.0f;
+	char	ContextByte = 0;
+	int		ContextInt = 0;
+	float	ContextFloat = 0.0f;
+	char	ContextStr[MAX_CONTEXT] = {};
 };
 
 struct AnimationEvent

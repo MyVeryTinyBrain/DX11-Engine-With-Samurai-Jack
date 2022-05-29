@@ -18,70 +18,32 @@ private:
 
 public:
 
-	bool IsPlayingJump() const;
-	bool IsPlayingGuard() const;
-	bool IsPlayingAttack() const;
-	bool IsPlayingDamage() const;
-	bool IsPlayingAirAction() const;
-
-	bool IsPlayingGuardableAnimation(bool withoutGuardHit = false) const;
-	bool IsPlayingNonAttackableAnimation() const;
-	bool IsPlayingNonJumpableAnimation() const;
-	bool IsPlayingNonMovableAnimation() const;
-	bool IsPlayingNonRollableAnimation() const;
-	bool IsPlayingNonGuardableAnimation() const;
-
-public:
-
 	ResourceRef<Mesh>	Mesh;
 	AnimatorLayer*		Layer;
 
 public:
 
-	// 0(Stop) ~ 1(Move)
+	AnimatorProperty* GroundStateBProperty;
+
 	AnimatorProperty* MoveStateFProperty;
-
-	// 0(Run) 1(Dash)
 	AnimatorProperty* DashStateFProperty;
-
-	// 0(Run) 1(Dash)
 	AnimatorProperty* LastDashStateFProperty;
 
-	// (Damaged)
-	AnimatorProperty* DamageTProperty;
-
-	// 0(Forward) 1(Back)
-	AnimatorProperty* DamageDirectionFProperty;
-
-	// 0(Normal) 1(Large) 2(Blow)
-	AnimatorProperty* DamageTypeIProperty;
-
-	// (Roll)
-	AnimatorProperty* RollTProperty;
-
-	// (Light Attack)
-	AnimatorProperty* LightAttackTProperty;
-
-	// (Heavy Attack)
-	AnimatorProperty* HeavyAttackTProperty;
-
-	// (Guard)
-	AnimatorProperty* GuardStateBProperty;
-
-	// (Guard Break)
-	AnimatorProperty* GuardBreakTProperty;
-
-	// (Guard Hit)
-	AnimatorProperty* GuardHitTProperty;
-
-	// (Jump)
 	AnimatorProperty* JumpTProperty;
-
-	// (AirJump)
 	AnimatorProperty* AirJumpTProperty;
 
-	// 0(No Grunded) 1(Grounded)
-	AnimatorProperty* HasGroundBProperty;
+	AnimatorProperty* RollTProperty;
+
+	AnimatorProperty* GuardBProperty;
+	AnimatorProperty* GuardHitTProperty;
+	AnimatorProperty* GuardBreakTProperty;
+
+	AnimatorProperty* DamageTProperty;	
+	AnimatorProperty* DamageDirectionFProperty; // 0(Forward) 1(Back)
+	AnimatorProperty* DamageTypeIProperty; // 0(Normal) 1(Large) 2(Blow)
+
+	AnimatorProperty* LightAttackTProperty;
+	AnimatorProperty* HeavyAttackTProperty;
 
 public:
 
@@ -128,6 +90,10 @@ public:
 	AnimatorNode* ATK_AIR_Y_START;
 	AnimatorNode* ATK_AIR_Y_LOOP; // Loop
 	AnimatorNode* ATK_AIR_Y_END;
+	
+private:
+
+	void AddCommonTransitions(AnimatorNode* startNode, float exitTime);
 
 private:
 

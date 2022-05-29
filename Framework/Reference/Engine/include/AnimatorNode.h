@@ -21,9 +21,7 @@ public:
 
 public:
 
-	void AddEvent(float normalizedTime, int intContext);
-	void AddEvent(float normalizedTime, const string& strContext);
-	void AddEvent(float normalizedTime, int intContext, const string& strContext);
+	void AddEvent(const AnimationEventDesc& eventDesc);
 
 public:
 

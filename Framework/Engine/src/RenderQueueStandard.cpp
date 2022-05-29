@@ -65,6 +65,9 @@ void RenderQueueStandard::Render(ICamera* camera)
 						if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
 							continue;
 
+						if (request.op.onCameraOp)
+							request.op.onCameraOp->OnCamera(camera, &request);
+
 						if (request.essential.cull && !CullOp(camera, request.op.cullOp))
 							continue;
 
@@ -100,7 +103,13 @@ bool RenderQueueStandard::CullOp(ICamera* camera, IRendererCullOp* cullOp) const
 	if (!cullOp)
 		return true;
 
-	return cullOp->CullTest(camera);
+	if (cullOp->CullTest(camera))
+	{
+		cullOp->OnCullPass(camera);
+		return true;
+	}
+
+	return false;
 }
 
 void RenderQueueStandard::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)

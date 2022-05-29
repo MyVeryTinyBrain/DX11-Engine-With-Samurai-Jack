@@ -3,10 +3,19 @@
 #include "Player.h"
 #include "Config.h"
 
+vector<Enemy*> Enemy::g_enemies;
+
 void Enemy::Awake()
 {
     Character::Awake();
     CCT->capsuleCollider->layerIndex = PhysicsLayer_Enemy;
+
+    RegistEnemy(this);
+}
+
+void Enemy::OnDestroyed()
+{
+    UnregistEnemy(this);
 }
 
 Player* Enemy::GetPlayer() const
@@ -52,4 +61,22 @@ float Enemy::XZAngleBetweenPlayer() const
     xzForard.y = 0;
     xzForard.Normalize();
     return V3::Angle(ToPlayerDirectionXZ(), xzForard);
+}
+
+void Enemy::RegistEnemy(Enemy* enemy)
+{
+    auto find_it = std::find(g_enemies.begin(), g_enemies.end(), enemy);
+    if (find_it == g_enemies.end())
+    {
+        g_enemies.push_back(enemy);
+    }
+}
+
+void Enemy::UnregistEnemy(Enemy* enemy)
+{
+    auto find_it = std::find(g_enemies.begin(), g_enemies.end(), enemy);
+    if (find_it != g_enemies.end())
+    {
+        g_enemies.erase(find_it);
+    }
 }

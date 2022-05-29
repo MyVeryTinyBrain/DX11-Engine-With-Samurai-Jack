@@ -68,6 +68,7 @@ using namespace DirectX::PackedVector;
 #include <Windows.h>
 #include <thread>
 #include <condition_variable>
+#include <random>
 using namespace std;
 
 // WRL

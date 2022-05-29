@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "ResourceManagement.h"
 #include "ResourceObject.h"
+#include "CompiledShaderDesc.h"
 
 ResourceManagement::ResourceManagement()
 {
@@ -111,6 +112,12 @@ ResourceRef<ResourceObject> ResourceManagement::Find(const tstring& path) const
 	ResourceObject* resource = FindManagedResource(path);
 
 	return ResourceRef<ResourceObject>(resource);
+}
+
+ResourceRef<ResourceObject> ResourceManagement::FindBinrayShader(const tstring& path) const
+{
+	tstring binaryShaderPath = CompiledShaderDesc::ParseToBinaryShaderPath(path);
+	return Find(binaryShaderPath);
 }
 
 System* ResourceManagement::GetSystem() const

@@ -18,21 +18,26 @@ class BossAncientKing : public Boss
 
 		SATK_TURN,
 
-		ATK_RAND,
+		ATK_NEAR_RAND,
+		ATK_FAR_RAND,
 
-		ATK_BEGIN,
-
+		__ATK_NEAR_BEGIN,
 		ATK_SWING_H,
 		ATK_SWING_V,
 		ATK_STOMP,
 		ATK_STEPON,
-		ATK_RUSH,
 		ATK_JUMP,
-		ATK_ELECTRIC,
 		ATK_DOWNSTRIKE,
-		ATK_BEAM,
+		ATK_NEAR_RUSH,
+		ATK_NEAR_ELECTRIC,
+		ATK_NEAR_BEAM,
+		__ATK_NEAR_END,
 
-		ATK_END,
+		__ATK_FAR_BEGIN,
+		ATK_RUSH,
+		ATK_ELECTRIC,
+		ATK_BEAM,
+		__ATK_FAR_END,
 
 		RAGE,
 	};
@@ -91,7 +96,8 @@ private:
 	void StateEnded(BossAncientKing::State before, BossAncientKing::State current);
 
 	bool RaycastToForwardInStage(float length) const;
-	bool IsATKCondition() const;
+	bool IsFarATKCondition() const;
+	bool IsNearATKCondition() const;
 	bool IsSATKTurnCondition() const;
 
 private:
@@ -133,6 +139,21 @@ private:
 	GameObject* m_goCollider;
 	CapsuleCollider* m_collider;
 
+	// Attack
+
+	enum
+	{
+		HAMMER_TRIGGER = 0,
+		FOOT_L_TRIGGER = 1,
+		FOOT_R_TRIGGER = 2,
+		MAX_TRIGGERS,
+	};
+
+	GameObject* m_goAttackTrigger[MAX_TRIGGERS];
+	Collider* m_attackTrigger[MAX_TRIGGERS];
+	int							m_attackType = 0;
+	unordered_set<Rigidbody*>	m_hitBuffer;
+
 	// Stat
 
 	float m_hp = 100.0f;
@@ -144,5 +165,7 @@ private:
 	// 뒤돌기 공격을 사용하면 활성화됩니다.
 	// 다른 공격을 한 번 하면 다시 비활성화됩니다.
 	bool m_usedSATK_TURN = false; 
+	float m_farATKCounter = 0.0f;
+	bool m_gadableAttack = false;
 };
 

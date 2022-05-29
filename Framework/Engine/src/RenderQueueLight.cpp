@@ -366,15 +366,18 @@ void RenderQueueLight::Render_DepthOfLight_Static(ICamera* camera, const LightDe
 
     for (auto& pairByMesh : m_staticRequets)
     {
-        const Vector_RenderRequests& requests = pairByMesh.second;
+        Vector_RenderRequests& requests = pairByMesh.second;
         uint instanceRequestCount = uint(requests.size());
-        const RenderRequest& front = requests.front();
+        RenderRequest& front = requests.front();
 
         uint drawCount = 0;
         m_instanceBufferManager->BeginSetDatas(deviceContext, instanceRequestCount);
         {
             for (auto& request : requests)
             {
+                if (request.op.onCameraOp)
+                    request.op.onCameraOp->OnCamera(camera, &request);
+
                 if (!IsValidShadowRequest(camera, lightDesc, request, boundings[i]))
                     continue;
 
@@ -425,11 +428,14 @@ void RenderQueueLight::Render_DepthOfLight_Skinned(ICamera* camera, const LightD
 
     for (auto& pairByMesh : m_skinnedRequests)
     {
-        const Vector_RenderRequests& requests = pairByMesh.second;
+        Vector_RenderRequests& requests = pairByMesh.second;
         uint instanceRequestCount = uint(requests.size());
 
         for (auto& request : requests)
         {
+            if (request.op.onCameraOp)
+                request.op.onCameraOp->OnCamera(camera, &request);
+
             if (!IsValidShadowRequest(camera, lightDesc, request, boundings[i]))
                 continue;
 
@@ -480,10 +486,10 @@ void RenderQueueLight::Render_DepthOfLight_ShadowPass(ICamera* camera, const Lig
 
                 for (auto& request : requests)
                 {
-                    if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
-                        continue;
+                    if (request.op.onCameraOp)
+                        request.op.onCameraOp->OnCamera(camera, &request);
 
-                    if (!CullOp(request, boundings[projectionIndex]))
+                    if (!IsValidShadowRequest(camera, lightDesc, request, boundings[projectionIndex]))
                         continue;
 
                     ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
@@ -535,19 +541,19 @@ void RenderQueueLight::Render_DepthOfLight_ShadowPassInstance(ICamera* camera, c
                 if (instanceRequestCount == 0)
                     continue;
 
-                const RenderRequest& front = requests.front();
+                RenderRequest& front = requests.front();
 
                 uint drawCount = 0;
                 m_instanceBufferManager->BeginSetDatas(deviceContext, instanceRequestCount);
                 {
                     for (uint i = 0; i < instanceRequestCount; ++i)
                     {
-                        const RenderRequest& request = requests[i];
+                        RenderRequest& request = requests[i];
 
-                        if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
-                            continue;
+                        if (request.op.onCameraOp)
+                            request.op.onCameraOp->OnCamera(camera, &request);
 
-                        if (!CullOp(request, boundings[projectionIndex]))
+                        if (!IsValidShadowRequest(camera, lightDesc, request, boundings[projectionIndex]))
                             continue;
 
                         InstanceData data;

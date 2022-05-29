@@ -41,6 +41,7 @@
     <ClInclude Include="include\AudioListener.h" />
     <ClInclude Include="include\AudioSource.h" />
     <ClInclude Include="include\AudioSourcePlaydata.h" />
+    <ClInclude Include="include\BillboardRenderer.h" />
     <ClInclude Include="include\BoxCollider.h" />
     <ClInclude Include="include\CapsuleCollider.h" />
     <ClInclude Include="include\CCTCallback.h" />
@@ -60,6 +61,7 @@
     <ClInclude Include="include\DxTextureUtility.h" />
     <ClInclude Include="include\ILight.h" />
     <ClInclude Include="include\ILightManager.h" />
+    <ClInclude Include="include\IOnCamera.h" />
     <ClInclude Include="include\IPhysicsObject.h" />
     <ClInclude Include="include\IRendererBoundsOp.h" />
     <ClInclude Include="include\ISoundSystem.h" />
@@ -146,7 +148,6 @@
     <ClInclude Include="include\AssimpData.h" />
     <ClInclude Include="include\MeshRenderer.h" />
     <ClInclude Include="include\NodeTransform.h" />
-    <ClInclude Include="include\InstanceRenderer.h" />
     <ClInclude Include="include\PhysicsQuery.h" />
     <ClInclude Include="include\PhysicsSimulationCallbackType.h" />
     <ClInclude Include="include\PhysicsSimulationEventCallback.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="src\AudioListener.cpp" />
     <ClCompile Include="src\AudioSource.cpp" />
     <ClCompile Include="src\AudioSourcePlaydata.cpp" />
+    <ClCompile Include="src\BillboardRenderer.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\CapsuleCollider.cpp" />
     <ClCompile Include="src\CCTCallback.cpp" />
@@ -260,6 +262,7 @@
     <ClCompile Include="src\DxTextureUtility.cpp" />
     <ClCompile Include="src\ILight.cpp" />
     <ClCompile Include="src\ILightManager.cpp" />
+    <ClCompile Include="src\IOnCamera.cpp" />
     <ClCompile Include="src\IPhysicsObject.cpp" />
     <ClCompile Include="src\IRendererBoundsOp.cpp" />
     <ClCompile Include="src\ISoundSystem.cpp" />
@@ -345,7 +348,6 @@
     <ClCompile Include="src\AssimpData.cpp" />
     <ClCompile Include="src\MeshRenderer.cpp" />
     <ClCompile Include="src\NodeTransform.cpp" />
-    <ClCompile Include="src\InstanceRenderer.cpp" />
     <ClCompile Include="src\PhysicsQuery.cpp" />
     <ClCompile Include="src\PhysicsSimulationCallbackType.cpp" />
     <ClCompile Include="src\PhysicsSimulationEventCallback.cpp" />
@@ -452,6 +454,7 @@
     <FxCompile Include="..\Shader\PostProcessing.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />
+    <FxCompile Include="..\Shader\Unlit.fx" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="include\Engine.natvis" />

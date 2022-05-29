@@ -72,5 +72,6 @@
 
 #include "TrailRenderer.h"
 #include "LineRenderer.h"
+#include "BillboardRenderer.h"
 
 #include "JsonUtility.h"

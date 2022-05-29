@@ -3,19 +3,30 @@
 #include "Config.h"
 #include "BossAncientKingAnimator.h"
 
-#define ATK_MAX_DIST 5.0f
-#define ATK_MAX_ANGLE 20.0f
+#include "Player.h"
+#include "TPSCamera.h"
+#include "BillboardAnimation.h"
+
+#define ATK_NEAR_MAX_DIST 6.0f
+#define ATK_NEAR_MAX_ANGLE 20.0f
+#define ATK_FAR_MAX_DIST 15.0f
+#define ATK_FAR_MAX_ANGLE 30.0f
+#define ATK_KEEP_MAX_ANGLE 35.0f
 #define LOOK_STOP_MIN_ANGLE 5.0f
 #define LOOK_START_ANGLE 100.0f
 #define IDLE_TIME 2.0f
-#define WAIT_DEFAULT_TIME 1.0f
+#define WAIT_DEFAULT_TIME 0.2f
 #define TRACE_SPIN_ANGLE_PER_SEC 50.0f
 #define LOOK_SPIN_ANGLE_PER_SEC 140.0f
 #define TRACE_TO_LOOK_TIME 5.0f
+#define SPIN_ON_ATK_NEAR_ANGLE_PER_SEC 19.0f
+#define SPIN_ON_ATK_FAR_ANGLE_PER_SEC 25.0f
 
-#define RUSH_START_ACCTIME 8.0f
+#define RUSH_START_ACCTIME 12.0f
 #define RUSH_MIN_ANGLE 4.0f
 #define RUSH_SPIN_ANGLE_PER_SEC 20.0f
+
+#define ATK_FAR_DELAY 7.0f
 
 void BossAncientKing::Awake()
 {
@@ -46,6 +57,9 @@ void BossAncientKing::Update()
 	Boss::Update();
 
 	StateUpdate();
+	AttackTriggerQuery();
+
+	m_farATKCounter -= system->time->deltaTime;
 }
 
 void BossAncientKing::LateUpdate()
@@ -114,23 +128,49 @@ void BossAncientKing::SetupLight()
 void BossAncientKing::SetupHammer()
 {
 	m_goHammer = CreateGameObjectToChild(m_goCharacterRender->transform);
-	m_goHammer->transform->localScale = V3::one() * 5.0f;
+	m_goHammer->transform->localScale = V3::one() * 4.0f;
 	m_hammerRenderer = m_goHammer->AddComponent<MeshRenderer>();
 	m_hammerRenderer->mesh = system->resource->Find(MESH_ANCIENT_KING_HAMMER);
 	m_hammerRenderer->SetupStandardMaterials();
 
 	m_goHammerTrail = CreateGameObjectToChild(m_goHammer->transform);
-	m_goHammerTrail->transform->localPosition = V3(0, 0, -0.72f);
+	m_goHammerTrail->transform->localPosition = V3(0.0f, 0.0f, -0.9f);
 	//m_goHammerTrail->transform->localEulerAngles = V3(0, -96.0f, 0);
 	m_hammerTrailRenderer = m_goHammerTrail->AddComponent<TrailRenderer>();
 	m_hammerTrailRenderer->alignment = TrailRenderer::Alignment::View;
-	m_hammerTrailRenderer->shrinkDistance = 50.0f;
+	m_hammerTrailRenderer->shrinkDistance = 30.0f;
 	m_hammerTrailRenderer->width = 4.0f;
-	m_hammerTrailRenderer->autoTrail = true;
+	m_hammerTrailRenderer->autoTrail = false;
+	m_hammerTrailRenderer->interpolateStep = 30;
 }
 
 void BossAncientKing::SetupAttackTrigger()
 {
+	m_goAttackTrigger[HAMMER_TRIGGER] = CreateGameObjectToChild(m_goHammer->transform);
+	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.4f);
+	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
+	m_attackTrigger[HAMMER_TRIGGER] = m_goAttackTrigger[HAMMER_TRIGGER]->AddComponent<CapsuleCollider>();
+	CapsuleCollider* hammer_trigger = (CapsuleCollider*)m_attackTrigger[HAMMER_TRIGGER];
+	hammer_trigger->radius = 0.7f;
+	hammer_trigger->halfHeight = 0.45f;
+	hammer_trigger->isTrigger = true;
+	hammer_trigger->enable = false;
+
+	m_goAttackTrigger[FOOT_L_TRIGGER] = CreateGameObjectToChild(transform);
+	m_goAttackTrigger[FOOT_L_TRIGGER]->transform->localPosition = V3(0, 0, 0);
+	m_attackTrigger[FOOT_L_TRIGGER] = m_goAttackTrigger[FOOT_L_TRIGGER]->AddComponent<SphereCollider>();
+	SphereCollider* foot_l_trigger = (SphereCollider*)m_attackTrigger[FOOT_L_TRIGGER];
+	foot_l_trigger->radius = 3.8f;
+	foot_l_trigger->isTrigger = true;
+	foot_l_trigger->enable = false;
+
+	m_goAttackTrigger[FOOT_R_TRIGGER] = CreateGameObjectToChild(transform);
+	m_goAttackTrigger[FOOT_R_TRIGGER]->transform->localPosition = V3(0, 0, 0);
+	m_attackTrigger[FOOT_R_TRIGGER] = m_goAttackTrigger[FOOT_R_TRIGGER]->AddComponent<SphereCollider>();
+	SphereCollider* foot_r_trigger = (SphereCollider*)m_attackTrigger[FOOT_R_TRIGGER];
+	foot_r_trigger->radius = 3.9f;
+	foot_r_trigger->isTrigger = true;
+	foot_r_trigger->enable = false;
 }
 
 void BossAncientKing::UpdateCCT()
@@ -151,18 +191,75 @@ void BossAncientKing::UpdateAttachmentObjects()
 
 	m_goLight->transform->position = m_Head->position;
 	m_goLight->transform->rotation = m_Head->rotation;
+
+	m_goAttackTrigger[FOOT_L_TRIGGER]->transform->position = m_LeftFoot->position;
+	m_goAttackTrigger[FOOT_L_TRIGGER]->transform->rotation = m_LeftFoot->rotation;
+
+	m_goAttackTrigger[FOOT_R_TRIGGER]->transform->position = m_RightFoot->position;
+	m_goAttackTrigger[FOOT_R_TRIGGER]->transform->rotation = m_RightFoot->rotation;
 }
 
 void BossAncientKing::AttackTriggerQuery()
 {
+	for (int i = 0; i < MAX_TRIGGERS; ++i)
+	{
+		if (!m_attackTrigger[i]->enable)
+			continue;
+
+		vector<Collider*> overlaps = system->physics->query->OverlapAll(m_attackTrigger[i], 1 << PhysicsLayer_Player, PhysicsQueryType::Collider);
+		for (auto& overlap : overlaps)
+		{
+			Rigidbody* rigidbody = overlap->rigidbody;
+			if (!rigidbody) continue;
+
+			Player* player = rigidbody->gameObject->GetComponent<Player>();
+			if (!player) continue;
+
+			auto result = m_hitBuffer.insert(rigidbody);
+			if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.
+
+			DamageIn damage = {};
+			damage.FromComponent = this;
+			damage.FromDirection = player->transform->position - transform->position;
+			damage.Guardable = m_gadableAttack;
+			switch (m_attackType)
+			{
+				case ANIM_ATK_LIGHT:
+					damage.Type = DamageInType::LIGHT;
+					damage.Damage = 1.0f;
+					break;
+				case ANIM_ATK_HEAVY:
+					damage.Type = DamageInType::HEAVY;
+					damage.Damage = 2.5f;
+					break;
+				case ANIM_ATK_BLOW:
+					damage.Type = DamageInType::BLOW;
+					damage.Damage = 3.0f;
+					break;
+				case ANIM_ATK_BLOWUP:
+					damage.Damage = 2.0f;
+					damage.Type = DamageInType::BLOWUP;
+					break;
+				case ANIM_ATK_BLOWDOWN:
+					damage.Damage = 3.0f;
+					damage.Type = DamageInType::BLOWDOWN;
+					break;
+			}
+			player->Damage(damage);
+		}
+	}
 }
 
 void BossAncientKing::OffAttackTriggers()
 {
+	for (int i = 0; i < MAX_TRIGGERS; ++i)
+		m_attackTrigger[i]->enable = false;
 }
 
 void BossAncientKing::ClearHitBuffer()
 {
+	if (!m_hitBuffer.empty())
+		m_hitBuffer.clear();
 }
 
 void BossAncientKing::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
@@ -171,6 +268,8 @@ void BossAncientKing::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode
 
 void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
 {
+	m_gadableAttack = false;
+
 	if (prev && prev->name.find(TEXT("ATK")) != tstring::npos &&
 		endChanged.GetPointer() == m_animator->BH_IDLE)
 	{
@@ -182,14 +281,84 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 	{
 		m_usedSATK_TURN = false;
 	}
+
+	if (prev->name.find(TEXT("ATK")) != tstring::npos)
+	{
+		m_hammerTrailRenderer->autoTrail = false;
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
 }
 
 void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
 {
+	if (desc.ContextByte == ANIM_CAM_SHAKE)
+	{
+		float shakeValue = desc.ContextFloat;
+		Player* player = Player::GetInstance();
+		if (player)
+		{
+			TPSCamera* camera = Player::GetInstance()->GetTPSCamera();
+			camera->Shake(V3::up(), shakeValue * 0.1f, 1.1f, 0.15f, 4.0f / 0.15f);
+		}
+	}
+
+	if (desc.ContextInt & ANIM_ATK_GADABLE)
+	{
+		m_gadableAttack = true;
+	}
+
+	if (desc.ContextInt & ANIM_ATK_HAMMER_START)
+	{
+		m_hammerTrailRenderer->autoTrail = true;
+		m_attackTrigger[HAMMER_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextInt);
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_HAMMER_END)
+	{
+		m_hammerTrailRenderer->autoTrail = false;
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & ANIM_ATK_LF_START)
+	{
+		m_attackTrigger[FOOT_L_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextInt);
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_LF_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & ANIM_ATK_RF_START)
+	{
+		m_attackTrigger[FOOT_R_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextInt);
+		ClearHitBuffer();
+	}
+	else if (desc.ContextInt & ANIM_ATK_RF_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
 }
 
 void BossAncientKing::SetAttackType(int contextInt)
 {
+	m_attackType = ANIM_ATK_LIGHT;
+
+	if (contextInt & ANIM_ATK_LIGHT)
+		m_attackType = ANIM_ATK_LIGHT;
+	else if (contextInt & ANIM_ATK_HEAVY)
+		m_attackType = ANIM_ATK_HEAVY;
+	else if (contextInt & ANIM_ATK_BLOW)
+		m_attackType = ANIM_ATK_BLOW;
+	else if (contextInt & ANIM_ATK_BLOWUP)
+		m_attackType = ANIM_ATK_BLOWUP;
+	else if (contextInt & ANIM_ATK_BLOWDOWN)
+		m_attackType = ANIM_ATK_BLOWDOWN;
 }
 
 float BossAncientKing::GetHP() const
@@ -306,11 +475,11 @@ void BossAncientKing::StateUpdate()
 			// 걷기 애니메이션 중에 회전합니다.
 			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), TRACE_SPIN_ANGLE_PER_SEC, system->time->deltaTime);
 
-			if (IsATKCondition())
+			if (IsNearATKCondition())
 			{
-				SetState(State::ATK_RAND);
+				SetState(State::ATK_NEAR_RAND);
 			}
-			else if (IsSATKTurnCondition() && XZAngleBetweenPlayer() > LOOK_START_ANGLE && XZDistanceBetweenPlayer() < ATK_MAX_DIST)
+			else if (IsSATKTurnCondition() && XZAngleBetweenPlayer() > LOOK_START_ANGLE && XZDistanceBetweenPlayer() < ATK_NEAR_MAX_DIST)
 			{
 				SetState(State::SATK_TURN);
 			}
@@ -323,6 +492,10 @@ void BossAncientKing::StateUpdate()
 			{
 				SetState(State::ATK_RUSH);
 			}
+			else if (IsFarATKCondition())
+			{
+				SetState(State::ATK_FAR_RAND);
+			}
 		}
 		break;
 		case State::LOOK:
@@ -333,11 +506,11 @@ void BossAncientKing::StateUpdate()
 			if (m_animator->Layer->IsPlaying(m_animator->BH_TURN_ROTATE))
 				RotateOnYAxisToDirection(ToPlayerDirectionXZ(), LOOK_SPIN_ANGLE_PER_SEC, system->time->deltaTime);
 
-			if (IsATKCondition())
+			if (IsNearATKCondition())
 			{
-				SetState(State::ATK_RAND);
+				SetState(State::ATK_NEAR_RAND);
 			}
-			else if (IsSATKTurnCondition() && XZAngleBetweenPlayer() > LOOK_START_ANGLE && XZDistanceBetweenPlayer() < ATK_MAX_DIST)
+			else if (IsSATKTurnCondition() && XZAngleBetweenPlayer() > LOOK_START_ANGLE && XZDistanceBetweenPlayer() < ATK_NEAR_MAX_DIST)
 			{
 				SetState(State::SATK_TURN);
 			}
@@ -346,13 +519,17 @@ void BossAncientKing::StateUpdate()
 				// 플레이어를 요구 각도 이내로 쳐다본다면 추적을 시작합니다.
 				SetState(State::TRACE);
 			}
+			else if (IsFarATKCondition())
+			{
+				SetState(State::ATK_FAR_RAND);
+			}
 		}
 		break;
 		case State::ATK_SWING_H:
 		case State::ATK_STEPON:
 		case State::ATK_DOWNSTRIKE:
 		{
-			m_animator->KeepAttackBProperty->valueAsBool = XZAngleBetweenPlayer() < ATK_MAX_ANGLE;
+			m_animator->KeepAttackBProperty->valueAsBool = XZAngleBetweenPlayer() < ATK_KEEP_MAX_ANGLE;
 		}
 		break;
 		case State::ATK_RUSH:
@@ -366,9 +543,9 @@ void BossAncientKing::StateUpdate()
 			m_animator->KeepAttackBProperty->valueAsBool =
 				!system->physics->query->SweepSphereTest(
 					CCT->capsuleCollider->transform->position,
-					CCT->capsuleCollider->radius,
+					CCT->capsuleCollider->radius * 0.95f,
 					transform->forward,
-					m_collider->radius + 1.0f,
+					m_collider->radius + 1.5f,
 					1 << PhysicsLayer_Default,
 					PhysicsQueryType::Collider,
 					CCT->rigidbody);
@@ -376,6 +553,23 @@ void BossAncientKing::StateUpdate()
 				m_animator->KeepAttackBProperty->valueAsBool = false;
 		}
 		break;
+	}
+
+	// Spin when attack
+	switch (m_state)
+	{
+		case State::ATK_SWING_H:
+		case State::ATK_SWING_V:
+		case State::ATK_STOMP:
+		case State::ATK_STEPON:
+		case State::ATK_JUMP:
+		case State::ATK_DOWNSTRIKE:
+			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), SPIN_ON_ATK_NEAR_ANGLE_PER_SEC, system->time->deltaTime);
+			break;
+		case State::ATK_ELECTRIC:
+		case State::ATK_BEAM:
+			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), SPIN_ON_ATK_FAR_ANGLE_PER_SEC, system->time->deltaTime);
+			break;
 	}
 }
 
@@ -410,9 +604,13 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 			{
 				SetState(State::LOOK);
 			}
-			else if (IsATKCondition())
+			else if (IsNearATKCondition())
 			{
-				SetState(State::ATK_RAND);
+				SetState(State::ATK_NEAR_RAND);
+			}
+			else if (IsFarATKCondition())
+			{
+				SetState(State::ATK_FAR_RAND);
 			}
 		}
 		break;
@@ -423,17 +621,28 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 				m_traceOrLookAccCounter = 0.0f;
 
 			m_animator->TurnBProperty->valueAsBool = true;
-			if (IsATKCondition())
+			if (IsNearATKCondition())
 			{
-				SetState(State::ATK_RAND);
+				SetState(State::ATK_NEAR_RAND);
+			}
+			else if (IsFarATKCondition())
+			{
+				SetState(State::ATK_FAR_RAND);
 			}
 		}
 		break;
-		case State::ATK_RAND:
+		case State::ATK_FAR_RAND:
 		{
-			if (!IsATKCondition()) cout << "Is not ATK Condition" << endl;
-			int numATK = (int)State::ATK_END - (int)State::ATK_BEGIN;
-			int indexATK = (int)State::ATK_BEGIN + rand() % numATK + 1;
+			int numATK = (int)State::__ATK_FAR_END - (int)State::__ATK_FAR_BEGIN;
+			int indexATK = (int)State::__ATK_FAR_BEGIN + (rand() % (numATK - 1)) + 1;
+			State atk = (State)indexATK;
+			SetState(atk);
+		}
+		break;
+		case State::ATK_NEAR_RAND:
+		{
+			int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
+			int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
 			State atk = (State)indexATK;
 			SetState(atk);
 		}
@@ -465,7 +674,9 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		}
 		break;
 		case State::ATK_RUSH:
+		case State::ATK_NEAR_RUSH:
 		{
+			m_state = State::ATK_RUSH;
 			m_animator->ATK_RUSH_TProperty->SetTriggerState();
 		}
 		break;
@@ -475,7 +686,9 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		}
 		break;
 		case State::ATK_ELECTRIC:
+		case State::ATK_NEAR_ELECTRIC:
 		{
+			m_state = State::ATK_ELECTRIC;
 			m_animator->ATK_ELECTRIC_TProperty->SetTriggerState();
 		}
 		break;
@@ -485,16 +698,20 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		}
 		break;
 		case State::ATK_BEAM:
+		case State::ATK_NEAR_BEAM:
 		{
+			m_state = State::ATK_BEAM;
 			m_animator->ATK_BEAM_TProperty->SetTriggerState();
 		}
 		break;
-		case State::ATK_BEGIN:
-		case State::ATK_END:
-		{
-			SetState(State::ATK_RUSH);
-		}
-		break;
+		//case State::__ATK_FAR_BEGIN:
+		//case State::__ATK_FAR_END:
+		//case State::__ATK_NEAR_BEGIN:
+		//case State::__ATK_NEAR_END:
+		//{
+		//	SetState(State::ATK_RUSH);
+		//}
+		//break;
 	}
 }
 
@@ -529,6 +746,12 @@ void BossAncientKing::StateEnded(BossAncientKing::State before, BossAncientKing:
 			m_animator->TurnBProperty->valueAsBool = false;
 		}
 		break;
+		case State::ATK_RUSH:
+		case State::ATK_ELECTRIC:
+		case State::ATK_BEAM:
+		{
+			m_farATKCounter = ATK_FAR_DELAY;
+		}
 	}
 }
 
@@ -548,12 +771,26 @@ bool BossAncientKing::RaycastToForwardInStage(float length) const
 	return false;
 }
 
-bool BossAncientKing::IsATKCondition() const
+bool BossAncientKing::IsFarATKCondition() const
 {
-	if (XZDistanceBetweenPlayer() > ATK_MAX_DIST)
+	if (m_farATKCounter > 0.0f)
 		return false;
 
-	if (XZAngleBetweenPlayer() > ATK_MAX_ANGLE)
+	if (XZDistanceBetweenPlayer() < ATK_NEAR_MAX_DIST)
+		return false;
+
+	if (XZAngleBetweenPlayer() > ATK_FAR_MAX_ANGLE)
+		return false;
+
+	return true;
+}
+
+bool BossAncientKing::IsNearATKCondition() const
+{
+	if (XZDistanceBetweenPlayer() > ATK_NEAR_MAX_DIST)
+		return false;
+
+	if (XZAngleBetweenPlayer() > ATK_NEAR_MAX_ANGLE)
 		return false;
 
 	return true;

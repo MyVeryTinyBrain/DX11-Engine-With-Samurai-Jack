@@ -62,21 +62,72 @@ void BossAncientKingAnimator::SetupNodes()
     Layer->AddNode(BH_IDLE);
 
     BH_TURN_ROTATE = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN_ROTATE")), NOLOOP);
+    {
+        AnimationEventDesc e0, e1;
+        e0.NormalizedTime = 22 / 44.0f;
+        e1.NormalizedTime = 42 / 44.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        e1.ContextFloat = 0.5f;
+        BH_TURN_ROTATE->AddEvent(e0);
+        BH_TURN_ROTATE->AddEvent(e1);
+    }
     Layer->AddNode(BH_TURN_ROTATE);
 
     BH_TURN_WAIT = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN_WAIT")), NOLOOP);
     Layer->AddNode(BH_TURN_WAIT);
 
     BH_WLK_ST = AnimatorSingleNode::Create(GetClip(TEXT("BH_WLK_ST")), NOLOOP);
+    {
+        AnimationEventDesc e0, e1;
+        e0.NormalizedTime = 17 / 60.0f;
+        e1.NormalizedTime = 44 / 60.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        e1.ContextFloat = 0.5f;
+        BH_WLK_ST->AddEvent(e0);
+        BH_WLK_ST->AddEvent(e1);
+    }
     Layer->AddNode(BH_WLK_ST);
 
     BH_WLK_LP = AnimatorSingleNode::Create(GetClip(TEXT("BH_WLK_LP")), LOOP);
+    {
+        AnimationEventDesc e0, e1;
+        e0.NormalizedTime = 24 / 80.0f;
+        e1.NormalizedTime = 65 / 80.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        e1.ContextFloat = 0.5f;
+        BH_WLK_LP->AddEvent(e0);
+        BH_WLK_LP->AddEvent(e1);
+    }
     Layer->AddNode(BH_WLK_LP);
 
     BH_WLK_ED = AnimatorSingleNode::Create(GetClip(TEXT("BH_WLK_ED")), NOLOOP);
+    {
+        AnimationEventDesc e0, e1;
+        e0.NormalizedTime = 24 / 70.0f;
+        e1.NormalizedTime = 60 / 70.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        e1.ContextFloat = 0.5f;
+        BH_WLK_ED->AddEvent(e0);
+        BH_WLK_ED->AddEvent(e1);
+    }
     Layer->AddNode(BH_WLK_ED);
 
     DMG_GROGY_ST = AnimatorSingleNode::Create(GetClip(TEXT("DMG_GROGY_ST")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 15 / 35.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        DMG_GROGY_ST->AddEvent(e0);
+    }
     Layer->AddNode(DMG_GROGY_ST);
 
     DMG_GROGY_LP = AnimatorSingleNode::Create(GetClip(TEXT("DMG_GROGY_LP")), LOOP);
@@ -89,48 +140,218 @@ void BossAncientKingAnimator::SetupNodes()
     Layer->AddNode(DMG_GROGY_HIT);
 
     DMG_DIE = AnimatorSingleNode::Create(GetClip(TEXT("DMG_DIE")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 88 / 100.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        DMG_DIE->AddEvent(e0);
+    }
     Layer->AddNode(DMG_DIE);
   
     ATK_TURN = AnimatorSingleNode::Create(GetClip(TEXT("ATK_TURN")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 29 / 75.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        ATK_TURN->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 16 / 75.0f;
+        a1.NormalizedTime = 33 / 75.0f;
+        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
+        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        ATK_TURN->AddEvent(a0);
+        ATK_TURN->AddEvent(a1);
+    }
     Layer->AddNode(ATK_TURN);
 
     ATK_SWING_L = AnimatorSingleNode::Create(GetClip(TEXT("ATK_SWING_L")), NOLOOP);
+    {
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 27 / 100.0f;
+        a1.NormalizedTime = 38 / 100.0f;
+        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
+        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        ATK_SWING_L->AddEvent(a0);
+        ATK_SWING_L->AddEvent(a1);
+    }
     Layer->AddNode(ATK_SWING_L);
 
     ATK_SWING_R = AnimatorSingleNode::Create(GetClip(TEXT("ATK_SWING_R")), NOLOOP);
+    {
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 18 / 89.0f;
+        a1.NormalizedTime = 34 / 89.0f;
+        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
+        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        ATK_SWING_R->AddEvent(a0);
+        ATK_SWING_R->AddEvent(a1);
+    }
     Layer->AddNode(ATK_SWING_R);
 
     ATK_SWING_V = AnimatorSingleNode::Create(GetClip(TEXT("ATK_SWING_V")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 39 / 85.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_SWING_V->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 35 / 85.0f;
+        a1.NormalizedTime = 39 / 85.0f;
+        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
+        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        ATK_SWING_V->AddEvent(a0);
+        ATK_SWING_V->AddEvent(a1);
+    }
     Layer->AddNode(ATK_SWING_V);
 
     ATK_STOMP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_STOMP")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 78 / 260.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_STOMP->AddEvent(e0);
+
+		AnimationEventDesc a0, a1;
+		a0.NormalizedTime = 74 / 260.0f;
+		a1.NormalizedTime = 85 / 260.0f;
+		a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
+		a1.ContextInt = ANIM_ATK_HAMMER_END;
+		ATK_STOMP->AddEvent(a0);
+		ATK_STOMP->AddEvent(a1);
+    }
     Layer->AddNode(ATK_STOMP);
 
     ATK_STEPON_L = AnimatorSingleNode::Create(GetClip(TEXT("ATK_STEPON_L")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 59 / 123.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_STEPON_L->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 58 / 123.0f;
+        a1.NormalizedTime = 61 / 123.0f;
+        a0.ContextInt = ANIM_ATK_LF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
+        a1.ContextInt = ANIM_ATK_LF_END;
+        ATK_STEPON_L->AddEvent(a0);
+        ATK_STEPON_L->AddEvent(a1);
+    }
     Layer->AddNode(ATK_STEPON_L);
 
     ATK_STEPON_R = AnimatorSingleNode::Create(GetClip(TEXT("ATK_STEPON_R")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 40 / 110.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_STEPON_R->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 38 / 123.0f;
+        a1.NormalizedTime = 40 / 123.0f;
+        a0.ContextInt = ANIM_ATK_RF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
+        a1.ContextInt = ANIM_ATK_RF_END;
+        ATK_STEPON_R->AddEvent(a0);
+        ATK_STEPON_R->AddEvent(a1);
+    }
     Layer->AddNode(ATK_STEPON_R);
 
     ATK_RUSH_ST = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ST")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 33 / 35.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        ATK_RUSH_ST->AddEvent(e0);
+    }
     Layer->AddNode(ATK_RUSH_ST);
 
     ATK_RUSH_LP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_LP")), LOOP);
+    {
+        AnimationEventDesc e0, e1;
+        e0.NormalizedTime = 4 / 20.0f;
+        e1.NormalizedTime = 14 / 20.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 0.5f;
+        e1.ContextFloat = 0.5f;
+        ATK_RUSH_LP->AddEvent(e0);
+        ATK_RUSH_LP->AddEvent(e1);
+    }
     Layer->AddNode(ATK_RUSH_LP);
 
     ATK_RUSH_ED = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ED")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 17 / 52.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_RUSH_ED->AddEvent(e0);
+    }
     Layer->AddNode(ATK_RUSH_ED);
 
     ATK_JUMP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_JUMP")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 33 / 110.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_JUMP->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 31 / 110.0f;
+        a1.NormalizedTime = 34 / 110.0f;
+        a0.ContextInt = ANIM_ATK_RF_START | ANIM_ATK_LF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
+        a1.ContextInt = ANIM_ATK_RF_END | ANIM_ATK_LF_END;
+        ATK_JUMP->AddEvent(a0);
+        ATK_JUMP->AddEvent(a1);
+    }
     Layer->AddNode(ATK_JUMP);
 
     ATK_ELECTRIC = AnimatorSingleNode::Create(GetClip(TEXT("ATK_ELECTRIC")), NOLOOP);
     Layer->AddNode(ATK_ELECTRIC);
 
     ATK_DOWNSTRIKE_L = AnimatorSingleNode::Create(GetClip(TEXT("ATK_DOWNSTRIKE_L")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 51 / 115.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_DOWNSTRIKE_L->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 48 / 115.0f;
+        a1.NormalizedTime = 52 / 115.0f;
+        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
+        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        ATK_DOWNSTRIKE_L->AddEvent(a0);
+        ATK_DOWNSTRIKE_L->AddEvent(a1);
+    }
     Layer->AddNode(ATK_DOWNSTRIKE_L);
 
     ATK_DOWNSTRIKE_R = AnimatorSingleNode::Create(GetClip(TEXT("ATK_DOWNSTRIKE_R")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 47 / 120.0f;
+        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextFloat = 1.0f;
+        ATK_DOWNSTRIKE_R->AddEvent(e0);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 44 / 110.0f;
+        a1.NormalizedTime = 50 / 110.0f;
+        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
+        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        ATK_DOWNSTRIKE_R->AddEvent(a0);
+        ATK_DOWNSTRIKE_R->AddEvent(a1);
+    }
     Layer->AddNode(ATK_DOWNSTRIKE_R);
 
     ATK_BEAM = AnimatorSingleNode::Create(GetClip(TEXT("ATK_BEAM")), NOLOOP);

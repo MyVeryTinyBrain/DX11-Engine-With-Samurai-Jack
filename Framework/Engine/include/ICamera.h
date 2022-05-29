@@ -15,6 +15,8 @@ public:
 	virtual V3 GetPosition() const = 0;
 
 	virtual V3 GetDirection() const = 0;
+	virtual V3 GetUp() const = 0;
+	virtual V3 GetRight() const = 0;
 
 	virtual Q GetRotation() const = 0;
 

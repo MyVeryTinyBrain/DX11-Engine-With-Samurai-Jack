@@ -8,6 +8,7 @@
 #include "IRendererBoundsOp.h"
 #include "IRendererCullOp.h"
 #include "IRendererBoneOp.h"
+#include "IOnCamera.h"
 
 ENGINE_BEGIN
 
@@ -39,6 +40,7 @@ struct ENGINE_API RenderRequestOp
 	IRendererBoundsOp*						boundsOp; // instance 플래그가 활성화 상태에서는 인식되지 않습니다.
 	IRendererCullOp*						cullOp;
 	IRendererBoneOp*						boneOp;
+	IOnCamera*								onCameraOp;
 };
 
 struct ENGINE_API RenderRequestShadow

@@ -98,6 +98,9 @@ bool MeshRenderer::IsValid() const
 
 void MeshRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 {
+	if (m_mesh == mesh)
+		return;
+
 	m_mesh = mesh;
 
 	SetupDefaultMaterials();

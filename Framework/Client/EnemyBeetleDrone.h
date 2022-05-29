@@ -83,6 +83,6 @@ private:
 	// Stat
 
 	bool m_appeared = false;
-	float m_hp = 10.0f;
+	float m_hp = 20.0f;
 };
 

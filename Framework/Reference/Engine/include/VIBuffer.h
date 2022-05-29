@@ -37,7 +37,7 @@ public:
 
 public:
 
-	inline bool IsValid() const { return m_vi && m_vb && m_ib; }
+	bool IsValid() const;
 
 	inline VI* GetVI() const { return m_vi; }
 

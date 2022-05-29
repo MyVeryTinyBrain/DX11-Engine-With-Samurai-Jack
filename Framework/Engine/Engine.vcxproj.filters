@@ -305,9 +305,6 @@
     <ClInclude Include="include\NodeDesc.h">
       <Filter>Object\Resource\Mesh\Assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\InstanceRenderer.h">
-      <Filter>Object\SceneObject\Component\Renderer\InstanceRenderer</Filter>
-    </ClInclude>
     <ClInclude Include="include\AnimatorProperty.h">
       <Filter>Object\SceneObject\Component\Animator\Layer\Property</Filter>
     </ClInclude>
@@ -605,6 +602,12 @@
     <ClInclude Include="include\AnimatorEmptyNode.h">
       <Filter>Object\SceneObject\Component\Animator\Node</Filter>
     </ClInclude>
+    <ClInclude Include="include\IOnCamera.h">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BillboardRenderer.h">
+      <Filter>Object\SceneObject\Component\Renderer\BillobardRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -901,9 +904,6 @@
     <ClCompile Include="src\NodeSet.cpp">
       <Filter>Object\Resource\Mesh\Assimp</Filter>
     </ClCompile>
-    <ClCompile Include="src\InstanceRenderer.cpp">
-      <Filter>Object\SceneObject\Component\Renderer\InstanceRenderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\AnimatorProperty.cpp">
       <Filter>Object\SceneObject\Component\Animator\Layer\Property</Filter>
     </ClCompile>
@@ -1165,6 +1165,12 @@
     <ClCompile Include="src\AnimatorEmptyNode.cpp">
       <Filter>Object\SceneObject\Component\Animator\Node</Filter>
     </ClCompile>
+    <ClCompile Include="src\IOnCamera.cpp">
+      <Filter>EngineWorld\System\Graphic\RenderQueue\IRendererOp</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BillboardRenderer.cpp">
+      <Filter>Object\SceneObject\Component\Renderer\BillobardRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1281,12 +1287,6 @@
     <Filter Include="Object\SceneObject\Component\Renderer\MeshRenderer">
       <UniqueIdentifier>{0a7e4c6c-af05-4fc7-a237-a13c2cc46464}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\SceneObject\Component\Renderer\ScreenRenderer">
-      <UniqueIdentifier>{2b1d13ba-cebe-4e55-a0e2-406e38e5ffb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\SceneObject\Component\Renderer\SpriteRenderer">
-      <UniqueIdentifier>{e1699a2c-e9b2-47b2-b2f1-4f8df20d447f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\SceneObject\Component\Renderer\TrailRenderer">
       <UniqueIdentifier>{c4473133-c261-4c74-8ab8-790d18ef47e9}</UniqueIdentifier>
     </Filter>
@@ -1343,9 +1343,6 @@
     </Filter>
     <Filter Include="Object\Resource\Mesh\Assimp">
       <UniqueIdentifier>{a059355a-2980-432d-a3fc-6d6ae07e8f31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\SceneObject\Component\Renderer\InstanceRenderer">
-      <UniqueIdentifier>{84f4e220-0ddd-49b6-badc-6c278b152b56}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\SceneObject\Component\Animator\Layer\Property">
       <UniqueIdentifier>{0b20cead-6a1d-45ea-8eb9-76525e779218}</UniqueIdentifier>
@@ -1479,6 +1476,9 @@
     <Filter Include="Object\SceneObject\Component\Animator\AnimationEvent">
       <UniqueIdentifier>{c8b3769d-e3c6-41ec-97b4-1d540e8681b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\SceneObject\Component\Renderer\BillobardRenderer">
+      <UniqueIdentifier>{36a93583-5043-4072-b374-7d736647d97d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Color.fx">
@@ -1513,6 +1513,9 @@
     </FxCompile>
     <FxCompile Include="..\Shader\Light.hlsl">
       <Filter>Object\Resource\Shader\Built-in Header</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Unlit.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

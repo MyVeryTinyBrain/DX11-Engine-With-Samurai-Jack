@@ -14,7 +14,7 @@ namespace XmMathPlus
 
 		constexpr Real Rad2Deg = (180.0f / PI);
 
-		constexpr Real Infinity = ((Real)(1e+300 * 1e+300));
+		constexpr Real Infinity = (0x7F800000);
 
 		constexpr Real NaN = ((Real)(Infinity * 0.0F));
 

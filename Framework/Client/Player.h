@@ -17,6 +17,8 @@ private:
 
 private:
 
+	// Setup
+
 	void SetupTPSCamera();
 	void SetupCharacterRenderers();
 	void SetupAnimator();
@@ -25,21 +27,29 @@ private:
 	void SetupFootCnt();
 	void SetupAttackTrigger();
 
+	// Character update
+
 	void UpdateCCT();
 	void UpdateAttachmentObjects();
 
-	void XZInput();
-	void DashInput();
-	void JumpInput();
-	void RollInput();
-	void AttackInput();
-	void GuardInput();
+	// Attack
 
 	void AttackTriggerQuery();
 	void OffAttackTriggers();
 	void ClearHitBuffer();
 
+	// Character behavior
+
+	void XZInput();
+	void DashInput();
+	void JumpInput();
+	void RollInput();
+	void GuardInput();
+	void AttackInput();
+
 private:
+
+	// Input
 
 	void UpdateKeyTimes();
 	V3 GetTranslateDirection() const;
@@ -52,10 +62,6 @@ private:
 	void OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev);
 	void OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc);
 	void SetAttackType(int contextInt);
-
-private:
-
-	bool GroundCheck(float dist);
 
 public:
 
@@ -84,9 +90,9 @@ private:
 
 	GameObject*				m_goCharacterRender;
 	SkinnedMeshRenderer*	m_characterRenderer;
-	Ref<NodeTransform>		m_rightHandWeaponCntNode;
-	Ref<NodeTransform>		m_scabbardCntNode;
-	Ref<NodeTransform>		m_leftToeBaseNode;
+	Ref<NodeTransform>		m_RightHandWeaponCntNode;
+	Ref<NodeTransform>		m_ScabbardCntNode;
+	Ref<NodeTransform>		m_LeftToeBaseNode;
 
 	GameObject*				m_goKatanaSheathRenderer;
 	MeshRenderer*			m_katanaSheathRenderer;
@@ -127,10 +133,6 @@ private:
 	float					m_lShiftPressingTime;
 	float					m_leftMousePressedTime;
 	float					m_leftMousePressingTime;
-
-	// Second groundhit
-
-	bool m_hasGround = false;
 
 	// Static
 

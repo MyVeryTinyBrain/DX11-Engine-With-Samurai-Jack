@@ -24,6 +24,8 @@ public:
 
 	HRESULT SetRawValue(const string& name, const void* data, size_t size);
 	HRESULT SetFloat(const string& name, float value);
+	HRESULT SetInt(const string& name, int value);
+	HRESULT SetUInt(const string& name, uint value);
 	HRESULT SetVector(const string& name, const V4& value);
 	HRESULT SetColor(const string& name, const Color& value);
 	HRESULT SetMatrix(const string& name, const M4& value);
@@ -32,6 +34,8 @@ public:
 
 	HRESULT GetRawValue(const string& name, void* out_data, size_t* inout_size);
 	HRESULT GetFloat(const string& name, float* out_value);
+	HRESULT GetInt(const string& name, int* out_value);
+	HRESULT GetUInt(const string& name, uint* out_value);
 	HRESULT GetVector(const string& name, V4* out_value);
 	HRESULT GetColor(const string& name, Color* out_value);
 	HRESULT GetMatrix(const string& name, M4* out_value);

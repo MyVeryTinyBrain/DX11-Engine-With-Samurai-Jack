@@ -64,23 +64,51 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 	Layer->AddNode(BH_STD_LAND);
 
 	STD_ATK1 = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK1")), NOLOOP);
-	STD_ATK1->AddEvent(18 / 45.0f, ANIM_ATK_RH_START | ANIM_ATK_LIGHT);
-	STD_ATK1->AddEvent(20 / 45.0f, ANIM_ATK_RH_END);
+	{
+		AnimationEventDesc e0, e1;
+		e0.NormalizedTime = 18 / 45.0f;
+		e1.NormalizedTime = 20 / 45.0f;
+		e0.ContextInt = ANIM_ATK_RH_START | ANIM_ATK_LIGHT;
+		e1.ContextInt = ANIM_ATK_RH_END;
+		STD_ATK1->AddEvent(e0);
+		STD_ATK1->AddEvent(e1);
+	}
 	Layer->AddNode(STD_ATK1);
 
 	STD_ATK2 = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK2")), NOLOOP);
-	STD_ATK2->AddEvent(8 / 50.0f, ANIM_ATK_LH_START | ANIM_ATK_LIGHT);
-	STD_ATK2->AddEvent(11 / 50.0f, ANIM_ATK_LH_END);
+	{
+		AnimationEventDesc e0, e1;
+		e0.NormalizedTime = 8 / 50.0f;
+		e1.NormalizedTime = 11 / 50.0f;
+		e0.ContextInt = ANIM_ATK_LH_START | ANIM_ATK_LIGHT;
+		e1.ContextInt = ANIM_ATK_LH_END;
+		STD_ATK2->AddEvent(e0);
+		STD_ATK2->AddEvent(e1);
+	}
 	Layer->AddNode(STD_ATK2);
 
 	STD_ATK3A = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK3A")), NOLOOP);
-	STD_ATK3A->AddEvent(5 / 51.0f, ANIM_ATK_RH_START | ANIM_ATK_HEAVY);
-	STD_ATK3A->AddEvent(9 / 51.0f, ANIM_ATK_RH_END);
+	{
+		AnimationEventDesc e0, e1;
+		e0.NormalizedTime = 5 / 51.0f;
+		e1.NormalizedTime = 9 / 51.0f;
+		e0.ContextInt = ANIM_ATK_RH_START | ANIM_ATK_HEAVY;
+		e1.ContextInt = ANIM_ATK_RH_END;
+		STD_ATK3A->AddEvent(e0);
+		STD_ATK3A->AddEvent(e1);
+	}
 	Layer->AddNode(STD_ATK3A);
 
 	STD_ATK3B = AnimatorSingleNode::Create(GetClip(TEXT("STD_ATK3B")), NOLOOP);
-	STD_ATK3B->AddEvent(20 / 45.0f, ANIM_ATK_RH_START | ANIM_ATK_LH_START | ANIM_ATK_BLOW);
-	STD_ATK3B->AddEvent(23 / 45.0f, ANIM_ATK_RH_END | ANIM_ATK_LH_END);
+	{
+		AnimationEventDesc e0, e1;
+		e0.NormalizedTime = 20 / 45.0f;
+		e1.NormalizedTime = 23 / 45.0f;
+		e0.ContextInt = ANIM_ATK_RH_START | ANIM_ATK_LH_START | ANIM_ATK_BLOW;
+		e1.ContextInt = ANIM_ATK_RH_END | ANIM_ATK_LH_END;
+		STD_ATK3B->AddEvent(e0);
+		STD_ATK3B->AddEvent(e1);
+	}
 	Layer->AddNode(STD_ATK3B);
 
 	DMG_STD_AIR = AnimatorSingleNode::Create(GetClip(TEXT("DMG_STD_AIR")), NOLOOP);

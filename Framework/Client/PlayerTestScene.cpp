@@ -6,6 +6,7 @@
 #include "EnemyBeetleDrone.h"
 #include "BossAncientKing.h"
 #include "Config.h"
+#include "BillboardAnimation.h"
 
 Scene* PlayerTestScene::Clone()
 {
@@ -24,23 +25,43 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
 
-	{
-		GameObject* goLine = CreateGameObject();
-		goLine->transform->position = V3(0, 5, -5);
-		LineRenderer* line = goLine->AddComponent<LineRenderer>();
+	//{
+	//	GameObject* goLine = CreateGameObject();
+	//	goLine->transform->position = V3(0, 2, -4);
+	//	LineRenderer* line = goLine->AddComponent<LineRenderer>();
 
-		for (int i = 0; i <= 50; ++i)
-		{
-			float p = float(i) / 50.0f;
-			float r = p * TAU;
-			float x = Cos(r);
-			float z = Sin(r);
-			line->AddPoint(V3(x, 0, z) * 3.0f);
-		}
+	//	//for (int i = 0; i <= 50; ++i)
+	//	//{
+	//	//	float p = float(i) / 50.0f;
+	//	//	float r = p * TAU;
+	//	//	float x = Cos(r);
+	//	//	float z = Sin(r);
+	//	//	line->AddPoint(V3(x, 0, z) * 3.0f);
+	//	//}
 
-		line->isLocalSpace = true;
-		line->alignment = LineRenderer::Alignment::Local;
-	}
+	//	line->AddPoint(V3(0, 0, 0));
+	//	line->AddPoint(V3(2, 0, 0));
+	//	line->AddPoint(V3(2, 2, 0));
+	//	line->AddPoint(V3(4, 2, 0));
+
+	//	line->SetInterpolateStep(50);
+
+	//	line->isLocalSpace = true;
+	//	//line->alignment = LineRenderer::Alignment::View;
+	//}
+
+	//{
+	//	GameObject* goLine = CreateGameObject();
+	//	goLine->transform->position = V3(0, 1, -1);
+	//	LineRenderer* line = goLine->AddComponent<LineRenderer>();
+
+	//	line->AddPoint(V3(0, 0, 0));
+	//	line->AddPoint(V3(0, 2, 0));
+	//	line->AddPoint(V3(2, 2, 0));
+
+	//	line->isLocalSpace = true;
+	//	line->alignment = LineRenderer::Alignment::View;
+	//}
 
 	//*
 	{
@@ -53,15 +74,38 @@ void PlayerTestScene::OnLoad()
 				system->resource->factory->LoadMeshM(MESH_BEETLE_DRONE);
 				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING);
 				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING_HAMMER);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_SWORDTRAIL_GRADIENT);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_TRAIL_GRADIENT);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SPARK);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_TRAIL_LINE);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_EXPLOSION);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FIRE_SUBUV);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME01);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME02);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME03);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME04);
+				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_TRAIL);
+				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
+				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_ANIMATION);
 			});
 		if (t0.joinable())
 			t0.join();
 
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(0, 20, 10);
-		//	goEnemy->AddComponent<BossAncientKing>();
-		//}
+		{
+			GameObject* goAnim = CreateGameObject();
+			goAnim->transform->position = V3(0, 2, 8);
+			goAnim->transform->localScale = V3::one() * 3.0f;
+			BillboardAnimation* anim = goAnim->AddComponent<BillboardAnimation>();
+			anim->SetTexture(system->resource->Find(TEX_ANIM_FLAME04));
+			anim->SetSliced(uint2(8, 8));
+			anim->SetColor(Color::RGBA255(255, 0, 68, 255));
+		}
+
+		{
+			GameObject* goEnemy = CreateGameObject();
+			goEnemy->transform->position = V3(0, 20, 10);
+			goEnemy->AddComponent<BossAncientKing>();
+		}
 
 		//{
 		//	GameObject* goEnemy = CreateGameObject();
@@ -142,7 +186,7 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			GameObject* goGround = CreateGameObject();
+			GameObject* goGround = CreateGameObject(TEXT("Ground"));
 			goGround->transform->position = V3::down() * 1.0f;
 			goGround->transform->localScale = V3(100, 1, 100);
 
@@ -159,7 +203,7 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			GameObject* goWall = CreateGameObject();
+			GameObject* goWall = CreateGameObject(TEXT("Wall"));
 			goWall->transform->position = V3(50, 4.5f, 0);
 			goWall->transform->localScale = V3(1, 10, 100);
 
@@ -174,7 +218,7 @@ void PlayerTestScene::OnLoad()
 			meshRenderer->SetupStandardMaterials();
 		}
 		{
-			GameObject* goWall = CreateGameObject();
+			GameObject* goWall = CreateGameObject(TEXT("Wall"));
 			goWall->transform->position = V3(-50, 4.5f, 0);
 			goWall->transform->localScale = V3(1, 10, 100);
 
@@ -189,7 +233,7 @@ void PlayerTestScene::OnLoad()
 			meshRenderer->SetupStandardMaterials();
 		}
 		{
-			GameObject* goWall = CreateGameObject();
+			GameObject* goWall = CreateGameObject(TEXT("Wall"));
 			goWall->transform->position = V3(0, 4.5f, 50);
 			goWall->transform->localScale = V3(100, 10, 1);
 
@@ -204,7 +248,7 @@ void PlayerTestScene::OnLoad()
 			meshRenderer->SetupStandardMaterials();
 		}
 		{
-			GameObject* goWall = CreateGameObject();
+			GameObject* goWall = CreateGameObject(TEXT("Wall"));
 			goWall->transform->position = V3(0, 4.5f, -50);
 			goWall->transform->localScale = V3(100, 10, 1);
 
@@ -253,7 +297,7 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			GameObject* box = CreateGameObject();
+			GameObject* box = CreateGameObject(TEXT("Box"));
 			box->transform->eulerAngles = V3(-20, 0, 10);
 			box->transform->localScale = V3::one() * 5;
 			box->transform->position = V3(0, 0, -5);
@@ -269,7 +313,7 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			GameObject* box = CreateGameObject();
+			GameObject* box = CreateGameObject(TEXT("Box"));
 			box->transform->eulerAngles = V3(0, 0, 0);
 			box->transform->localScale = V3::one() * 5;
 			box->transform->position = V3(20, 0, -5);
@@ -285,7 +329,7 @@ void PlayerTestScene::OnLoad()
 		}
 
 		{
-			GameObject* box = CreateGameObject();
+			GameObject* box = CreateGameObject(TEXT("Box"));
 			box->transform->eulerAngles = V3(45, 0, 0);
 			box->transform->localScale = V3::one() * 5;
 			box->transform->position = V3(-20, -1.0f, -5);

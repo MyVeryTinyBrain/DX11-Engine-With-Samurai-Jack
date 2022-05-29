@@ -84,7 +84,7 @@ PS_IN VS_MAIN(VS_IN In)
 	instanceWorldMatrix[2] = In.Forward;
 	instanceWorldMatrix[3] = In.Instance_Position;
 
-	float4 worldPosition = mul(position, _WorldMatrix);
+	float4 worldPosition = mul(position, instanceWorldMatrix);
 	half4 vPosition = mul(worldPosition, _ViewMatrix);
 	half4 outputPosition = mul(vPosition, _ProjectionMatrix);
 

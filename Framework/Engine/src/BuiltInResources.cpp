@@ -104,6 +104,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateShader(TEXT("Color.cso"), &m_colorShader)))
 		return hr;
 
+	if (FAILED(hr = CreateShader(TEXT("Unlit.cso"), &m_unlitShader)))
+		return hr;
+
 	if (nullptr == (m_standardMaterial = m_factory->CreateMaterialByShaderUM(m_standardShader)))
 		return E_FAIL;
 
@@ -111,10 +114,13 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 		return E_FAIL;
 	m_whiteMaterial->SetColor("_Color", Color::white());
 	m_whiteMaterial->techniqueIndex = 0;
-
+	
 	if (nullptr == (m_wireframeMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
 	m_wireframeMaterial->techniqueIndex = 3;
+
+	if (nullptr == (m_unlitMaterial = m_factory->CreateMaterialByShaderUM(m_unlitShader)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -223,6 +229,11 @@ const ResourceRef<Shader>& BuiltInResources::GetColorShader() const
 	return m_colorShader;
 }
 
+const ResourceRef<Shader>& BuiltInResources::GetUnlitShader() const
+{
+	return m_unlitShader;
+}
+
 const ResourceRef<Material>& BuiltInResources::GetStandardMaterial() const
 {
 	return m_standardMaterial;
@@ -236,6 +247,11 @@ const ResourceRef<Material>& BuiltInResources::GetWhiteMaterial() const
 const ResourceRef<Material>& BuiltInResources::GetWireframeMaterial() const
 {
 	return m_wireframeMaterial;
+}
+
+const ResourceRef<Material>& BuiltInResources::GetUnlitMaterial() const
+{
+	return m_unlitMaterial;
 }
 
 System* BuiltInResources::GetSystem() const

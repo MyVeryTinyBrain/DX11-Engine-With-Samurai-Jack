@@ -2,29 +2,48 @@
 
 #include "Renderer.h"
 #include "IRendererCullOp.h"
+#include "IOnCamera.h"
 
 ENGINE_BEGIN
 
-class ENGINE_API TrailRenderer : public Renderer, public IRendererCullOp
+class ENGINE_API TrailRenderer : public Renderer, public IRendererCullOp, public IOnCamera
 {
-private:
-
-	struct Data
-	{
-		V3		Position;
-		Q		Rotation;
-		float	DistanceAccumulation;
-	};
-
 public:
 
 	enum class Alignment { View, Local };
 
 private:
 
+	struct Data
+	{
+		V3		position;
+		Q		rotation;
+		float	distanceAcc;
+	};
+	struct VertexPairInput
+	{
+		V3 start, end;
+		Q rotation; // Using on Local alignment
+		float distanceAcc;
+		TrailRenderer::Alignment alignment;
+		float width;
+		ICamera* camera;
+		float percent;
+		bool inverse;
+	};
+	struct VertexPairOutput
+	{
+		V3 position[2];
+		V3 normal, binormal, tangent;
+		V3 uvw[2];
+	};
+
+private:
+
 	virtual void Awake() override;
 	virtual void LateUpdate() override;
 	virtual void Render() override;
+	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pinput) override;
 
 public:
 
@@ -32,9 +51,6 @@ public:
 	void PopPosition();
 
 public:
-
-	inline uint GetRectCount() const { return m_numRect; }
-	void SetRectCount(uint value);
 
 	inline float GetWidth() const { return m_width; }
 	inline void SetWidth(float value) { m_width = Max(0.0f, value); }
@@ -66,7 +82,9 @@ public:
 	inline bool IsAutoTrailMode() const { return m_autoTrail; }
 	inline void SetAutoTrailMode(bool value) { m_autoTrail = value; }
 
-	_declspec(property(get = GetRectCount, put = SetRectCount)) uint rectCount;
+	inline uint GetInterpolateStep() const { return m_interpolateStep; }
+	inline void SetInterpolateStep(uint value) { m_interpolateStep = value; }
+
 	_declspec(property(get = GetWidth, put = SetWidth)) float width;
 	_declspec(property(get = GetMinVertexDistance, put = SetMinVertexDistance)) float minVertexDistance;
 	_declspec(property(get = GetBeginShrinkDelay, put = SetBeginShrinkDelay)) float beginShrinkDelay;
@@ -77,6 +95,7 @@ public:
 	_declspec(property(get = GetVScale, put = SetVScale)) float vScale;
 	_declspec(property(get = GetAlignment, put = SetAlignment)) TrailRenderer::Alignment alignment;
 	_declspec(property(get = IsAutoTrailMode, put = SetAutoTrailMode)) bool autoTrail;
+	_declspec(property(get = GetInterpolateStep, put = SetInterpolateStep)) uint interpolateStep;
 
 public:
 
@@ -86,19 +105,16 @@ public:
 
 private:
 
-	void SetupMesh(uint numRect);
+	void SetupMesh();
+	void SetNumMeshRect(uint numRect);
+	uint GetNumMeshRect() const;
+	uint GetNumInterpolatedRect() const;
+
 	void Shrink(float shrinkDistance);
-	void SetupVertexPair(
-		uint dataIndex, 
-		const V3& camDir, 
-		const V3& camPos,
-		float width, 
-		V3& inout_min, V3& inout_max);
-	void ApplyVertices();
+	void ApplyVertices(ICamera* camera);
+	TrailRenderer::VertexPairOutput CalcVertexPair(const TrailRenderer::VertexPairInput& desc, V3& inout_min, V3& inout_max) const;
 
 private:
-
-	uint						m_numRect = 0;
 
 	deque<Data>					m_datas;
 
@@ -125,29 +141,7 @@ private:
 
 	bool						m_autoTrail = true;
 
-	//uint						m_numInterpolate = 0;
-
-	/*
-
-	8---9	..uvw.y = 4 * vScale, uvw.z = 1
-	| /	|
-	6---7	..uvw.y = 3 * vScale
-	| /	|
-	4---5	..uvw.y = 2 * vScale
-	| /	|
-	2---3	..uvw.y = 1 * vScale
-	| /	|
-	0---1	..uvw.y = 0 * vScale, uvw.z = 0
-
-	.	.
-	.	.
-	uvw.x = 0
-		.
-		.
-		uvw.x = 1
-
-	*/
-
+	uint						m_interpolateStep = 10;
 };
 
 ENGINE_END

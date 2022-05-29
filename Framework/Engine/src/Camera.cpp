@@ -119,9 +119,14 @@ V3 Camera::GetDirection() const
 	return transform->forward;
 }
 
-void Camera::SetDirection(const V3& direction)
+V3 Camera::GetUp() const
 {
-	transform->forward = direction;
+	return transform->up;
+}
+
+V3 Camera::GetRight() const
+{
+	return transform->right;
 }
 
 Q Camera::GetRotation() const

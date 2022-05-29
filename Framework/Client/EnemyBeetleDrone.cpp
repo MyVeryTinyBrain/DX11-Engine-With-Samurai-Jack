@@ -11,11 +11,12 @@ void EnemyBeetleDrone::Awake()
 	SetupAnimator();
 	SetupAttackTrigger();
 
+	UnregistEnemy(this);
 	CCT->radius = 0.8f;
 	CCT->height = 0.675f;
 	//CCT->height = 0.01f; // Bug mode
 
-	//m_characterRenderer->enable = false;
+	m_characterRenderer->enable = false;
 	//CCT->rigidbody->enable = false;
 }
 
@@ -51,10 +52,19 @@ void EnemyBeetleDrone::Update()
 		}
 	}
 
-	if (isDead && CCT->isGrounded)
+	if (isDead)
 	{
-		CCT->enable = false;
-		//CCT->rigidbody->enable = false;
+		CCT->collisionWithCCT = false;
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Player, true);
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, true);
+		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_VirtualEnemy, true);
+		Enemy::UnregistEnemy(this);
+
+		if (CCT->isGrounded && CCT->enable)
+		{
+			CCT->enable = false;
+			CCT->rigidbody->enable = false;
+		}
 	}
 
 	if (m_animator->DamageDirectionFProperty->valueAsFloat == 0.0f && m_animator->IsPlayingDamageDuringLookPlayerAnimation())
@@ -169,20 +179,14 @@ void EnemyBeetleDrone::AttackTriggerQuery()
 				case ANIM_ATK_BLOW:
 					damage.Type = DamageInType::BLOW;
 					damage.Damage = 3.0f;
-					damage.Velocity = transform->forward * 5.0f + V3(0, 5, 0);
-					damage.SetVelocity = true;
 					break;
 				case ANIM_ATK_BLOWUP:
 					damage.Damage = 2.0f;
 					damage.Type = DamageInType::BLOWUP;
-					damage.Velocity = BLOWUP_VELOCITY;
-					damage.SetVelocity = true;
 					break;
 				case ANIM_ATK_BLOWDOWN:
 					damage.Damage = 3.0f;
 					damage.Type = DamageInType::BLOWDOWN;
-					damage.Velocity = BLOWDOWN_VELOCITY;
-					damage.SetVelocity = true;
 					break;
 			}
 			player->Damage(damage);
@@ -251,6 +255,8 @@ void EnemyBeetleDrone::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animatio
 
 void EnemyBeetleDrone::SetAttackType(int contextInt)
 {
+	m_attackType = ANIM_ATK_LIGHT;
+
 	if (contextInt & ANIM_ATK_LIGHT)
 		m_attackType = ANIM_ATK_LIGHT;
 	else if (contextInt & ANIM_ATK_HEAVY)
@@ -260,10 +266,7 @@ void EnemyBeetleDrone::SetAttackType(int contextInt)
 	else if (contextInt & ANIM_ATK_BLOWUP)
 		m_attackType = ANIM_ATK_BLOWUP;
 	else if (contextInt & ANIM_ATK_BLOWDOWN)
-		m_attackType = ANIM_ATK_BLOWDOWN;
-	else
-		m_attackType = ANIM_ATK_LIGHT;
-}
+		m_attackType = ANIM_ATK_BLOWDOWN;}
 
 float EnemyBeetleDrone::GetHP() const
 {
@@ -350,7 +353,6 @@ DamageOutType EnemyBeetleDrone::OnDamage(const DamageOut& out)
 			}
 			if (out.In.SetVelocity)
 			{
-				//CCT->velocity = desc.Velocity;
 				CCT->Jump(out.In.Velocity);
 			}
 			hp -= out.In.Damage;
@@ -376,7 +378,7 @@ void EnemyBeetleDrone::DoAppear()
 		return;
 
 	m_appeared = true;
-	//m_characterRenderer->enable = true;
+	m_characterRenderer->enable = true;
 	//CCT->rigidbody->enable = true;
 	PhysicsRay ray;
 	ray.Direction = V3::down();
@@ -388,4 +390,6 @@ void EnemyBeetleDrone::DoAppear()
 		CCT->footPosition = hit.Point;
 	}
 	m_animator->Layer->Play(m_animator->ETC_APPEAR);
+
+	RegistEnemy(this);
 }

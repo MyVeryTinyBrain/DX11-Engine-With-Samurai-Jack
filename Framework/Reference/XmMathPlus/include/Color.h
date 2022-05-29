@@ -106,6 +106,8 @@ namespace XmMathPlus
 
 		inline static Color yellow() { return Color(1, 0.92f, 0.016f, 1); }
 
+		inline static Color RGBA255(uint r, uint g, uint b, uint a) { return Color(float(r) / 255.0f, float(g) / 255.0f, float(b) / 255.0f, float(a) / 255.0f); }
+
 		// Member Variables	============================================================================
 
 	public:

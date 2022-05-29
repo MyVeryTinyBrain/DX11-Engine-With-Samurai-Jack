@@ -20,14 +20,15 @@
 void TrailRenderer::Awake()
 {
 	Renderer::Awake();
-
-	SetupMesh(512);
-
+	SetupMesh();
 	SetMaterial(system->resource->builtIn->whiteMaterial);
+	SetNumMeshRect(1024);
 }
 
 void TrailRenderer::LateUpdate()
 {
+	Renderer::LateUpdate();
+
 	if (m_beginShrinkCounter > 0)
 	{
 		m_beginShrinkCounter -= system->time->deltaTime;
@@ -37,7 +38,7 @@ void TrailRenderer::LateUpdate()
 		Shrink(m_shrinkDistance * system->time->deltaTime);
 	}
 
-	if(m_autoTrail)
+	if (m_autoTrail)
 	{
 		const V3& position = transform->position;
 		if (m_datas.empty())
@@ -46,34 +47,12 @@ void TrailRenderer::LateUpdate()
 		}
 		else
 		{
-			const V3& last = m_datas.back().Position;
+			const V3& last = m_datas.back().position;
 			float dist = V3::Distance(position, last);
 
 			if (dist > m_minVertexDistance)
 			{
 				AddPosition(transform->position, transform->rotation);
-
-				//if (m_pairs.size() <= 2)
-				//{
-				//	AddPosition(transform->position, transform->rotation);
-				//}
-				//else
-				//{
-				//	auto end = m_pairs.end() - 1;
-				//	auto prevend = end - 1;
-				//	Pair c;
-				//	c.Position = transform->position;
-				//	c.Rotation = transform->rotation;
-				//	const Pair& b = *end;
-				//	const Pair& a = *prevend;
-				//	for (int i = 0; i < 20; ++i)
-				//	{
-				//		float percent = float(i + 1) / float(20);
-				//		V3 position = V3::CatMulRom(a.Position, b.Position, c.Position, c.Position, percent);
-				//		Q rotation = Q::SLerp(b.Rotation, c.Rotation, percent);
-				//		AddPosition(position, rotation);
-				//	}
-				//}
 			}
 		}
 	}
@@ -84,10 +63,10 @@ void TrailRenderer::Render()
 	if (!isValid)
 		return;
 
+	M4 localToWorldMatrix = transform->localToWorldMatrix;
+
 	if (m_materials.empty())
 		return;
-
-	ApplyVertices();
 
 	if (!m_mesh || !m_mesh->isValid)
 		return;
@@ -129,7 +108,7 @@ void TrailRenderer::Render()
 		input.essential.instance = instancingFlag;
 
 		input.customPrimitiveCount.usePrimitiveCount = true;
-		input.customPrimitiveCount.primitiveCount = uint(m_datas.size() - 1) * 2;
+		input.customPrimitiveCount.primitiveCount = GetNumInterpolatedRect() * 2;
 
 		RenderRequestShadow shadow = {};
 		shadow.draw = drawShadowFlag;
@@ -139,35 +118,37 @@ void TrailRenderer::Render()
 		input.op.boneOp = nullptr;
 		input.op.cullOp = this;
 		input.op.boundsOp = this;
+		input.op.onCameraOp = this;
 
 		system->graphic->renderQueue->Add(input);
 	}
 }
 
+void TrailRenderer::OnCamera(ICamera* camera, RenderRequest* inout_pinput)
+{
+	if (IsValid())
+		ApplyVertices(camera);
+}
+
 void TrailRenderer::AddPosition(const V3& position, const Q& rotation)
 {
-	if (m_datas.size() >= m_numRect)
-	{
-		PopPosition();
-	}
-
 	if (m_datas.empty())
 	{
 		m_beginShrinkCounter = m_beginShrinkDelay;
 	}
 
 	Data data;
-	data.Position = position;
-	data.Rotation = rotation;
+	data.position = position;
+	data.rotation = rotation;
 
 	if (m_datas.empty())
 	{
-		data.DistanceAccumulation = 0.0f;
+		data.distanceAcc = 0.0f;
 	}
 	else
 	{
 		const Data& back = m_datas.back();
-		data.DistanceAccumulation = back.DistanceAccumulation + V3::Distance(back.Position, position);
+		data.distanceAcc = back.distanceAcc + V3::Distance(back.position, position);
 	}
 
 	m_datas.push_back(data);
@@ -177,14 +158,6 @@ void TrailRenderer::PopPosition()
 {
 	if (!m_datas.empty())
 		m_datas.pop_front();
-}
-
-void TrailRenderer::SetRectCount(uint value)
-{
-	if (m_numRect == value)
-		return;
-
-	SetupMesh(value);
 }
 
 bool TrailRenderer::CullTest(ICamera* camera) const
@@ -197,7 +170,6 @@ Bounds TrailRenderer::GetBounds() const
 	if (!m_mesh)
 		return Bounds(transform->position, V3::zero());
 
-	// 이미 월드 공간에 있으므로, 월드 변환을 하지 않은채로 반환합니다.
 	return m_mesh->GetBounds();
 }
 
@@ -209,19 +181,34 @@ bool TrailRenderer::IsValid() const
 	return m_datas.size() >= 2;
 }
 
-void TrailRenderer::SetupMesh(uint numRect)
+void TrailRenderer::SetupMesh()
 {
-	if (numRect == m_numRect)
+	Vertex* vertices = new Vertex[3]{};
+	Index* indicies = new Index[3]{};
+	VI* vi = new VI;
+	vi->SetVerticesNocopy(&vertices, 3);
+	vi->SetIndicesNocopy(&indicies, 3);
+	VIBuffer* vibuffer = nullptr;
+	VIBuffer::CreateVIBufferNocopy(
+		system->graphic->device, system->graphic->deviceContext, &vi,
+		D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
+		D3D11_USAGE_IMMUTABLE, 0, 0,
+		&vibuffer);
+	m_mesh = system->resource->factory->CreateMeshNocopyUM(&vibuffer);
+}
+
+void TrailRenderer::SetNumMeshRect(uint numRect)
+{
+	if (GetNumMeshRect() == numRect)
 		return;
 
-	VI* vi = !m_mesh ? new VI : m_mesh->viBuffer->GetVI();
-
 	uint numVertices = numRect * 2 + 2;
-	Vertex* vertices = new Vertex[numVertices]{};
-	vi->SetVerticesNocopy(&vertices, numVertices);
-
 	uint numTriangles = numRect * 2;
+	Vertex* vertices = new Vertex[numVertices]{};
 	TriangleIndex* triangles = new TriangleIndex[numTriangles]{};
+	VIBuffer* vibuffer = m_mesh->GetVIBuffer();
+	VI* vi = vibuffer->GetVI();
+
 	for (uint i = 0; i < numRect; ++i)
 	{
 		uint indexBegin = i * 2;
@@ -236,31 +223,42 @@ void TrailRenderer::SetupMesh(uint numRect)
 		triangles[triangle[1]]._1 = vertex[3];
 		triangles[triangle[1]]._2 = vertex[1];
 	}
-	vi->SetIndicesAsTrianglesNocopy(&triangles, numTriangles);
 
+	vi->SetVerticesNocopy(&vertices, numVertices);
+	vi->SetIndicesAsTrianglesNocopy(&triangles, numTriangles);
 	vi->RecalculcateNormals();
 	vi->RecalculateTangentsBinormals();
 	vi->RecalculateBounds();
 
-	if (!m_mesh)
-	{
-		VIBuffer* viBuffer = nullptr;
-		VIBuffer::CreateVIBufferNocopy(
-			system->graphic->device, system->graphic->deviceContext,
-			&vi,
-			D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0,
-			D3D11_USAGE_IMMUTABLE, 0, 0,
-			&viBuffer);
+	vibuffer->RegenerateVertexBuffer();
+	vibuffer->RegenerateIndexBuffer();
+}
 
-		m_mesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
-	}
-	else
-	{
-		m_mesh->viBuffer->RegenerateVertexBuffer();
-		m_mesh->viBuffer->RegenerateIndexBuffer();
-	}
+uint TrailRenderer::GetNumMeshRect() const
+{
+	ResourceRef<Mesh> mesh = m_mesh;
+	if (!mesh)
+		return 0;
 
-	m_numRect = numRect;
+	VIBuffer* vibuffer = m_mesh->GetVIBuffer();
+	if (!vibuffer)
+		return 0;
+
+	VI* vi = vibuffer->GetVI();
+	if (!vi)
+		return 0;
+
+	uint vertexCount = vi->GetVertexCount();
+	uint numRect = (vertexCount / 2) - 1;
+
+	return numRect;
+}
+
+uint TrailRenderer::GetNumInterpolatedRect() const
+{
+	uint numPoints = (uint)m_datas.size();
+	uint interpolatedNumRect = (m_interpolateStep + 1) * (numPoints - 1);
+	return interpolatedNumRect;
 }
 
 void TrailRenderer::Shrink(float shrinkDistance)
@@ -277,7 +275,7 @@ void TrailRenderer::Shrink(float shrinkDistance)
 	Data& first = m_datas[0];
 	Data& second = m_datas[1];
 
-	V3 delta = second.Position - first.Position;
+	V3 delta = second.position - first.position;
 	float deltaDist = delta.magnitude;
 	V3 dir = delta / deltaDist;
 	float newDist = deltaDist - shrinkDistance;
@@ -291,161 +289,193 @@ void TrailRenderer::Shrink(float shrinkDistance)
 	}
 	else
 	{
-		first.DistanceAccumulation += shrinkDistance;
-		first.Position = second.Position - dir * newDist;
+		first.distanceAcc += shrinkDistance;
+		first.position = second.position - dir * newDist;
 	}
 }
 
-void TrailRenderer::SetupVertexPair(
-	uint dataIndex, 
-	const V3& camDir, 
-	const V3& camPos,
-	float width, 
-	V3& inout_min, V3& inout_max)
+void TrailRenderer::ApplyVertices(ICamera* camera)
 {
+	uint numDatas = (uint)m_datas.size();
+	uint interpolatedNumRect = GetNumInterpolatedRect();
+	if (numDatas == 0) interpolatedNumRect = 0;
+	
+	if (interpolatedNumRect > GetNumMeshRect())
+	{
+		SetNumMeshRect(interpolatedNumRect * 2);
+	}
+
 	VI* vi = m_mesh->viBuffer->GetVI();
 	Vertex* vertices = vi->GetVertices();
-
-	// Calc indices of vertices
-
-	uint beginIndex = dataIndex * 2;
-	uint vertex[2] = { beginIndex, beginIndex + 1 };
-	uint next = dataIndex + 1;
-	if (dataIndex == m_datas.size() - 1)
-		next = dataIndex - 1;
-
-	Data& curPair = m_datas[dataIndex];
-	Data& nextPair = m_datas[next];
-
-	V3 delta = nextPair.Position - curPair.Position;
-	float deltaDist = delta.magnitude;
-	V3 forward = delta / deltaDist;
-	if (dataIndex == m_datas.size() - 1)
-		forward *= -1.0f;
-
-	V3 right, up;
-
-	//V3 c2p = (curPair.Position - camPos).normalized;
-
-	switch (m_alignment)
-	{
-		case TrailRenderer::Alignment::View:
-			right = V3::Cross(camDir, forward).normalized;
-			//right = V3::Cross(c2p, forward).normalized;
-			up = V3::Cross(right, forward).normalized;
-			break;
-		case TrailRenderer::Alignment::Local:
-			forward = curPair.Rotation.MultiplyVector(V3::forward());
-			right = curPair.Rotation.MultiplyVector(V3::right());
-			up = curPair.Rotation.MultiplyVector(V3::up());
-			break;
-	}
-
-	// Set positions of pair
-
-	float halfWidth = width * 0.5f;
-	float scale = 1.0f;
-
-	if (m_applyWidthByLength)
-	{
-		Data& first = m_datas.front();
-		Data& end = m_datas.back();
-
-		float firstDistance = first.DistanceAccumulation;
-		scale = Clamp01((curPair.DistanceAccumulation - first.DistanceAccumulation) / (end.DistanceAccumulation - first.DistanceAccumulation));
-	}
-
-	vertices[vertex[0]].position = curPair.Position + right * halfWidth * scale;
-	vertices[vertex[1]].position = curPair.Position - right * halfWidth * scale;
-
-	// Set normals of pair
-
-	vertices[vertex[0]].normal = up;
-	vertices[vertex[1]].normal = up;
-	vertices[vertex[0]].biNormal = right;
-	vertices[vertex[1]].biNormal = right;
-	vertices[vertex[0]].tangent = forward;
-	vertices[vertex[1]].tangent = forward;
-
-	// Set uvw of pair
-
-	float percent = float(dataIndex) / m_datas.size();
-
-	if (!m_fitUToWidth)
-	{
-		vertices[vertex[0]].uvw.x = 0.0f;
-		vertices[vertex[1]].uvw.x = 1.0f;
-	}
-	else
-	{
-		vertices[vertex[0]].uvw.x = 1.0f - (scale * 0.5f + 0.5f);
-		vertices[vertex[1]].uvw.x = scale * 0.5f + 0.5f;
-	}
-
-	vertices[vertex[0]].uvw.z = percent;
-	vertices[vertex[1]].uvw.z = percent;
-
-	if (m_fitVToLength)
-	{
-		vertices[vertex[0]].uvw.y = percent;
-		vertices[vertex[1]].uvw.y = percent;
-	}
-	else
-	{
-		float v = curPair.DistanceAccumulation / m_vScale;
-
-		vertices[vertex[0]].uvw.y = v;
-		vertices[vertex[1]].uvw.y = v;
-	}
-
-	// Calc extents
-
-	V3 minV = V3::Min(vertices[vertex[0]].position, vertices[vertex[1]].position);
-	V3 maxV = V3::Max(vertices[vertex[0]].position, vertices[vertex[1]].position);
-
-	inout_min = V3::Min(inout_min, minV);
-	inout_max = V3::Max(inout_max, maxV);
-}
-
-void TrailRenderer::ApplyVertices()
-{
-	Camera* mainCamera = (Camera*)system->graphic->cameraManager->mainCamera;
-	V3 camDir = mainCamera->transform->forward;
-	V3 camPos = mainCamera->transform->position;
-
 	V3 minV = V3(FLT_MAX, FLT_MAX, FLT_MAX);
 	V3 maxV = V3(FLT_MIN, FLT_MIN, FLT_MIN);
 
-	for (int i = 0; i < int(m_datas.size()); ++i)
+	for (uint i = 0; i < uint(numDatas - 1); ++i)
 	{
-		SetupVertexPair(i, camDir, camPos, m_width, minV, maxV);
+		uint currentIndex = i;
+		uint nextIndex = (i + 1 >= numDatas) ? numDatas - 1 : i + 1;
+		uint prevIndex = (i > 0) ? i - 1 : 0;
+		uint next2Index = (i + 2 >= numDatas) ? numDatas - 1 : i + 2;
+
+		const Data& prevData = m_datas[prevIndex];
+		const Data& data = m_datas[currentIndex];
+		const Data& nextData = m_datas[nextIndex];
+		const Data& next2Data = m_datas[next2Index];
+
+		for (uint j = 0; j < m_interpolateStep + 1; ++j)
+		{
+			uint totalIndex = i * (m_interpolateStep + 1) + j;
+			float interpolatePercent = float(j) / float(m_interpolateStep + 1);
+			float nextInterpolatePercent = float(j + 1) / float(m_interpolateStep + 1);
+
+			VertexPairInput input;
+			input.start = V3::CatMulRom(prevData.position, data.position, nextData.position, next2Data.position, interpolatePercent);
+			input.end = V3::CatMulRom(prevData.position, data.position, nextData.position, next2Data.position, nextInterpolatePercent);
+			input.alignment = m_alignment;
+			input.camera = camera;
+			input.percent = float(totalIndex) / float(interpolatedNumRect);
+			input.width = m_width;
+			input.inverse = false;
+			input.rotation = Q::SLerp(data.rotation, nextData.rotation, interpolatePercent);
+			input.distanceAcc = Lerp(data.distanceAcc, nextData.distanceAcc, interpolatePercent);
+
+			VertexPairOutput output = CalcVertexPair(input, minV, maxV);
+
+			uint vertexIndexL = totalIndex * 2;
+			uint vertexIndexR = vertexIndexL + 1;
+			vertices[vertexIndexL].position = output.position[0];
+			vertices[vertexIndexR].position = output.position[1];
+			vertices[vertexIndexL].uvw = output.uvw[0];
+			vertices[vertexIndexR].uvw = output.uvw[1];
+			vertices[vertexIndexL].normal = output.normal;
+			vertices[vertexIndexR].normal = output.normal;
+			vertices[vertexIndexL].biNormal = output.binormal;
+			vertices[vertexIndexR].biNormal = output.binormal;
+			vertices[vertexIndexL].tangent = output.tangent;
+			vertices[vertexIndexR].tangent = output.tangent;
+		}
 	}
 
-	//bool drawCanInterpolate = m_datas.size() >= 4;
-	//for (int i = 0; i < int(m_datas.size()); ++i)
-	//{
-	//	if (i > 0) // 1번째 데이터부터 CatMulRom 보간 적용이 가능합니다.
-	//	{
-	//		for (int j = 0; j < m_numInterpolate; ++j)
-	//		{
+	{
+		VertexPairInput input;
+		input.end = m_datas[numDatas - 1].position;
+		input.start = (vertices[interpolatedNumRect * 2 - 2].position + vertices[interpolatedNumRect * 2 - 1].position) * 0.5f;
+		input.alignment = m_alignment;
+		input.camera = camera;
+		input.percent = 1.0f;
+		input.width = m_width;
+		input.inverse = true;
+		input.rotation = m_datas[numDatas - 1].rotation;
+		input.distanceAcc = m_datas[numDatas - 1].distanceAcc;
 
-	//		}
-	//	}
-	//	//SetupVertexPair(i, camDir, camPos, m_width, minV, maxV);
-	//	// 인덱스 i대신 두 개의 데이터를 입력받아야 함
-	//}
+		VertexPairOutput output = CalcVertexPair(input, minV, maxV);
+
+		uint vertexIndexL = interpolatedNumRect * 2;
+		uint vertexIndexR = vertexIndexL + 1;
+		vertices[vertexIndexL].position = output.position[0];
+		vertices[vertexIndexR].position = output.position[1];
+		vertices[vertexIndexL].uvw = V3(0, 1, 1);
+		vertices[vertexIndexR].uvw = V3(1, 1, 1);
+		vertices[vertexIndexL].normal = output.normal;
+		vertices[vertexIndexR].normal = output.normal;
+		vertices[vertexIndexL].biNormal = output.binormal;
+		vertices[vertexIndexR].biNormal = output.binormal;
+		vertices[vertexIndexL].tangent = output.tangent;
+		vertices[vertexIndexR].tangent = output.tangent;
+	}
 
 	Bounds bounds;
 	bounds.extents = (maxV - minV) * 0.5f;
 	bounds.center = (minV + maxV) * 0.5f;
-
-	VI* vi = m_mesh->viBuffer->GetVI();
 	vi->SetBounds(bounds);
-
-	//vi->RecalculcateNormals();
-	//vi->RecalculateTangentsBinormals();
-	//vi->RecalculateBounds();
 
 	m_mesh->viBuffer->UpdateVertexBuffer();
 	m_mesh->viBuffer->UpdateIndexBuffer();
+}
+
+TrailRenderer::VertexPairOutput TrailRenderer::CalcVertexPair(const TrailRenderer::VertexPairInput& desc, V3& inout_min, V3& inout_max) const
+{
+	TrailRenderer::VertexPairOutput output;
+
+	V3 a2b = desc.end - desc.start;
+	if (desc.inverse) a2b *= -1.0f;
+	V3 dir = a2b.normalized;
+
+	V3 right, up;
+	switch (desc.alignment)
+	{
+		case (TrailRenderer::Alignment::View):
+		{
+			right = V3::Cross(desc.camera->GetDirection(), dir).normalized;
+			up = V3::Cross(right, dir).normalized;
+		}
+		break;
+		case (TrailRenderer::Alignment::Local):
+		{
+			dir = desc.rotation.MultiplyVector(V3::forward());
+			right = desc.rotation.MultiplyVector(V3::right());
+			up = desc.rotation.MultiplyVector(V3::up());
+		}
+		break;
+	}
+
+	float halfWidth = desc.width * 0.5f;
+	float scale = 1.0f;
+
+	if (m_applyWidthByLength)
+	{
+		const Data& first = m_datas.front();
+		const Data& end = m_datas.back();
+
+		float firstDistance = first.distanceAcc;
+		scale = Clamp01((desc.distanceAcc - first.distanceAcc) / (end.distanceAcc - first.distanceAcc));
+	}
+
+	if (!desc.inverse)
+	{
+		output.position[0] = desc.start + right * halfWidth * scale;
+		output.position[1] = desc.start - right * halfWidth * scale;
+	}
+	else
+	{
+		output.position[0] = desc.end + right * halfWidth * scale;
+		output.position[1] = desc.end - right * halfWidth * scale;
+	}
+
+	output.normal = up;
+	output.binormal = right;
+	output.tangent = dir;
+
+	if (!m_fitUToWidth)
+	{
+		output.uvw[0].x = 0.0f;
+		output.uvw[1].x = 1.0f;
+	}
+	else
+	{
+		output.uvw[0].x = 1.0f - (scale * 0.5f + 0.5f);
+		output.uvw[1].x = scale * 0.5f + 0.5f;
+	}
+
+	if (m_fitVToLength)
+	{
+		output.uvw[0].y = desc.percent;
+		output.uvw[1].y = desc.percent;
+	}
+	else
+	{
+		float v = desc.distanceAcc/ m_vScale;
+		output.uvw[0].y = v;
+		output.uvw[1].y = v;
+	}
+
+	output.uvw[0].z = desc.percent;
+	output.uvw[1].z = desc.percent;
+
+	V3 min = V3::Min(output.position[0], output.position[1]);
+	V3 max = V3::Max(output.position[0], output.position[1]);
+	inout_min = V3::Min(min, inout_min);
+	inout_max = V3::Max(max, inout_max);
+
+	return output;
 }

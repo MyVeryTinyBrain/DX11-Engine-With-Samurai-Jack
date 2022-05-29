@@ -2,10 +2,11 @@
 
 #include "Renderer.h"
 #include "IRendererCullOp.h"
+#include "IOnCamera.h"
 
 ENGINE_BEGIN
 
-class ENGINE_API LineRenderer : public Renderer, public IRendererCullOp
+class ENGINE_API LineRenderer : public Renderer, public IRendererCullOp, public IOnCamera
 {
 public:
 
@@ -13,8 +14,28 @@ public:
 
 private:
 
+	struct VertexPairInput
+	{
+		V3 start, end;
+		LineRenderer::Alignment alignment;
+		float width;
+		ICamera* camera;
+		float percent;
+		bool inverse;
+	};
+	struct VertexPairOutput
+	{
+		V3 position[2];
+		V3 normal, binormal, tangent;
+		V3 uvw[2];
+	};
+
+private:
+
 	virtual void Awake() override;
+	virtual void LateUpdate() override;
 	virtual void Render() override;
+	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pinput) override;
 
 public:
 
@@ -24,7 +45,7 @@ public:
 	inline void SetPoint(uint index, const V3& point) { m_points[index] = point; }
 	bool RemovePoint(uint index);
 	void ClearPoints();
-	 
+
 	inline float GetWidth() const { return m_width; }
 	inline void SetWidth(float value) { m_width = value; }
 
@@ -34,10 +55,24 @@ public:
 	inline LineRenderer::Alignment GetAlignment() const { return m_alignment; }
 	inline void SetAlignment(LineRenderer::Alignment value) { m_alignment = value; }
 
+	inline uint GetInterpolateStep() const { return m_interpolateStep; }
+	inline void SetInterpolateStep(uint value) { m_interpolateStep = value; }
+
 	_declspec(property(get = GetNumPoints)) uint numPoints;
 	_declspec(property(get = GetWidth, put = SetWidth)) float width;
 	_declspec(property(get = IsLocalSpace, put = SetLocalSpace)) bool isLocalSpace;
 	_declspec(property(get = GetAlignment, put = SetAlignment)) LineRenderer::Alignment alignment;
+	_declspec(property(get = GetInterpolateStep, put = SetInterpolateStep)) uint interpolateStep;
+
+private:
+
+	void SetupMesh();
+	void SetNumMeshRect(uint numRect);
+	uint GetNumMeshRect() const;
+	uint GetNumInterpolatedRect() const;
+
+	void ApplyVertices(ICamera* camera);
+	LineRenderer::VertexPairOutput CalcVertexPair(const LineRenderer::VertexPairInput& desc, V3& inout_min, V3& inout_max) const;
 
 public:
 
@@ -47,45 +82,11 @@ public:
 
 private:
 
-	void FitNumRect();
-	void SetupMesh(uint numRect);
-	void SetupVertexPair(
-		uint pointIndex,
-		const V3& camDir,
-		const V3& camPos,
-		float width,
-		V3& inout_min, V3& inout_max);
-	void ApplyVertices();
-
-private:
-
-	uint						m_numRect = 0;
-	float						m_width = 0.5f;
-	bool						m_localSpace = false;
-	vector<V3>					m_points;
-
-	LineRenderer::Alignment		m_alignment = LineRenderer::Alignment::View;
-
-	/*
-
-	8---9	..uvw.y = 1, uvw.z = 1
-	| /	|
-	6---7	
-	| /	|
-	4---5	
-	| /	|
-	2---3	
-	| /	|
-	0---1	..uvw.y = 0, uvw.z = 0
-
-	.	.
-	.	.
-	uvw.x = 0
-		.
-		.
-		uvw.x = 1
-
-	*/
+	vector<V3> m_points;
+	float m_width = 0.5f;
+	bool m_localSpace = false;
+	LineRenderer::Alignment m_alignment = LineRenderer::Alignment::View;
+	uint m_interpolateStep = 0;
 };
 
 ENGINE_END

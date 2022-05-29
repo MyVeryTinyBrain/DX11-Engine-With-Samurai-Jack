@@ -187,6 +187,20 @@ HRESULT VIBuffer::DrawInstanceSubMesh(Com<ID3D11DeviceContext> deviceContext, ui
 	return S_OK;
 }
 
+bool VIBuffer::IsValid() const
+{
+	if (!m_vi)
+		return false;
+
+	if (!m_vi->IsValid())
+		return false;
+
+	if (!m_vb || !m_ib)
+		return false;
+
+	return true;
+}
+
 HRESULT VIBuffer::CreateVIBuffer(
 	Com<ID3D11Device> device, Com<ID3D11DeviceContext> deviceContext,
 	const VI* vi, 

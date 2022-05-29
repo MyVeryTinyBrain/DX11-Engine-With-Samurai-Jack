@@ -25,7 +25,8 @@ public:
 	void SetPosition(const V3& position);
 
 	virtual V3 GetDirection() const override;
-	void SetDirection(const V3& direction);
+	virtual V3 GetUp() const override;
+	virtual V3 GetRight() const override;
 
 	virtual Q GetRotation() const override;
 
@@ -49,7 +50,9 @@ public:
 	void SetOrder(int value);
 
 	_declspec(property(get = GetPosition, put = SetPosition)) V3 position;
-	_declspec(property(get = GetDirection, put = SetDirection)) V3 direction;
+	_declspec(property(get = GetDirection)) V3 direction;
+	_declspec(property(get = GetUp)) V3 up;
+	_declspec(property(get = GetRight)) V3 right;
 	_declspec(property(get = GetViewMatrix)) M4 viewMatrix;
 	_declspec(property(get = GetProjectionMatrix)) M4 projectionMatrix;
 	_declspec(property(get = GetAllowedLayers, put = SetAllowedLayers)) uint32_t allowedLayers;
