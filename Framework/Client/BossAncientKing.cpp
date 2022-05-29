@@ -142,6 +142,7 @@ void BossAncientKing::SetupHammer()
 	m_hammerTrailRenderer->width = 4.0f;
 	m_hammerTrailRenderer->autoTrail = false;
 	m_hammerTrailRenderer->interpolateStep = 30;
+	m_hammerTrailRenderer->enable = false;
 }
 
 void BossAncientKing::SetupAttackTrigger()
