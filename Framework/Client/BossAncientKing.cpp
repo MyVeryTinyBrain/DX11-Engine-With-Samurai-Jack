@@ -287,6 +287,7 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 		m_hammerTrailRenderer->autoTrail = false;
 		OffAttackTriggers();
 		ClearHitBuffer();
+		m_gadableAttack = false;
 	}
 }
 
