@@ -93,12 +93,19 @@ public:
 	inline float GetMaxAngularVelocity() const { return m_body->getMaxAngularVelocity(); }
 	inline void SetMaxAngularVelocity(float value) { m_body->setMaxAngularVelocity(Max(0.0f, value)); }
 
+	uint GetPositionSolverIterationCount() const;
+	void SetPositionSolverIterationCount(uint value);
+	uint GetVelocitySolverIterationCount() const;
+	void SetVelocitySolverIterationCount(uint value);
+	
 	_declspec(property(get = GetSleepThresholder, put = SetSleepThresholder)) float sleepThresholder;
 	_declspec(property(get = GetMass, put = SetMass)) float mass;
 	_declspec(property(get = GetLinearDamping, put = SetLinearDamping)) float linearDamping;
 	_declspec(property(get = GetAngularDamping, put = SetAngularDamping)) float angularDamping;
 	_declspec(property(get = GetMaxLinearVelocity, put = SetMaxLinearVelocity)) float maxLinearVelocity;
 	_declspec(property(get = GetMaxAngularVelocity, put = SetMaxAngularVelocity)) float maxAngularVelocity;
+	_declspec(property(get = GetPositionSolverIterationCount, put = SetPositionSolverIterationCount)) uint positionSolverIterationCount;
+	_declspec(property(get = GetVelocitySolverIterationCount, put = SetVelocitySolverIterationCount)) uint velocitySolverIterationCount;
 
 public:
 

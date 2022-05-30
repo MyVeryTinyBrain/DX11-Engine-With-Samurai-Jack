@@ -169,6 +169,8 @@
     <ClInclude Include="BossAncientKing.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="EffectExplosion.h" />
+    <ClInclude Include="EffectShockwave.h" />
     <ClInclude Include="EffectSpark.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBeetleDrone.h" />
@@ -177,6 +179,7 @@
     <ClInclude Include="FreeCamera.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="IDamagable.h" />
+    <ClInclude Include="ProjectileWaveBeam.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimator.h" />
     <ClInclude Include="PlayerTestScene.h" />
@@ -199,12 +202,15 @@
     <ClCompile Include="BossAncientKing.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="EffectExplosion.cpp" />
+    <ClCompile Include="EffectShockwave.cpp" />
     <ClCompile Include="EffectSpark.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBeetleDrone.cpp" />
     <ClCompile Include="EnemyBeetleDroneAnimator.cpp" />
     <ClCompile Include="FreeCamera.cpp" />
     <ClCompile Include="IDamagable.cpp" />
+    <ClCompile Include="ProjectileWaveBeam.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="PlayerTestScene.cpp" />
@@ -233,10 +239,8 @@
   <ItemGroup>
     <FxCompile Include="..\Shader\BillboardAnimation.fx" />
     <FxCompile Include="..\Shader\BillboardEffect.fx" />
-    <FxCompile Include="..\Shader\PBR.fx" />
+    <FxCompile Include="..\Shader\Shockwave.fx" />
     <FxCompile Include="..\Shader\Trail.fx" />
-    <FxCompile Include="..\Shader\Priority.fx" />
-    <FxCompile Include="..\Shader\Skybox.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

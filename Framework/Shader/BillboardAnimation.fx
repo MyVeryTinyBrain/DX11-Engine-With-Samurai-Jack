@@ -56,6 +56,8 @@ half4 PS_MAIN(PS_IN In) : SV_TARGET
 	half v = vBeg + vDelta * In.UV.y;
 
 	half4 color = _Texture.Sample(diffuseSampler, half2(u, v));
+	half a = Max(color.rgb);
+	color.a = a;
 	if (color.a <= 0.0f)
 		discard;
 

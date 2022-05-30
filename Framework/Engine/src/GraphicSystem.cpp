@@ -51,7 +51,7 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 		}
 	}
 	SafeRelease(adapter);
-
+	
 	if (FAILED(DxUtility::CreateSwapChain(m_device, hWnd, width, height, refreshPerSec, vsync, fullScreen, &m_swapChain)))
 		return false;
 

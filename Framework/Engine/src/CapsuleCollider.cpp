@@ -188,7 +188,7 @@ void CapsuleCollider::CreateDebugShape()
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		&viBuffer);
 	m_dbgMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
-	m_dbgMaterial = system->resource->builtIn->wireframeMaterial;
+	m_dbgMaterial = system->resource->builtIn->greenWireframeMaterial;
 }
 
 void CapsuleCollider::ResetDebugShape()

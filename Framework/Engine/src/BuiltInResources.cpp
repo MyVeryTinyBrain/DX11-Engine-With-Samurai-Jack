@@ -104,22 +104,22 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateShader(TEXT("Color.cso"), &m_colorShader)))
 		return hr;
 
+	if (FAILED(hr = CreateShader(TEXT("Wireframe.cso"), &m_wireframeShader)))
+		return hr;
+
 	if (FAILED(hr = CreateShader(TEXT("Unlit.cso"), &m_unlitShader)))
 		return hr;
 
 	if (nullptr == (m_standardMaterial = m_factory->CreateMaterialByShaderUM(m_standardShader)))
 		return E_FAIL;
 
-	if (nullptr == (m_whiteMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
+	if (nullptr == (m_whiteColorMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
-	m_whiteMaterial->SetColor("_Color", Color::white());
-	m_whiteMaterial->techniqueIndex = 0;
 	
-	if (nullptr == (m_wireframeMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
+	if (nullptr == (m_greenWireframeMaterial = m_factory->CreateMaterialByShaderUM(m_wireframeShader)))
 		return E_FAIL;
-	m_wireframeMaterial->techniqueIndex = 3;
 
-	if (nullptr == (m_unlitMaterial = m_factory->CreateMaterialByShaderUM(m_unlitShader)))
+	if (nullptr == (m_whiteUnlitMaterial = m_factory->CreateMaterialByShaderUM(m_unlitShader)))
 		return E_FAIL;
 
 	return S_OK;
@@ -239,19 +239,19 @@ const ResourceRef<Material>& BuiltInResources::GetStandardMaterial() const
 	return m_standardMaterial;
 }
 
-const ResourceRef<Material>& BuiltInResources::GetWhiteMaterial() const
+const ResourceRef<Material>& BuiltInResources::GetWhiteColorMaterial() const
 {
-	return m_whiteMaterial;
+	return m_whiteColorMaterial;
 }
 
-const ResourceRef<Material>& BuiltInResources::GetWireframeMaterial() const
+const ResourceRef<Material>& BuiltInResources::GetGreenWireframeMaterial() const
 {
-	return m_wireframeMaterial;
+	return m_greenWireframeMaterial;
 }
 
-const ResourceRef<Material>& BuiltInResources::GetUnlitMaterial() const
+const ResourceRef<Material>& BuiltInResources::GetWhiteUnlitMaterial() const
 {
-	return m_unlitMaterial;
+	return m_whiteUnlitMaterial;
 }
 
 System* BuiltInResources::GetSystem() const

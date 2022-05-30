@@ -16,7 +16,7 @@ void LineRenderer::Awake()
 {
 	Renderer::Awake();
 	SetupMesh();
-	SetMaterial(system->resource->builtIn->whiteMaterial);
+	SetMaterial(system->resource->builtIn->whiteColorMaterial);
 }
 
 void LineRenderer::LateUpdate()

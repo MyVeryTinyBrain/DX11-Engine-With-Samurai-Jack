@@ -6,6 +6,7 @@
 #include "Enemy.h"
 
 #include "EffectSpark.h"
+#include "EffectShockwave.h"
 
 Player* Player::g_player = nullptr;
 
@@ -25,7 +26,8 @@ void Player::Awake()
 
 	g_player = this;
 }
-
+#include "BossAncientKing.h"
+#include "EnemyBeetleDrone.h"
 void Player::Update()
 {
 	Character::Update();
@@ -47,6 +49,28 @@ void Player::Update()
 		else
 			m_tpsCamera->Unlook();
 	}
+
+	ImGui::Begin("Monster");
+	if (ImGui::Button("Beetle"))
+	{
+		GameObject* goEnemy = CreateGameObject();
+		goEnemy->transform->position = transform->position + transform->forward * 3.0f + V3::up() * 5.0f;
+		goEnemy->AddComponent<EnemyBeetleDrone>();
+	}
+	if (ImGui::Button("AncientKing"))
+	{
+		GameObject* goEnemy = CreateGameObject();
+		goEnemy->transform->position = transform->position + transform->forward * 6.0f + V3::up() * 8.0f;
+		goEnemy->AddComponent<BossAncientKing>();
+	}
+	if (ImGui::Button("Destroy"))
+	{
+		while (Enemy::GetEnemyCount() > 0)
+		{
+			Enemy::GetEnemyByIndex(0)->gameObject->Destroy();
+		}
+	}
+	ImGui::End();
 }
 
 void Player::FixedUpdate()
@@ -125,7 +149,7 @@ void Player::SetupKatana()
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_TRAIL);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
-	material->SetTexture("_GradientTexture", system->resource->Find(TEX_SWORDTRAIL_GRADIENT));
+	material->SetTexture("_GradientTexture", system->resource->Find(TEX_GRADIENT_TO_RIGHT));
 	m_katanaTrailRenderer->material = material;
 	m_katanaTrailRenderer->fitVToLength = true;
 }
@@ -141,7 +165,7 @@ void Player::SetupFootCnt()
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_TRAIL);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
-	material->SetTexture("_GradientTexture", system->resource->Find(TEX_TRAIL_GRADIENT));
+	material->SetTexture("_GradientTexture", system->resource->Find(TEX_GRADIENT_CENTER));
 	material->SetFloat("_SideAttenFactor", 1.5f);
 	//material->SetFloat("_EndFade", 1.0f);
 	m_footTrailRenderer->material = material;
@@ -458,6 +482,14 @@ void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc
 		V3 jump;
 		jump.y = desc.ContextFloat;
 		CCT->Jump(jump);
+
+		EffectShockwave::Create(
+			gameObject->regionScene,
+			CCT->footPosition,
+			0.25f,
+			0.5f,
+			0.2f, 2.5f
+		);
 	}
 
 	if (desc.ContextInt & ANIM_ATK_KT_START)

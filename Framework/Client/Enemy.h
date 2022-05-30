@@ -9,6 +9,7 @@ class Enemy : public Character
 protected:
 
 	virtual void Awake() override;
+	virtual void Start() override;
 	virtual void OnDestroyed() override;
 
 protected:

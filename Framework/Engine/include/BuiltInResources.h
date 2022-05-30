@@ -93,14 +93,14 @@ public:
 	const ResourceRef<Material>& GetStandardMaterial() const;
 	_declspec(property(get = GetStandardMaterial)) const ResourceRef<Material>& standardMaterial;
 
-	const ResourceRef<Material>& GetWhiteMaterial() const;
-	_declspec(property(get = GetWhiteMaterial)) const ResourceRef<Material>& whiteMaterial;
+	const ResourceRef<Material>& GetWhiteColorMaterial() const;
+	_declspec(property(get = GetWhiteColorMaterial)) const ResourceRef<Material>& whiteColorMaterial;
 
-	const ResourceRef<Material>& GetWireframeMaterial() const;
-	_declspec(property(get = GetWireframeMaterial)) const ResourceRef<Material>& wireframeMaterial;
+	const ResourceRef<Material>& GetGreenWireframeMaterial() const;
+	_declspec(property(get = GetGreenWireframeMaterial)) const ResourceRef<Material>& greenWireframeMaterial;
 
-	const ResourceRef<Material>& GetUnlitMaterial() const;
-	_declspec(property(get = GetUnlitMaterial)) const ResourceRef<Material>& unlitMaterial;
+	const ResourceRef<Material>& GetWhiteUnlitMaterial() const;
+	_declspec(property(get = GetWhiteUnlitMaterial)) const ResourceRef<Material>& whiteUnlitMaterial;
 
 public:
 
@@ -111,9 +111,7 @@ public:
 private:
 
 	HRESULT CreateTexture2D(const Color& color, unsigned int width, unsigned int height, tstring resourceKey, ResourceRef<Texture2D>* out_tex2D);
-
 	HRESULT CreateMeshNocopyVI(VI* vi, ResourceRef<Mesh>* out_mesh);
-
 	HRESULT CreateShader(const tstring& shaderPath, ResourceRef<Shader>* out_shader);
 
 private:
@@ -128,47 +126,37 @@ private: // Built-In resources
 	ResourceRef<Texture2D> m_gray;
 	ResourceRef<Texture2D> m_black;
 	ResourceRef<Texture2D> m_clear;
-
 	ResourceRef<Texture2D> m_red;
 	ResourceRef<Texture2D> m_green;
 	ResourceRef<Texture2D> m_blue;
-
 	ResourceRef<Texture2D> m_normal;
 	ResourceRef<Texture2D> m_roughness;
-
 	ResourceRef<Texture2D> m_whiteTransparent;
 	ResourceRef<Texture2D> m_blackTransparent;
 
 	// Mesh ===============================================
 
 	ResourceRef<Mesh> m_quad;
-
 	ResourceRef<Mesh> m_plane;
-
 	ResourceRef<Mesh> m_box;
-
 	ResourceRef<Mesh> m_skybox;
-
 	ResourceRef<Mesh> m_sphere;
-
 	ResourceRef<Mesh> m_capsule;
-
 	ResourceRef<Mesh> m_cylinder;
 
 	// Shader =============================================
 
 	ResourceRef<Shader> m_standardShader;
 	ResourceRef<Shader> m_colorShader;
+	ResourceRef<Shader> m_wireframeShader;
 	ResourceRef<Shader> m_unlitShader;
 
 	// Material ===========================================
 
 	ResourceRef<Material> m_standardMaterial;
-
-	ResourceRef<Material> m_whiteMaterial;
-	ResourceRef<Material> m_wireframeMaterial;
-
-	ResourceRef<Material> m_unlitMaterial;
+	ResourceRef<Material> m_whiteColorMaterial;
+	ResourceRef<Material> m_greenWireframeMaterial;
+	ResourceRef<Material> m_whiteUnlitMaterial;
 };
 
 ENGINE_END

@@ -32,11 +32,7 @@
       <Filter>PlayerTestScene</Filter>
     </ClInclude>
     <ClInclude Include="SoundTest.h" />
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Config.h" />
-    <ClInclude Include="Boss.h" />
-    <ClInclude Include="IDamagable.h" />
     <ClInclude Include="PlayerAnimator.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -57,6 +53,27 @@
     </ClInclude>
     <ClInclude Include="BillboardAnimation.h">
       <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectShockwave.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="IDamagable.h">
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h">
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectExplosion.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileWaveBeam.h">
+      <Filter>Projectile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +124,9 @@
     <Filter Include="Effect">
       <UniqueIdentifier>{7170783e-5bc6-4557-ba7c-20244881e03d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Projectile">
+      <UniqueIdentifier>{a5585c75-5e45-4921-b0b6-01bc9d590299}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -136,10 +156,6 @@
       <Filter>PlayerTestScene</Filter>
     </ClCompile>
     <ClCompile Include="SoundTest.cpp" />
-    <ClCompile Include="Character.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="IDamagable.cpp" />
     <ClCompile Include="PlayerAnimator.cpp">
       <Filter>Player</Filter>
     </ClCompile>
@@ -161,17 +177,29 @@
     <ClCompile Include="BillboardAnimation.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
+    <ClCompile Include="EffectShockwave.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="IDamagable.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Boss.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectExplosion.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileWaveBeam.cpp">
+      <Filter>Projectile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Shader\Priority.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\Skybox.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\PBR.fx">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="..\Shader\Trail.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -179,6 +207,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\BillboardAnimation.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Shockwave.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

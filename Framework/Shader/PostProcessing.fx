@@ -544,6 +544,7 @@ half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
 	//sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Threshold) * _BloomDesc.Intensity;
 	sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Intensity);
 	//sampleColor = sampleColor * _BloomDesc.Intensity;
+
 	return sampleColor;
 }
 

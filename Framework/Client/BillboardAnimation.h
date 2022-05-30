@@ -15,6 +15,7 @@ public:
 	void SetColor(const Color& color);
 	void SetTexture(ResourceRef<Texture> texture);
 	void SetMesh(ResourceRef<Mesh> mesh);
+	void SetDelay(float value) { m_autoDelay = Max(0.0f, value); }
 	BillboardRenderer* GetBillboardRenderer() const { return m_renderer; }
 
 private:
@@ -23,8 +24,12 @@ private:
 	uint2 m_sliced = {};
 	uint2 m_index = {};
 	bool m_autoPlay = true;
-	float m_autoDelay = 0.05f;
+	float m_autoDelay = 0.025f;
 	float m_leftToIncrease = 0.0f;
+
+public:
+
+	delegate<void()> OnLooped;
 
 };
 

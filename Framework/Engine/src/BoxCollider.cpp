@@ -34,7 +34,7 @@ void BoxCollider::Awake()
 	Collider::Awake();
 
 	m_dbgMesh = system->resource->builtIn->boxMesh;
-	m_dbgMaterial = system->resource->builtIn->wireframeMaterial;
+	m_dbgMaterial = system->resource->builtIn->greenWireframeMaterial;
 }
 
 void BoxCollider::DebugRender()

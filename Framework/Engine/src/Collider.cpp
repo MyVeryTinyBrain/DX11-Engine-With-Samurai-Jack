@@ -309,8 +309,11 @@ void Collider::ApplyPose(bool unconditionally)
 		m_beforeLocalPosition = localPositionFromBody;
 		m_beforeLocalRotation = localRotationFromBody;
 
-		if (!IsCCTComponent() && rigidBody->IsCCTComponent())
+		if (!IsCCTComponent() && rigidbody && rigidBody->IsCCTComponent())
 		{
+			// CCT 콜라이더 예외처리
+			// CCT가 자꾸 돌려버리니까 다시 돌려줘야 합니다.
+
 			localPositionFromBody = Q::Euler(0, 0, -90).MultiplyVector(localPositionFromBody);
 			Q localRotationFromBody_WithDefaultRotation = Q::Euler(0,0,-90) * m_defaultRotation * localRotationFromBody;
 

@@ -190,7 +190,7 @@ void BossAncientKingAnimator::SetupNodes()
         ATK_SWING_R->AddEvent(a1);
     }
     Layer->AddNode(ATK_SWING_R);
-
+        
     ATK_SWING_V = AnimatorSingleNode::Create(GetClip(TEXT("ATK_SWING_V")), NOLOOP);
     {
         AnimationEventDesc e0;
@@ -231,7 +231,7 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 59 / 123.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ANIM_CAM_SHAKE | ANIM_LF_SHOCKWAVE;
         e0.ContextFloat = 1.0f;
         ATK_STEPON_L->AddEvent(e0);
 
@@ -249,13 +249,13 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 40 / 110.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ANIM_CAM_SHAKE | ANIM_RF_SHOCKWAVE;
         e0.ContextFloat = 1.0f;
         ATK_STEPON_R->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
-        a0.NormalizedTime = 38 / 123.0f;
-        a1.NormalizedTime = 40 / 123.0f;
+        a0.NormalizedTime = 39 / 123.0f;
+        a1.NormalizedTime = 41 / 123.0f;
         a0.ContextInt = ANIM_ATK_RF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
         a1.ContextInt = ANIM_ATK_RF_END;
         ATK_STEPON_R->AddEvent(a0);
@@ -301,7 +301,7 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 33 / 110.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ANIM_CAM_SHAKE | ANIM_LF_SHOCKWAVE | ANIM_RF_SHOCKWAVE;
         e0.ContextFloat = 1.0f;
         ATK_JUMP->AddEvent(e0);
 
@@ -355,6 +355,15 @@ void BossAncientKingAnimator::SetupNodes()
     Layer->AddNode(ATK_DOWNSTRIKE_R);
 
     ATK_BEAM = AnimatorSingleNode::Create(GetClip(TEXT("ATK_BEAM")), NOLOOP);
+    {
+        for (uint i = 0; i < 15; ++i)
+        {
+            AnimationEventDesc e;
+            e.NormalizedTime = float(40 + i) / 90.0f;
+            e.ContextInt = ANIM_ATK_BEAM;
+            ATK_BEAM->AddEvent(e);
+        }
+    }
     Layer->AddNode(ATK_BEAM);
 
     ETC_RAGE = AnimatorSingleNode::Create(GetClip(TEXT("ETC_RAGE")), NOLOOP);

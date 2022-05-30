@@ -21,7 +21,7 @@ void TrailRenderer::Awake()
 {
 	Renderer::Awake();
 	SetupMesh();
-	SetMaterial(system->resource->builtIn->whiteMaterial);
+	SetMaterial(system->resource->builtIn->whiteColorMaterial);
 	SetNumMeshRect(1024);
 }
 

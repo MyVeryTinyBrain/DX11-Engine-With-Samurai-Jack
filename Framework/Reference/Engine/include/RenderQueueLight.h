@@ -73,7 +73,7 @@ private:
 
 	bool CullOp(const RenderRequest& request, const BoundingHolder& boundingHolder) const;
 
-	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial);
+	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, uint& inout_prevPassIndex, IMaterial** inout_prevMaterial);
 	void ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMesh* mesh, IMesh** inout_prevMesh);
 	void ApplyCameraBuffer(Com<ID3D11DeviceContext> deviceContext, const LightDesc& lightDesc, uint projectionIndex);
 	void ApplyBoneMatrices(Com<ID3D11DeviceContext> deviceContext, IRendererBoneOp* boneOp, uint subMeshIndex);

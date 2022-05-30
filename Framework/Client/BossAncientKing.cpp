@@ -5,7 +5,8 @@
 
 #include "Player.h"
 #include "TPSCamera.h"
-#include "BillboardAnimation.h"
+#include "EffectShockwave.h"
+#include "ProjectileWaveBeam.h"
 
 #define ATK_NEAR_MAX_DIST 6.0f
 #define ATK_NEAR_MAX_ANGLE 20.0f
@@ -148,12 +149,12 @@ void BossAncientKing::SetupHammer()
 void BossAncientKing::SetupAttackTrigger()
 {
 	m_goAttackTrigger[HAMMER_TRIGGER] = CreateGameObjectToChild(m_goHammer->transform);
-	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.4f);
+	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.7f);
 	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
 	m_attackTrigger[HAMMER_TRIGGER] = m_goAttackTrigger[HAMMER_TRIGGER]->AddComponent<CapsuleCollider>();
 	CapsuleCollider* hammer_trigger = (CapsuleCollider*)m_attackTrigger[HAMMER_TRIGGER];
 	hammer_trigger->radius = 0.7f;
-	hammer_trigger->halfHeight = 0.45f;
+	hammer_trigger->halfHeight = 0.4f;
 	hammer_trigger->isTrigger = true;
 	hammer_trigger->enable = false;
 
@@ -294,7 +295,7 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 
 void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
 {
-	if (desc.ContextByte == ANIM_CAM_SHAKE)
+	if (desc.ContextByte & ANIM_CAM_SHAKE)
 	{
 		float shakeValue = desc.ContextFloat;
 		Player* player = Player::GetInstance();
@@ -310,6 +311,27 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		m_gadableAttack = true;
 	}
 
+	if (desc.ContextByte & ANIM_LF_SHOCKWAVE)
+	{
+		EffectShockwave::Create(
+			gameObject->regionScene,
+			m_attackTrigger[FOOT_L_TRIGGER]->transform->position + V3::down() * 0.5f,
+			1.0f,
+			2.0f,
+			1.0f, 9.0f
+		);
+	}
+	if (desc.ContextByte & ANIM_RF_SHOCKWAVE)
+	{
+		EffectShockwave::Create(
+			gameObject->regionScene,
+			m_attackTrigger[FOOT_R_TRIGGER]->transform->position + V3::down() * 0.5f,
+			1.0f,
+			2.0f,
+			1.0f, 9.0f
+		);
+	}
+
 	if (desc.ContextInt & ANIM_ATK_HAMMER_START)
 	{
 		m_hammerTrailRenderer->autoTrail = true;
@@ -317,7 +339,7 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		SetAttackType(desc.ContextInt);
 		ClearHitBuffer();
 	}
-	else if (desc.ContextInt & ANIM_ATK_HAMMER_END)
+	if (desc.ContextInt & ANIM_ATK_HAMMER_END)
 	{
 		m_hammerTrailRenderer->autoTrail = false;
 		OffAttackTriggers();
@@ -329,7 +351,7 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		SetAttackType(desc.ContextInt);
 		ClearHitBuffer();
 	}
-	else if (desc.ContextInt & ANIM_ATK_LF_END)
+	if (desc.ContextInt & ANIM_ATK_LF_END)
 	{
 		OffAttackTriggers();
 		ClearHitBuffer();
@@ -340,10 +362,18 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		SetAttackType(desc.ContextInt);
 		ClearHitBuffer();
 	}
-	else if (desc.ContextInt & ANIM_ATK_RF_END)
+	if (desc.ContextInt & ANIM_ATK_RF_END)
 	{
 		OffAttackTriggers();
 		ClearHitBuffer();
+	}
+
+	if (desc.ContextInt & ANIM_ATK_BEAM)
+	{
+		GameObject* goBeam = CreateGameObject();
+		goBeam->transform->position = m_Head->position;
+		goBeam->transform->forward = (player->transform->position - m_Head->position).normalized;
+		ProjectileWaveBeam* beam = goBeam->AddComponent<ProjectileWaveBeam>();
 	}
 }
 

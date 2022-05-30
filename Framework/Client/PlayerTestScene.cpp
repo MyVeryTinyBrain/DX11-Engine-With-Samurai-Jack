@@ -7,6 +7,7 @@
 #include "BossAncientKing.h"
 #include "Config.h"
 #include "BillboardAnimation.h"
+#include "EffectShockwave.h"
 
 Scene* PlayerTestScene::Clone()
 {
@@ -74,19 +75,17 @@ void PlayerTestScene::OnLoad()
 				system->resource->factory->LoadMeshM(MESH_BEETLE_DRONE);
 				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING);
 				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING_HAMMER);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_SWORDTRAIL_GRADIENT);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_TRAIL_GRADIENT);
+				system->resource->factory->LoadMeshM(MESH_CYILNDER_THIN_TWOSIDES);
+				system->resource->factory->LoadMeshM(MESH_WAVE);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_GRADIENT_TO_RIGHT);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_GRADIENT_CENTER);
 				system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SPARK);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_TRAIL_LINE);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_EXPLOSION);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FIRE_SUBUV);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME01);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME02);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME03);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIM_FLAME04);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_ELECTRIC_H0);
+				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIMATION_EXPLOSION);
 				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_TRAIL);
 				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
 				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_ANIMATION);
+				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SHOCKWAVE);
 			});
 		if (t0.joinable())
 			t0.join();
@@ -102,11 +101,11 @@ void PlayerTestScene::OnLoad()
 		//	billboardAnimation->SetColor(Color::RGBA255(255, 0, 68, 255));
 		//}
 
-		{
-			GameObject* goEnemy = CreateGameObject();
-			goEnemy->transform->position = V3(0, 20, 10);
-			goEnemy->AddComponent<BossAncientKing>();
-		}
+		//{
+		//	GameObject* goEnemy = CreateGameObject();
+		//	goEnemy->transform->position = V3(0, 20, 10);
+		//	goEnemy->AddComponent<BossAncientKing>();
+		//}
 
 		//{
 		//	GameObject* goEnemy = CreateGameObject();

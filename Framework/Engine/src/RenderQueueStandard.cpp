@@ -37,6 +37,7 @@ void RenderQueueStandard::Render(ICamera* camera)
 	Com<ID3D11Device> device = m_graphicSystem->device;
 	Com<ID3D11DeviceContext> deviceContext = m_graphicSystem->deviceContext;
 
+	uint prevPass = 0;
 	IMaterial* prevMaterial = nullptr;
 	IMesh* prevMesh = nullptr;
 
@@ -71,7 +72,7 @@ void RenderQueueStandard::Render(ICamera* camera)
 						if (request.essential.cull && !CullOp(camera, request.op.cullOp))
 							continue;
 
-						ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, &prevMaterial);
+						ApplyMaterial(deviceContext, camera, material, request.essential.techniqueIndex, request.essential.passIndex, prevPass, &prevMaterial);
 						ApplyMesh(deviceContext, mesh, &prevMesh);
 						ApplyBoneMatrices(request.op.boneOp, request.essential.subMeshIndex);
 						ApplyWorldMatrix(request.essential.worldMatrix);
@@ -112,17 +113,18 @@ bool RenderQueueStandard::CullOp(ICamera* camera, IRendererCullOp* cullOp) const
 	return false;
 }
 
-void RenderQueueStandard::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial)
+void RenderQueueStandard::ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, uint& inout_prevPassIndex, IMaterial** inout_prevMaterial)
 {
 	HRESULT hr = S_OK;
 
 	if (!inout_prevMaterial)
 		return;
 
-	// 이미 적용된 재질이라면 적용하지 않습니다.
-	if (*inout_prevMaterial == material)
+	// 이미 적용된 재질이며, 같은 패스인경우 적용하지 않습니다.
+	if (*inout_prevMaterial == material && inout_prevPassIndex == passIndex)
 		return;
 
+	inout_prevPassIndex = passIndex;
 	*inout_prevMaterial = material;
 
 	material->ApplyMaterial(deviceContext, camera);

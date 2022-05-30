@@ -212,7 +212,7 @@ void TestScene::OnLoad()
 
         MeshRenderer* meshRenderer = goHandlingTest->AddComponent<MeshRenderer>();
         meshRenderer->mesh = system->resource->builtIn->boxMesh;
-        meshRenderer->material = system->resource->builtIn->wireframeMaterial;
+        meshRenderer->material = system->resource->builtIn->greenWireframeMaterial;
 
         GameObject* goGizmo = CreateGameObject();
         Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();

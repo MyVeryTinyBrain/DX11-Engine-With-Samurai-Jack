@@ -13,6 +13,10 @@ void Enemy::Awake()
     RegistEnemy(this);
 }
 
+void Enemy::Start()
+{
+}
+
 void Enemy::OnDestroyed()
 {
     UnregistEnemy(this);

@@ -202,6 +202,6 @@ void BillboardRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 
 	for (uint i = 0; i < numMaterials; ++i)
 	{
-		SetMaterialByIndex(i, system->resource->builtIn->unlitMaterial);
+		SetMaterialByIndex(i, system->resource->builtIn->whiteUnlitMaterial);
 	}
 }

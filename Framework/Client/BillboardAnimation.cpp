@@ -58,6 +58,7 @@ void BillboardAnimation::IncreaseIndex()
 	{
 		x = 0;
 		y = 0;
+		OnLooped();
 	}
 	SetIndex(uint2(x, y));
 }

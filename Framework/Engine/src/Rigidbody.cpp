@@ -131,6 +131,14 @@ void Rigidbody::OnDestroyed()
 		return;
 
 	DetachAll();
+
+	if (!m_isCCTComponent)
+	{
+		IPhysicsSystem* iPhysicsSystem = system->physics;
+		PxScene* pxScene = iPhysicsSystem->GetScene();
+		pxScene->removeActor(*m_body);
+		PxRelease(m_body);
+	}
 }
 
 Rigidbody::~Rigidbody()
@@ -138,15 +146,6 @@ Rigidbody::~Rigidbody()
 	m_currentInterpolate = nullptr;
 	SafeDelete(m_interpolater);
 	SafeDelete(m_extrapolater);
-
-	if (m_isCCTComponent)
-		return;
-
-	IPhysicsSystem* iPhysicsSystem = system->physics;
-	PxScene* pxScene = iPhysicsSystem->GetScene();
-	pxScene->removeActor(*m_body);
-
-	PxRelease(m_body);
 }
 
 void Rigidbody::SetContinousDetctionMode(bool value)
@@ -220,6 +219,36 @@ void Rigidbody::SetInterpolateMode(Rigidbody::Interpolate mode)
 			m_currentInterpolate = nullptr;
 			break;
 	}
+}
+
+uint Rigidbody::GetPositionSolverIterationCount() const
+{
+	PxU32 p, v;
+	m_body->getSolverIterationCounts(p, v);
+	return uint(p);
+}
+
+void Rigidbody::SetPositionSolverIterationCount(uint value)
+{
+	PxU32 p, v;
+	m_body->getSolverIterationCounts(p, v);
+	p = PxU32(value);
+	m_body->setSolverIterationCounts(p, v);
+}
+
+uint Rigidbody::GetVelocitySolverIterationCount() const
+{
+	PxU32 p, v;
+	m_body->getSolverIterationCounts(p, v);
+	return uint(v);
+}
+
+void Rigidbody::SetVelocitySolverIterationCount(uint value)
+{
+	PxU32 p, v;
+	m_body->getSolverIterationCounts(p, v);
+	v = PxU32(value);
+	m_body->setSolverIterationCounts(p, v);
 }
 
 V3 Rigidbody::GetVelocity() const

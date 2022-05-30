@@ -34,7 +34,7 @@ void SphereCollider::Awake()
 	Collider::Awake();
 
 	m_dbgMesh = system->resource->builtIn->sphereMesh;
-	m_dbgMaterial = system->resource->builtIn->wireframeMaterial;
+	m_dbgMaterial = system->resource->builtIn->greenWireframeMaterial;
 }
 
 void SphereCollider::DebugRender()

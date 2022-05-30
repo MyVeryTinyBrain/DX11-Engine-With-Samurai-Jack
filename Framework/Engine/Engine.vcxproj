@@ -455,6 +455,7 @@
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />
     <FxCompile Include="..\Shader\Unlit.fx" />
+    <FxCompile Include="..\Shader\Wireframe.fx" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="include\Engine.natvis" />

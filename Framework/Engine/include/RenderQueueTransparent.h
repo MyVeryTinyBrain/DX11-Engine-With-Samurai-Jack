@@ -34,7 +34,7 @@ private:
 
 	bool CullOp(ICamera* camera, IRendererCullOp* cullOp) const;
 
-	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, IMaterial** inout_prevMaterial);
+	void ApplyMaterial(Com<ID3D11DeviceContext> deviceContext, ICamera* camera, IMaterial* material, uint techniqueIndex, uint passIndex, uint& inout_prevPassIndex, IMaterial** inout_prevMaterial);
 
 	void ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMesh* mesh, IMesh** inout_prevMesh);
 

@@ -6,6 +6,8 @@ void EffectSpark::Awake()
 {
 	m_rigidbody = gameObject->AddComponent<Rigidbody>();
 	m_rigidbody->SetRotationLock(Rigidbody::Axis::All, true);
+	m_rigidbody->positionSolverIterationCount = 1;
+	m_rigidbody->velocitySolverIterationCount = 1;
 	
 	m_collider = gameObject->AddComponent<SphereCollider>();
 	m_collider->layerIndex = PhysicsLayer_Particle;
