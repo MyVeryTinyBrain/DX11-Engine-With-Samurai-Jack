@@ -44,7 +44,7 @@ void BossAncientKing::Awake()
 	SetupHammer();
 	SetupAttackTrigger();
 
-	SetState(State::IDLE);
+	//SetState(State::IDLE);
 	m_idleLeftCounter = 2.0f;
 }
 
@@ -155,8 +155,9 @@ void BossAncientKing::SetupAttackTrigger()
 	CapsuleCollider* hammer_trigger = (CapsuleCollider*)m_attackTrigger[HAMMER_TRIGGER];
 	hammer_trigger->radius = 0.7f;
 	hammer_trigger->halfHeight = 0.4f;
-	hammer_trigger->isTrigger = true;
-	hammer_trigger->enable = false;
+	//hammer_trigger->isTrigger = true;
+	hammer_trigger->enable = true;
+	hammer_trigger->debugRender = true;
 
 	m_goAttackTrigger[FOOT_L_TRIGGER] = CreateGameObjectToChild(transform);
 	m_goAttackTrigger[FOOT_L_TRIGGER]->transform->localPosition = V3(0, 0, 0);
@@ -209,6 +210,7 @@ void BossAncientKing::AttackTriggerQuery()
 			continue;
 
 		vector<Collider*> overlaps = system->physics->query->OverlapAll(m_attackTrigger[i], 1 << PhysicsLayer_Player, PhysicsQueryType::Collider);
+		cout << overlaps.size() << endl;
 		for (auto& overlap : overlaps)
 		{
 			Rigidbody* rigidbody = overlap->rigidbody;
@@ -266,12 +268,14 @@ void BossAncientKing::ClearHitBuffer()
 
 void BossAncientKing::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
 {
+	if (changing->name.find(TEXT("ATK")) != tstring::npos)
+	{
+		m_gadableAttack = false;
+	}
 }
 
 void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
 {
-	m_gadableAttack = false;
-
 	if (prev && prev->name.find(TEXT("ATK")) != tstring::npos &&
 		endChanged.GetPointer() == m_animator->BH_IDLE)
 	{
@@ -289,7 +293,6 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 		m_hammerTrailRenderer->autoTrail = false;
 		OffAttackTriggers();
 		ClearHitBuffer();
-		m_gadableAttack = false;
 	}
 }
 
@@ -368,11 +371,15 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		ClearHitBuffer();
 	}
 
+	if (desc.ContextByte & ANIM_AIM_BEGIN)
+	{
+		m_aimPosition = player->transform->position;
+	}
 	if (desc.ContextInt & ANIM_ATK_BEAM)
 	{
 		GameObject* goBeam = CreateGameObject();
 		goBeam->transform->position = m_Head->position;
-		goBeam->transform->forward = (player->transform->position - m_Head->position).normalized;
+		goBeam->transform->forward = (m_aimPosition - m_Head->position).normalized;
 		ProjectileWaveBeam* beam = goBeam->AddComponent<ProjectileWaveBeam>();
 	}
 }

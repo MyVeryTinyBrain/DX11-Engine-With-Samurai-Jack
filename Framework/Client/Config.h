@@ -61,6 +61,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define ANIM_CAM_SHAKE			0b00000001
 #define ANIM_LF_SHOCKWAVE		0b00000010
 #define ANIM_RF_SHOCKWAVE		0b00000100
+#define ANIM_AIM_BEGIN			0b00001000
 
 #define JUMP_SPEED				(11.0f)
 #define AIRJUMP_SPEED			(13.0f)

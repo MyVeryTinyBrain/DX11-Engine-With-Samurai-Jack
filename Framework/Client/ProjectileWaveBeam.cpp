@@ -14,7 +14,6 @@ void ProjectileWaveBeam::Awake()
 
 	m_trigger = gameObject->AddComponent<SphereCollider>();
 	m_trigger->isTrigger = true;
-	m_trigger->debugRender = true;
 }
 
 void ProjectileWaveBeam::Update()

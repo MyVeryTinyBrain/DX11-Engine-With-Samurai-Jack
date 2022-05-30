@@ -167,5 +167,6 @@ private:
 	bool m_usedSATK_TURN = false; 
 	float m_farATKCounter = 0.0f;
 	bool m_gadableAttack = false;
+	V3 m_aimPosition;
 };
 

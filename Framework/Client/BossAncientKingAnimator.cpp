@@ -158,7 +158,7 @@ void BossAncientKingAnimator::SetupNodes()
         ATK_TURN->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
-        a0.NormalizedTime = 16 / 75.0f;
+        a0.NormalizedTime = 20 / 75.0f;
         a1.NormalizedTime = 33 / 75.0f;
         a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
         a1.ContextInt = ANIM_ATK_HAMMER_END;
@@ -356,6 +356,11 @@ void BossAncientKingAnimator::SetupNodes()
 
     ATK_BEAM = AnimatorSingleNode::Create(GetClip(TEXT("ATK_BEAM")), NOLOOP);
     {
+        AnimationEventDesc a;
+        a.NormalizedTime = float(40) / 90.0f;
+        a.ContextByte = ANIM_AIM_BEGIN;
+        ATK_BEAM->AddEvent(a);
+
         for (uint i = 0; i < 15; ++i)
         {
             AnimationEventDesc e;
