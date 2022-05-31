@@ -3,6 +3,7 @@
 ENGINE_BEGIN
 
 class CharacterController;
+class PhysicsLayerManager;
 
 class CCTCallback : public PxUserControllerHitReport, public PxControllerBehaviorCallback, public PxQueryFilterCallback, public PxControllerFilterCallback
 {

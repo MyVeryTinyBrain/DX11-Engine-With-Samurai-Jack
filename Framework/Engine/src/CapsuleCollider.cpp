@@ -63,7 +63,7 @@ void CapsuleCollider::Awake()
 
 void CapsuleCollider::Awake(void* arg)
 {
-	//m_defaultRotation = Q::Euler(0, 0, 90);
+	m_defaultRotation = Q::Euler(0, 0, 90);
 
 	Collider::Awake(arg);
 

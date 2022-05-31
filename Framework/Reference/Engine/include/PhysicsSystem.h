@@ -4,7 +4,7 @@
 #include "PhysicsLayerManager.h"
 
 ENGINE_BEGIN
-class PhysicsSystem final : public IPhysicsSystem
+class PhysicsSystem final : public IPhysicsSystem, public PxControllerFilterCallback
 {
 public:
 
@@ -50,6 +50,10 @@ private:
 private:
 
 	bool SetupScene();
+
+private:
+
+	virtual bool filter(const PxController& a, const PxController& b) override;
 
 private:
 

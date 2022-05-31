@@ -608,6 +608,9 @@
     <ClInclude Include="include\BillboardRenderer.h">
       <Filter>Object\SceneObject\Component\Renderer\BillobardRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\CCTFilterCallback.h">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1170,6 +1173,9 @@
     </ClCompile>
     <ClCompile Include="src\BillboardRenderer.cpp">
       <Filter>Object\SceneObject\Component\Renderer\BillobardRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCTFilterCallback.cpp">
+      <Filter>EngineWorld\System\Physics\Callback</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

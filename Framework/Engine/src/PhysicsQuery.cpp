@@ -85,7 +85,13 @@ bool PhysicsQuery::OverlapGeometryTest(const PxGeometryHolder& g, const V3& p, c
 	PhysicsQueryFilterCallback callback(desc);
 	PxOverlapHit data;
 
-	PxTransform t(ToPxVec3(p), ToPxQuat(r));
+	Q R;
+	if (!g.capsule().isValid())
+		R = r;
+	else
+		R = Q::Euler(0, 0, 90) * r;
+
+	PxTransform t(ToPxVec3(p), ToPxQuat(R));
 
 	return PxSceneQueryExt::overlapAny(*m_scene, g.any(), t, data, m_testFilter, &callback);
 	//return m_scene->overlap(g.any(), t, buffer, m_testFilter, &callback);
@@ -101,7 +107,13 @@ Collider* PhysicsQuery::OverlapGeometry(const PxGeometryHolder& g, const V3& p, 
 	PhysicsQueryFilterCallback callback(desc);
 	PxOverlapHit data;
 
-	PxTransform t(ToPxVec3(p), ToPxQuat(r));
+	Q R;
+	if (!g.capsule().isValid())
+		R = r;
+	else
+		R = Q::Euler(0, 0, 90) * r;
+
+	PxTransform t(ToPxVec3(p), ToPxQuat(R));
 
 	//bool result = m_scene->overlap(g.any(), t, buffer, m_queryFilter, &callback);
 	bool result = PxSceneQueryExt::overlapAny(*m_scene, g.any(), t, data, m_queryFilter, &callback);
@@ -121,7 +133,13 @@ vector<Collider*> PhysicsQuery::OverlapGeometryAll(const PxGeometryHolder& g, co
 	PxOverlapHit datas[HIT_MAX];
 	PxOverlapBuffer buffer(datas, HIT_MAX);
 
-	PxTransform t(ToPxVec3(p), ToPxQuat(r));
+	Q R;
+	if (!g.capsule().isValid())
+		R = r;
+	else
+		R = Q::Euler(0, 0, 90) * r;
+
+	PxTransform t(ToPxVec3(p), ToPxQuat(R));
 
 	m_scene->overlap(g.any(), t, buffer, m_queryFilter, &callback);
 
@@ -240,7 +258,13 @@ bool PhysicsQuery::SweepGeometryTest(const PxGeometryHolder& g, const V3& p, con
 	PhysicsQueryFilterCallback callback(desc);
 	PxSweepBuffer buffer;
 
-	PxTransform t(ToPxVec3(p), ToPxQuat(r));
+	Q R;
+	if (!g.capsule().isValid())
+		R = r;
+	else
+		R = Q::Euler(0, 0, 90) * r;
+
+	PxTransform t(ToPxVec3(p), ToPxQuat(R));
 
 	return m_scene->sweep(g.any(), t, ToPxVec3(dir), length, buffer, m_flags, m_testFilter, &callback);
 }
@@ -255,7 +279,13 @@ bool PhysicsQuery::SweepGeometry(PhysicsHit& hit, const PxGeometryHolder& g, con
 	PhysicsQueryFilterCallback callback(desc);
 	PxSweepBuffer buffer;
 
-	PxTransform t(ToPxVec3(p), ToPxQuat(r));
+	Q R;
+	if (!g.capsule().isValid())
+		R = r;
+	else
+		R = Q::Euler(0, 0, 90) * r;
+
+	PxTransform t(ToPxVec3(p), ToPxQuat(R));
 
 	bool result = m_scene->sweep(g.any(), t, ToPxVec3(dir), length, buffer, m_flags, m_queryFilter, &callback);
 	if (!result) return false;
@@ -279,7 +309,13 @@ vector<PhysicsHit> PhysicsQuery::SweepGeometryAll(const PxGeometryHolder& g, con
 	PxSweepHit datas[HIT_MAX];
 	PxSweepBuffer buffer(datas, HIT_MAX);
 
-	PxTransform t(ToPxVec3(p), ToPxQuat(r));
+	Q R;
+	if (!g.capsule().isValid())
+		R = r;
+	else
+		R = Q::Euler(0, 0, 90) * r;
+
+	PxTransform t(ToPxVec3(p), ToPxQuat(R));
 
 	m_scene->sweep(g.any(), t, ToPxVec3(dir), length, buffer, m_flags, m_queryFilter, &callback);
 

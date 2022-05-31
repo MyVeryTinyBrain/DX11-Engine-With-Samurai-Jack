@@ -44,7 +44,7 @@ void BossAncientKing::Awake()
 	SetupHammer();
 	SetupAttackTrigger();
 
-	//SetState(State::IDLE);
+	SetState(State::IDLE);
 	m_idleLeftCounter = 2.0f;
 }
 
@@ -155,15 +155,14 @@ void BossAncientKing::SetupAttackTrigger()
 	CapsuleCollider* hammer_trigger = (CapsuleCollider*)m_attackTrigger[HAMMER_TRIGGER];
 	hammer_trigger->radius = 0.7f;
 	hammer_trigger->halfHeight = 0.4f;
-	//hammer_trigger->isTrigger = true;
-	hammer_trigger->enable = true;
-	hammer_trigger->debugRender = true;
+	hammer_trigger->isTrigger = true;
+	hammer_trigger->enable = false;
 
 	m_goAttackTrigger[FOOT_L_TRIGGER] = CreateGameObjectToChild(transform);
 	m_goAttackTrigger[FOOT_L_TRIGGER]->transform->localPosition = V3(0, 0, 0);
 	m_attackTrigger[FOOT_L_TRIGGER] = m_goAttackTrigger[FOOT_L_TRIGGER]->AddComponent<SphereCollider>();
 	SphereCollider* foot_l_trigger = (SphereCollider*)m_attackTrigger[FOOT_L_TRIGGER];
-	foot_l_trigger->radius = 3.8f;
+	foot_l_trigger->radius = 4.5f;
 	foot_l_trigger->isTrigger = true;
 	foot_l_trigger->enable = false;
 
@@ -171,7 +170,7 @@ void BossAncientKing::SetupAttackTrigger()
 	m_goAttackTrigger[FOOT_R_TRIGGER]->transform->localPosition = V3(0, 0, 0);
 	m_attackTrigger[FOOT_R_TRIGGER] = m_goAttackTrigger[FOOT_R_TRIGGER]->AddComponent<SphereCollider>();
 	SphereCollider* foot_r_trigger = (SphereCollider*)m_attackTrigger[FOOT_R_TRIGGER];
-	foot_r_trigger->radius = 3.9f;
+	foot_r_trigger->radius = 4.5f;
 	foot_r_trigger->isTrigger = true;
 	foot_r_trigger->enable = false;
 }
@@ -210,7 +209,6 @@ void BossAncientKing::AttackTriggerQuery()
 			continue;
 
 		vector<Collider*> overlaps = system->physics->query->OverlapAll(m_attackTrigger[i], 1 << PhysicsLayer_Player, PhysicsQueryType::Collider);
-		cout << overlaps.size() << endl;
 		for (auto& overlap : overlaps)
 		{
 			Rigidbody* rigidbody = overlap->rigidbody;

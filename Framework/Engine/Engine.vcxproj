@@ -46,6 +46,7 @@
     <ClInclude Include="include\CapsuleCollider.h" />
     <ClInclude Include="include\CCTCallback.h" />
     <ClInclude Include="include\CCTExtrapolate.h" />
+    <ClInclude Include="include\CCTFilterCallback.h" />
     <ClInclude Include="include\CCTInterpolate.h" />
     <ClInclude Include="include\CCTInterpolateBase.h" />
     <ClInclude Include="include\CharacterController.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="src\CapsuleCollider.cpp" />
     <ClCompile Include="src\CCTCallback.cpp" />
     <ClCompile Include="src\CCTExtrapolate.cpp" />
+    <ClCompile Include="src\CCTFilterCallback.cpp" />
     <ClCompile Include="src\CCTInterpolate.cpp" />
     <ClCompile Include="src\CCTInterpolateBase.cpp" />
     <ClCompile Include="src\CharacterController.cpp" />

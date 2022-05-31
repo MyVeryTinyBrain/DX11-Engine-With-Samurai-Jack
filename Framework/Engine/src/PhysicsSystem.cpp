@@ -6,6 +6,7 @@
 #include "System.h"
 #include "Times.h"
 #include "PhysicsQuery.h"
+#include "CCTFilterCallback.h"
 
 PhysicsSystem::PhysicsSystem()
 {
@@ -215,7 +216,7 @@ void PhysicsSystem::SimulateOnce(const map<uint, vector<Component*>>& executionB
 
 void PhysicsSystem::OnUpate()
 {
-	//m_controllerManager->computeInteractions(m_system->time->deltaTime);
+	m_controllerManager->computeInteractions(m_system->time->deltaTime, this);
 }
 
 void PhysicsSystem::RegistPhysicsObject(IPhysicsObject* physicsObject)
@@ -262,4 +263,9 @@ bool PhysicsSystem::SetupScene()
 	m_scene = m_physics->createScene(desc);
 
 	return m_scene != nullptr;
+}
+
+bool PhysicsSystem::filter(const PxController& a, const PxController& b)
+{
+	return CCTFilterCallback::static_cct_filtercallback(m_physicsLayerManager, a, b);
 }
