@@ -15,10 +15,10 @@ DeferredRenderTarget::DeferredRenderTarget(Com<ID3D11Device> device, uint width,
 
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R8G8B8A8_UNORM, &m_albedo);
 	m_renderTargets.push_back(m_albedo);
-	
+
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R16G16B16A16_UNORM, &m_normal);
 	m_renderTargets.push_back(m_normal);
-	
+
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_depth[0]);
 	m_renderTargets.push_back(m_depth[0]);
 	RenderTarget::Create(device, width, height, false, DXGI_FORMAT_R32_FLOAT, &m_depth[1]);
@@ -178,7 +178,6 @@ bool DeferredRenderTarget::ReadyToDraw(Com<ID3D11DeviceContext> dc)
 
 	Clear(dc);
 	ClearPostProcessings(dc);
-	ClearCopyTargets();
 
 	return true;
 }
@@ -246,34 +245,6 @@ void DeferredRenderTarget::SetDeferredVolumetricLightBlendTargets(Com<ID3D11Devi
 
 	DxUtility::SetRenderTargets(dc, 1, arrRTV, m_depthStencil->GetDSV().Get());
 	DxUtility::SetViewport(dc, m_width, m_height);
-}
-
-void DeferredRenderTarget::ClearCopyTargets()
-{
-	m_depthWasCopied = false;
-	m_resultWasCopied = false;
-}
-
-bool DeferredRenderTarget::DepthWasCopied() const
-{
-	return m_depthWasCopied;
-}
-
-bool DeferredRenderTarget::ResultWasCopied() const
-{
-	return m_resultWasCopied;
-}
-
-void DeferredRenderTarget::CopyDepth(Com<ID3D11DeviceContext> dc)
-{
-	dc->CopyResource(m_depth[0]->texture.Get(), m_depth[1]->texture.Get());
-	m_depthWasCopied = true;
-}
-
-void DeferredRenderTarget::CopyResult(Com<ID3D11DeviceContext> dc)
-{
-	dc->CopyResource(m_result[0]->texture.Get(), m_result[1]->texture.Get());
-	m_resultWasCopied = true;
 }
 
 void DeferredRenderTarget::SetSSRResolutionScale(Com<ID3D11Device> device, float value)

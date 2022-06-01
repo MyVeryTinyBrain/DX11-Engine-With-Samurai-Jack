@@ -17,7 +17,7 @@ void EffectShockwave::Awake()
 	material = system->resource->factory->CreateMaterialByShaderUM(shader);
 	m_renderer->material = material;
 
-	ResourceRef<Texture> texture = system->resource->Find(TEX_EFFECT_ELECTRIC_H0);
+	ResourceRef<Texture> texture = system->resource->Find(TEX_EFFECT_ELECTRIC_H);
 	material->SetTexture("_Texture", texture);
 	material->SetColor("_Color", m_startColor);
 }

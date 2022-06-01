@@ -68,8 +68,9 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 18 / 45.0f;
 		e1.NormalizedTime = 20 / 45.0f;
-		e0.ContextInt = ANIM_ATK_RH_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_RH_END;
+		e0.ContextInt = IntContext::RH_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::RH_END;
 		STD_ATK1->AddEvent(e0);
 		STD_ATK1->AddEvent(e1);
 	}
@@ -80,8 +81,9 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 8 / 50.0f;
 		e1.NormalizedTime = 11 / 50.0f;
-		e0.ContextInt = ANIM_ATK_LH_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_LH_END;
+		e0.ContextInt = IntContext::LH_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::LH_END;
 		STD_ATK2->AddEvent(e0);
 		STD_ATK2->AddEvent(e1);
 	}
@@ -92,8 +94,9 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 5 / 51.0f;
 		e1.NormalizedTime = 9 / 51.0f;
-		e0.ContextInt = ANIM_ATK_RH_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_RH_END;
+		e0.ContextInt = IntContext::RH_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::RH_END;
 		STD_ATK3A->AddEvent(e0);
 		STD_ATK3A->AddEvent(e1);
 	}
@@ -104,8 +107,9 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 20 / 45.0f;
 		e1.NormalizedTime = 23 / 45.0f;
-		e0.ContextInt = ANIM_ATK_RH_START | ANIM_ATK_LH_START | ANIM_ATK_BLOW;
-		e1.ContextInt = ANIM_ATK_RH_END | ANIM_ATK_LH_END;
+		e0.ContextInt = IntContext::RH_START | IntContext::LH_START;
+		e0.ContextUInt = UIntContext::ATK_BLOW;
+		e1.ContextInt = IntContext::RH_END | IntContext::LH_END;
 		STD_ATK3B->AddEvent(e0);
 		STD_ATK3B->AddEvent(e1);
 	}

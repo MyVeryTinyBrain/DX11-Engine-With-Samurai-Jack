@@ -69,11 +69,20 @@
     <ClInclude Include="Boss.h">
       <Filter>Character</Filter>
     </ClInclude>
-    <ClInclude Include="EffectExplosion.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
     <ClInclude Include="ProjectileWaveBeam.h">
       <Filter>Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectRing01.h">
+      <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleElectricBeam.h">
+      <Filter>Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectElectricBeam.h">
+      <Filter>Effect\Damagable</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectGroundImapct.h">
+      <Filter>Effect\Damagable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +135,12 @@
     </Filter>
     <Filter Include="Projectile">
       <UniqueIdentifier>{a5585c75-5e45-4921-b0b6-01bc9d590299}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Particle">
+      <UniqueIdentifier>{49e5b270-a69d-4f32-988f-a51a2418a609}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Damagable">
+      <UniqueIdentifier>{a6276206-9663-4e4e-b80d-5b730c478ca2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,11 +207,20 @@
     <ClCompile Include="Boss.cpp">
       <Filter>Character</Filter>
     </ClCompile>
-    <ClCompile Include="EffectExplosion.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="ProjectileWaveBeam.cpp">
       <Filter>Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectRing01.cpp">
+      <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleElectricBeam.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectElectricBeam.cpp">
+      <Filter>Effect\Damagable</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectGroundImapct.cpp">
+      <Filter>Effect\Damagable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +234,15 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\Shockwave.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\WaveBeam.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Ring.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\AncientKingTrail.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

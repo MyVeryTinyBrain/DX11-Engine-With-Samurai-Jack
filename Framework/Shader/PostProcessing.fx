@@ -70,7 +70,6 @@ struct FogDesc
 struct BloomDesc
 {
 	bool	Enable;
-	uint	Type;
 	uint	BlurNumSamples;
 	float	Intensity;
 	float	Threshold;
@@ -528,42 +527,11 @@ float4 AdjustSaturation(half4 color, half saturation)
 	return lerp(gray, color, saturation);
 }
 
-half4 PS_MAIN_Bloom_Apply_Add(PS_IN In) : SV_TARGET
+half4 PS_MAIN_Bloom_Apply(PS_IN In) : SV_TARGET
 {
-	//half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-
-	//half4 color;
-	//color.rgb = sampleColor.rgb;
-	//color.a = 1.0f;
-	//color *= _BloomDesc.Intensity;
-	//color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
-
-	//return color;
-
-	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	//sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Threshold) * _BloomDesc.Intensity;
-	sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Intensity);
-	//sampleColor = sampleColor * _BloomDesc.Intensity;
-
-	return sampleColor;
-}
-
-half4 PS_MAIN_Bloom_Apply_Mix(PS_IN In) : SV_TARGET
-{
-	//half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	//half brightness = Max(sampleColor.rgb);
-
-	//half4 color;
-	//color.rgb = normalize(sampleColor.rgb);
-	//color.a = brightness;
-	//color *= _BloomDesc.Intensity;
-	//color = min(half4(1.0f, 1.0f, 1.0f, 1.0f), color);
-
-	//return color;
-
-	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	sampleColor = AdjustSaturation(sampleColor, _BloomDesc.Threshold) * _BloomDesc.Intensity;
-	return sampleColor;
+	half4 bloomColor = _Sample.Sample(pointSampler, In.UV);
+	bloomColor = AdjustSaturation(bloomColor, _BloomDesc.Intensity);
+	return bloomColor;
 }
 
 // Chromatic Aberration ============================================================================================
@@ -884,21 +852,13 @@ technique11 PostProcessing
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Extract();
 	}
-	pass Bloom_Apply_Add
+	pass Bloom_Apply
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);
 		SetBlendState(BlendState_Add, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply_Add();
-	}
-	pass Bloom_Apply_Mix
-	{
-		SetRasterizerState(RasterizerState0);
-		SetDepthStencilState(DepthStencilState0, 0);
-		SetBlendState(BlendState_Mix, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply_Mix();
+		PixelShader = compile ps_5_0 PS_MAIN_Bloom_Apply();
 	}
 	pass ChromaticAberration_Write
 	{

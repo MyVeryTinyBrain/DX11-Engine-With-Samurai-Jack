@@ -73,7 +73,7 @@ void PlayerAnimator::SetupNodes()
 	{
 		AnimationEventDesc desc;
 		desc.NormalizedTime = 0.0f;
-		desc.ContextInt = ANIM_JUMP;
+		desc.ContextByte = ByteContext::JUMP;
 		desc.ContextFloat = JUMP_SPEED;
 		BH_JUMP->AddEvent(desc);
 	}
@@ -83,7 +83,7 @@ void PlayerAnimator::SetupNodes()
 	{
 		AnimationEventDesc desc;
 		desc.NormalizedTime = 0.0f;
-		desc.ContextInt = ANIM_JUMP;
+		desc.ContextByte = ByteContext::JUMP;
 		desc.ContextFloat = AIRJUMP_SPEED;
 		BH_AIR_JUMP->AddEvent(desc);
 	}
@@ -165,8 +165,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 7 / 34.0f;
 		e1.NormalizedTime = 10 / 34.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_X->AddEvent(e0);
 		ATK_X->AddEvent(e1);
 	}
@@ -178,8 +179,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 12 / 45.0f;
 		e1.NormalizedTime = 17 / 45.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_XX->AddEvent(e0);
 		ATK_XX->AddEvent(e1);
 	}
@@ -191,8 +193,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 11 / 70.0f;
 		e1.NormalizedTime = 17 / 70.0f;
-		e0.ContextInt = ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_FOOT_END;
+		e0.ContextInt = IntContext::FOOT_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::FOOT_END;
 		ATK_XXX->AddEvent(e0);
 		ATK_XXX->AddEvent(e1);
 	}
@@ -203,8 +206,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 10 / 35.0f;
 		e1.NormalizedTime = 15 / 35.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_XXXX->AddEvent(e0);
 		ATK_XXXX->AddEvent(e1);
 	}
@@ -215,8 +219,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 18 / 53.0f;
 		e1.NormalizedTime = 23 / 53.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_XXXXX->AddEvent(e0);
 		ATK_XXXXX->AddEvent(e1);
 	}
@@ -229,10 +234,12 @@ void PlayerAnimator::SetupNodes()
 		e1.NormalizedTime = 8 / 40.0f;
 		e2.NormalizedTime = 12 / 40.0f;
 		e3.NormalizedTime = 18 / 40.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_KT_END;
-		e2.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_HEAVY;
-		e3.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::KT_END;
+		e2.ContextInt = IntContext::KT_START;
+		e2.ContextUInt = UIntContext::ATK_LIGHT;
+		e3.ContextInt = IntContext::KT_END;
 		ATK_AIR_X->AddEvent(e0);
 		ATK_AIR_X->AddEvent(e1);
 		ATK_AIR_X->AddEvent(e2);
@@ -246,8 +253,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 11 / 40.0f;
 		e1.NormalizedTime = 20 / 40.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_AIR_XX->AddEvent(e0);
 		ATK_AIR_XX->AddEvent(e1);
 	}
@@ -259,8 +267,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 8 / 34.0f;
 		e1.NormalizedTime = 14 / 34.0f;
-		e0.ContextInt = ANIM_ATK_FOOT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_FOOT_END;
+		e0.ContextInt = IntContext::FOOT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::FOOT_END;
 		ATK_AIR_XXX->AddEvent(e0);
 		ATK_AIR_XXX->AddEvent(e1);
 	}
@@ -272,8 +281,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 8 / 60.0f;
 		e1.NormalizedTime = 14 / 60.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_Y->AddEvent(e0);
 		ATK_Y->AddEvent(e1);
 	}
@@ -286,10 +296,12 @@ void PlayerAnimator::SetupNodes()
 		e1.NormalizedTime = 12 / 72.0f;
 		e2.NormalizedTime = 15 / 72.0f;
 		e3.NormalizedTime = 20 / 72.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_KT_END;
-		e2.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_HEAVY;
-		e3.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::KT_END;
+		e2.ContextInt = IntContext::KT_START;
+		e2.ContextUInt = UIntContext::ATK_HEAVY;
+		e3.ContextInt = IntContext::KT_END;
 		ATK_YY->AddEvent(e0);
 		ATK_YY->AddEvent(e1);
 		ATK_YY->AddEvent(e2);
@@ -300,10 +312,11 @@ void PlayerAnimator::SetupNodes()
 	ATK_YYY = AnimatorSingleNode::Create(GetClip(TEXT("ATK_YYY")), NOLOOP);
 	{
 		AnimationEventDesc e0, e1;
-		e0.NormalizedTime = 9 / 49.0f;
-		e1.NormalizedTime = 12 / 49.0f;
-		e0.ContextInt = ANIM_ATK_KT_STING_START | ANIM_ATK_BLOW;
-		e1.ContextInt = ANIM_ATK_KT_STING_END;
+		e0.NormalizedTime = 6 / 49.0f;
+		e1.NormalizedTime = 13 / 49.0f;
+		e0.ContextInt = IntContext::KT_STING_START;
+		e0.ContextUInt = UIntContext::ATK_BLOW;
+		e1.ContextInt = IntContext::KT_STING_END;
 		ATK_YYY->AddEvent(e0);
 		ATK_YYY->AddEvent(e1);
 	}
@@ -315,10 +328,11 @@ void PlayerAnimator::SetupNodes()
 		e0.NormalizedTime = 5 / 30.0f;
 		e1.NormalizedTime = 6 / 30.0f;
 		e2.NormalizedTime = 14 / 30.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_BLOWUP;
-		e1.ContextInt = ANIM_JUMP;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_BLOWUP;
+		e1.ContextByte = ByteContext::JUMP;
 		e1.ContextFloat = BLOWUP_SPEED;
-		e2.ContextInt = ANIM_ATK_KT_END;
+		e2.ContextInt = IntContext::KT_END;
 		ATK_XY->AddEvent(e0);
 		ATK_XY->AddEvent(e1);
 	}
@@ -331,10 +345,13 @@ void PlayerAnimator::SetupNodes()
 		e1.NormalizedTime = 18 / 68.0f;
 		e2.NormalizedTime = 26 / 68.0f;
 		e3.NormalizedTime = 32 / 68.0f;
-		e0.ContextInt = ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY;
-		e2.ContextInt = ANIM_ATK_FOOT_START | ANIM_ATK_HEAVY;
-		e3.ContextInt = ANIM_ATK_FOOT_END;
+		e0.ContextInt = IntContext::FOOT_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::FOOT_START;
+		e1.ContextUInt = UIntContext::ATK_HEAVY;
+		e2.ContextInt = IntContext::FOOT_START;
+		e2.ContextUInt = UIntContext::ATK_HEAVY;
+		e3.ContextInt = IntContext::FOOT_END;
 		ATK_XXXY->AddEvent(e0);
 		ATK_XXXY->AddEvent(e1);
 		ATK_XXXY->AddEvent(e2);
@@ -347,8 +364,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 16 / 56.0f;
 		e1.NormalizedTime = 21 / 56.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_HEAVY;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_HEAVY;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_XXXXY->AddEvent(e0);
 		ATK_XXXXY->AddEvent(e1);
 	}
@@ -361,10 +379,13 @@ void PlayerAnimator::SetupNodes()
 		e1.NormalizedTime = 19 / 52.0f;
 		e2.NormalizedTime = 29 / 52.0f;
 		e3.NormalizedTime = 35 / 52.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e1.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e2.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_LIGHT;
-		e3.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_LIGHT;
+		e1.ContextInt = IntContext::KT_START;
+		e1.ContextUInt = UIntContext::ATK_LIGHT;
+		e2.ContextInt = IntContext::KT_START;
+		e2.ContextUInt = UIntContext::ATK_LIGHT;
+		e3.ContextInt = IntContext::KT_END;
 		ATK_XXXXXY->AddEvent(e0);
 		ATK_XXXXXY->AddEvent(e1);
 		ATK_XXXXXY->AddEvent(e2);
@@ -376,7 +397,8 @@ void PlayerAnimator::SetupNodes()
 	{
 		AnimationEventDesc e0;
 		e0.NormalizedTime = 11 / 13.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_BLOWDOWN;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_BLOWDOWN;
 		ATK_AIR_Y_START->AddEvent(e0);
 	}
 	ATK_AIR_Y_START->speed = 1.2f;
@@ -386,7 +408,8 @@ void PlayerAnimator::SetupNodes()
 	{
 		AnimationEventDesc e0;
 		e0.NormalizedTime = 0.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_BLOWDOWN;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_BLOWDOWN;
 		ATK_AIR_Y_LOOP->AddEvent(e0);
 	}
 	Layer->AddNode(ATK_AIR_Y_LOOP);
@@ -396,8 +419,9 @@ void PlayerAnimator::SetupNodes()
 		AnimationEventDesc e0, e1;
 		e0.NormalizedTime = 0.0f;
 		e1.NormalizedTime = 5 / 35.0f;
-		e0.ContextInt = ANIM_ATK_KT_START | ANIM_ATK_BLOW;
-		e1.ContextInt = ANIM_ATK_KT_END;
+		e0.ContextInt = IntContext::KT_START;
+		e0.ContextUInt = UIntContext::ATK_BLOW;
+		e1.ContextInt = IntContext::KT_END;
 		ATK_AIR_Y_END->AddEvent(e0);
 		ATK_AIR_Y_END->AddEvent(e1);
 	}
@@ -575,7 +599,7 @@ void PlayerAnimator::SetupTransitions()
 	// DMG_LIGHT -> EXIT
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		Layer->AddTransition(DMG_LIGHT, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+		Layer->AddTransition(DMG_LIGHT, EXIT, values, 0.5f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
 	}
 
 	// ANY -> DMG_HEAVY

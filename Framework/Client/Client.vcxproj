@@ -169,7 +169,8 @@
     <ClInclude Include="BossAncientKing.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="EffectExplosion.h" />
+    <ClInclude Include="EffectGroundImapct.h" />
+    <ClInclude Include="EffectRing01.h" />
     <ClInclude Include="EffectShockwave.h" />
     <ClInclude Include="EffectSpark.h" />
     <ClInclude Include="Enemy.h" />
@@ -184,6 +185,8 @@
     <ClInclude Include="PlayerAnimator.h" />
     <ClInclude Include="PlayerTestScene.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="EffectElectricBeam.h" />
+    <ClInclude Include="ParticleElectricBeam.h" />
     <ClInclude Include="SoundTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -202,7 +205,8 @@
     <ClCompile Include="BossAncientKing.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="EffectExplosion.cpp" />
+    <ClCompile Include="EffectGroundImapct.cpp" />
+    <ClCompile Include="EffectRing01.cpp" />
     <ClCompile Include="EffectShockwave.cpp" />
     <ClCompile Include="EffectSpark.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -214,6 +218,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="PlayerTestScene.cpp" />
+    <ClCompile Include="EffectElectricBeam.cpp" />
+    <ClCompile Include="ParticleElectricBeam.cpp" />
     <ClCompile Include="SoundTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -237,10 +243,13 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Shader\AncientKingTrail.fx" />
     <FxCompile Include="..\Shader\BillboardAnimation.fx" />
     <FxCompile Include="..\Shader\BillboardEffect.fx" />
+    <FxCompile Include="..\Shader\Ring.fx" />
     <FxCompile Include="..\Shader\Shockwave.fx" />
     <FxCompile Include="..\Shader\Trail.fx" />
+    <FxCompile Include="..\Shader\WaveBeam.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,6 +2,32 @@
 
 class PlayerAnimator : public Animator, public AnimatorTransitionCallback
 {
+public:
+
+	enum IntContext : int
+	{
+		KT_START = 0b1,
+		KT_END = 0b10,
+		FOOT_START = 0b100,
+		FOOT_END = 0b1000,
+		KT_STING_START = 0b10000,
+		KT_STING_END = 0b100000,
+	};
+
+	enum UIntContext : uint
+	{
+		ATK_LIGHT = 0b1,
+		ATK_HEAVY = 0b10,
+		ATK_BLOW = 0b100,
+		ATK_BLOWUP = 0b1000,
+		ATK_BLOWDOWN = 0b10000,
+	};
+
+	enum ByteContext : byte
+	{
+		JUMP = 0b1,
+	};
+
 private:
 
 	virtual void Awake() override;

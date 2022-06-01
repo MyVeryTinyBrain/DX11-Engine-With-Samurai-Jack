@@ -4,19 +4,13 @@ struct VS_IN
 {
 	float3 Position : POSITION;
 	float3 UVW : TEXCOORD;
-	float3 Normal : NORMAL;
-	float3 Tangent : TANGENT;
-	float3 Binormal : BINORMAL;
 };
 
 struct PS_IN
 {
 	float4 Screen : SV_POSITION;
 	float3 UVW : TEXCOORD;
-	float3 Normal : NORMAL;
-	float3 Tangent : TANGENT;
-	float3 Binormal : BINORMAL;
-	float4 WorldPosition : TEXCOORD1;
+	float4 ProjPosition : TEXCOORD1;
 };
 
 // _GradientTexture: 빨강 채널의 값을 사용합니다.
@@ -27,11 +21,18 @@ float4			_Color < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 float			_SideAttenFactor < float Default = 1.5f; > ;
 float			_EndFade < float Default = 0.2f; > ;
 texture2D		_GradientTexture < string Default = "white"; > ;
-texture2D		_Grab : GRAB_TEXTURE;
+//texture2D		_DistortionTexture < string Default = "White"; > ;
+//float			_DistortionPower < float Default = 50.0f; > ;
+//texture2D		_Grab : GRAB_TEXTURE;
 SamplerState	linearSampler
 {
 	AddressU = Wrap;
 	AddressV = Wrap;
+};
+SamplerState	grabSampler
+{
+	AddressU = Mirror;
+	AddressV = Mirror;
 };
 
 PS_IN VS_MAIN(VS_IN In)
@@ -45,17 +46,14 @@ PS_IN VS_MAIN(VS_IN In)
 
 	output.Screen = outputPosition;
 	output.UVW = In.UVW;
-	output.Normal = In.Normal;
-	output.Tangent = In.Tangent;
-	output.Binormal = In.Binormal;
-	output.WorldPosition = worldPosition;
+	output.ProjPosition = outputPosition;
 
 	return output;
 }
 
 float4 PS_MAIN(PS_IN In) : SV_TARGET
 {
-	half4 color = _Color;
+	half4 baseColor = _Color;
 
 	half4 gradient = _GradientTexture.Sample(linearSampler, In.UVW.xy);
 	half sideFade = pow(abs(gradient.r), _SideAttenFactor);
@@ -63,9 +61,21 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 	half lengthPercent = In.UVW.z;
 	half endFade = 1.0f - smoothstep(1.0f - _EndFade, 1.0f, lengthPercent);
 
-	color.a = sideFade * endFade;
+	baseColor.a = sideFade * endFade;
 
-	return color;
+	//half2 grabUV = In.ProjPosition.xy / In.ProjPosition.w;
+	//grabUV.x = grabUV.x * 0.5f + 0.5f;
+	//grabUV.y = grabUV.y * -0.5f + 0.5f;
+
+	//half2 distortion = (_DistortionTexture.Sample(linearSampler, In.UVW.xy).r / _Size.xy) * _DistortionPower;
+	//half2 sampleCoord = grabUV + distortion;
+	//half4 grab = _Grab.Sample(grabSampler, sampleCoord);
+
+	//half4 color;
+	//color.rgb = grab.rgb * (1.0f - baseColor.a) + baseColor.rgb * baseColor.a;
+	//color.a = 1.0f;
+
+	return baseColor;
 }
 
 //float4 vPosition = mul(float4(In.WorldPosition.xyz, 1), _ViewMatrix);
@@ -88,7 +98,7 @@ DepthStencilState DepthStencilState0
 {
 	DepthEnable = true;
 	DepthFunc = less;
-	DepthWriteMask = all;
+	DepthWriteMask = zero;
 };
 
 BlendState BlendState0

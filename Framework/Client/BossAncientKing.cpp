@@ -7,6 +7,9 @@
 #include "TPSCamera.h"
 #include "EffectShockwave.h"
 #include "ProjectileWaveBeam.h"
+#include "EffectRing01.h"
+#include "EffectElectricBeam.h"
+#include "EffectGroundImapct.h"
 
 #define ATK_NEAR_MAX_DIST 6.0f
 #define ATK_NEAR_MAX_ANGLE 20.0f
@@ -16,12 +19,11 @@
 #define LOOK_STOP_MIN_ANGLE 5.0f
 #define LOOK_START_ANGLE 100.0f
 #define IDLE_TIME 2.0f
-#define WAIT_DEFAULT_TIME 0.2f
+#define WAIT_DEFAULT_TIME 0.1f
 #define TRACE_SPIN_ANGLE_PER_SEC 50.0f
 #define LOOK_SPIN_ANGLE_PER_SEC 140.0f
 #define TRACE_TO_LOOK_TIME 5.0f
-#define SPIN_ON_ATK_NEAR_ANGLE_PER_SEC 19.0f
-#define SPIN_ON_ATK_FAR_ANGLE_PER_SEC 25.0f
+#define SPIN_ON_ATK_NEAR_ANGLE_PER_SEC 15.0f
 
 #define RUSH_START_ACCTIME 12.0f
 #define RUSH_MIN_ANGLE 4.0f
@@ -29,11 +31,13 @@
 
 #define ATK_FAR_DELAY 7.0f
 
+#define MANUAL_LOOK_SPIN_PER_SEC 180.0f
+
 void BossAncientKing::Awake()
 {
 	Boss::Awake();
 
-	CCT->radius = 2.85f;
+	CCT->radius = 3.0f;
 	CCT->height = 0.01f;
 	CCT->capsuleCollider->layerIndex = PhysicsLayer_VirtualEnemy;
 
@@ -51,6 +55,8 @@ void BossAncientKing::Awake()
 void BossAncientKing::Start()
 {
 	Boss::Start();
+
+	m_toPlayerDirection = transform->forward;
 }
 
 void BossAncientKing::Update()
@@ -61,6 +67,16 @@ void BossAncientKing::Update()
 	AttackTriggerQuery();
 
 	m_farATKCounter -= system->time->deltaTime;
+
+	if (m_electricBeam->active)
+	{
+		m_electricBeam->transform->forward = (m_aimPosition - m_electricBeam->transform->position).normalized;
+	}
+
+	if (m_manualLook)
+	{
+		RotateOnYAxisToDirection(ToPlayerDirectionXZ(), MANUAL_LOOK_SPIN_PER_SEC, system->time->deltaTime);
+	}
 }
 
 void BossAncientKing::LateUpdate()
@@ -81,7 +97,7 @@ void BossAncientKing::SetupCollider()
 	m_collider = goCollider->AddComponent<CapsuleCollider>();
 	m_collider->layerIndex = PhysicsLayer_Enemy;
 	m_collider->radius = CCT->radius;
-	m_collider->halfHeight = CCT->height * 0.5f + 2.0f;
+	m_collider->halfHeight = 5.0f;
 }
 
 void BossAncientKing::SetupCharacterRenderers()
@@ -134,26 +150,18 @@ void BossAncientKing::SetupHammer()
 	m_hammerRenderer->mesh = system->resource->Find(MESH_ANCIENT_KING_HAMMER);
 	m_hammerRenderer->SetupStandardMaterials();
 
-	m_goHammerTrail = CreateGameObjectToChild(m_goHammer->transform);
-	m_goHammerTrail->transform->localPosition = V3(0.0f, 0.0f, -0.9f);
-	//m_goHammerTrail->transform->localEulerAngles = V3(0, -96.0f, 0);
-	m_hammerTrailRenderer = m_goHammerTrail->AddComponent<TrailRenderer>();
-	m_hammerTrailRenderer->alignment = TrailRenderer::Alignment::View;
-	m_hammerTrailRenderer->shrinkDistance = 30.0f;
-	m_hammerTrailRenderer->width = 4.0f;
-	m_hammerTrailRenderer->autoTrail = false;
-	m_hammerTrailRenderer->interpolateStep = 30;
-	m_hammerTrailRenderer->enable = false;
+	m_goHammerTip = CreateGameObjectToChild(m_goHammer->transform);
+	m_goHammerTip->transform->localPosition = V3(0.0f, 0.0f, -0.9f);
 }
 
 void BossAncientKing::SetupAttackTrigger()
 {
 	m_goAttackTrigger[HAMMER_TRIGGER] = CreateGameObjectToChild(m_goHammer->transform);
-	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.7f);
+	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.4f);
 	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
 	m_attackTrigger[HAMMER_TRIGGER] = m_goAttackTrigger[HAMMER_TRIGGER]->AddComponent<CapsuleCollider>();
 	CapsuleCollider* hammer_trigger = (CapsuleCollider*)m_attackTrigger[HAMMER_TRIGGER];
-	hammer_trigger->radius = 0.7f;
+	hammer_trigger->radius = 0.5f;
 	hammer_trigger->halfHeight = 0.4f;
 	hammer_trigger->isTrigger = true;
 	hammer_trigger->enable = false;
@@ -173,6 +181,16 @@ void BossAncientKing::SetupAttackTrigger()
 	foot_r_trigger->radius = 4.5f;
 	foot_r_trigger->isTrigger = true;
 	foot_r_trigger->enable = false;
+
+	m_attackTrigger[HAMMER_TIP_TRIGGER] = m_goHammerTip->AddComponent<SphereCollider>();
+	SphereCollider* hammerTipTrigger = (SphereCollider*)m_attackTrigger[HAMMER_TIP_TRIGGER];
+	hammerTipTrigger->radius = 1.0f;
+	hammerTipTrigger->isTrigger = true;
+	hammerTipTrigger->enable = false;
+
+	GameObject* goElectricBeam = CreateGameObjectToChild(transform);
+	m_electricBeam = goElectricBeam->AddComponent<EffectElectricBeam>();
+	m_electricBeam->enable = false;
 }
 
 void BossAncientKing::UpdateCCT()
@@ -191,6 +209,20 @@ void BossAncientKing::UpdateAttachmentObjects()
 	m_goHammer->transform->position = m_L_Hand_Weapon_cnt_tr->position;
 	m_goHammer->transform->rotation = m_L_Hand_Weapon_cnt_tr->rotation;
 
+	// Look at player
+	float angle = V3::Angle(transform->forward, ToPlayerDirection());
+	if (angle < 70.0f)
+	{
+		V3 toPlayerDirection = ToPlayerDirection();
+		m_toPlayerDirection = V3::Lerp(m_toPlayerDirection, toPlayerDirection, system->time->deltaTime * 5.0f).normalized;
+	}
+	else
+	{
+		m_toPlayerDirection = V3::Lerp(m_toPlayerDirection, transform->forward, system->time->deltaTime * 5.0f).normalized;
+	}
+	Q lookRotation = Q::FromToRotation(transform->forward, m_toPlayerDirection);
+	m_Head->SetRotationWithCurrentRotation(lookRotation);
+
 	m_goLight->transform->position = m_Head->position;
 	m_goLight->transform->rotation = m_Head->rotation;
 
@@ -199,6 +231,8 @@ void BossAncientKing::UpdateAttachmentObjects()
 
 	m_goAttackTrigger[FOOT_R_TRIGGER]->transform->position = m_RightFoot->position;
 	m_goAttackTrigger[FOOT_R_TRIGGER]->transform->rotation = m_RightFoot->rotation;
+
+	m_electricBeam->transform->position = m_R_Hand_Weapon_cnt_tr->position;
 }
 
 void BossAncientKing::AttackTriggerQuery()
@@ -226,23 +260,23 @@ void BossAncientKing::AttackTriggerQuery()
 			damage.Guardable = m_gadableAttack;
 			switch (m_attackType)
 			{
-				case ANIM_ATK_LIGHT:
+				case BossAncientKingAnimator::UIntContext::ATK_LIGHT:
 					damage.Type = DamageInType::LIGHT;
 					damage.Damage = 1.0f;
 					break;
-				case ANIM_ATK_HEAVY:
+				case BossAncientKingAnimator::UIntContext::ATK_HEAVY:
 					damage.Type = DamageInType::HEAVY;
 					damage.Damage = 2.5f;
 					break;
-				case ANIM_ATK_BLOW:
+				case BossAncientKingAnimator::UIntContext::ATK_BLOW:
 					damage.Type = DamageInType::BLOW;
 					damage.Damage = 3.0f;
 					break;
-				case ANIM_ATK_BLOWUP:
+				case BossAncientKingAnimator::UIntContext::ATK_BLOWUP:
 					damage.Damage = 2.0f;
 					damage.Type = DamageInType::BLOWUP;
 					break;
-				case ANIM_ATK_BLOWDOWN:
+				case BossAncientKingAnimator::UIntContext::ATK_BLOWDOWN:
 					damage.Damage = 3.0f;
 					damage.Type = DamageInType::BLOWDOWN;
 					break;
@@ -288,15 +322,24 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 
 	if (prev->name.find(TEXT("ATK")) != tstring::npos)
 	{
-		m_hammerTrailRenderer->autoTrail = false;
 		OffAttackTriggers();
 		ClearHitBuffer();
+		m_electricBeam->enable = false;
+		m_manualLook = false;
 	}
 }
 
 void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
 {
-	if (desc.ContextByte & ANIM_CAM_SHAKE)
+	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::BACKJUMP_END)
+	{
+		uint randomFarAttack = rand() % 2;
+		if (randomFarAttack == 0)
+			SetState(BossAncientKing::State::ATK_BEAM);
+		else
+			SetState(BossAncientKing::State::ATK_ELECTRIC);
+	}
+	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::CAM_SHAKE)
 	{
 		float shakeValue = desc.ContextFloat;
 		Player* player = Player::GetInstance();
@@ -306,96 +349,284 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			camera->Shake(V3::up(), shakeValue * 0.1f, 1.1f, 0.15f, 4.0f / 0.15f);
 		}
 	}
+	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::LF_SHOCKWAVE)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_attackTrigger[FOOT_L_TRIGGER]->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = m_attackTrigger[FOOT_L_TRIGGER]->transform->position + V3::down() * 0.5f;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
 
-	if (desc.ContextInt & ANIM_ATK_GADABLE)
+		EffectShockwave::Create(
+			gameObject->regionScene,
+			position,
+			1.0f,
+			2.0f,
+			1.0f, 9.0f
+		);
+	}
+	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::RF_SHOCKWAVE)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_attackTrigger[FOOT_R_TRIGGER]->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = m_attackTrigger[FOOT_R_TRIGGER]->transform->position + V3::down() * 0.5f;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		EffectShockwave::Create(
+			gameObject->regionScene,
+			position,
+			1.0f,
+			2.0f,
+			1.0f, 9.0f
+		);
+	}
+	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::HAMMER_SHOCKWAVE)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_goHammerTip->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = m_goHammerTip->transform->position;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		EffectShockwave::Create(
+			gameObject->regionScene,
+			position,
+			1.2f,
+			3.0f,
+			1.0f, 12.0f
+		);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::ATK_GADABLE)
 	{
 		m_gadableAttack = true;
 	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::SET_AIM_ON_HEAD)
+	{
+		V3 aimPosition = player->transform->position;
+		V3 aimDelta = aimPosition - m_Head->position;
+		V3 aimDirection = aimDelta.normalized;
+		float angle = V3::Angle(transform->forward, aimDirection);
+		if (angle < 80.0f)
+		{
+			m_aimPosition = aimPosition;
+		}
+		else
+		{
+			m_aimPosition = CCT->footPosition + transform->forward * 10.0f;
+		}
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::SET_AIM_ON_RH)
+	{
+		V3 aimPosition = player->transform->position;
+		V3 aimDelta = aimPosition - m_R_Hand_Weapon_cnt_tr->position;
+		V3 aimDirection = aimDelta.normalized;
+		float angle = V3::Angle(transform->forward, aimDirection);
+		if (angle < 30.0f)
+		{
+			m_aimPosition = aimPosition;
+		}
+		else
+		{
+			m_aimPosition = CCT->footPosition + transform->forward * 10.0f;
+		}
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::ATK_SHOOT_BEAM)
+	{
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> rdYAngle(-10.0f, +10.0f);
+		std::uniform_real_distribution<float> rdXZAngle(-10.0f, +10.0f);
+		V3 aimDelta = m_aimPosition - m_Head->position;
+		V3 aimDirection = aimDelta.normalized;
+		Q rdRotate = Q::Euler(rdXZAngle(gen), rdYAngle(gen), rdXZAngle(gen));
+		V3 direction = rdRotate.MultiplyVector(aimDirection).normalized;
 
-	if (desc.ContextByte & ANIM_LF_SHOCKWAVE)
-	{
-		EffectShockwave::Create(
-			gameObject->regionScene,
-			m_attackTrigger[FOOT_L_TRIGGER]->transform->position + V3::down() * 0.5f,
-			1.0f,
-			2.0f,
-			1.0f, 9.0f
-		);
-	}
-	if (desc.ContextByte & ANIM_RF_SHOCKWAVE)
-	{
-		EffectShockwave::Create(
-			gameObject->regionScene,
-			m_attackTrigger[FOOT_R_TRIGGER]->transform->position + V3::down() * 0.5f,
-			1.0f,
-			2.0f,
-			1.0f, 9.0f
-		);
-	}
-
-	if (desc.ContextInt & ANIM_ATK_HAMMER_START)
-	{
-		m_hammerTrailRenderer->autoTrail = true;
-		m_attackTrigger[HAMMER_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
-		ClearHitBuffer();
-	}
-	if (desc.ContextInt & ANIM_ATK_HAMMER_END)
-	{
-		m_hammerTrailRenderer->autoTrail = false;
-		OffAttackTriggers();
-		ClearHitBuffer();
-	}
-	if (desc.ContextInt & ANIM_ATK_LF_START)
-	{
-		m_attackTrigger[FOOT_L_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
-		ClearHitBuffer();
-	}
-	if (desc.ContextInt & ANIM_ATK_LF_END)
-	{
-		OffAttackTriggers();
-		ClearHitBuffer();
-	}
-	if (desc.ContextInt & ANIM_ATK_RF_START)
-	{
-		m_attackTrigger[FOOT_R_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
-		ClearHitBuffer();
-	}
-	if (desc.ContextInt & ANIM_ATK_RF_END)
-	{
-		OffAttackTriggers();
-		ClearHitBuffer();
-	}
-
-	if (desc.ContextByte & ANIM_AIM_BEGIN)
-	{
-		m_aimPosition = player->transform->position;
-	}
-	if (desc.ContextInt & ANIM_ATK_BEAM)
-	{
 		GameObject* goBeam = CreateGameObject();
 		goBeam->transform->position = m_Head->position;
-		goBeam->transform->forward = (m_aimPosition - m_Head->position).normalized;
+		goBeam->transform->forward = direction;
 		ProjectileWaveBeam* beam = goBeam->AddComponent<ProjectileWaveBeam>();
+
+		EffectRing01::Create(
+			gameObject->regionScene,
+			m_Head->position,
+			0.5f,
+			0.5f,
+			200.0f,
+			2.0f, 5.0f,
+			Color(1.0f, 0.9764f, 0.466f, 1.0f)
+		);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::ATK_ELECTRIC_START)
+	{
+		m_electricBeam->enable = true;
+		m_electricBeam->transform->localScale = V3(1.0f, 1.0f, 20.0f);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::ATK_ELECTRIC_END)
+	{
+		m_electricBeam->enable = false;
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::MANUALLOOK_START)
+	{
+		m_manualLook = true;
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::MANUALLOOK_END)
+	{
+		m_manualLook = false; 
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::HAMMER_GROUND_IMPACT)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_goHammerTip->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = CCT->footPosition;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		EffectGroundImapct::Create(
+			gameObject->regionScene,
+			position + V3::up() * 0.1f,
+			0.5f,
+			0.8f,
+			200.0f,
+			0.1f,
+			40.0f,
+			Color::red()
+		);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::LF_GROUND_IMPACT)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_LeftFoot->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = CCT->footPosition;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		EffectGroundImapct::Create(
+			gameObject->regionScene,
+			position + V3::up() * 0.1f,
+			0.5f,
+			0.8f,
+			200.0f,
+			0.1f,
+			40.0f,
+			Color::red()
+		);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::RF_GROUND_IMPACT)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_RightFoot->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = CCT->footPosition;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		EffectGroundImapct::Create(
+			gameObject->regionScene,
+			position + V3::up() * 0.1f,
+			0.5f,
+			0.8f,
+			200.0f,
+			0.1f,
+			40.0f,
+			Color::red()
+		);
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::HAMMER_START)
+	{
+		m_attackTrigger[HAMMER_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::HAMMER_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::LF_START)
+	{
+		m_attackTrigger[FOOT_L_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::LF_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::RF_START)
+	{
+		m_attackTrigger[FOOT_R_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::RF_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::HAMMER_TIP_START)
+	{
+		m_attackTrigger[HAMMER_TIP_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & BossAncientKingAnimator::IntContext::HAMMER_TIP_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
 	}
 }
 
-void BossAncientKing::SetAttackType(int contextInt)
+void BossAncientKing::SetAttackType(uint contextUInt)
 {
-	m_attackType = ANIM_ATK_LIGHT;
+	m_attackType = BossAncientKingAnimator::UIntContext::ATK_LIGHT;
 
-	if (contextInt & ANIM_ATK_LIGHT)
-		m_attackType = ANIM_ATK_LIGHT;
-	else if (contextInt & ANIM_ATK_HEAVY)
-		m_attackType = ANIM_ATK_HEAVY;
-	else if (contextInt & ANIM_ATK_BLOW)
-		m_attackType = ANIM_ATK_BLOW;
-	else if (contextInt & ANIM_ATK_BLOWUP)
-		m_attackType = ANIM_ATK_BLOWUP;
-	else if (contextInt & ANIM_ATK_BLOWDOWN)
-		m_attackType = ANIM_ATK_BLOWDOWN;
+	if (contextUInt & BossAncientKingAnimator::UIntContext::ATK_LIGHT)
+		m_attackType = BossAncientKingAnimator::UIntContext::ATK_LIGHT;
+	if (contextUInt & BossAncientKingAnimator::UIntContext::ATK_HEAVY)
+		m_attackType = BossAncientKingAnimator::UIntContext::ATK_HEAVY;
+	if (contextUInt & BossAncientKingAnimator::UIntContext::ATK_BLOW)
+		m_attackType = BossAncientKingAnimator::UIntContext::ATK_BLOW;
+	if (contextUInt & BossAncientKingAnimator::UIntContext::ATK_BLOWUP)
+		m_attackType = BossAncientKingAnimator::UIntContext::ATK_BLOWUP;
+	if (contextUInt & BossAncientKingAnimator::UIntContext::ATK_BLOWDOWN)
+		m_attackType = BossAncientKingAnimator::UIntContext::ATK_BLOWDOWN;
 }
 
 float BossAncientKing::GetHP() const
@@ -577,15 +808,34 @@ void BossAncientKing::StateUpdate()
 				RotateOnYAxisToDirection(ToPlayerDirectionXZ(), RUSH_SPIN_ANGLE_PER_SEC, system->time->deltaTime);
 			}
 
-			m_animator->KeepAttackBProperty->valueAsBool =
-				!system->physics->query->SweepSphereTest(
+			PhysicsHit hit;
+			bool sweepHit =
+				system->physics->query->SweepSphere(
+					hit,
 					CCT->capsuleCollider->transform->position,
-					CCT->capsuleCollider->radius * 0.95f,
+					CCT->capsuleCollider->radius,
 					transform->forward,
 					m_collider->radius + 1.5f,
-					1 << PhysicsLayer_Default,
+					1 << PhysicsLayer_Default | 1 << PhysicsLayer_Player,
 					PhysicsQueryType::Collider,
 					CCT->rigidbody);
+			m_animator->KeepAttackBProperty->valueAsBool = !sweepHit;
+
+			if (m_rushDamageReady && 
+				m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_LP) &&
+				sweepHit && 
+				hit.Collider->rigidbody->gameObject == player->gameObject)
+			{
+				DamageIn damage = {};
+				damage.FromComponent = this;
+				damage.FromDirection = player->transform->position - transform->position;
+				damage.Guardable = m_gadableAttack;
+				damage.Type = DamageInType::BLOW;
+				damage.Damage = 3.0f;
+				player->Damage(damage);
+				m_rushDamageReady = false;
+			}
+
 			if (m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_ED))
 				m_animator->KeepAttackBProperty->valueAsBool = false;
 		}
@@ -602,10 +852,6 @@ void BossAncientKing::StateUpdate()
 		case State::ATK_JUMP:
 		case State::ATK_DOWNSTRIKE:
 			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), SPIN_ON_ATK_NEAR_ANGLE_PER_SEC, system->time->deltaTime);
-			break;
-		case State::ATK_ELECTRIC:
-		case State::ATK_BEAM:
-			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), SPIN_ON_ATK_FAR_ANGLE_PER_SEC, system->time->deltaTime);
 			break;
 	}
 }
@@ -715,6 +961,7 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		{
 			m_state = State::ATK_RUSH;
 			m_animator->ATK_RUSH_TProperty->SetTriggerState();
+			m_rushDamageReady = true;
 		}
 		break;
 		case State::ATK_JUMP:
@@ -723,7 +970,6 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		}
 		break;
 		case State::ATK_ELECTRIC:
-		case State::ATK_NEAR_ELECTRIC:
 		{
 			m_state = State::ATK_ELECTRIC;
 			m_animator->ATK_ELECTRIC_TProperty->SetTriggerState();
@@ -739,6 +985,11 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		{
 			m_state = State::ATK_BEAM;
 			m_animator->ATK_BEAM_TProperty->SetTriggerState();
+		}
+		break;
+		case State::ATK_BACKJUMP:
+		{
+			m_animator->ATK_BACKJUMP_TProperty->SetTriggerState();
 		}
 		break;
 		//case State::__ATK_FAR_BEGIN:
@@ -788,24 +1039,9 @@ void BossAncientKing::StateEnded(BossAncientKing::State before, BossAncientKing:
 		case State::ATK_BEAM:
 		{
 			m_farATKCounter = ATK_FAR_DELAY;
+			m_rushDamageReady = false;
 		}
 	}
-}
-
-bool BossAncientKing::RaycastToForwardInStage(float length) const
-{
-	PhysicsHit hit;
-	PhysicsRay ray;
-	ray.Direction = transform->forward;
-	ray.Length = length;
-	ray.Point = transform->position;
-
-	if (system->physics->query->RaycastTest(ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
-	{
-		return true;
-	}
-
-	return false;
 }
 
 bool BossAncientKing::IsFarATKCondition() const

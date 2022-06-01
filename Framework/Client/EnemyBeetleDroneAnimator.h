@@ -2,6 +2,25 @@
 
 class EnemyBeetleDroneAnimator : public Animator, public AnimatorTransitionCallback
 {
+public:
+
+	enum IntContext : int
+	{
+		RH_START = 0b1,
+		RH_END = 0b10,
+		LH_START = 0b100,
+		LH_END = 0b1000,
+	};
+
+	enum UIntContext : uint
+	{
+		ATK_LIGHT = 0b1,
+		ATK_HEAVY = 0b10,
+		ATK_BLOW = 0b100,
+		ATK_BLOWUP = 0b1000,
+		ATK_BLOWDOWN = 0b10000,
+	};
+
 private:
 
 	virtual void Awake() override;

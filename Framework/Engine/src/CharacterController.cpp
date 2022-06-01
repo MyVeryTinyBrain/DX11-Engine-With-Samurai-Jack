@@ -81,6 +81,15 @@ void CharacterController::AfterPhysicsSimulation()
 		m_currentInterpolate->BackupPose();
 	}
 
+	if (m_fixedUpdate)
+	{
+		m_prevGroundHit = m_groundHit;
+		if (m_groundHit)
+		{
+			m_groundHit = false;
+		}
+	}
+
 	NotifyCollisions();
 	ClearCollisions();
 }
@@ -91,10 +100,32 @@ void CharacterController::BeforePhysicsSimulationOnce()
 
 void CharacterController::AfterPhysicsSimulationOnce()
 {
-	m_prevGroundHit = m_groundHit;
-	if (m_groundHit)
+	//m_prevGroundHit = m_groundHit;
+	//if (m_groundHit)
+	//{
+	//	m_groundHit = false;
+	//}
+}
+
+void CharacterController::PreUpdate()
+{
+	if (m_fixedUpdate && m_currentInterpolate)
 	{
-		m_groundHit = false;
+		m_currentInterpolate->InterpolatePose();
+	}
+
+	if (!m_fixedUpdate)
+	{
+		UpdateController(system->time->deltaTime);
+	}
+
+	if (!m_fixedUpdate)
+	{
+		m_prevGroundHit = m_groundHit;
+		if (m_groundHit)
+		{
+			m_groundHit = false;
+		}
 	}
 }
 
@@ -131,19 +162,6 @@ void CharacterController::Update()
 
 void CharacterController::FixedUpdate()
 {
-}
-
-void CharacterController::PreUpdate()
-{
-	if (m_fixedUpdate && m_currentInterpolate)
-	{
-		m_currentInterpolate->InterpolatePose();
-	}
-
-	if (!m_fixedUpdate)
-	{
-		UpdateController(system->time->deltaTime);
-	}
 }
 
 void CharacterController::PostUpdate()

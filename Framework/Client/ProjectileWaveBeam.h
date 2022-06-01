@@ -13,6 +13,7 @@ private:
 	MeshRenderer* m_renderer;
 	SphereCollider* m_trigger;
 	float m_elapsed = 0.0f;
-	float m_speed = 100.0f;
+	float m_speed = 40.0f;
+	V3 m_hitNormal = {};
 };
 

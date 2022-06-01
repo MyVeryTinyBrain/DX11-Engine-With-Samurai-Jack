@@ -41,9 +41,9 @@ protected:
 	virtual void AfterPhysicsSimulation() override;
 	virtual void BeforePhysicsSimulationOnce() override;
 	virtual void AfterPhysicsSimulationOnce() override;
+	virtual void PreUpdate() override;
 	virtual void Update() override;
 	virtual void FixedUpdate() override;
-	virtual void PreUpdate() override;
 	virtual void PostUpdate() override;
 	virtual void OnDestroyed() override;
 

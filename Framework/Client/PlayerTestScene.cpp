@@ -69,23 +69,7 @@ void PlayerTestScene::OnLoad()
 		thread t0(
 			[&]
 			{
-				system->resource->factory->LoadMeshM(MESH_JACK);
-				system->resource->factory->LoadMeshM(MESH_KATANA);
-				system->resource->factory->LoadMeshM(MESH_KATANA_SHEATH);
-				system->resource->factory->LoadMeshM(MESH_BEETLE_DRONE);
-				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING);
-				system->resource->factory->LoadMeshM(MESH_ANCIENT_KING_HAMMER);
-				system->resource->factory->LoadMeshM(MESH_CYILNDER_THIN_TWOSIDES);
-				system->resource->factory->LoadMeshM(MESH_WAVE);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_GRADIENT_TO_RIGHT);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_GRADIENT_CENTER);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SPARK);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_ELECTRIC_H0);
-				system->resource->factory->LoadTexture2DM(loadDesc, TEX_ANIMATION_EXPLOSION);
-				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_TRAIL);
-				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
-				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_ANIMATION);
-				system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SHOCKWAVE);
+				LOAD_CONFIGFILES(system);
 			});
 		if (t0.joinable())
 			t0.join();
@@ -839,11 +823,6 @@ void PlayerTestScene::OnUpdate()
 		bool enable = bloomDesc.Enable;
 		ImGui::Checkbox("Enable", &enable);
 		bloomDesc.Enable = enable;
-
-		const char* items[] = { "Add", "Mix" };
-		int type = (int)bloomDesc.Type;
-		ImGui::Combo("Type", &type, items, 2);
-		bloomDesc.Type = (BloomType)type;
 
 		int blurNumSamples = (int)bloomDesc.BlurNumSamples;
 		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);

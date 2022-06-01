@@ -48,6 +48,7 @@ void BossAncientKingAnimator::SetupProperties()
     ATK_STEPON_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_STEPON_T"), AnimatorProperty::Type::TRIGGER);
     ATK_RUSH_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_RUSH_T"), AnimatorProperty::Type::TRIGGER);
     ATK_JUMP_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_JUMP_T"), AnimatorProperty::Type::TRIGGER);
+    ATK_BACKJUMP_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_BACKJUMP_T"), AnimatorProperty::Type::TRIGGER);
     ATK_ELECTRIC_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_ELECTRIC_T"), AnimatorProperty::Type::TRIGGER);
     ATK_DOWNSTRIKE_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_DOWNSTRIKE_T"), AnimatorProperty::Type::TRIGGER);
     ATK_BEAM_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_BEAM_T"), AnimatorProperty::Type::TRIGGER);
@@ -66,8 +67,8 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0, e1;
         e0.NormalizedTime = 22 / 44.0f;
         e1.NormalizedTime = 42 / 44.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
-        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
+        e1.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         e1.ContextFloat = 0.5f;
         BH_TURN_ROTATE->AddEvent(e0);
@@ -83,8 +84,8 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0, e1;
         e0.NormalizedTime = 17 / 60.0f;
         e1.NormalizedTime = 44 / 60.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
-        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
+        e1.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         e1.ContextFloat = 0.5f;
         BH_WLK_ST->AddEvent(e0);
@@ -97,8 +98,8 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0, e1;
         e0.NormalizedTime = 24 / 80.0f;
         e1.NormalizedTime = 65 / 80.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
-        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
+        e1.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         e1.ContextFloat = 0.5f;
         BH_WLK_LP->AddEvent(e0);
@@ -111,8 +112,8 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0, e1;
         e0.NormalizedTime = 24 / 70.0f;
         e1.NormalizedTime = 60 / 70.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
-        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
+        e1.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         e1.ContextFloat = 0.5f;
         BH_WLK_ED->AddEvent(e0);
@@ -124,7 +125,7 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 15 / 35.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         DMG_GROGY_ST->AddEvent(e0);
     }
@@ -143,7 +144,7 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 88 / 100.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         DMG_DIE->AddEvent(e0);
     }
@@ -153,15 +154,16 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 29 / 75.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         ATK_TURN->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 20 / 75.0f;
         a1.NormalizedTime = 33 / 75.0f;
-        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
-        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::HAMMER_END;
         ATK_TURN->AddEvent(a0);
         ATK_TURN->AddEvent(a1);
     }
@@ -172,8 +174,9 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 27 / 100.0f;
         a1.NormalizedTime = 38 / 100.0f;
-        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
-        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::HAMMER_END;
         ATK_SWING_L->AddEvent(a0);
         ATK_SWING_L->AddEvent(a1);
     }
@@ -184,8 +187,9 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 18 / 89.0f;
         a1.NormalizedTime = 34 / 89.0f;
-        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
-        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::HAMMER_END;
         ATK_SWING_R->AddEvent(a0);
         ATK_SWING_R->AddEvent(a1);
     }
@@ -195,15 +199,16 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 39 / 85.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         ATK_SWING_V->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 35 / 85.0f;
         a1.NormalizedTime = 39 / 85.0f;
-        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
-        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::HAMMER_END;
         ATK_SWING_V->AddEvent(a0);
         ATK_SWING_V->AddEvent(a1);
     }
@@ -213,15 +218,37 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 78 / 260.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         ATK_STOMP->AddEvent(e0);
+
+        AnimationEventDesc shockwave;
+        shockwave.NormalizedTime = 78 / 260.0f;
+        shockwave.ContextByte = ByteContext::HAMMER_SHOCKWAVE;
+        ATK_STOMP->AddEvent(shockwave);
+
+        for (uint i = 0; i < 3; ++i)
+        {
+            AnimationEventDesc groundimpact0;
+            groundimpact0.NormalizedTime = (78 + i * 4) / 260.0f;
+            groundimpact0.ContextUInt = UIntContext::HAMMER_GROUND_IMPACT;
+            ATK_STOMP->AddEvent(groundimpact0);
+        }
+
+        AnimationEventDesc sphereAttack0, sphereAttack1;
+        sphereAttack0.NormalizedTime = 78 / 260.0f;
+        sphereAttack1.NormalizedTime = 80 / 260.0f;
+        sphereAttack0.ContextInt = IntContext::HAMMER_TIP_START;
+        sphereAttack1.ContextInt = IntContext::HAMMER_TIP_END;
+        ATK_STOMP->AddEvent(sphereAttack0);
+        ATK_STOMP->AddEvent(sphereAttack1);
 
 		AnimationEventDesc a0, a1;
 		a0.NormalizedTime = 74 / 260.0f;
 		a1.NormalizedTime = 85 / 260.0f;
-		a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
-		a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW;
+		a1.ContextInt = IntContext::HAMMER_END;
 		ATK_STOMP->AddEvent(a0);
 		ATK_STOMP->AddEvent(a1);
     }
@@ -231,15 +258,16 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 59 / 123.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE | ANIM_LF_SHOCKWAVE;
+        e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::LF_SHOCKWAVE;
         e0.ContextFloat = 1.0f;
         ATK_STEPON_L->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 58 / 123.0f;
         a1.NormalizedTime = 61 / 123.0f;
-        a0.ContextInt = ANIM_ATK_LF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
-        a1.ContextInt = ANIM_ATK_LF_END;
+        a0.ContextInt = IntContext::LF_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::LF_END;
         ATK_STEPON_L->AddEvent(a0);
         ATK_STEPON_L->AddEvent(a1);
     }
@@ -249,15 +277,16 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 40 / 110.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE | ANIM_RF_SHOCKWAVE;
+        e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::RF_SHOCKWAVE;
         e0.ContextFloat = 1.0f;
         ATK_STEPON_R->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
-        a0.NormalizedTime = 39 / 123.0f;
-        a1.NormalizedTime = 41 / 123.0f;
-        a0.ContextInt = ANIM_ATK_RF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
-        a1.ContextInt = ANIM_ATK_RF_END;
+        a0.NormalizedTime = 40 / 123.0f;
+        a1.NormalizedTime = 43 / 123.0f;
+        a0.ContextInt = IntContext::RF_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::RF_END;
         ATK_STEPON_R->AddEvent(a0);
         ATK_STEPON_R->AddEvent(a1);
     }
@@ -267,7 +296,7 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 33 / 35.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         ATK_RUSH_ST->AddEvent(e0);
     }
@@ -278,8 +307,8 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0, e1;
         e0.NormalizedTime = 4 / 20.0f;
         e1.NormalizedTime = 14 / 20.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
-        e1.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
+        e1.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         e1.ContextFloat = 0.5f;
         ATK_RUSH_LP->AddEvent(e0);
@@ -291,7 +320,7 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 17 / 52.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         ATK_RUSH_ED->AddEvent(e0);
     }
@@ -301,36 +330,103 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 33 / 110.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE | ANIM_LF_SHOCKWAVE | ANIM_RF_SHOCKWAVE;
+        e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::LF_SHOCKWAVE | ByteContext::RF_SHOCKWAVE;
         e0.ContextFloat = 1.0f;
         ATK_JUMP->AddEvent(e0);
 
-        AnimationEventDesc a0, a1;
-        a0.NormalizedTime = 31 / 110.0f;
-        a1.NormalizedTime = 34 / 110.0f;
-        a0.ContextInt = ANIM_ATK_RF_START | ANIM_ATK_LF_START | ANIM_ATK_BLOW | ANIM_ATK_GADABLE;
-        a1.ContextInt = ANIM_ATK_RF_END | ANIM_ATK_LF_END;
-        ATK_JUMP->AddEvent(a0);
-        ATK_JUMP->AddEvent(a1);
+        AnimationEventDesc groundimpact;
+        groundimpact.NormalizedTime = 33 / 110.0f;
+        groundimpact.ContextUInt = UIntContext::LF_GROUND_IMPACT | UIntContext::RF_GROUND_IMPACT;
+        ATK_JUMP->AddEvent(groundimpact);
+
+        //AnimationEventDesc a0, a1;
+        //a0.NormalizedTime = 31 / 110.0f;
+        //a1.NormalizedTime = 34 / 110.0f;
+        //a0.ContextInt = IntContext::RF_START | IntContext::LF_START;
+        //a0.ContextUInt = UIntContext::ATK_BLOW;
+        //a1.ContextInt = IntContext::RF_END | IntContext::LF_END;
+        //ATK_JUMP->AddEvent(a0);
+        //ATK_JUMP->AddEvent(a1);
     }
     Layer->AddNode(ATK_JUMP);
 
+    ATK_BACKJUMP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_BACKJUMP")), NOLOOP);
+    {
+        AnimationEventDesc e0;
+        e0.NormalizedTime = 33 / 110.0f;
+        e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::LF_SHOCKWAVE | ByteContext::RF_SHOCKWAVE;
+        e0.ContextFloat = 1.0f;
+        ATK_BACKJUMP->AddEvent(e0);
+
+        AnimationEventDesc groundimpact;
+        groundimpact.NormalizedTime = 33 / 110.0f;
+        groundimpact.ContextUInt = UIntContext::LF_GROUND_IMPACT | UIntContext::RF_GROUND_IMPACT;
+        ATK_BACKJUMP->AddEvent(groundimpact);
+
+        //AnimationEventDesc a0, a1;
+        //a0.NormalizedTime = 31 / 110.0f;
+        //a1.NormalizedTime = 34 / 110.0f;
+        //a0.ContextInt = IntContext::RF_START | IntContext::LF_START;
+        //a0.ContextUInt = UIntContext::ATK_BLOW;
+        //a1.ContextInt = IntContext::RF_END | IntContext::LF_END;
+        //ATK_BACKJUMP->AddEvent(a0);
+        //ATK_BACKJUMP->AddEvent(a1);
+
+        AnimationEventDesc bjend;
+        bjend.NormalizedTime = 45 / 110.0f;
+        bjend.ContextByte = ByteContext::BACKJUMP_END;
+        ATK_BACKJUMP->AddEvent(bjend);
+    }
+    Layer->AddNode(ATK_BACKJUMP);
+
     ATK_ELECTRIC = AnimatorSingleNode::Create(GetClip(TEXT("ATK_ELECTRIC")), NOLOOP);
+    {
+        AnimationEventDesc a0, a1, a2;
+        a0.NormalizedTime = 45 / 123.0f;
+        a1.NormalizedTime = 50 / 123.0f;
+        a2.NormalizedTime = 75 / 123.0f;
+        a0.ContextUInt = UIntContext::SET_AIM_ON_RH;
+        a1.ContextUInt = UIntContext::ATK_ELECTRIC_START;
+        a2.ContextUInt = UIntContext::ATK_ELECTRIC_END;
+        ATK_ELECTRIC->AddEvent(a0);
+        ATK_ELECTRIC->AddEvent(a1);
+        ATK_ELECTRIC->AddEvent(a2);
+
+        {
+            AnimationEventDesc e0, e1;
+            e0.NormalizedTime = 12 / 123.0f;
+            e1.NormalizedTime = 30 / 123.0f;
+            e0.ContextUInt = UIntContext::MANUALLOOK_START;
+            e1.ContextUInt = UIntContext::MANUALLOOK_END;
+            ATK_ELECTRIC->AddEvent(e0);
+            ATK_ELECTRIC->AddEvent(e1);
+        }
+        {
+            AnimationEventDesc e0, e1;
+            e0.NormalizedTime = 43 / 123.0f;
+            e1.NormalizedTime = 49 / 123.0f;
+            e0.ContextUInt = UIntContext::MANUALLOOK_START;
+            e1.ContextUInt = UIntContext::MANUALLOOK_END;
+            ATK_ELECTRIC->AddEvent(e0);
+            ATK_ELECTRIC->AddEvent(e1);
+        }
+    }
     Layer->AddNode(ATK_ELECTRIC);
 
     ATK_DOWNSTRIKE_L = AnimatorSingleNode::Create(GetClip(TEXT("ATK_DOWNSTRIKE_L")), NOLOOP);
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 51 / 115.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         ATK_DOWNSTRIKE_L->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 48 / 115.0f;
         a1.NormalizedTime = 52 / 115.0f;
-        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
-        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::HAMMER_END;
         ATK_DOWNSTRIKE_L->AddEvent(a0);
         ATK_DOWNSTRIKE_L->AddEvent(a1);
     }
@@ -340,15 +436,16 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc e0;
         e0.NormalizedTime = 47 / 120.0f;
-        e0.ContextByte = ANIM_CAM_SHAKE;
+        e0.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 1.0f;
         ATK_DOWNSTRIKE_R->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 44 / 110.0f;
         a1.NormalizedTime = 50 / 110.0f;
-        a0.ContextInt = ANIM_ATK_HAMMER_START | ANIM_ATK_BLOW;
-        a1.ContextInt = ANIM_ATK_HAMMER_END;
+        a0.ContextInt = IntContext::HAMMER_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::HAMMER_END;
         ATK_DOWNSTRIKE_R->AddEvent(a0);
         ATK_DOWNSTRIKE_R->AddEvent(a1);
     }
@@ -358,16 +455,24 @@ void BossAncientKingAnimator::SetupNodes()
     {
         AnimationEventDesc a;
         a.NormalizedTime = float(40) / 90.0f;
-        a.ContextByte = ANIM_AIM_BEGIN;
+        a.ContextUInt = UIntContext::SET_AIM_ON_HEAD;
         ATK_BEAM->AddEvent(a);
 
-        for (uint i = 0; i < 15; ++i)
+        for (uint i = 0; i < 13; ++i)
         {
             AnimationEventDesc e;
-            e.NormalizedTime = float(40 + i) / 90.0f;
-            e.ContextInt = ANIM_ATK_BEAM;
+            e.NormalizedTime = float(42 + i) / 90.0f;
+            e.ContextUInt = UIntContext::ATK_SHOOT_BEAM;
             ATK_BEAM->AddEvent(e);
         }
+
+        AnimationEventDesc e0, e1;
+        e0.NormalizedTime = 18 / 90.0f;
+        e1.NormalizedTime = 37 / 90.0f;
+        e0.ContextUInt = UIntContext::MANUALLOOK_START;
+        e1.ContextUInt = UIntContext::MANUALLOOK_END;
+        ATK_BEAM->AddEvent(e0);
+        ATK_BEAM->AddEvent(e1);
     }
     Layer->AddNode(ATK_BEAM);
 
@@ -582,6 +687,19 @@ void BossAncientKingAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         Layer->AddTransition(ATK_JUMP, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> ATK_BACKJUMP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(ATK_BACKJUMP_TProperty));
+        Layer->AddTransition(ANY, ATK_BACKJUMP, values, 0.0f, 0.05f);
+    }
+
+    // ATK_BACKJUMP -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_BACKJUMP, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_ELECTRIC

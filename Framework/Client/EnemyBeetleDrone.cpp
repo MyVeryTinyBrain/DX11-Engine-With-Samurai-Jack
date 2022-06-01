@@ -168,23 +168,23 @@ void EnemyBeetleDrone::AttackTriggerQuery()
 			damage.Guardable = true;
 			switch (m_attackType)
 			{
-				case ANIM_ATK_LIGHT:
+				case EnemyBeetleDroneAnimator::UIntContext::ATK_LIGHT:
 					damage.Type = DamageInType::LIGHT;
 					damage.Damage = 1.0f;
 					break;
-				case ANIM_ATK_HEAVY:
+				case EnemyBeetleDroneAnimator::UIntContext::ATK_HEAVY:
 					damage.Type = DamageInType::HEAVY;
 					damage.Damage = 2.5f;
 					break;
-				case ANIM_ATK_BLOW:
+				case EnemyBeetleDroneAnimator::UIntContext::ATK_BLOW:
 					damage.Type = DamageInType::BLOW;
 					damage.Damage = 3.0f;
 					break;
-				case ANIM_ATK_BLOWUP:
+				case EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWUP:
 					damage.Damage = 2.0f;
 					damage.Type = DamageInType::BLOWUP;
 					break;
-				case ANIM_ATK_BLOWDOWN:
+				case EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWDOWN:
 					damage.Damage = 3.0f;
 					damage.Type = DamageInType::BLOWDOWN;
 					break;
@@ -229,44 +229,45 @@ void EnemyBeetleDrone::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> 
 
 void EnemyBeetleDrone::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
 {
-	if (desc.ContextInt & ANIM_ATK_RH_START)
+	if (desc.ContextInt & EnemyBeetleDroneAnimator::IntContext::RH_START)
 	{
 		m_attackTrigger[RH_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
+		SetAttackType(desc.ContextUInt);
 		ClearHitBuffer();
 	}
-	else if (desc.ContextInt & ANIM_ATK_RH_END)
+	if (desc.ContextInt & EnemyBeetleDroneAnimator::IntContext::RH_END)
 	{
 		OffAttackTriggers();
 		ClearHitBuffer();
 	}
-	if (desc.ContextInt & ANIM_ATK_LH_START)
+	if (desc.ContextInt & EnemyBeetleDroneAnimator::IntContext::LH_START)
 	{
 		m_attackTrigger[LH_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
+		SetAttackType(desc.ContextUInt);
 		ClearHitBuffer();
 	}
-	else if (desc.ContextInt & ANIM_ATK_LH_END)
+	if (desc.ContextInt & EnemyBeetleDroneAnimator::IntContext::LH_END)
 	{
 		OffAttackTriggers();
 		ClearHitBuffer();
 	}
 }
 
-void EnemyBeetleDrone::SetAttackType(int contextInt)
+void EnemyBeetleDrone::SetAttackType(uint contextUInt)
 {
-	m_attackType = ANIM_ATK_LIGHT;
+	m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_LIGHT;
 
-	if (contextInt & ANIM_ATK_LIGHT)
-		m_attackType = ANIM_ATK_LIGHT;
-	else if (contextInt & ANIM_ATK_HEAVY)
-		m_attackType = ANIM_ATK_HEAVY;
-	else if (contextInt & ANIM_ATK_BLOW)
-		m_attackType = ANIM_ATK_BLOW;
-	else if (contextInt & ANIM_ATK_BLOWUP)
-		m_attackType = ANIM_ATK_BLOWUP;
-	else if (contextInt & ANIM_ATK_BLOWDOWN)
-		m_attackType = ANIM_ATK_BLOWDOWN;}
+	if (contextUInt & EnemyBeetleDroneAnimator::UIntContext::ATK_LIGHT)
+		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_LIGHT;
+	if (contextUInt & EnemyBeetleDroneAnimator::UIntContext::ATK_HEAVY)
+		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_HEAVY;
+	if (contextUInt & EnemyBeetleDroneAnimator::UIntContext::ATK_BLOW)
+		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_BLOW;
+	if (contextUInt & EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWUP)
+		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWUP;
+	if (contextUInt & EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWDOWN)
+		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWDOWN;
+}
 
 float EnemyBeetleDrone::GetHP() const
 {

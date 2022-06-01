@@ -34,7 +34,7 @@ private:
 	void OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing);
 	void OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev);
 	void OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc);
-	void SetAttackType(int contextInt);
+	void SetAttackType(uint contextUInt);
 
 public:
 
@@ -77,7 +77,7 @@ private:
 
 	GameObject* m_goAttackTrigger[2];
 	SphereCollider* m_attackTrigger[2];
-	int	m_attackType = 0;
+	uint m_attackType = 0;
 	unordered_set<Rigidbody*> m_hitBuffer;
 
 	// Stat

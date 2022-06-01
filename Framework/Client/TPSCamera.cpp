@@ -7,7 +7,6 @@ void TPSCamera::Awake()
 {
 	m_goCamera = CreateGameObjectToChild(transform);
     m_camera = m_goCamera->AddComponent<Camera>();
-    m_camera->drawGBuffer = true;
 }
 
 void TPSCamera::Start()
@@ -246,11 +245,11 @@ void TPSCamera::UpdateDistance()
     PhysicsHit hit;
     PhysicsRay ray;
     ray.Direction = -m_goCamera->transform->forward;
-    ray.Length = m_distance + 0.01f;
+    ray.Length = m_distance + 100.0f;
     ray.Point = targetPos;
     if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
     {
-        float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 0.25f);
+        float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 1.0f);
         distance = Min(distance, hitDistance);
     }
 

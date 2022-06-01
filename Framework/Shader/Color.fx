@@ -36,30 +36,14 @@ RasterizerState CullOffRasterizerState
 	FillMode = Solid;
 	Cullmode = None;
 };
-RasterizerState WireframeRasterizerState
-{
-	FillMode = Wireframe;
-	Cullmode = None;
-};
 
 DepthStencilState DefaultDepthStencilState
 {
 	DepthEnable = true;
 	DepthFunc = less;
-	DepthWriteMask = all;
+	DepthWriteMask = false;
 };
 
-DepthStencilState NoWriteDepthStencilState
-{
-	DepthEnable = false;
-	DepthFunc = less;
-	DepthWriteMask = all;
-};
-
-BlendState DefaultBlendState
-{
-	BlendEnable[0] = false;
-};
 BlendState MixBlendState
 {
 	BlendEnable[0] = true;
@@ -74,50 +58,6 @@ technique11 Default
 	{
 		SetRasterizerState(CullOffRasterizerState);
 		SetDepthStencilState(DefaultDepthStencilState, 0);
-		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-}
-technique11 Object
-{
-	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65532; >
-	{
-		SetRasterizerState(CullOffRasterizerState);
-		SetDepthStencilState(NoWriteDepthStencilState, 0);
-		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-}
-technique11 NextObject
-{
-	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65533; >
-	{
-		SetRasterizerState(CullOffRasterizerState);
-		SetDepthStencilState(NoWriteDepthStencilState, 0);
-		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-}
-technique11 Wireframe
-{
-	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65534; >
-	{
-		SetRasterizerState(WireframeRasterizerState);
-		SetDepthStencilState(NoWriteDepthStencilState, 0);
-		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		VertexShader = compile vs_5_0 VS_MAIN();
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
-}
-technique11 NextWireframe
-{
-	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65535; >
-	{
-		SetRasterizerState(WireframeRasterizerState);
-		SetDepthStencilState(NoWriteDepthStencilState, 0);
 		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN();

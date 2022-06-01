@@ -12,6 +12,7 @@ void EffectSpark::Awake()
 	m_collider = gameObject->AddComponent<SphereCollider>();
 	m_collider->layerIndex = PhysicsLayer_Particle;
 	m_collider->restitution = 0.5f;
+	m_collider->friction = 0.0f;
 	m_collider->radius = 0.1f;
 	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &EffectSpark::OnCollisionEnter);
 
@@ -34,8 +35,8 @@ void EffectSpark::Update()
 
 	m_elapsed += system->time->deltaTime;
 	float percent = Clamp01(m_elapsed / m_duration);
-	float scale = (1.0f - percent) * m_initScale;
 
+	float scale = (1.0f - percent) * m_initScale;
 	m_renderer->transform->localScale = V3::one() * scale;
 
 	if (percent >= 1.0f)

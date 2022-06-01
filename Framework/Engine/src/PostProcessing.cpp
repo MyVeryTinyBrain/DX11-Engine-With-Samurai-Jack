@@ -242,21 +242,17 @@ void PostProcessing::GetTehcniqueAndPass(Type type, uint& out_technique, uint& o
 			technique = 0;
 			pass = 9;
 			break;
-		case Type::Bloom_Apply_Add:
+		case Type::Bloom_Apply:
 			technique = 0;
 			pass = 10;
 			break;
-		case Type::Bloom_Apply_Mix:
+		case Type::ChromaticAberration_Write:
 			technique = 0;
 			pass = 11;
 			break;
-		case Type::ChromaticAberration_Write:
-			technique = 0;
-			pass = 12;
-			break;
 		case Type::ChromaticAberration_Apply:
 			technique = 0;
-			pass = 13;
+			pass = 12;
 			break;
 		case Type::HorizontalBlur:
 			technique = 1;
@@ -466,24 +462,13 @@ void PostProcessing::Render_Bloom_Extract(ICamera* camera, const BloomDesc& bloo
 
 void PostProcessing::Render_Bloom_Apply(ICamera* camera, const BloomDesc& bloomDesc)
 {
-	PostProcessing::Type bloomType = PostProcessing::Type::Bloom_Apply_Mix;
-	switch (bloomDesc.Type)
-	{
-		case BloomType::Mix:
-			bloomType = PostProcessing::Type::Bloom_Apply_Mix;
-			break;
-		case BloomType::Add:
-			bloomType = PostProcessing::Type::Bloom_Apply_Add;
-			break;
-	}
-
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	ID3D11RenderTargetView* arrRTV[8] = {};
 	arrRTV[0] = drt->result->rtv.Get();
 	DxUtility::SetRenderTargets(m_graphicSystem->deviceContext, 1, arrRTV, nullptr);
 
 	uint technique, pass;
-	GetTehcniqueAndPass(bloomType, technique, pass);
+	GetTehcniqueAndPass(PostProcessing::Type::Bloom_Apply, technique, pass);
 
 	m_shaderPostProcessing->SetRawValue("_BloomDesc", &bloomDesc, sizeof(BloomDesc));
 	m_shaderPostProcessing->SetTexture("_Sample", drt->bloom->srv.Get());

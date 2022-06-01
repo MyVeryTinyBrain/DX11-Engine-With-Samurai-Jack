@@ -36,14 +36,6 @@ public:
 
 public:
 
-	void ClearCopyTargets();
-	bool DepthWasCopied() const;
-	bool ResultWasCopied() const;
-	void CopyDepth(Com<ID3D11DeviceContext> dc);
-	void CopyResult(Com<ID3D11DeviceContext> dc);
-
-public:
-
 	inline float GetSSRResolutionScale() const { return m_ssrResolutionScale; }
 	void SetSSRResolutionScale(Com<ID3D11Device> dc, float value);
 

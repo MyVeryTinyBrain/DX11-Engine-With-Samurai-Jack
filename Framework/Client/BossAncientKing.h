@@ -2,6 +2,7 @@
 #include "Boss.h"
 
 class BossAncientKingAnimator;
+class EffectElectricBeam;
 
 class BossAncientKing : public Boss
 {
@@ -29,8 +30,8 @@ class BossAncientKing : public Boss
 		ATK_JUMP,
 		ATK_DOWNSTRIKE,
 		ATK_NEAR_RUSH,
-		ATK_NEAR_ELECTRIC,
 		ATK_NEAR_BEAM,
+		ATK_BACKJUMP,
 		__ATK_NEAR_END,
 
 		__ATK_FAR_BEGIN,
@@ -73,7 +74,7 @@ private:
 	void OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing);
 	void OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev);
 	void OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc);
-	void SetAttackType(int contextInt);
+	void SetAttackType(uint contextUInt);
 
 public:
 
@@ -118,6 +119,7 @@ private:
 	Ref<NodeTransform> m_LeftArmRoll;
 	Ref<NodeTransform> m_RightForeArmRoll;
 	Ref<NodeTransform> m_LeftForeArmRoll;
+	V3 m_toPlayerDirection;
 
 	// Animator
 
@@ -132,8 +134,7 @@ private:
 
 	GameObject* m_goHammer;
 	MeshRenderer* m_hammerRenderer;
-	GameObject* m_goHammerTrail;
-	TrailRenderer* m_hammerTrailRenderer;
+	GameObject* m_goHammerTip;
 
 	// Collider for push the player
 	GameObject* m_goCollider;
@@ -146,13 +147,16 @@ private:
 		HAMMER_TRIGGER = 0,
 		FOOT_L_TRIGGER = 1,
 		FOOT_R_TRIGGER = 2,
+		HAMMER_TIP_TRIGGER = 3,
 		MAX_TRIGGERS,
 	};
 
 	GameObject* m_goAttackTrigger[MAX_TRIGGERS];
 	Collider* m_attackTrigger[MAX_TRIGGERS];
-	int							m_attackType = 0;
+	uint m_attackType = 0;
 	unordered_set<Rigidbody*>	m_hitBuffer;
+
+	EffectElectricBeam* m_electricBeam;
 
 	// Stat
 
@@ -168,5 +172,7 @@ private:
 	float m_farATKCounter = 0.0f;
 	bool m_gadableAttack = false;
 	V3 m_aimPosition;
+	bool m_manualLook = false;
+	bool m_rushDamageReady = false;
 };
 

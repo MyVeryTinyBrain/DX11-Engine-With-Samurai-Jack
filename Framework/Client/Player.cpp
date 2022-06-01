@@ -7,6 +7,7 @@
 
 #include "EffectSpark.h"
 #include "EffectShockwave.h"
+#include "EffectRing01.h"
 
 Player* Player::g_player = nullptr;
 
@@ -146,28 +147,30 @@ void Player::SetupKatana()
 	m_katanaTrailRenderer->width = 2.0f;
 	m_katanaTrailRenderer->autoTrail = false;
 	m_katanaTrailRenderer->interpolateStep = 30;
+	//m_katanaTrailRenderer->fitVToLength = false;
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_TRAIL);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 	material->SetTexture("_GradientTexture", system->resource->Find(TEX_GRADIENT_TO_RIGHT));
+	//material->SetTexture("_DistortionTexture", system->resource->Find(TEX_EFFECT_ELECTRIC_V));
 	m_katanaTrailRenderer->material = material;
-	m_katanaTrailRenderer->fitVToLength = true;
 }
 
 void Player::SetupFootCnt()
 {
 	m_goFootCnt = CreateGameObjectToChild(m_goCharacterRender->transform);
 	m_footTrailRenderer = m_goFootCnt->AddComponent<TrailRenderer>();
-	m_footTrailRenderer->shrinkDistance = 20.0f;
+	m_footTrailRenderer->shrinkDistance = 30.0f;
 	m_footTrailRenderer->width = 2.0f;
 	m_footTrailRenderer->autoTrail = false;
 	m_footTrailRenderer->alignment = TrailRenderer::Alignment::Local;
+	//m_footTrailRenderer->fitVToLength = false;
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_TRAIL);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 	material->SetTexture("_GradientTexture", system->resource->Find(TEX_GRADIENT_CENTER));
+	//material->SetTexture("_DistortionTexture", system->resource->Find(TEX_EFFECT_ELECTRIC_V));
 	material->SetFloat("_SideAttenFactor", 1.5f);
-	//material->SetFloat("_EndFade", 1.0f);
 	m_footTrailRenderer->material = material;
 }
 
@@ -235,27 +238,27 @@ void Player::AttackTriggerQuery()
 			damage.Guardable = true;
 			switch (m_attackType)
 			{
-				case ANIM_ATK_LIGHT:
+				case PlayerAnimator::UIntContext::ATK_LIGHT:
 					damage.Type = DamageInType::LIGHT;
 					damage.Damage = 1.0f;
 					break;
-				case ANIM_ATK_HEAVY:
+				case PlayerAnimator::UIntContext::ATK_HEAVY:
 					damage.Type = DamageInType::HEAVY;
 					damage.Damage = 2.5f;
 					break;
-				case ANIM_ATK_BLOW:
+				case PlayerAnimator::UIntContext::ATK_BLOW:
 					damage.Type = DamageInType::BLOW;
 					damage.Damage = 3.0f;
 					damage.Velocity = transform->forward * 5.0f + V3(0, 5, 0);
 					damage.SetVelocity = true;
 					break;
-				case ANIM_ATK_BLOWUP:
+				case PlayerAnimator::UIntContext::ATK_BLOWUP:
 					damage.Damage = 2.0f;
 					damage.Type = DamageInType::BLOWUP;
 					damage.Velocity = BLOWUP_VELOCITY;
 					damage.SetVelocity = true;
 					break;
-				case ANIM_ATK_BLOWDOWN:
+				case PlayerAnimator::UIntContext::ATK_BLOWDOWN:
 					damage.Damage = 3.0f;
 					damage.Type = DamageInType::BLOWDOWN;
 					damage.Velocity = BLOWDOWN_VELOCITY;
@@ -278,6 +281,9 @@ void Player::AttackTriggerQuery()
 				0.2f, 0.7f,
 				0.5f, 2.0f,
 				30);
+
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
 		}
 	}
 }
@@ -319,6 +325,11 @@ void Player::XZInput()
 			RotateOnYAxisToDirection(translation, 900.0f, system->time->deltaTime);
 		}
 	}
+	else if (damaged && m_damagedDirection.magnitude > 0.01f)
+	{
+		RotateOnYAxisToDirection(-m_damagedDirection, 900.0f, system->time->deltaTime);
+	}
+
 
 	bool airAction = 
 		m_animator->Layer->IsPlaying(m_animator->ATK_AIR_X) ||
@@ -477,7 +488,44 @@ void Player::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged
 
 void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
 {
-	if (desc.ContextInt & ANIM_JUMP)
+	if (desc.ContextInt & PlayerAnimator::IntContext::KT_START)
+	{
+		m_katanaTrailRenderer->autoTrail = true;
+		m_attackTrigger[KATANA_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & PlayerAnimator::IntContext::KT_END)
+	{
+		m_katanaTrailRenderer->autoTrail = false;
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & PlayerAnimator::IntContext::FOOT_START)
+	{
+		m_footTrailRenderer->autoTrail = true;
+		m_attackTrigger[FOOT_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & PlayerAnimator::IntContext::FOOT_END)
+	{
+		m_footTrailRenderer->autoTrail = false;
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & PlayerAnimator::IntContext::KT_STING_START)
+	{
+		m_attackTrigger[KATANA_TRIGGER]->enable = true;
+		SetAttackType(desc.ContextUInt);
+		ClearHitBuffer();
+	}
+	if (desc.ContextInt & PlayerAnimator::IntContext::KT_STING_END)
+	{
+		OffAttackTriggers();
+		ClearHitBuffer();
+	}
+	if (desc.ContextByte & PlayerAnimator::ByteContext::JUMP)
 	{
 		V3 jump;
 		jump.y = desc.ContextFloat;
@@ -491,60 +539,22 @@ void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc
 			0.2f, 2.5f
 		);
 	}
-
-	if (desc.ContextInt & ANIM_ATK_KT_START)
-	{
-		m_katanaTrailRenderer->autoTrail = true;
-		m_attackTrigger[KATANA_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
-		ClearHitBuffer();
-	}
-	else if (desc.ContextInt & ANIM_ATK_KT_END)
-	{
-		m_katanaTrailRenderer->autoTrail = false;
-		OffAttackTriggers();
-		ClearHitBuffer();
-	}
-	else if (desc.ContextInt & ANIM_ATK_FOOT_START)
-	{
-		m_footTrailRenderer->autoTrail = true;
-		m_attackTrigger[FOOT_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
-		ClearHitBuffer();
-	}
-	else if (desc.ContextInt & ANIM_ATK_FOOT_END)
-	{
-		m_footTrailRenderer->autoTrail = false;
-		OffAttackTriggers();
-		ClearHitBuffer();
-	}
-	else if (desc.ContextInt & ANIM_ATK_KT_STING_START)
-	{
-		m_attackTrigger[KATANA_TRIGGER]->enable = true;
-		SetAttackType(desc.ContextInt);
-		ClearHitBuffer();
-	}
-	else if (desc.ContextInt & ANIM_ATK_KT_STING_END)
-	{
-		OffAttackTriggers();
-		ClearHitBuffer();
-	}
 }
 
-void Player::SetAttackType(int contextInt)
+void Player::SetAttackType(uint contextUInt)
 {
-	m_attackType = ANIM_ATK_LIGHT;
+	m_attackType = PlayerAnimator::UIntContext::ATK_LIGHT;
 
-	if (contextInt & ANIM_ATK_LIGHT)
-		m_attackType = ANIM_ATK_LIGHT;
-	else if (contextInt & ANIM_ATK_HEAVY)
-		m_attackType = ANIM_ATK_HEAVY;
-	else if (contextInt & ANIM_ATK_BLOW)
-		m_attackType = ANIM_ATK_BLOW;
-	else if (contextInt & ANIM_ATK_BLOWUP)
-		m_attackType = ANIM_ATK_BLOWUP;
-	else if (contextInt & ANIM_ATK_BLOWDOWN)
-		m_attackType = ANIM_ATK_BLOWDOWN;
+	if (contextUInt & PlayerAnimator::UIntContext::ATK_LIGHT)
+		m_attackType = PlayerAnimator::UIntContext::ATK_LIGHT;
+	if (contextUInt & PlayerAnimator::UIntContext::ATK_HEAVY)
+		m_attackType = PlayerAnimator::UIntContext::ATK_HEAVY;
+	if (contextUInt & PlayerAnimator::UIntContext::ATK_BLOW)
+		m_attackType = PlayerAnimator::UIntContext::ATK_BLOW;
+	if (contextUInt & PlayerAnimator::UIntContext::ATK_BLOWUP)
+		m_attackType = PlayerAnimator::UIntContext::ATK_BLOWUP;
+	if (contextUInt & PlayerAnimator::UIntContext::ATK_BLOWDOWN)
+		m_attackType = PlayerAnimator::UIntContext::ATK_BLOWDOWN;
 }
 
 float Player::GetHP() const
@@ -597,6 +607,10 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 	{
 		case DamageOutType::GUARDED:
 		{
+			m_damagedDirection = out.In.FromDirection;
+			m_damagedDirection.y = 0;
+			m_damagedDirection.Normalize();
+
 			EffectSpark::Create(
 				gameObject->regionScene,
 				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
@@ -607,12 +621,30 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				0.2f, 0.7f,
 				0.5f, 2.0f,
 				30);
+
+			EffectRing01::Create(
+				gameObject->regionScene,
+				transform->position,
+				0.5f,
+				0.5f,
+				200.0f,
+				0.5f, 2.0f,
+				Color::RGBA255(255, 142, 51, 255)
+			);
+
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
+
 			m_animator->GuardHitTProperty->SetTriggerState();
 			return DamageOutType::GUARDED;
 		}
 		break;
 		case DamageOutType::GUARD_BREAKED:
 		{
+			m_damagedDirection = out.In.FromDirection;
+			m_damagedDirection.y = 0;
+			m_damagedDirection.Normalize();
+
 			EffectSpark::Create(
 				gameObject->regionScene,
 				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
@@ -623,6 +655,20 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				0.2f, 0.7f,
 				0.5f, 2.0f,
 				30);
+
+			EffectRing01::Create(
+				gameObject->regionScene,
+				transform->position,
+				0.5f,
+				0.5f,
+				200.0f,
+				0.5f, 2.0f,
+				Color::RGBA255(255, 71, 51, 255)
+			);
+
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
+
 			m_animator->GuardBreakTProperty->SetTriggerState();
 			return DamageOutType::GUARD_BREAKED;
 		}
@@ -631,19 +677,53 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 		{
 			m_animator->DamageTProperty->SetTriggerState();
 			m_animator->DamageDirectionFProperty->valueAsFloat = out.Backattack ? 1.0f : 0.0f;
+
 			switch (out.In.Type)
 			{
 				case DamageInType::LIGHT:
+				{
 					m_animator->DamageTypeIProperty->valueAsInt = 0;
-					break;
+
+					if (!out.Backattack)
+					{
+						m_damagedDirection = out.In.FromDirection;
+						m_damagedDirection.y = 0;
+						m_damagedDirection.Normalize();
+					}
+					else
+					{
+						m_damagedDirection = {};
+					}
+				}
+				break;
 				case DamageInType::HEAVY:
+				{
 					m_animator->DamageTypeIProperty->valueAsInt = 1;
-					break;
+
+					if (!out.Backattack)
+					{
+						m_damagedDirection = out.In.FromDirection;
+						m_damagedDirection.y = 0;
+						m_damagedDirection.Normalize();
+					}
+					else
+					{
+						m_damagedDirection = {};
+					}
+				}
+				break;
 				case DamageInType::BLOW:
 				case DamageInType::BLOWUP:
+				{
 					m_animator->DamageTypeIProperty->valueAsInt = 2;
-					break;
+
+					m_damagedDirection = out.In.FromDirection;
+					m_damagedDirection.y = 0;
+					m_damagedDirection.Normalize();
+				}
+				break;
 			}
+
 			if (!CCT->isGrounded)
 			{
 				m_animator->DamageTypeIProperty->valueAsInt = 2;
@@ -652,6 +732,9 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			{
 				CCT->Jump(out.In.Velocity);
 			}
+
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.035f, 1.1f, 0.1f, 2.0f / 0.1f);
 			return DamageOutType::HIT;
 		}
 		break;

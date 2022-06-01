@@ -8,12 +8,6 @@ enum class FogType : unsigned int
 	Z,
 };
 
-enum class BloomType : unsigned int
-{
-	Add,
-	Mix,
-};
-
 enum class BlurType : unsigned int
 {
 	Default,
@@ -45,7 +39,6 @@ struct FogDesc
 struct BloomDesc
 {
 	BOOL		Enable;				
-	BloomType	Type;				
 	uint		BlurNumSamples;		// [0~16]
 	float		Intensity;			// [0~inf]
 	float		Threshold;			// [0~1]
