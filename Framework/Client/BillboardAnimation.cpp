@@ -6,7 +6,7 @@ void BillboardAnimation::Awake()
 {
 	GameObject* goRenderer = CreateGameObjectToChild(transform);
 	m_renderer = goRenderer->AddComponent<BillboardRenderer>();
-	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_BILLBOARD_ANIMATION);
+	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_BILLBOARD_SPRITESHEET);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
 	m_renderer->material = material;
 

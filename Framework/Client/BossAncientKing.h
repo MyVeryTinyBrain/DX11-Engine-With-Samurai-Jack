@@ -96,7 +96,6 @@ private:
 	void StateChanged(BossAncientKing::State before, BossAncientKing::State next);
 	void StateEnded(BossAncientKing::State before, BossAncientKing::State current);
 
-	bool RaycastToForwardInStage(float length) const;
 	bool IsFarATKCondition() const;
 	bool IsNearATKCondition() const;
 	bool IsSATKTurnCondition() const;
@@ -174,5 +173,6 @@ private:
 	V3 m_aimPosition;
 	bool m_manualLook = false;
 	bool m_rushDamageReady = false;
+	uint m_hitCount = 0;
 };
 

@@ -19,7 +19,7 @@ void ProjectileWaveBeam::Awake()
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(shader, TEXT("ProjectileWaveBeamMaterial"));
 	m_renderer->material = material;
 	m_renderer->material->SetTexture("_Texture", system->resource->Find(TEX_EFFECT_FLASH));
-	m_renderer->material->SetTexture("_DistortionTexture", system->resource->Find(TEX_NOISE_0));
+	m_renderer->material->SetTexture("_DistortionTexture", system->resource->Find(TEX_NOISE_01));
 	m_renderer->material->SetColor("_Color", Color(1.0f, 0.9764f, 0.466f, 1.0f));
 	m_renderer->material = material;
 

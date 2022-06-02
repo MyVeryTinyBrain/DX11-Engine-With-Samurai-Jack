@@ -48,13 +48,7 @@
     <ClInclude Include="EnemyBeetleDroneAnimator.h">
       <Filter>BeetleDrone</Filter>
     </ClInclude>
-    <ClInclude Include="EffectSpark.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
     <ClInclude Include="BillboardAnimation.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="EffectShockwave.h">
       <Filter>Effect</Filter>
     </ClInclude>
     <ClInclude Include="IDamagable.h">
@@ -72,17 +66,32 @@
     <ClInclude Include="ProjectileWaveBeam.h">
       <Filter>Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="EffectRing01.h">
-      <Filter>Effect</Filter>
-    </ClInclude>
     <ClInclude Include="ParticleElectricBeam.h">
       <Filter>Particle</Filter>
     </ClInclude>
     <ClInclude Include="EffectElectricBeam.h">
-      <Filter>Effect\Damagable</Filter>
+      <Filter>Effect\Damagable\Electric</Filter>
     </ClInclude>
     <ClInclude Include="EffectGroundImapct.h">
-      <Filter>Effect\Damagable</Filter>
+      <Filter>Effect\Damagable\GroundImpact</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectDust01.h">
+      <Filter>Effect\Dust01</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleDust01.h">
+      <Filter>Effect\Dust01</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectRing01.h">
+      <Filter>Effect\Ring</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectShockwave.h">
+      <Filter>Effect\Shockwave</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectSpark.h">
+      <Filter>Effect\Spark</Filter>
+    </ClInclude>
+    <ClInclude Include="BillboardSpritesheet.h">
+      <Filter>Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +151,24 @@
     <Filter Include="Effect\Damagable">
       <UniqueIdentifier>{a6276206-9663-4e4e-b80d-5b730c478ca2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect\Damagable\Electric">
+      <UniqueIdentifier>{f415ead6-7381-49a6-8670-86627900e8b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Damagable\GroundImpact">
+      <UniqueIdentifier>{8db4da6a-c12a-4390-b5fe-2dda01cb7454}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Dust01">
+      <UniqueIdentifier>{f84e9eb6-31cb-439e-a3b3-313458c82ec8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Ring">
+      <UniqueIdentifier>{aab1d201-b998-4c2d-bec5-8d213dd29751}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Shockwave">
+      <UniqueIdentifier>{76542711-c528-4786-b22c-28cba2d9cee3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Spark">
+      <UniqueIdentifier>{1ae88ce2-a762-46f7-a7a1-a969a56268c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -186,13 +213,7 @@
     <ClCompile Include="EnemyBeetleDroneAnimator.cpp">
       <Filter>BeetleDrone</Filter>
     </ClCompile>
-    <ClCompile Include="EffectSpark.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="BillboardAnimation.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="EffectShockwave.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="IDamagable.cpp">
@@ -210,17 +231,32 @@
     <ClCompile Include="ProjectileWaveBeam.cpp">
       <Filter>Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="EffectRing01.cpp">
-      <Filter>Effect</Filter>
-    </ClCompile>
     <ClCompile Include="ParticleElectricBeam.cpp">
       <Filter>Particle</Filter>
     </ClCompile>
     <ClCompile Include="EffectElectricBeam.cpp">
-      <Filter>Effect\Damagable</Filter>
+      <Filter>Effect\Damagable\Electric</Filter>
     </ClCompile>
     <ClCompile Include="EffectGroundImapct.cpp">
-      <Filter>Effect\Damagable</Filter>
+      <Filter>Effect\Damagable\GroundImpact</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectDust01.cpp">
+      <Filter>Effect\Dust01</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleDust01.cpp">
+      <Filter>Effect\Dust01</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectRing01.cpp">
+      <Filter>Effect\Ring</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectShockwave.cpp">
+      <Filter>Effect\Shockwave</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectSpark.cpp">
+      <Filter>Effect\Spark</Filter>
+    </ClCompile>
+    <ClCompile Include="BillboardSpritesheet.cpp">
+      <Filter>Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,7 +266,7 @@
     <FxCompile Include="..\Shader\BillboardEffect.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\Shader\BillboardAnimation.fx">
+    <FxCompile Include="..\Shader\BillboardSpritesheet.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\Shockwave.fx">

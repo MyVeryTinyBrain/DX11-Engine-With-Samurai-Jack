@@ -65,13 +65,15 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define TEX_EFFECT_RING01				TEXT("../Resource/Effect/T_E_Ring_01.dds")
 #define TEX_EFFECT_RING02				TEXT("../Resource/Effect/T_E_Ring_02.dds")
 #define TEX_EFFECT_RING_DISTORTION		TEXT("../Resource/Effect/T_E_Ring_04.dds")
-#define TEX_NOISE_0						TEXT("../Resource/Noise/Noise01.dds")
+#define TEX_NOISE_01					TEXT("../Resource/Noise/Noise01.dds")
+#define TEX_DUST_01						TEXT("../Resource/Dust/Dust01.dds")
+#define TEX_DUST_02						TEXT("../Resource/Dust/Dust02.dds")
 
 // Shaders
 
 #define SHADER_TRAIL					TEXT("Trail.cso")
 #define SHADER_BILLBOARD_EFFECT			TEXT("BillboardEffect.cso")
-#define SHADER_BILLBOARD_ANIMATION		TEXT("BillboardAnimation.cso")
+#define SHADER_BILLBOARD_SPRITESHEET	TEXT("BillboardSpritesheet.cso")
 #define SHADER_SHOCKWAVE				TEXT("Shockwave.cso")
 #define SHADER_WAVEBEAM					TEXT("WaveBeam.cso")
 #define SHADER_RING						TEXT("Ring.cso")
@@ -106,10 +108,12 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING01);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING_DISTORTION);
-	system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_0);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_01);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_01);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_02);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_TRAIL);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
-	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_ANIMATION);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_SPRITESHEET);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SHOCKWAVE);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_WAVEBEAM);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_RING);

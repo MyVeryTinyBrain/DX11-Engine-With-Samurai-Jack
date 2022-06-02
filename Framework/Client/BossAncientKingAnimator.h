@@ -89,6 +89,10 @@ public:
 	AnimatorProperty* ATK_DOWNSTRIKE_TProperty; 
 	AnimatorProperty* ATK_BEAM_TProperty;
 
+	AnimatorProperty* GROGY_TProperty;
+	AnimatorProperty* DIE_TProperty;
+	AnimatorProperty* RAGE_TProperty;
+
 public:
 
 	AnimatorNode* ADDITIVE_EMPTY; 

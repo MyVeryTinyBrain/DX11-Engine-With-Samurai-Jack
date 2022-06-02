@@ -52,6 +52,11 @@ void BossAncientKingAnimator::SetupProperties()
     ATK_ELECTRIC_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_ELECTRIC_T"), AnimatorProperty::Type::TRIGGER);
     ATK_DOWNSTRIKE_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_DOWNSTRIKE_T"), AnimatorProperty::Type::TRIGGER);
     ATK_BEAM_TProperty = AdditiveLayer->AddProperty(TEXT("ATK_BEAM_T"), AnimatorProperty::Type::TRIGGER);
+
+    GROGY_TProperty = AdditiveLayer->AddProperty(TEXT("GROGY_T"), AnimatorProperty::Type::TRIGGER);
+    DIE_TProperty = AdditiveLayer->AddProperty(TEXT("DIE_T"), AnimatorProperty::Type::TRIGGER);
+    RAGE_TProperty = AdditiveLayer->AddProperty(TEXT("RAGE_T"), AnimatorProperty::Type::TRIGGER);
+
     // Additive ===============================================================================================================
 
     AdditiveDamageTProperty = AdditiveLayer->AddProperty(TEXT("AdditiveDamageT"), AnimatorProperty::Type::TRIGGER);
@@ -230,7 +235,7 @@ void BossAncientKingAnimator::SetupNodes()
         for (uint i = 0; i < 3; ++i)
         {
             AnimationEventDesc groundimpact0;
-            groundimpact0.NormalizedTime = (78 + i * 4) / 260.0f;
+            groundimpact0.NormalizedTime = (78 + i * 6) / 260.0f;
             groundimpact0.ContextUInt = UIntContext::HAMMER_GROUND_IMPACT;
             ATK_STOMP->AddEvent(groundimpact0);
         }
@@ -752,6 +757,51 @@ void BossAncientKingAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         Layer->AddTransition(ATK_BEAM, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANT -> DMG_GROGY_ST
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(GROGY_TProperty));
+        Layer->AddTransition(ANY, DMG_GROGY_ST, values, 0.0f, 0.05f, 0.0f);
+    }
+
+    // DMG_GROGY_ST -> DMG_GROGY_LP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(DMG_GROGY_ST, DMG_GROGY_LP, values, 1.0f, 0.0f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // DMG_GROGY_LP -> DMG_GROGY_ED
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(DMG_GROGY_LP, DMG_GROGY_ED, values, 2.0f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // DMG_GROGY_ED -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(DMG_GROGY_ED, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> DMG_DIE
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(DIE_TProperty));
+        Layer->AddTransition(ANY, DMG_DIE, values, 0.0f, 0.05f, 0.0f);
+    }
+
+    // ANY -> ETC_RAGE
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::Trigger(RAGE_TProperty));
+        Layer->AddTransition(ANY, ETC_RAGE, values, 0.0f, 0.05f);
+    }
+
+    // ETC_RAGE -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ETC_RAGE, EXIT, values, 0.95f, 0.05f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // Additive ===============================================================================================================

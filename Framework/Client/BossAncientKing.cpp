@@ -327,6 +327,16 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 		m_electricBeam->enable = false;
 		m_manualLook = false;
 	}
+
+	if (prev.GetPointer() == m_animator->DMG_GROGY_ED)
+	{
+		SetState(State::WAIT);
+	}
+
+	if (prev.GetPointer() == m_animator->ETC_RAGE)
+	{
+		SetState(State::WAIT);
+	}
 }
 
 void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc)
@@ -680,7 +690,27 @@ DamageOutType BossAncientKing::OnDamage(const DamageOut& out)
 		case DamageOutType::GUARD_BREAKED:
 		case DamageOutType::HIT:
 		{
-			m_animator->AdditiveDamageTProperty->SetTriggerState();
+			m_hp -= out.In.Damage;
+
+			if (m_hp <= 0.0f)
+			{
+				SetState(State::DIE);
+			}
+			else if (m_hitCount > 40)
+			{
+				m_hitCount = 0;
+				SetState(State::GROGY);
+			}
+			else
+			{
+				m_animator->AdditiveDamageTProperty->SetTriggerState();
+				
+				if (m_state != State::GROGY)
+				{
+					++m_hitCount;
+				}
+			}
+
 			return DamageOutType::HIT;
 		}
 		break;
@@ -992,14 +1022,21 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 			m_animator->ATK_BACKJUMP_TProperty->SetTriggerState();
 		}
 		break;
-		//case State::__ATK_FAR_BEGIN:
-		//case State::__ATK_FAR_END:
-		//case State::__ATK_NEAR_BEGIN:
-		//case State::__ATK_NEAR_END:
-		//{
-		//	SetState(State::ATK_RUSH);
-		//}
-		//break;
+		case State::GROGY:
+		{
+			m_animator->GROGY_TProperty->SetTriggerState();
+		}
+		break;
+		case State::RAGE:
+		{
+			m_animator->RAGE_TProperty->SetTriggerState();
+		}
+		break;
+		case State::DIE:
+		{
+			m_animator->DIE_TProperty->SetTriggerState();
+		}
+		break;
 	}
 }
 

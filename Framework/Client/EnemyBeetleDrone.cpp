@@ -392,5 +392,10 @@ void EnemyBeetleDrone::DoAppear()
 	}
 	m_animator->Layer->Play(m_animator->ETC_APPEAR);
 
+	if (player)
+	{
+		transform->forward = ToPlayerDirectionXZ();
+	}
+
 	RegistEnemy(this);
 }

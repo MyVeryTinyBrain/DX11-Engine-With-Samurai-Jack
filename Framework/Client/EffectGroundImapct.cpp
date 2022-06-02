@@ -13,7 +13,7 @@ void EffectGroundImapct::Awake()
 	m_renderer = goRenderer->AddComponent<MeshRenderer>();
 	m_renderer->mesh = system->resource->builtIn->quadMesh;
 
-	m_trigger = m_parent->AddComponent<SphereCollider>();
+	m_trigger = m_parent->AddComponent<BoxCollider>();
 	m_trigger->isTrigger = true;
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_RING);
@@ -73,7 +73,15 @@ void EffectGroundImapct::AttackTriggerQuery()
 		Character* character = rigidbody->gameObject->GetComponent<Character>();
 		if (!character) continue;
 
+		// 바닥 접지 검사
 		if (!character->CCT->isGrounded) continue;
+
+		// 원 영역내 검사
+		V3 xzPosition = transform->position;
+		V3 xzCharacterPosition = character->transform->position;
+		xzPosition.y = xzCharacterPosition.y = 0;
+		float dist = V3::Distance(xzPosition, xzCharacterPosition);
+		if (dist > m_parent->transform->lossyScale.x * 0.5f) continue;
 
 		auto result = m_hitBuffer.insert(rigidbody);
 		if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.

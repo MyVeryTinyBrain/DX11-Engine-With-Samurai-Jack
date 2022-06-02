@@ -20,7 +20,7 @@ private:
 
 	unordered_set<Rigidbody*> m_hitBuffer;
 	uint m_attackLayermask;
-	SphereCollider* m_trigger;
+	BoxCollider* m_trigger;
 
 	float m_elapsed = 0.0f;
 	float m_duration = 1.0f;
