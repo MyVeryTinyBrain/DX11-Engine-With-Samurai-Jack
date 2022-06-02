@@ -63,20 +63,14 @@
     <ClInclude Include="Boss.h">
       <Filter>Character</Filter>
     </ClInclude>
-    <ClInclude Include="ProjectileWaveBeam.h">
+    <ClInclude Include="ProjectileInstanceWaveBeam.h">
       <Filter>Projectile</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleElectricBeam.h">
-      <Filter>Particle</Filter>
     </ClInclude>
     <ClInclude Include="EffectElectricBeam.h">
       <Filter>Effect\Damagable\Electric</Filter>
     </ClInclude>
     <ClInclude Include="EffectGroundImapct.h">
       <Filter>Effect\Damagable\GroundImpact</Filter>
-    </ClInclude>
-    <ClInclude Include="EffectDust01.h">
-      <Filter>Effect\Dust01</Filter>
     </ClInclude>
     <ClInclude Include="ParticleDust01.h">
       <Filter>Effect\Dust01</Filter>
@@ -87,11 +81,14 @@
     <ClInclude Include="EffectShockwave.h">
       <Filter>Effect\Shockwave</Filter>
     </ClInclude>
-    <ClInclude Include="EffectSpark.h">
+    <ClInclude Include="ParticleInstanceSpark.h">
       <Filter>Effect\Spark</Filter>
     </ClInclude>
     <ClInclude Include="BillboardSpritesheet.h">
       <Filter>Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleElectricBeam.h">
+      <Filter>Effect\Damagable\Electric</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +141,6 @@
     </Filter>
     <Filter Include="Projectile">
       <UniqueIdentifier>{a5585c75-5e45-4921-b0b6-01bc9d590299}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Particle">
-      <UniqueIdentifier>{49e5b270-a69d-4f32-988f-a51a2418a609}</UniqueIdentifier>
     </Filter>
     <Filter Include="Effect\Damagable">
       <UniqueIdentifier>{a6276206-9663-4e4e-b80d-5b730c478ca2}</UniqueIdentifier>
@@ -228,20 +222,14 @@
     <ClCompile Include="Boss.cpp">
       <Filter>Character</Filter>
     </ClCompile>
-    <ClCompile Include="ProjectileWaveBeam.cpp">
+    <ClCompile Include="ProjectileInstanceWaveBeam.cpp">
       <Filter>Projectile</Filter>
-    </ClCompile>
-    <ClCompile Include="ParticleElectricBeam.cpp">
-      <Filter>Particle</Filter>
     </ClCompile>
     <ClCompile Include="EffectElectricBeam.cpp">
       <Filter>Effect\Damagable\Electric</Filter>
     </ClCompile>
     <ClCompile Include="EffectGroundImapct.cpp">
       <Filter>Effect\Damagable\GroundImpact</Filter>
-    </ClCompile>
-    <ClCompile Include="EffectDust01.cpp">
-      <Filter>Effect\Dust01</Filter>
     </ClCompile>
     <ClCompile Include="ParticleDust01.cpp">
       <Filter>Effect\Dust01</Filter>
@@ -252,11 +240,14 @@
     <ClCompile Include="EffectShockwave.cpp">
       <Filter>Effect\Shockwave</Filter>
     </ClCompile>
-    <ClCompile Include="EffectSpark.cpp">
+    <ClCompile Include="ParticleInstanceSpark.cpp">
       <Filter>Effect\Spark</Filter>
     </ClCompile>
     <ClCompile Include="BillboardSpritesheet.cpp">
       <Filter>Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleElectricBeam.cpp">
+      <Filter>Effect\Damagable\Electric</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,7 +269,10 @@
     <FxCompile Include="..\Shader\Ring.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="..\Shader\AncientKingTrail.fx">
+    <FxCompile Include="..\Shader\Spark.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\InstanceUnlit.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

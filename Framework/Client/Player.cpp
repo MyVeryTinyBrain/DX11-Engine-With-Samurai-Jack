@@ -5,9 +5,10 @@
 #include "Config.h"
 #include "Enemy.h"
 
-#include "EffectSpark.h"
+#include "ParticleInstanceSpark.h"
 #include "EffectShockwave.h"
 #include "EffectRing01.h"
+#include "ParticleDust01.h"
 
 Player* Player::g_player = nullptr;
 
@@ -32,7 +33,7 @@ void Player::Awake()
 void Player::Update()
 {
 	Character::Update();
-
+	
 	UpdateKeyTimes();
 	AttackTriggerQuery();
 
@@ -271,16 +272,28 @@ void Player::AttackTriggerQuery()
 
 		if (numHit > 0)
 		{
-			EffectSpark::Create(
+			V3 katanaPos = m_goAttackTrigger[KATANA_TRIGGER]->transform->position + transform->forward * 2.5f;
+
+			ParticleInstanceSpark::Create(
 				gameObject->regionScene, 
-				m_goAttackTrigger[KATANA_TRIGGER]->transform->position + transform->forward * 2.5f,
+				katanaPos,
 				-transform->forward,
 				0.0f, 45.0f,
 				1.0f, 5.0f, 
 				2.0f, 9.0f, 
-				0.2f, 0.7f,
+				0.1f, 0.355f,
 				0.5f, 2.0f,
-				30);
+				50);
+
+			ParticleDust01::CreateAroundAxis(
+				gameObject->regionScene,
+				katanaPos,
+				V3::up(), 1.0f,
+				0.5f, 1.5f,
+				0.5f, 1.0f,
+				1.0f, 2.0f, 0.5f,
+				Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+				10);
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
@@ -417,13 +430,11 @@ void Player::AttackInput()
 		CCT->Move(V3::down() * 40.0f * system->time->deltaTime, system->time->deltaTime);
 		CCT->collisionWithCCT = false;
 		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, true);
-		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_VirtualEnemy, true);
 	}
 	else
 	{
 		CCT->collisionWithCCT = true;
 		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, false);
-		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_VirtualEnemy, false);
 	}
 }
 
@@ -611,23 +622,23 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			m_damagedDirection.y = 0;
 			m_damagedDirection.Normalize();
 
-			EffectSpark::Create(
+			ParticleInstanceSpark::Create(
 				gameObject->regionScene,
 				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
 				-transform->forward,
 				0.0f, 45.0f,
 				1.0f, 5.0f,
 				2.0f, 9.0f,
-				0.2f, 0.7f,
+				0.1f, 0.5f,
 				0.5f, 2.0f,
-				30);
+				50);
 
 			EffectRing01::Create(
 				gameObject->regionScene,
 				transform->position,
 				0.5f,
 				0.5f,
-				200.0f,
+				500.0f,
 				0.5f, 2.0f,
 				Color::RGBA255(255, 142, 51, 255)
 			);
@@ -645,23 +656,23 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			m_damagedDirection.y = 0;
 			m_damagedDirection.Normalize();
 
-			EffectSpark::Create(
+			ParticleInstanceSpark::Create(
 				gameObject->regionScene,
 				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
 				-transform->forward,
 				0.0f, 45.0f,
 				1.0f, 5.0f,
 				2.0f, 9.0f,
-				0.2f, 0.7f,
+				0.1f, 0.5f,
 				0.5f, 2.0f,
-				30);
+				50);
 
 			EffectRing01::Create(
 				gameObject->regionScene,
 				transform->position,
 				0.5f,
 				0.5f,
-				200.0f,
+				500.0f,
 				0.5f, 2.0f,
 				Color::RGBA255(255, 71, 51, 255)
 			);

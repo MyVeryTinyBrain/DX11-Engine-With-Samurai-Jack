@@ -1,6 +1,6 @@
 #pragma once
 
-class EffectSpark : public Component
+class ParticleInstanceSpark : public Component
 {
 private:
 
@@ -32,6 +32,7 @@ public:
 		float minHSpeed, float maxHSpeed, 
 		float minScale, float maxScale, 
 		float minDuration, float maxDuration,
-		uint count);
+		uint count,
+		const Color& color = Color(1.0f, 0.9764f, 0.466f, 1.0f));
 };
 

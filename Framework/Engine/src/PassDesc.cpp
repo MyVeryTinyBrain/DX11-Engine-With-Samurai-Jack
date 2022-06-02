@@ -160,6 +160,39 @@ bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_
 			element.InputSlot = InstanceData::InputSlot();
 			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
 		}
+		else if (!strcmp(element.SemanticName, InstanceData::InstanceData0Name0()) ||
+			!strcmp(element.SemanticName, InstanceData::InstanceData0Name1()))
+		{
+			element.AlignedByteOffset = InstanceData::InstanceData0Position();
+			element.Format = InstanceData::InstanceData0Format();
+			element.InputSlotClass = InstanceData::InputSlotClass();
+			element.InputSlot = InstanceData::InputSlot();
+			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
+		}
+		else if (!strcmp(element.SemanticName, InstanceData::InstanceData1Name()))
+		{
+			element.AlignedByteOffset = InstanceData::InstanceData1Position();
+			element.Format = InstanceData::InstanceData1Format();
+			element.InputSlotClass = InstanceData::InputSlotClass();
+			element.InputSlot = InstanceData::InputSlot();
+			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
+		}
+		else if (!strcmp(element.SemanticName, InstanceData::InstanceData2Name()))
+		{
+			element.AlignedByteOffset = InstanceData::InstanceData2Position();
+			element.Format = InstanceData::InstanceData2Format();
+			element.InputSlotClass = InstanceData::InputSlotClass();
+			element.InputSlot = InstanceData::InputSlot();
+			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
+		}
+		else if (!strcmp(element.SemanticName, InstanceData::InstanceData3Name()))
+		{
+			element.AlignedByteOffset = InstanceData::InstanceData3Position();
+			element.Format = InstanceData::InstanceData3Format();
+			element.InputSlotClass = InstanceData::InputSlotClass();
+			element.InputSlot = InstanceData::InputSlot();
+			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
+		}
 		else
 		{
 			isValidElement = false;

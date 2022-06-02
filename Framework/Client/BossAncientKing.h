@@ -88,6 +88,7 @@ public:
 	virtual bool IsInvisible() const override;
 	virtual bool IsSuperarmor() const override;
 	virtual DamageOutType OnDamage(const DamageOut& out) override;
+	void OnCCTCollision(const CCTCollision& collision);
 
 private:
 
@@ -159,7 +160,7 @@ private:
 
 	// Stat
 
-	float m_hp = 100.0f;
+	float m_hp = 200.0f;
 	State m_state = State::NONE;
 	float m_idleLeftCounter = 0.0f;
 	float m_waitLeftCounter = 0.0f; // 직접 설정해서 사용하는 값입니다.
@@ -174,5 +175,6 @@ private:
 	bool m_manualLook = false;
 	bool m_rushDamageReady = false;
 	uint m_hitCount = 0;
+	int m_backJumpLeftCount = 5;
 };
 

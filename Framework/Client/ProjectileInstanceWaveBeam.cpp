@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "ProjectileWaveBeam.h"
+#include "ProjectileInstanceWaveBeam.h"
 #include "Config.h"
-#include "EffectSpark.h"
+#include "ParticleInstanceSpark.h"
 #include "EffectRing01.h"
 #include "Player.h"
 
 #define DURATION 5.0f
 
-void ProjectileWaveBeam::Awake()
+void ProjectileInstanceWaveBeam::Awake()
 {
 	GameObject* goRenderer = CreateGameObjectToChild(transform);
 	goRenderer->transform->localEulerAngles = V3(90, 180, 0);
@@ -16,7 +16,7 @@ void ProjectileWaveBeam::Awake()
 	m_renderer->mesh = system->resource->Find(MESH_WAVE);
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_WAVEBEAM);
-	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(shader, TEXT("ProjectileWaveBeamMaterial"));
+	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(shader, TEXT("ProjectileInstanceWaveBeamMaterial"));
 	m_renderer->material = material;
 	m_renderer->material->SetTexture("_Texture", system->resource->Find(TEX_EFFECT_FLASH));
 	m_renderer->material->SetTexture("_DistortionTexture", system->resource->Find(TEX_NOISE_01));
@@ -30,7 +30,7 @@ void ProjectileWaveBeam::Awake()
 	m_trigger->isTrigger = true;
 }
 
-void ProjectileWaveBeam::Update()
+void ProjectileInstanceWaveBeam::Update()
 {
 	float dt = system->time->deltaTime;
 	float delta = dt * m_speed;
@@ -74,18 +74,18 @@ void ProjectileWaveBeam::Update()
 	}
 }
 
-void ProjectileWaveBeam::OnDestroyed()
+void ProjectileInstanceWaveBeam::OnDestroyed()
 {
 	V3 position = transform->position + m_hitNormal * 1.0f;
 
-	EffectSpark::Create(
+	ParticleInstanceSpark::Create(
 		gameObject->regionScene,
 		position,
 		m_hitNormal,
 		-90.0f, 90.0f,
 		1.0f, 5.0f,
 		2.0f, 10.0f,
-		0.5f, 1.5f,
+		0.4f, 1.1f,
 		0.5f, 3.0f,
 		10);
 
@@ -94,7 +94,7 @@ void ProjectileWaveBeam::OnDestroyed()
 		position,
 		0.5f,
 		0.5f,
-		200.0f,
+		500.0f,
 		1.0f, 2.5f,
 		Color(1.0f, 0.9764f, 0.466f, 1.0f));
 }

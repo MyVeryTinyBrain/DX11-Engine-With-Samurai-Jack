@@ -131,6 +131,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 15 / 35.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE;
+        e0.ContextUInt = UIntContext::RF_DUST | UIntContext::LF_DUST | UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         DMG_GROGY_ST->AddEvent(e0);
     }
@@ -150,6 +151,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 88 / 100.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE;
+        e0.ContextUInt = UIntContext::RF_DUST | UIntContext::LF_DUST | UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         DMG_DIE->AddEvent(e0);
     }
@@ -205,6 +207,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 39 / 85.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE;
+        e0.ContextUInt = UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         ATK_SWING_V->AddEvent(e0);
 
@@ -230,6 +233,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc shockwave;
         shockwave.NormalizedTime = 78 / 260.0f;
         shockwave.ContextByte = ByteContext::HAMMER_SHOCKWAVE;
+        shockwave.ContextUInt = UIntContext::HAMMER_DUST;
         ATK_STOMP->AddEvent(shockwave);
 
         for (uint i = 0; i < 3; ++i)
@@ -264,6 +268,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 59 / 123.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::LF_SHOCKWAVE;
+        e0.ContextUInt = UIntContext::LF_DUST;
         e0.ContextFloat = 1.0f;
         ATK_STEPON_L->AddEvent(e0);
 
@@ -283,6 +288,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 40 / 110.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::RF_SHOCKWAVE;
+        e0.ContextUInt = UIntContext::RF_DUST;
         e0.ContextFloat = 1.0f;
         ATK_STEPON_R->AddEvent(e0);
 
@@ -336,6 +342,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 33 / 110.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::LF_SHOCKWAVE | ByteContext::RF_SHOCKWAVE;
+        e0.ContextUInt = UIntContext::LF_DUST | UIntContext::RF_DUST;
         e0.ContextFloat = 1.0f;
         ATK_JUMP->AddEvent(e0);
 
@@ -360,6 +367,7 @@ void BossAncientKingAnimator::SetupNodes()
         AnimationEventDesc e0;
         e0.NormalizedTime = 33 / 110.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE | ByteContext::LF_SHOCKWAVE | ByteContext::RF_SHOCKWAVE;
+        e0.ContextUInt = UIntContext::LF_DUST | UIntContext::RF_DUST;
         e0.ContextFloat = 1.0f;
         ATK_BACKJUMP->AddEvent(e0);
 
@@ -421,8 +429,9 @@ void BossAncientKingAnimator::SetupNodes()
     ATK_DOWNSTRIKE_L = AnimatorSingleNode::Create(GetClip(TEXT("ATK_DOWNSTRIKE_L")), NOLOOP);
     {
         AnimationEventDesc e0;
-        e0.NormalizedTime = 51 / 115.0f;
+        e0.NormalizedTime = 52 / 115.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE;
+        e0.ContextUInt = UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         ATK_DOWNSTRIKE_L->AddEvent(e0);
 
@@ -440,8 +449,9 @@ void BossAncientKingAnimator::SetupNodes()
     ATK_DOWNSTRIKE_R = AnimatorSingleNode::Create(GetClip(TEXT("ATK_DOWNSTRIKE_R")), NOLOOP);
     {
         AnimationEventDesc e0;
-        e0.NormalizedTime = 47 / 120.0f;
+        e0.NormalizedTime = 49 / 120.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE;
+        e0.ContextUInt = UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         ATK_DOWNSTRIKE_R->AddEvent(e0);
 

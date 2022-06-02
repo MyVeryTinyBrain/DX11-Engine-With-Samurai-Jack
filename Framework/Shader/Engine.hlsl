@@ -44,6 +44,18 @@
 		float4 Up : INSTANCE_UP;
 		float4 Forward : INSTANCE_FORWARD;
 		float4 Instance_Position : INSTANCE_POSITION;
+		float4 Name0 : INSTNACE_DATA0 or INSTANCE_DATA
+		float4 Name1 : INSTNACE_DATA1
+		float4 Name2 : INSTNACE_DATA2
+		float4 Name3 : INSTNACE_DATA3
+
+	- 인스턴싱 렌더콜에 개별 상태를 지정
+		아래의 시맨틱을 사용하여 정점마다 개별 상태를 전달해줄수 있습니다.
+		렌더러의 SetInstanceData 함수를 사용하여 이 값을 설정할수 있습니다.
+		float4 Name0 : INSTNACE_DATA0 or INSTANCE_DATA
+		float4 Name1 : INSTNACE_DATA1
+		float4 Name2 : INSTNACE_DATA2
+		float4 Name3 : INSTNACE_DATA3
 
 	- 그림자 설정
 		패스 선언에서 bool DrawShadow를 설정할수 있습니다.

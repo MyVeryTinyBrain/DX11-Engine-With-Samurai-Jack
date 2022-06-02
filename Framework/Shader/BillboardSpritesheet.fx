@@ -4,11 +4,6 @@ struct VS_IN
 {
 	float3 Position : POSITION;
 	float2 UV : TEXCOORD;
-
-	float4 Right : INSTANCE_RIGHT;
-	float4 Up : INSTANCE_UP;
-	float4 Forward : INSTANCE_FORWARD;
-	float4 Instance_Position : INSTANCE_POSITION;
 };
 
 struct PS_IN
@@ -33,17 +28,10 @@ PS_IN VS_MAIN(VS_IN In)
 {
 	PS_IN output = (PS_IN)0;
 
-	float4 position = float4(In.Position, 1);	
-	
-	float4x4 instanceWorldMatrix;
-	instanceWorldMatrix[0] = In.Right;
-	instanceWorldMatrix[1] = In.Up;
-	instanceWorldMatrix[2] = In.Forward;
-	instanceWorldMatrix[3] = In.Instance_Position;
-
-	float4 worldPosition = mul(position, instanceWorldMatrix);
-	float4 viewPosition = mul(worldPosition, _ViewMatrix);
-	float4 outputPosition = mul(viewPosition, _ProjectionMatrix);
+	float4 position = float4(In.Position, 1);
+	float4 worldPosition = mul(position, _WorldMatrix);
+	half4 vPosition = mul(worldPosition, _ViewMatrix);
+	half4 outputPosition = mul(vPosition, _ProjectionMatrix);
 
 	output.Screen = outputPosition;
 	output.UV = In.UV;
@@ -63,12 +51,8 @@ half4 PS_MAIN(PS_IN In) : SV_TARGET
 	half v = vBeg + vDelta * In.UV.y;
 
 	half4 color = _Texture.Sample(diffuseSampler, half2(u, v));
-	half a = Max(color.rgb);
-	color.a = a;
-	if (color.a <= 0.0f)
-		discard;
-
-	return pow(color, 1.0f) * _Color;
+	//color.a = pow(color.a, 0.5f);
+	return color * _Color;
 }
 
 RasterizerState RasterizerState0
@@ -94,7 +78,7 @@ BlendState BlendState0
 
 technique11 Technique0
 {
-	pass Pass0 < string RenderGroup = "Transparent"; int RenderGroupOrder = 0; bool DrawShadow = false; bool Instancing = true; >
+	pass Pass0 < string RenderGroup = "Transparent"; int RenderGroupOrder = 0; bool DrawShadow = false; >
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);

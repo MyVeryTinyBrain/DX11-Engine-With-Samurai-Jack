@@ -1,6 +1,6 @@
 #pragma once
 
-class ProjectileWaveBeam : public Component
+class ProjectileInstanceWaveBeam : public Component
 {
 private:
 

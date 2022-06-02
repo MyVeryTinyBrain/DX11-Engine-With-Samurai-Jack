@@ -64,6 +64,7 @@ void SkinnedMeshRenderer::Render()
 			input.essential.subMeshIndex = i;
 			input.essential.cull = cullingFlag;
 			input.essential.instance = false;
+			memcpy(input.essential.instanceData, GetInstanceDataArray(), sizeof(Real4) * 4);
 
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;

@@ -157,6 +157,18 @@ void Renderer::SetupDefaultMaterials()
     }
 }
 
+void Renderer::SetInstanceData(uint index, const Real4& data)
+{
+    assert(index <= 3); // 사용할수 있는 인스턴스 데이터의 인덱스를 초과했습니다.
+    m_instanceDatas[index] = data;
+}
+
+const Real4& Renderer::GetInstanceData(uint index)
+{
+    assert(index <= 3); // 사용할수 있는 인스턴스 데이터의 인덱스를 초과했습니다.
+    return m_instanceDatas[index];
+}
+
 bool Renderer::IsValid() const
 {
     if (m_materials.empty())

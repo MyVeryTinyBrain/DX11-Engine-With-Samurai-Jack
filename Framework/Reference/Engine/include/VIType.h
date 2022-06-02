@@ -95,6 +95,31 @@ struct ENGINE_API InstanceData
 	XM_CONSTEXPR inline static uint32_t			PositionSize() { return sizeof(V4); }
 	XM_CONSTEXPR inline static const char*		PositionName() { return "INSTANCE_POSITION"; }
 	XM_CONSTEXPR inline static DXGI_FORMAT		PositionFormat() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	Real4 instanceData0;	// float4			INSTANCE_DATA0 or INSTNACE_DATA
+	XM_CONSTEXPR inline static uint32_t			InstanceData0Position() { return PositionPosition() + PositionSize(); }
+	XM_CONSTEXPR inline static uint32_t			InstanceData0Size() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		InstanceData0Name0() { return "INSTANCE_DATA0"; }
+	XM_CONSTEXPR inline static const char*		InstanceData0Name1() { return "INSTANCE_DATA"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		InstanceData0Format() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	Real4 instanceData1;	// float4			INSTANCE_DATA1
+	XM_CONSTEXPR inline static uint32_t			InstanceData1Position() { return InstanceData0Position() + InstanceData0Size(); }
+	XM_CONSTEXPR inline static uint32_t			InstanceData1Size() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		InstanceData1Name() { return "INSTANCE_DATA1"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		InstanceData1Format() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	Real4 instanceData2;	// float4			INSTANCE_DATA2
+	XM_CONSTEXPR inline static uint32_t			InstanceData2Position() { return InstanceData1Position() + InstanceData1Size(); }
+	XM_CONSTEXPR inline static uint32_t			InstanceData2Size() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		InstanceData2Name() { return "INSTANCE_DATA2"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		InstanceData2Format() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
+
+	Real4 instanceData3;	// float4			INSTANCE_DATA3
+	XM_CONSTEXPR inline static uint32_t			InstanceData3Position() { return InstanceData2Position() + InstanceData2Size(); }
+	XM_CONSTEXPR inline static uint32_t			InstanceData3Size() { return sizeof(V4); }
+	XM_CONSTEXPR inline static const char*		InstanceData3Name() { return "INSTANCE_DATA3"; }
+	XM_CONSTEXPR inline static DXGI_FORMAT		InstanceData3Format() { return DXGI_FORMAT_R32G32B32A32_FLOAT; }
 };
 
 enum class PrimitiveTopology

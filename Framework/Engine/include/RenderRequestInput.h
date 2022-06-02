@@ -25,6 +25,7 @@ struct ENGINE_API RenderRequestEssential
 	uint									subMeshIndex;
 	bool									cull;
 	bool									instance;
+	Real4									instanceData[4];
 
 	bool IsValid() const;
 };

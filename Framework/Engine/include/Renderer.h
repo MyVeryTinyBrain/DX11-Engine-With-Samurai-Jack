@@ -52,6 +52,13 @@ public:
 
 	void SetupDefaultMaterials();
 
+	// 인스턴싱에 사용되는 데이터를 설정하거나 가져옵니다.
+	// 최대 0, 1, 2, 3번의 인덱스를 사용할수 있습니다.
+
+	void SetInstanceData(uint index, const Real4& data);
+	const Real4& GetInstanceData(uint index);
+	const Real4* GetInstanceDataArray() const { return m_instanceDatas; }
+
 	virtual bool IsValid() const;
 
 	ResourceRef<Mesh> GetProtectedMesh() const;
@@ -69,6 +76,7 @@ protected:
 
 	uint8_t m_layerIndex = 0;
 
+	Real4 m_instanceDatas[4] = {};
 };
 
 ENGINE_END

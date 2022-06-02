@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "EffectSpark.h"
+#include "ParticleInstanceSpark.h"
 #include "Config.h"
 
-void EffectSpark::Awake()
+void ParticleInstanceSpark::Awake()
 {
 	m_rigidbody = gameObject->AddComponent<Rigidbody>();
 	m_rigidbody->SetRotationLock(Rigidbody::Axis::All, true);
@@ -11,21 +11,21 @@ void EffectSpark::Awake()
 	
 	m_collider = gameObject->AddComponent<SphereCollider>();
 	m_collider->layerIndex = PhysicsLayer_Particle;
-	m_collider->restitution = 0.5f;
+	m_collider->restitution = 0.9f;
 	m_collider->friction = 0.0f;
 	m_collider->radius = 0.1f;
-	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &EffectSpark::OnCollisionEnter);
+	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &ParticleInstanceSpark::OnCollisionEnter);
 
 	GameObject* goRenderer = CreateGameObjectToChild(transform);
 	m_renderer = goRenderer->AddComponent<BillboardRenderer>();
-	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_BILLBOARD_EFFECT);
-	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(shader, TEXT("EffectSparkMaterial"));
+	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_SPARK);
+	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderM(shader, TEXT("ParticleInstanceYellowSparkMaterial"));
 	m_renderer->material = material;
-	m_renderer->material->SetTexture("_Texture", system->resource->Find(TEX_EFFECT_SPARK));
-	m_renderer->material->SetColor("_Color", Color(1.0f, 0.9764f, 0.466f, 1.0f));
+	m_renderer->material->SetTexture("_SparkSpreadTexture", system->resource->Find(TEX_EFFECT_SPARK_SPREAD));
+	m_renderer->material->SetTexture("_SparkDotTexture", system->resource->Find(TEX_EFFECT_SPARK_DOT));
 }
 
-void EffectSpark::Update()
+void ParticleInstanceSpark::Update()
 {
 	if (m_duration == 0.0f)
 	{
@@ -46,16 +46,16 @@ void EffectSpark::Update()
 	}
 }
 
-void EffectSpark::OnCollisionEnter(const Collision& collision)
+void ParticleInstanceSpark::OnCollisionEnter(const Collision& collision)
 {
 }
 
-void EffectSpark::SetVelocity(const V3& velocity)
+void ParticleInstanceSpark::SetVelocity(const V3& velocity)
 {
 	m_rigidbody->velocity = velocity;
 }
 
-void EffectSpark::Create(
+void ParticleInstanceSpark::Create(
 	Scene* scene, 
 	const V3& position, 
 	const V3& normal,
@@ -64,7 +64,8 @@ void EffectSpark::Create(
 	float minHSpeed, float maxHSpeed, 
 	float minScale, float maxScale, 
 	float minDuration, float maxDuration,
-	uint count)
+	uint count,
+	const Color& color)
 {
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -77,7 +78,7 @@ void EffectSpark::Create(
 	for (uint i = 0; i < count; ++i)
 	{
 		GameObject* goEffect = scene->CreateGameObject();
-		EffectSpark* effect = goEffect->AddComponent<EffectSpark>();
+		ParticleInstanceSpark* effect = goEffect->AddComponent<ParticleInstanceSpark>();
 		goEffect->transform->position = position;
 
 		float radianX = rdAngleGen(gen);
@@ -92,5 +93,7 @@ void EffectSpark::Create(
 
 		effect->m_duration = rdDurationGen(gen);
 		effect->m_initScale = rdScaleGen(gen);
+		
+		effect->m_renderer->SetInstanceData(0, color);
 	}
 }

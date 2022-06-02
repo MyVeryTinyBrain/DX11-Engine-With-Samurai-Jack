@@ -6,10 +6,11 @@
 #include "Player.h"
 #include "TPSCamera.h"
 #include "EffectShockwave.h"
-#include "ProjectileWaveBeam.h"
+#include "ProjectileInstanceWaveBeam.h"
 #include "EffectRing01.h"
 #include "EffectElectricBeam.h"
 #include "EffectGroundImapct.h"
+#include "ParticleDust01.h"
 
 #define ATK_NEAR_MAX_DIST 6.0f
 #define ATK_NEAR_MAX_ANGLE 20.0f
@@ -39,7 +40,9 @@ void BossAncientKing::Awake()
 
 	CCT->radius = 3.0f;
 	CCT->height = 0.01f;
-	CCT->capsuleCollider->layerIndex = PhysicsLayer_VirtualEnemy;
+	CCT->capsuleCollider->layerIndex = PhysicsLayer_Enemy;
+	CCT->collisionWithCCT = false;
+	CCT->OnCollision += func<void(const CCTCollision&)>(this, &BossAncientKing::OnCCTCollision);
 
 	SetupCollider();
 	SetupCharacterRenderers();
@@ -62,6 +65,9 @@ void BossAncientKing::Start()
 void BossAncientKing::Update()
 {
 	Boss::Update();
+
+	if (system->input->GetKeyDown(Key::One))
+		SetState(State::ATK_RUSH);
 
 	StateUpdate();
 	AttackTriggerQuery();
@@ -425,6 +431,7 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			1.0f, 12.0f
 		);
 	}
+
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::ATK_GADABLE)
 	{
 		m_gadableAttack = true;
@@ -473,14 +480,14 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		GameObject* goBeam = CreateGameObject();
 		goBeam->transform->position = m_Head->position;
 		goBeam->transform->forward = direction;
-		ProjectileWaveBeam* beam = goBeam->AddComponent<ProjectileWaveBeam>();
+		ProjectileInstanceWaveBeam* beam = goBeam->AddComponent<ProjectileInstanceWaveBeam>();
 
 		EffectRing01::Create(
 			gameObject->regionScene,
 			m_Head->position,
 			0.5f,
 			0.5f,
-			200.0f,
+			500.0f,
 			2.0f, 5.0f,
 			Color(1.0f, 0.9764f, 0.466f, 1.0f)
 		);
@@ -521,7 +528,7 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			position + V3::up() * 0.1f,
 			0.5f,
 			0.8f,
-			200.0f,
+			1000.0f,
 			0.1f,
 			40.0f,
 			Color::red()
@@ -546,7 +553,7 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			position + V3::up() * 0.1f,
 			0.5f,
 			0.8f,
-			200.0f,
+			1000.0f,
 			0.1f,
 			40.0f,
 			Color::red()
@@ -571,12 +578,85 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			position + V3::up() * 0.1f,
 			0.5f,
 			0.8f,
-			200.0f,
+			1000.0f,
 			0.1f,
 			40.0f,
 			Color::red()
 		);
 	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::HAMMER_DUST)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_goHammerTip->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = m_goHammerTip->transform->position;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		ParticleDust01::CreateAroundAxis(
+			gameObject->regionScene,
+			position + V3::up() * 1.0f,
+			V3::up(), 1.0f,
+			1.0f, 6.0f,
+			2.5f, 5.0f,
+			2.0f, 10.0f, 0.5f,
+			Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+			50);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::RF_DUST)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_attackTrigger[FOOT_R_TRIGGER]->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = m_attackTrigger[FOOT_R_TRIGGER]->transform->position + V3::down() * 0.5f;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		ParticleDust01::CreateAroundAxis(
+			gameObject->regionScene,
+			position,
+			V3::up(), 1.0f,
+			0.2f, 3.0f,
+			2.0f, 4.5f,
+			2.0f, 10.0f, 0.5f,
+			Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+			50);
+	}
+	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::LF_DUST)
+	{
+		PhysicsHit hit;
+		PhysicsRay ray;
+		ray.Point = m_attackTrigger[FOOT_L_TRIGGER]->transform->position;
+		ray.Point.y = CCT->footPosition.y + 0.1f;
+		ray.Direction = V3::down();
+		ray.Length = 100.0f;
+		V3 position = m_attackTrigger[FOOT_L_TRIGGER]->transform->position + V3::down() * 0.5f;
+		if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+		{
+			position = hit.Point;
+		}
+
+		ParticleDust01::CreateAroundAxis(
+			gameObject->regionScene,
+			position,
+			V3::up(), 1.0f,
+			0.2f, 3.0f,
+			2.0f, 4.5f,
+			2.0f, 10.0f, 0.5f,
+			Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+			50);
+	}
+
 	if (desc.ContextInt & BossAncientKingAnimator::IntContext::HAMMER_START)
 	{
 		m_attackTrigger[HAMMER_TRIGGER]->enable = true;
@@ -722,6 +802,21 @@ DamageOutType BossAncientKing::OnDamage(const DamageOut& out)
 	}
 }
 
+void BossAncientKing::OnCCTCollision(const CCTCollision& collision)
+{
+	if (m_state == State::ATK_RUSH)
+	{
+		if (collision.HitCollider->layerIndex == PhysicsLayer_Default)
+		{
+			float angle = V3::Angle(collision.normal, -transform->forward);
+			if (angle < 70.0f)
+			{
+				m_animator->KeepAttackBProperty->valueAsBool = false;
+			}
+		}
+	}
+}
+
 void BossAncientKing::SetState(BossAncientKing::State state)
 {
 	if (state == m_state)
@@ -838,32 +933,21 @@ void BossAncientKing::StateUpdate()
 				RotateOnYAxisToDirection(ToPlayerDirectionXZ(), RUSH_SPIN_ANGLE_PER_SEC, system->time->deltaTime);
 			}
 
-			PhysicsHit hit;
-			bool sweepHit =
-				system->physics->query->SweepSphere(
-					hit,
-					CCT->capsuleCollider->transform->position,
-					CCT->capsuleCollider->radius,
-					transform->forward,
-					m_collider->radius + 1.5f,
-					1 << PhysicsLayer_Default | 1 << PhysicsLayer_Player,
-					PhysicsQueryType::Collider,
-					CCT->rigidbody);
-			m_animator->KeepAttackBProperty->valueAsBool = !sweepHit;
-
-			if (m_rushDamageReady && 
-				m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_LP) &&
-				sweepHit && 
-				hit.Collider->rigidbody->gameObject == player->gameObject)
+			if (system->physics->query->SweepTest(m_collider, transform->forward, 0.5f, 1 << PhysicsLayer_Player, PhysicsQueryType::Collider))
 			{
-				DamageIn damage = {};
-				damage.FromComponent = this;
-				damage.FromDirection = player->transform->position - transform->position;
-				damage.Guardable = m_gadableAttack;
-				damage.Type = DamageInType::BLOW;
-				damage.Damage = 3.0f;
-				player->Damage(damage);
-				m_rushDamageReady = false;
+				if (m_rushDamageReady &&
+					m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_LP))
+				{
+					DamageIn damage = {};
+					damage.FromComponent = this;
+					damage.FromDirection = player->transform->position - transform->position;
+					damage.Guardable = m_gadableAttack;
+					damage.Type = DamageInType::BLOW;
+					damage.Damage = 3.0f;
+					player->Damage(damage);
+					m_rushDamageReady = false;
+					m_animator->KeepAttackBProperty->valueAsBool = false;
+				}
 			}
 
 			if (m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_ED))
@@ -877,12 +961,13 @@ void BossAncientKing::StateUpdate()
 	{
 		case State::ATK_SWING_H:
 		case State::ATK_SWING_V:
-		case State::ATK_STOMP:
 		case State::ATK_STEPON:
 		case State::ATK_JUMP:
 		case State::ATK_DOWNSTRIKE:
+		{
 			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), SPIN_ON_ATK_NEAR_ANGLE_PER_SEC, system->time->deltaTime);
-			break;
+		}
+		break;
 	}
 }
 
@@ -949,6 +1034,18 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 			int numATK = (int)State::__ATK_FAR_END - (int)State::__ATK_FAR_BEGIN;
 			int indexATK = (int)State::__ATK_FAR_BEGIN + (rand() % (numATK - 1)) + 1;
 			State atk = (State)indexATK;
+
+			if (atk != State::ATK_BACKJUMP)
+			{
+				--m_backJumpLeftCount;
+
+				if (m_backJumpLeftCount <= 0)
+				{
+					atk = State::ATK_BACKJUMP;
+					m_backJumpLeftCount = 5;
+				}
+			}
+
 			SetState(atk);
 		}
 		break;
@@ -991,6 +1088,7 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		{
 			m_state = State::ATK_RUSH;
 			m_animator->ATK_RUSH_TProperty->SetTriggerState();
+			m_animator->KeepAttackBProperty->valueAsBool = true;
 			m_rushDamageReady = true;
 		}
 		break;

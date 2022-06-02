@@ -7,7 +7,6 @@ enum
 	PhysicsLayer_Default = 0,
 	PhysicsLayer_Player = 1,
 	PhysicsLayer_Enemy = 2,
-	PhysicsLayer_VirtualEnemy = 3,
 	PhysicsLayer_Particle = 7,
 };
 
@@ -15,7 +14,6 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 {
 	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Player, true);
 	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Enemy, true);
-	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_VirtualEnemy, true);
 	layerManager->SetCollision(PhysicsLayer_Default, PhysicsLayer_Particle, true);
 	layerManager->SetCollision(PhysicsLayer_Player, PhysicsLayer_Enemy, true);
 	layerManager->SetCollision(PhysicsLayer_Enemy, PhysicsLayer_Enemy, true);
@@ -58,7 +56,8 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 
 #define TEX_GRADIENT_TO_RIGHT			TEXT("../Resource/Gradient/ToRight.dds")
 #define TEX_GRADIENT_CENTER				TEXT("../Resource/Gradient/Center.dds")
-#define TEX_EFFECT_SPARK				TEXT("../Resource/Effect/Spark.dds")
+#define TEX_EFFECT_SPARK_DOT			TEXT("../Resource/Effect/Spark_Dot.dds")
+#define TEX_EFFECT_SPARK_SPREAD			TEXT("../Resource/Effect/Spark_Spread.dds")
 #define TEX_EFFECT_ELECTRIC_H			TEXT("../Resource/Effect/Electric_H.dds")
 #define TEX_EFFECT_ELECTRIC_V			TEXT("../Resource/Effect/Electric_V.dds")
 #define TEX_EFFECT_FLASH				TEXT("../Resource/Effect/T_E_Flash_05.dds")
@@ -66,17 +65,21 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define TEX_EFFECT_RING02				TEXT("../Resource/Effect/T_E_Ring_02.dds")
 #define TEX_EFFECT_RING_DISTORTION		TEXT("../Resource/Effect/T_E_Ring_04.dds")
 #define TEX_NOISE_01					TEXT("../Resource/Noise/Noise01.dds")
-#define TEX_DUST_01						TEXT("../Resource/Dust/Dust01.dds")
-#define TEX_DUST_02						TEXT("../Resource/Dust/Dust02.dds")
+#define TEX_DUST_PARTICLE_01			TEXT("../Resource/Dust/DustParticle01.dds")
+#define TEX_DUST_PARTICLE_02			TEXT("../Resource/Dust/DustParticle02.dds")
+#define TEX_DUST_PARTICLE_03			TEXT("../Resource/Dust/DustParticle03.dds")
+#define TEX_DUST_PARTICLE_04			TEXT("../Resource/Dust/DustParticle04.dds")
 
 // Shaders
 
-#define SHADER_TRAIL					TEXT("Trail.cso")
 #define SHADER_BILLBOARD_EFFECT			TEXT("BillboardEffect.cso")
 #define SHADER_BILLBOARD_SPRITESHEET	TEXT("BillboardSpritesheet.cso")
+#define SHADER_INSTANCE_UNLIT			TEXT("InstanceUnlit.cso")
+#define SHADER_TRAIL					TEXT("Trail.cso")
 #define SHADER_SHOCKWAVE				TEXT("Shockwave.cso")
 #define SHADER_WAVEBEAM					TEXT("WaveBeam.cso")
 #define SHADER_RING						TEXT("Ring.cso")
+#define SHADER_SPARK					TEXT("Spark.cso")
 
 inline void LOAD_CONFIGFILES(System* system)
 {
@@ -101,7 +104,8 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadMeshM(MESH_ELECTRIC_07);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_GRADIENT_TO_RIGHT);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_GRADIENT_CENTER);
-	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SPARK);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SPARK_DOT);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SPARK_SPREAD);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_ELECTRIC_H);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_ELECTRIC_V);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_FLASH);
@@ -109,14 +113,18 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING_DISTORTION);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_01);
-	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_01);
-	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_02);
-	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_TRAIL);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_01);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_02);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_03);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_04);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_SPRITESHEET);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_INSTANCE_UNLIT);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_TRAIL);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SHOCKWAVE);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_WAVEBEAM);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_RING);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SPARK);
 }
 
 #endif

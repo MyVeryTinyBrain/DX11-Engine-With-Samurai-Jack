@@ -53,15 +53,9 @@ void BillboardRenderer::Render()
 
 			RenderRequest input = {};
 
-			V3 eulerAngles = transform->eulerAngles;
-			if (IsSelfLock(BillboardRenderer::LockFlag::X))
-				eulerAngles.x = 0;
-			if (IsSelfLock(BillboardRenderer::LockFlag::Y))
-				eulerAngles.y = 0;
-			if (IsSelfLock(BillboardRenderer::LockFlag::Z))
-				eulerAngles.z = 0;
-			input.essential.worldMatrix = M4::SRT(transform->lossyScale, eulerAngles, transform->position);
-
+			M4 localMatrix = M4::SRT(transform->localScale, V3::zero(), transform->localPosition);
+			M4 parentMatrix = transform->parent ? transform->parent->localToWorldMatrix : M4::identity();
+			input.essential.worldMatrix = localMatrix * parentMatrix;
 			input.essential.renderGroup = renderGroup;
 			input.essential.renderGroupOrder = renderGroupOrder;
 			input.essential.layerIndex = m_layerIndex;
@@ -72,6 +66,7 @@ void BillboardRenderer::Render()
 			input.essential.subMeshIndex = i;
 			input.essential.cull = cullingFlag;
 			input.essential.instance = instancingFlag;
+			memcpy(input.essential.instanceData, GetInstanceDataArray(), sizeof(V4) * 4);
 
 			RenderRequestShadow shadow = {};
 			shadow.draw = drawShadowFlag;
@@ -99,10 +94,17 @@ void BillboardRenderer::OnCamera(ICamera* camera, RenderRequest* inout_prequest)
 		camEulerAngles.y = 0;
 	if (IsLock(BillboardRenderer::LockFlag::Z))
 		camEulerAngles.z = 0;
-	camEulerAngles += m_adjustLocalEulerAngles;
 
-	M4 camAdjustMatrix = M4::SRT(V3::one(), camEulerAngles, m_adjustLocalPosition);
-	M4 billboardWorldMatrix = camAdjustMatrix * inout_prequest->essential.worldMatrix;
+	V3 localEulerAngles = transform->localEulerAngles;
+	if (IsSelfLock(BillboardRenderer::LockFlag::X))
+		localEulerAngles.x = 0;
+	if (IsSelfLock(BillboardRenderer::LockFlag::Y))
+		localEulerAngles.y = 0;
+	if (IsSelfLock(BillboardRenderer::LockFlag::Z))
+		localEulerAngles.z = 0;
+
+	M4 rotateMatrix = M4::Rotate(camEulerAngles + localEulerAngles);
+	M4 billboardWorldMatrix = rotateMatrix * inout_prequest->essential.worldMatrix;
 	inout_prequest->essential.worldMatrix = billboardWorldMatrix;
 }
 

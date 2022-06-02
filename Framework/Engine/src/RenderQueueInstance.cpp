@@ -117,6 +117,11 @@ void RenderQueueInstance::Render(ICamera* camera)
 							data.forward = request.essential.worldMatrix.row[2];
 							data.position = request.essential.worldMatrix.row[3];
 
+							data.instanceData0 = request.essential.instanceData[0];
+							data.instanceData1 = request.essential.instanceData[1];
+							data.instanceData2 = request.essential.instanceData[2];
+							data.instanceData3 = request.essential.instanceData[3];
+
 							m_instanceBufferManager->SetData(uint(drawCount), &data);
 							++drawCount;
 						}

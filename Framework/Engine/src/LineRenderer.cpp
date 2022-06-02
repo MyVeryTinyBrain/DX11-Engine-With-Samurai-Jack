@@ -79,6 +79,7 @@ void LineRenderer::Render()
 		input.essential.subMeshIndex = 0;
 		input.essential.cull = cullingFlag;
 		input.essential.instance = instancingFlag;
+		memcpy(input.essential.instanceData, GetInstanceDataArray(), sizeof(Real4) * 4);
 
 		input.customPrimitiveCount.usePrimitiveCount = true;
 		input.customPrimitiveCount.primitiveCount = GetNumInterpolatedRect() * 2;

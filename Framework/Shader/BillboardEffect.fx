@@ -4,11 +4,6 @@ struct VS_IN
 {
 	float3 Position : POSITION;
 	float2 UV : TEXCOORD;
-
-	float4 Right : INSTANCE_RIGHT;
-	float4 Up : INSTANCE_UP;
-	float4 Forward : INSTANCE_FORWARD;
-	float4 Instance_Position : INSTANCE_POSITION;
 };
 
 struct PS_IN
@@ -30,14 +25,7 @@ PS_IN VS_MAIN(VS_IN In)
 	PS_IN output = (PS_IN)0;
 
 	float4 position = float4(In.Position, 1);
-
-	float4x4 instanceWorldMatrix;
-	instanceWorldMatrix[0] = In.Right;
-	instanceWorldMatrix[1] = In.Up;
-	instanceWorldMatrix[2] = In.Forward;
-	instanceWorldMatrix[3] = In.Instance_Position;
-
-	float4 worldPosition = mul(position, instanceWorldMatrix);
+	float4 worldPosition = mul(position, _WorldMatrix);
 	half4 vPosition = mul(worldPosition, _ViewMatrix);
 	half4 outputPosition = mul(vPosition, _ProjectionMatrix);
 
@@ -50,9 +38,6 @@ PS_IN VS_MAIN(VS_IN In)
 half4 PS_MAIN(PS_IN In) : SV_TARGET
 {
 	half4 color = _Texture.Sample(diffuseSampler, In.UV);
-	if (color.a <= 0.0f)
-		discard;
-
 	return color * _Color;
 }
 

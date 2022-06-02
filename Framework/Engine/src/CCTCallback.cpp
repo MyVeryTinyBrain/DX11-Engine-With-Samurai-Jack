@@ -131,6 +131,10 @@ PxQueryHitType::Enum CCTCallback::preFilter(const PxFilterData& filterData, cons
     if(!c0 || !r0)
         return PxQueryHitType::eNONE;
 
+    // CCT에 추가로 부착된 콜라이더의 경우에는 충돌하지 않습니다.
+    if(r0 == r1)
+        return PxQueryHitType::eNONE;
+
     // 캐릭터 컨트롤러가 비활성화 상태라면 충돌하지 않습니다.
     if(!m_characterController->active)
         return PxQueryHitType::eNONE;

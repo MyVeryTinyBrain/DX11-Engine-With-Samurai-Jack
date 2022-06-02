@@ -57,7 +57,6 @@ void EnemyBeetleDrone::Update()
 		CCT->collisionWithCCT = false;
 		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Player, true);
 		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, true);
-		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_VirtualEnemy, true);
 		Enemy::UnregistEnemy(this);
 
 		if (CCT->isGrounded && CCT->enable)
