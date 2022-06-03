@@ -225,6 +225,8 @@ HRESULT DxUtility::CreateSwapChain(ID3D11Device* device, HWND hWnd, unsigned int
 	desc.Windowed = !fullScreen;
 	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
+	desc.Flags = 0;
+
 	if (FAILED(dxgiFactory->CreateSwapChain(device, &desc, out_swapChain)))
 	{
 		ReleaseVars();

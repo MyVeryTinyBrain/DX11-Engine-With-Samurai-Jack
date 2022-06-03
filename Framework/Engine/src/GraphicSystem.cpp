@@ -31,10 +31,6 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 	flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	IDXGIFactory* dxgiFactory = nullptr;
-	if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&dxgiFactory)))
-		return false;
-
 	IDXGIAdapter* adapter = DxUtility::GetBestAdapter();
 	D3D_FEATURE_LEVEL feature;
 	if (!adapter)
@@ -121,7 +117,7 @@ void GraphicSystem::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 			RECT rect;
 			::GetClientRect(hWnd, &rect);
-			SetResolution((uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
+			SetSwapchainResolution((uint)(rect.right - rect.left), (uint)(rect.bottom - rect.top));
 		}
 		break;
 	}
@@ -227,7 +223,7 @@ float GraphicSystem::GetAspect() const
 	return float(m_width) / float(m_height);
 }
 
-bool GraphicSystem::SetResolution(uint width, uint height)
+bool GraphicSystem::SetSwapchainResolution(uint width, uint height)
 {
 	SafeRelease(m_rtv);
 	SafeRelease(m_dsv);

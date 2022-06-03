@@ -38,16 +38,16 @@ void EffectGroundImapct::Update()
 
 	m_elapsed += system->time->deltaTime;
 	float percent = Clamp01(m_elapsed / m_duration);
-	float powPercent = pow(percent, m_powFactor);
 
-	float scale = Lerp(m_startScale, m_endScale, powPercent);
+	float scale = Lerp(m_startScale, m_endScale, pow(percent, m_scalePowFactor));
 	m_parent->transform->localScale = V3::one() * scale;
 
-	float distortion = Lerp(m_distortion, 0.0f, powPercent);
+	float distortion = Lerp(m_distortion, 0.0f, percent);
 	m_renderer->material->SetFloat("_DistortionPower", distortion);
 
 	Color color = m_initColor;
-	color.a = Clamp01(1.0f - powPercent);
+	color.a = Clamp01(1.0f - percent);
+	color.a = pow(color.a, m_colorPowFactor);
 	m_renderer->material->SetColor("_Color", color);
 
 	if (percent >= 1.0f)
@@ -104,16 +104,22 @@ void EffectGroundImapct::ClearHitBuffer()
 		m_hitBuffer.clear();
 }
 
-void EffectGroundImapct::Create(Scene* scene, const V3& position, float duration, float powFactor, float distortion, float startScale, float endScale, const Color& color)
+void EffectGroundImapct::Create(
+	Scene* scene, 
+	const V3& position, 
+	float duration, 
+	float startScale, float endScale, float scalePowFactor,
+	float distortion, const Color& color, float colorPowFactor)
 {
 	GameObject* goEffect = scene->CreateGameObject();
 	EffectGroundImapct* effect = goEffect->AddComponent<EffectGroundImapct>();
 	goEffect->transform->position = position;
 
 	effect->m_duration = duration;
-	effect->m_powFactor = powFactor;
 	effect->m_distortion = distortion;
 	effect->m_startScale = startScale;
 	effect->m_endScale = endScale;
+	effect->m_scalePowFactor = scalePowFactor;
 	effect->m_initColor = color;
+	effect->m_colorPowFactor = colorPowFactor;
 }

@@ -24,11 +24,12 @@ private:
 
 	float m_elapsed = 0.0f;
 	float m_duration = 1.0f;
-	float m_powFactor = 1.0f;
 	float m_startScale = 1.0f;
 	float m_endScale = 5.0f;
+	float m_scalePowFactor = 1.0f;
 	float m_distortion = 100.0f;
 	Color m_initColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_colorPowFactor = 1.0f;
 
 public:
 
@@ -36,10 +37,8 @@ public:
 		Scene* scene,
 		const V3& position,
 		float duration,
-		float powFactor,
-		float distortion,
-		float startScale, float endScale,
-		const Color& color
+		float startScale, float endScale, float scalePowFactor,
+		float distortion, const Color& color, float colorPowFactor
 	);
 };
 

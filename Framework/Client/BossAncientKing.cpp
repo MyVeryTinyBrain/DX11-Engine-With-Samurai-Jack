@@ -527,11 +527,8 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			gameObject->regionScene,
 			position + V3::up() * 0.1f,
 			0.5f,
-			0.8f,
-			1000.0f,
-			0.1f,
-			40.0f,
-			Color::red()
+			0.1f, 40.0f, 0.8f,
+			1000.0f, Color::red(), 1.25f
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::LF_GROUND_IMPACT)
@@ -552,11 +549,8 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			gameObject->regionScene,
 			position + V3::up() * 0.1f,
 			0.5f,
-			0.8f,
-			1000.0f,
-			0.1f,
-			40.0f,
-			Color::red()
+			0.1f, 40.0f, 0.8f,
+			1000.0f, Color::red(), 1.25f
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::RF_GROUND_IMPACT)
@@ -577,11 +571,8 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			gameObject->regionScene,
 			position + V3::up() * 0.1f,
 			0.5f,
-			0.8f,
-			1000.0f,
-			0.1f,
-			40.0f,
-			Color::red()
+			0.1f, 40.0f, 0.8f,
+			1000.0f, Color::red(), 1.25f
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::HAMMER_DUST)

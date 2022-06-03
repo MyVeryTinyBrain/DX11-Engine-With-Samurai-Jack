@@ -59,7 +59,7 @@ public:
 	// Return aspect of resolution
 	float GetAspect() const;
 
-	bool SetResolution(uint width, uint height);
+	bool SetSwapchainResolution(uint width, uint height);
 
 	inline Com<ID3D11RenderTargetView> GetRTV() const { return m_rtv; }
 	inline Com<ID3D11DepthStencilView> GetDSV() const { return m_dsv; }

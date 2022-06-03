@@ -34,6 +34,8 @@ void Player::Update()
 {
 	Character::Update();
 	
+	//https://www.gamedev.net/forums/topic/605466-slimdx-setfullscreenstate-fails/
+
 	UpdateKeyTimes();
 	AttackTriggerQuery();
 
