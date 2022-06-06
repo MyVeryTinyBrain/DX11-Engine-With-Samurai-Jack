@@ -56,21 +56,6 @@ void PlayerTestScene::OnLoad()
 	//}
 
 	{
-		GameObject* goMesh = CreateGameObject();
-		goMesh->transform->position = V3(0, 10, 0);
-		goMesh->transform->eulerAngles = ADJUST_LOCALEULERANGLES;
-		MeshRenderer* meshRenderer = goMesh->AddComponent<MeshRenderer>();
-		meshRenderer->mesh = system->resource->Find(MESH_JACK);
-		meshRenderer->SetupStandardMaterials();
-
-		GameObject* goGizmo = CreateGameObject();
-		goGizmo->transform->position = goMesh->transform->position;
-		Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
-		gizmo->show = true;
-		gizmo->SetHandlingTransform(goMesh->transform);
-	}
-
-	{
 		GameObject* go = CreateGameObject();
 		go->transform->position = V3(0, 5, 0);
 		go->AddComponent<Player>();
