@@ -78,18 +78,19 @@ void CapsuleCollider::DebugRender()
 	if (!isValid)
 		return;
 
-	V3 absScale = V3::Abs(transform->lossyScale);
-	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
-	V3 scale = V3(biggestElementOfXZ, absScale.y, biggestElementOfXZ);
-	M4 localToWorldMatrix = M4::SRT(scale, transform->rotation, transform->position);
+	M4 localToWorldMatrix = GetDebugRenderWorldMatrix();
 
 	if (!m_dbgMesh || !m_dbgMesh->isValid)
 		return;
 
-	if (!m_dbgMaterial || !m_dbgMaterial->isValid)
+	ResourceRef<Material> material;
+	if (!isTrigger) material = system->resource->builtIn->greenWireframeMaterial;
+	else  material = system->resource->builtIn->blueWireframeMaterial;
+
+	if (!material || !material->isValid)
 		return;
 
-	uint passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
+	uint passCount = material->GetPassCountOfAppliedTechnique();
 	if (passCount == 0)
 		return;
 
@@ -99,11 +100,11 @@ void CapsuleCollider::DebugRender()
 		int renderGroupOrder;
 		bool instancingFlag;
 
-		if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
+		if (FAILED(material->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
 			return;
-		if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
+		if (FAILED(material->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
 			return;
-		if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
+		if (FAILED(material->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
 			return;
 
 		RenderRequest input;
@@ -111,8 +112,8 @@ void CapsuleCollider::DebugRender()
 		input.essential.renderGroup = renderGroup;
 		input.essential.renderGroupOrder = renderGroupOrder;
 		input.essential.layerIndex = 0;
-		input.essential.material = m_dbgMaterial;
-		input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
+		input.essential.material = material;
+		input.essential.techniqueIndex = material->techniqueIndex;
 		input.essential.passIndex = j;
 		input.essential.mesh = m_dbgMesh;
 		input.essential.subMeshIndex = 0;
@@ -188,7 +189,6 @@ void CapsuleCollider::CreateDebugShape()
 		D3D11_USAGE_IMMUTABLE, 0, 0,
 		&viBuffer);
 	m_dbgMesh = system->resource->factory->CreateMeshNocopyUM(&viBuffer);
-	m_dbgMaterial = system->resource->builtIn->greenWireframeMaterial;
 }
 
 void CapsuleCollider::ResetDebugShape()
@@ -273,4 +273,17 @@ void CapsuleCollider::ResetDebugShape()
 
 		viBuffer->UpdateVertexBuffer();
 	}
+}
+
+ResourceRef<Mesh> CapsuleCollider::GetDebugMesh() const
+{
+	return m_dbgMesh;
+}
+
+M4 CapsuleCollider::GetDebugRenderWorldMatrix() const
+{
+	V3 absScale = V3::Abs(transform->lossyScale);
+	float biggestElementOfXZ = absScale.x > absScale.z ? absScale.x : absScale.z;
+	V3 scale = V3(biggestElementOfXZ, absScale.y, biggestElementOfXZ);
+	return M4::SRT(scale, transform->rotation, transform->position);
 }

@@ -21,6 +21,11 @@ public:
 		ATK_BLOWDOWN = 0b10000,
 	};
 
+	enum ByteContext : byte
+	{
+		FOOT_DUST = 0b1,
+	};
+
 private:
 
 	virtual void Awake() override;
@@ -53,6 +58,7 @@ public:
 	AnimatorProperty* MoveBProperty;
 	AnimatorProperty* JumpTProperty;
 	AnimatorProperty* ATKTProperty;
+	AnimatorProperty* KeepATKBProperty;
 
 	// 0(ATK3A) 1(ATK3B)
 

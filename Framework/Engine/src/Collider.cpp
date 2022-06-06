@@ -102,11 +102,14 @@ void Collider::OnDestroyed()
 	if (m_isCCTComponent)
 		return;
 
-	PxActor* actor = m_shape->getActor();
-	PxRigidBody* rigidBody = static_cast<PxRigidBody*>(actor);
-	if (rigidBody)
+	if (m_shape)
 	{
-		rigidBody->detachShape(*m_shape);
+		PxActor* actor = m_shape->getActor();
+		PxRigidBody* rigidBody = static_cast<PxRigidBody*>(actor);
+		if (rigidBody)
+		{
+			rigidBody->detachShape(*m_shape);
+		}
 	}
 }
 
@@ -178,6 +181,9 @@ void Collider::SetDebugRenderMode(bool value)
 
 Rigidbody* Collider::GetRigidbody() const
 {
+	if (!m_shape)
+		return nullptr;
+
 	PxActor* actor = m_shape->getActor();
 
 	if (!actor)
@@ -200,6 +206,12 @@ void Collider::ResetShape()
 		{
 			m_shape = physics->createShape(pxGeometry.any(), *m_material, true);
 			m_shape->userData = this;
+
+			FindRigidbodyAndAttach();
+			ApplyFlags();
+			ApplyPose(true);
+			ApplyScale(true);
+			ApplyLayer();
 		}
 		else
 		{
@@ -209,13 +221,14 @@ void Collider::ResetShape()
 	}
 	else
 	{
-		if (!m_shape)
-		{
-			PxSphereGeometry pxTempGeometry;
-			m_shape = physics->createShape(pxTempGeometry, *m_material, true);
-			m_shape->userData = this;
-		}
+		//if (!m_shape)
+		//{
+		//	PxSphereGeometry pxTempGeometry;
+		//	m_shape = physics->createShape(pxTempGeometry, *m_material, true);
+		//	m_shape->userData = this;
+		//}
 		m_valid = false;
+		return;
 	}
 
 	PxActor* actor = m_shape->getActor();
@@ -231,6 +244,9 @@ void Collider::ResetShape()
 void Collider::FindRigidbodyAndAttach()
 {
 	if (GetRigidbody())
+		return;
+
+	if (!m_shape)
 		return;
 
 	Transform* t = transform;
@@ -258,6 +274,9 @@ void Collider::FindRigidbodyAndAttach()
 
 void Collider::ApplyFlags()
 {
+	if (!m_shape)
+		return;
+
 	// 트리거 플래그: 트리거 모드이고 컴포넌트가 활성화 되어있으면 켜집니다.
 	// 시뮬레이션 플래그: 트리거 모드가 비활성화이어야 하며 컴포넌트가 활성화 되어있으면 켜집니다.
 	// 쿼리 플래그: 컴포넌트가 활성화 상태라면 언제나 켜져 있습니다.
@@ -280,6 +299,9 @@ void Collider::ApplyFlags()
 
 void Collider::ApplyPose(bool unconditionally)
 {
+	if (!m_shape)
+		return;
+
 	Rigidbody* rigidBody = GetRigidbody();
 
 	V3 localPositionFromBody;
@@ -351,6 +373,9 @@ void Collider::ApplyScale(bool unconditionally)
 
 void Collider::ApplyLayer()
 {
+	if (!m_shape)
+		return;
+
 	IPhysicsSystem* iPhysicsSystem = system->physics;
 	PxPhysics* physics = iPhysicsSystem->GetPhysics();
 

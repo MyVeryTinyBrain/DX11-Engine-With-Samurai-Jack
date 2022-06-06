@@ -21,6 +21,9 @@ public:
 	ResourceRef<ResourceObject> Find(const tstring& path) const;
 	ResourceRef<ResourceObject> FindBinrayShader(const tstring& path) const;
 
+	uint GetNumResources() const;
+	ResourceRef<ResourceObject> GetResourceByIndex(uint index);
+
 public:
 
 	System* GetSystem() const;

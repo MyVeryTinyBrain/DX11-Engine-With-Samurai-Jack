@@ -34,7 +34,7 @@ void GizmoBase::NotifyChangedGizmoState()
 	OnChangedGizmoState();
 }
 
-void GizmoBase::Update()
+void GizmoBase::PostUpdate()
 {
 	if (!m_handlingTransform)
 	{

@@ -16,9 +16,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Default</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>TestScene</Filter>
-    </ClInclude>
     <ClInclude Include="TPSCamera.h">
       <Filter>TPSCamera</Filter>
     </ClInclude>
@@ -26,27 +23,26 @@
       <Filter>FreeCamera</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Player</Filter>
+      <Filter>Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="PlayerTestScene.h">
-      <Filter>PlayerTestScene</Filter>
+      <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SoundTest.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="PlayerAnimator.h">
-      <Filter>Player</Filter>
+      <Filter>Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="BossAncientKing.h">
-      <Filter>AncientKing</Filter>
+      <Filter>Object\AncientKing</Filter>
     </ClInclude>
     <ClInclude Include="BossAncientKingAnimator.h">
-      <Filter>AncientKing</Filter>
+      <Filter>Object\AncientKing</Filter>
     </ClInclude>
     <ClInclude Include="EnemyBeetleDrone.h">
-      <Filter>BeetleDrone</Filter>
+      <Filter>Object\BeetleDrone</Filter>
     </ClInclude>
     <ClInclude Include="EnemyBeetleDroneAnimator.h">
-      <Filter>BeetleDrone</Filter>
+      <Filter>Object\BeetleDrone</Filter>
     </ClInclude>
     <ClInclude Include="BillboardAnimation.h">
       <Filter>Effect</Filter>
@@ -90,6 +86,100 @@
     <ClInclude Include="ParticleElectricBeam.h">
       <Filter>Effect\Damagable\Electric</Filter>
     </ClInclude>
+    <ClInclude Include="EventListener.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem.h">
+      <Filter>EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectGlow.h">
+      <Filter>Effect\Glow</Filter>
+    </ClInclude>
+    <ClInclude Include="RaycastTest.h" />
+    <ClInclude Include="EditorScene.h">
+      <Filter>Editor\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ISerializable.h">
+      <Filter>Editor\ISerializable</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializableDirectionalLight.h">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializablePointLight.h">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializableSpotLight.h">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClInclude>
+    <ClInclude Include="Prop.h">
+      <Filter>Editor\Prop</Filter>
+    </ClInclude>
+    <ClInclude Include="IEditorObject.h">
+      <Filter>Editor\IEditorObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawner.h">
+      <Filter>Editor\Spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector.h">
+      <Filter>Editor\Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorObjects.h">
+      <Filter>Editor\EditorObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSelector.h">
+      <Filter>Editor\MeshSelector</Filter>
+    </ClInclude>
+    <ClInclude Include="IEditorEventListener.h">
+      <Filter>Editor\EditorEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorEventSystem.h">
+      <Filter>Editor\EditorEvent</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorConfig.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="ISerializableLight.h">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorObjectDeserializeByType.h">
+      <Filter>Editor\EditorObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ISerializableCollider.h">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializableBoxCollider.h">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializableCapsuleCollider.h">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializableSphereCollider.h">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorWindow.h">
+      <Filter>Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Hierarchy.h">
+      <Filter>Editor\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="PrefabPlayer.h">
+      <Filter>Editor\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="PrefabAncientKing.h">
+      <Filter>Editor\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="PrefabBeetleDrone.h">
+      <Filter>Editor\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="Lava.h">
+      <Filter>Object\Editable\Lava</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -109,32 +199,14 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{b8a2916b-8833-414a-aa4c-9dd98c048686}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TestScene">
-      <UniqueIdentifier>{4cfd2815-3778-468a-8117-3f746f1c41fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PlayerTestScene">
-      <UniqueIdentifier>{b81ebdf1-752c-4988-938a-75448d276ec5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="TPSCamera">
       <UniqueIdentifier>{597985f6-ecc8-483a-9816-13bced82fca1}</UniqueIdentifier>
     </Filter>
     <Filter Include="FreeCamera">
       <UniqueIdentifier>{a2e17b78-4613-4562-a6f7-5751dd450c61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Player">
-      <UniqueIdentifier>{64cf4265-82ae-46db-8a64-32bb2330264a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sound">
-      <UniqueIdentifier>{95cc7fd1-24f1-4eaa-8133-20d449e30aa3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Character">
       <UniqueIdentifier>{510733be-c035-4d7a-a3a4-bf459b70d63a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="BeetleDrone">
-      <UniqueIdentifier>{962f7d80-398b-4a0c-a820-841ae17a50b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AncientKing">
-      <UniqueIdentifier>{2eeee815-7748-4d74-9969-55cd517e446a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Effect">
       <UniqueIdentifier>{7170783e-5bc6-4557-ba7c-20244881e03d}</UniqueIdentifier>
@@ -163,6 +235,75 @@
     <Filter Include="Effect\Spark">
       <UniqueIdentifier>{1ae88ce2-a762-46f7-a7a1-a969a56268c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EventSystem">
+      <UniqueIdentifier>{e32fea32-499c-4aff-9682-417bd05d18d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Glow">
+      <UniqueIdentifier>{d5db3dd0-197a-4a54-82e3-60314adaadab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{b81ebdf1-752c-4988-938a-75448d276ec5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor">
+      <UniqueIdentifier>{a2b0363b-8265-4103-877f-b82a305ce30f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Scene">
+      <UniqueIdentifier>{e89dc339-4dc7-4308-a818-45c18e31124f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\ISerializable">
+      <UniqueIdentifier>{8a3ac84d-0696-4c9a-808e-40508ddbfcfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Prop">
+      <UniqueIdentifier>{cc19f2fc-fe3c-45cc-a984-bf385de3379f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\IEditorObject">
+      <UniqueIdentifier>{8a4d05ac-d136-487a-9b73-05cc1b899c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\EditorObjects">
+      <UniqueIdentifier>{27a77c08-9c93-4c7e-8af5-c4337772e056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Inspector">
+      <UniqueIdentifier>{a7e5465f-ef43-486a-9cb2-ee6a7f97628a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\MeshSelector">
+      <UniqueIdentifier>{2ef5a3f5-a0e7-42a8-9548-e82a7b358d67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\EditorEvent">
+      <UniqueIdentifier>{26f15377-701a-4f0e-9400-1397b6c8fb24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Prefab">
+      <UniqueIdentifier>{54a52fd7-4216-4e65-89e1-afa9dd808e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Spawner">
+      <UniqueIdentifier>{642edca7-796a-4fef-84df-0b39e4e6bd73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\SerializableCollider">
+      <UniqueIdentifier>{58e33e08-6bf3-4e90-80f8-4a6602e37a4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\SerializableLight">
+      <UniqueIdentifier>{9fd468c3-480d-4cc5-9ad9-3f430b5dab91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Hierarchy">
+      <UniqueIdentifier>{82051463-b87c-4198-8912-799746e6e369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{9f520e31-42ce-4226-b622-fb8f8a64f9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\AncientKing">
+      <UniqueIdentifier>{2eeee815-7748-4d74-9969-55cd517e446a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\BeetleDrone">
+      <UniqueIdentifier>{962f7d80-398b-4a0c-a820-841ae17a50b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Player">
+      <UniqueIdentifier>{64cf4265-82ae-46db-8a64-32bb2330264a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Editable">
+      <UniqueIdentifier>{b5c7c5cb-c466-4f14-9bd2-d79d65d34c04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Editable\Lava">
+      <UniqueIdentifier>{9c0bc470-ca94-452d-9cf0-46ef511a289b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -176,9 +317,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Default\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>TestScene</Filter>
-    </ClCompile>
     <ClCompile Include="TPSCamera.cpp">
       <Filter>TPSCamera</Filter>
     </ClCompile>
@@ -186,26 +324,25 @@
       <Filter>FreeCamera</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Player</Filter>
+      <Filter>Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="PlayerTestScene.cpp">
-      <Filter>PlayerTestScene</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SoundTest.cpp" />
     <ClCompile Include="PlayerAnimator.cpp">
-      <Filter>Player</Filter>
+      <Filter>Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="BossAncientKing.cpp">
-      <Filter>AncientKing</Filter>
+      <Filter>Object\AncientKing</Filter>
     </ClCompile>
     <ClCompile Include="BossAncientKingAnimator.cpp">
-      <Filter>AncientKing</Filter>
+      <Filter>Object\AncientKing</Filter>
     </ClCompile>
     <ClCompile Include="EnemyBeetleDrone.cpp">
-      <Filter>BeetleDrone</Filter>
+      <Filter>Object\BeetleDrone</Filter>
     </ClCompile>
     <ClCompile Include="EnemyBeetleDroneAnimator.cpp">
-      <Filter>BeetleDrone</Filter>
+      <Filter>Object\BeetleDrone</Filter>
     </ClCompile>
     <ClCompile Include="BillboardAnimation.cpp">
       <Filter>Effect</Filter>
@@ -249,6 +386,97 @@
     <ClCompile Include="ParticleElectricBeam.cpp">
       <Filter>Effect\Damagable\Electric</Filter>
     </ClCompile>
+    <ClCompile Include="EventListener.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="EventSystem.cpp">
+      <Filter>EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectGlow.cpp">
+      <Filter>Effect\Glow</Filter>
+    </ClCompile>
+    <ClCompile Include="RaycastTest.cpp" />
+    <ClCompile Include="EditorScene.cpp">
+      <Filter>Editor\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="ISerializable.cpp">
+      <Filter>Editor\ISerializable</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializableDirectionalLight.cpp">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializablePointLight.cpp">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializableSpotLight.cpp">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Prop.cpp">
+      <Filter>Editor\Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="IEditorObject.cpp">
+      <Filter>Editor\IEditorObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Spawner.cpp">
+      <Filter>Editor\Spawner</Filter>
+    </ClCompile>
+    <ClCompile Include="Inspector.cpp">
+      <Filter>Editor\Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorObjects.cpp">
+      <Filter>Editor\EditorObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSelector.cpp">
+      <Filter>Editor\MeshSelector</Filter>
+    </ClCompile>
+    <ClCompile Include="IEditorEventListener.cpp">
+      <Filter>Editor\EditorEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorEventSystem.cpp">
+      <Filter>Editor\EditorEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="ISerializableLight.cpp">
+      <Filter>Editor\SerializableLight</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorObjectDeserializeByType.cpp">
+      <Filter>Editor\EditorObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ISerializableCollider.cpp">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializableBoxCollider.cpp">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializableCapsuleCollider.cpp">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializableSphereCollider.cpp">
+      <Filter>Editor\SerializableCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorWindow.cpp">
+      <Filter>Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Hierarchy.cpp">
+      <Filter>Editor\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="PrefabAncientKing.cpp">
+      <Filter>Editor\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="PrefabBeetleDrone.cpp">
+      <Filter>Editor\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="PrefabPlayer.cpp">
+      <Filter>Editor\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="Lava.cpp">
+      <Filter>Object\Editable\Lava</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">
@@ -273,6 +501,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\InstanceUnlit.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Lava.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

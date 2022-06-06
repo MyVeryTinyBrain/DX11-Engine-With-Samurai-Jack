@@ -42,13 +42,17 @@ private:
 	void CreateDebugShape();
 	void ResetDebugShape();
 
+public:
+
+	virtual ResourceRef<Mesh> GetDebugMesh() const override;
+	virtual M4 GetDebugRenderWorldMatrix() const override;
+
 private:
 
 	float					m_radius = 0.5f;
 	float					m_halfHeight = 0.5f;
 
 	ResourceRef<Mesh>		m_dbgMesh;
-	ResourceRef<Material>	m_dbgMaterial;
 };
 
 ENGINE_END

@@ -120,6 +120,21 @@ ResourceRef<ResourceObject> ResourceManagement::FindBinrayShader(const tstring& 
 	return Find(binaryShaderPath);
 }
 
+uint ResourceManagement::GetNumResources() const
+{
+	return (uint)m_managedResources.size();
+}
+
+ResourceRef<ResourceObject> ResourceManagement::GetResourceByIndex(uint index)
+{
+	if (index >= GetNumResources())
+		return nullptr;
+
+	auto it = m_managedResources.begin();
+	std::advance(it, index);
+	return it->second;
+}
+
 System* ResourceManagement::GetSystem() const
 {
 	return m_system;

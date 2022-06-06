@@ -102,7 +102,9 @@ void MeshRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 	if (m_mesh == mesh)
 		return;
 
+	ResourceRef<Mesh> before = m_mesh;
 	m_mesh = mesh;
+	OnMeshChanged(before, mesh);
 
 	SetupDefaultMaterials();
 }

@@ -12,7 +12,7 @@ void PointLight::Awake()
 void PointLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const
 {
     float Far = m_range - m_near;
-    const M4& matrix = DirectX::XMMatrixPerspectiveFovLH(90.0f * Deg2Rad, 1.0f, m_near, 1000);
+    const M4& matrix = DirectX::XMMatrixPerspectiveFovLH(90.0f * Deg2Rad, 1.0f, m_near, Far);
     const V3& viewPosition = transform->position;
 
     Frustum frustums[6] = {};
@@ -139,10 +139,10 @@ void PointLight::SetupRotations()
 {
     // const V3	m_arrDirection[6] = { V3::up(),V3::left(),V3::forward(),V3::right(),V3::back(),V3::down(), };
 
-    m_arrRotations[4] = Q::Euler(-90, 0, 0);
+    m_arrRotations[0] = Q::Euler(-90, 0, 0);
     m_arrRotations[1] = Q::Euler(0, -90, 0);
     m_arrRotations[2] = Q::Euler(0, +000, 0);
-    m_arrRotations[0] = Q::Euler(0, +90, 0);
-    m_arrRotations[3] = Q::Euler(0, +180, 0);
+    m_arrRotations[3] = Q::Euler(0, +90, 0);
+    m_arrRotations[4] = Q::Euler(0, +180, 0);
     m_arrRotations[5] = Q::Euler(+90, 0, 0);
 }

@@ -156,3 +156,43 @@ void ParticleDust01::CreateInSphere(
 		}
 	}
 }
+
+void ParticleDust01::CreateWithNormal(
+	Scene* scene, 
+	const V3& position, 
+	const V3& normal, float minAngle, float maxAngle, float damping, 
+	float minRandomSpeed, float maxRandomSpeed, 
+	float minRandomDuration, float maxRandomDuration, 
+	float startScale, float endScale, float scalePowFactor, 
+	Color startColor, Color endColor, float colorPowFactor, 
+	uint count)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> rdSpeedGen(minRandomSpeed, maxRandomSpeed);
+	std::uniform_real_distribution<float> rdDurationGen(minRandomDuration, maxRandomDuration);
+	std::uniform_real_distribution<float> rdAngleGen(-(maxAngle - minAngle), +(maxAngle - minAngle));
+
+	for (uint i = 0; i < count; ++i)
+	{
+		float percent = Clamp01(float(i) / float(count - 1));
+		float angle = percent * 360.0f;
+
+		float angleX = rdAngleGen(gen);
+		float angleY = rdAngleGen(gen);
+		float angleZ = rdAngleGen(gen);
+		Q q = Q::Euler(angleX, angleY, angleZ);
+		V3 dir = q.MultiplyVector(normal).normalized;
+
+		V3 velocity = dir * rdSpeedGen(gen);
+		float duration = rdDurationGen(gen);
+
+		ParticleDust01::CreateOnce(
+			scene,
+			position,
+			velocity, damping,
+			duration,
+			startScale, endScale, scalePowFactor,
+			startColor, endColor, colorPowFactor);
+	}
+}

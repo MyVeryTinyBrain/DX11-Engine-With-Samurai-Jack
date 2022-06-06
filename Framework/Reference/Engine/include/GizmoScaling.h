@@ -10,9 +10,11 @@ class MeshRenderer;
 class Material;
 class ENGINE_API GizmoScaling : public GizmoBase
 {
-private:
+public:
 
-	GizmoBase::Axis PickTest() const;
+	virtual GizmoBase::Axis PickTest() const override;
+
+private:
 
 	MeshRenderer* AxisRenderer(GizmoBase::Axis axis) const;
 
@@ -47,11 +49,6 @@ private:
 	// For Pivot and Axis
 
 	ResourceRef<Mesh>			m_axisMesh;
-
-	ResourceRef<Texture2D>		m_rTexture;
-	ResourceRef<Texture2D>		m_gTexture;
-	ResourceRef<Texture2D>		m_bTexture;
-	ResourceRef<Texture2D>		m_pTexture; // Pivot Texture
 
 	ResourceRef<Material>		m_rMat;
 	ResourceRef<Material>		m_gMat;

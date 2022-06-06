@@ -89,6 +89,8 @@ public:
 
 public:
 
+	void OffAllTriggers();
+
 	// 반드시 애니메이터에 속한 노드를 사용해야 합니다.
 	// 이 노드를 재생 노드로 변경합니다.
 	void Play(Ref<AnimatorNode> node, float normalizedTime = 0.0f);

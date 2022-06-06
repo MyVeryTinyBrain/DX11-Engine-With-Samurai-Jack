@@ -2,12 +2,15 @@
 
 #include "Component.h"
 #include "Ref.h"
+#include "GizmoBase.h"
 
 ENGINE_BEGIN
-class GizmoBase;
+
 class ENGINE_API Gizmo : public Component
 {
 public:
+
+	GizmoBase::Axis PickTest() const;
 
 	void ShowGizmo(bool value);
 
@@ -35,7 +38,7 @@ private:
 
 	virtual void Awake() override;
 
-	virtual void Update() override;
+	virtual void PostUpdate() override;
 
 	void AutoScaling();
 

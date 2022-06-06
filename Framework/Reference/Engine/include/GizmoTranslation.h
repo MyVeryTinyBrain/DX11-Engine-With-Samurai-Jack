@@ -10,9 +10,11 @@ class MeshRenderer;
 class Material;
 class ENGINE_API GizmoTranslation : public GizmoBase
 {
-private:
+public:
 
-	GizmoBase::Axis PickTest() const;
+	virtual GizmoBase::Axis PickTest() const override;
+
+private:
 
 	MeshRenderer* AxisRenderer(GizmoBase::Axis axis) const;
 
@@ -39,10 +41,6 @@ private:	// Setup Component Parameters
 private:
 
 	ResourceRef<Mesh>			m_axisMesh;
-
-	ResourceRef<Texture2D>		m_rTexture;
-	ResourceRef<Texture2D>		m_gTexture;
-	ResourceRef<Texture2D>		m_bTexture;
 
 	ResourceRef<Material>		m_rMat;
 	ResourceRef<Material>		m_gMat;

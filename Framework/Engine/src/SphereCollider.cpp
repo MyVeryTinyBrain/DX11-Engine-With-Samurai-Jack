@@ -34,7 +34,6 @@ void SphereCollider::Awake()
 	Collider::Awake();
 
 	m_dbgMesh = system->resource->builtIn->sphereMesh;
-	m_dbgMaterial = system->resource->builtIn->greenWireframeMaterial;
 }
 
 void SphereCollider::DebugRender()
@@ -42,16 +41,19 @@ void SphereCollider::DebugRender()
 	if (!isValid)
 		return;
 
-	V3 scale = m_radius * V3::MaxAbsElement(transform->lossyScale) * V3::one() * 2.0f;
-	M4 localToWorldMatrix = M4::SRT(scale, transform->rotation, transform->position);
+	const M4& localToWorldMatrix = GetDebugRenderWorldMatrix();
 
 	if (!m_dbgMesh || !m_dbgMesh->isValid)
 		return;
 
-	if (!m_dbgMaterial || !m_dbgMaterial->isValid)
+	ResourceRef<Material> material;
+	if (!isTrigger) material = system->resource->builtIn->greenWireframeMaterial;
+	else  material = system->resource->builtIn->blueWireframeMaterial;
+
+	if (!material || !material->isValid)
 		return;
 
-	uint passCount = m_dbgMaterial->GetPassCountOfAppliedTechnique();
+	uint passCount = material->GetPassCountOfAppliedTechnique();
 	if (passCount == 0)
 		return;
 
@@ -61,11 +63,11 @@ void SphereCollider::DebugRender()
 		int renderGroupOrder;
 		bool instancingFlag;
 
-		if (FAILED(m_dbgMaterial->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
+		if (FAILED(material->GetRenderGroupOfAppliedTechnique(j, renderGroup)))
 			return;
-		if (FAILED(m_dbgMaterial->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
+		if (FAILED(material->GetRenderGroupOrderOfAppliedTechnique(j, renderGroupOrder)))
 			return;
-		if (FAILED(m_dbgMaterial->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
+		if (FAILED(material->GetInstancingFlagOfAppliedTechnique(j, instancingFlag)))
 			return;
 
 		RenderRequest input;
@@ -73,8 +75,8 @@ void SphereCollider::DebugRender()
 		input.essential.renderGroup = renderGroup;
 		input.essential.renderGroupOrder = renderGroupOrder;
 		input.essential.layerIndex = 0;
-		input.essential.material = m_dbgMaterial;
-		input.essential.techniqueIndex = m_dbgMaterial->techniqueIndex;
+		input.essential.material = material;
+		input.essential.techniqueIndex = material->techniqueIndex;
 		input.essential.passIndex = j;
 		input.essential.mesh = m_dbgMesh;
 		input.essential.subMeshIndex = 0;
@@ -110,4 +112,15 @@ void SphereCollider::SetRadius(float value)
 	m_radius = value;
 
 	ResetShape();
+}
+
+ResourceRef<Mesh> SphereCollider::GetDebugMesh() const
+{
+	return m_dbgMesh;
+}
+
+M4 SphereCollider::GetDebugRenderWorldMatrix() const
+{
+	V3 scale = m_radius * V3::MaxAbsElement(transform->lossyScale) * V3::one() * 2.0f;
+	return M4::SRT(scale, transform->rotation, transform->position);
 }

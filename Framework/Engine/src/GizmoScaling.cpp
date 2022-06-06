@@ -12,11 +12,11 @@
 #include "ResourceFactory.h"
 #include "BuiltInResources.h"
 #include "GameObject.h"
-#include "Texture2D.h"
+#include "Material.h"
 
 GizmoBase::Axis GizmoScaling::PickTest() const
 {
-	Ray ray = system->input->GetRayInWorldSpace();
+	Ray ray = system->input->GetRayInWorldSpace(system->graphic->cameraManager->mainCamera);
 	V3 hitOnAxisBox;
 
 	GizmoBase::Axis minDistAxis = GizmoBase::Axis::None;
@@ -172,7 +172,7 @@ bool GizmoScaling::MouseOnVirtualHandle(GizmoBase::Axis axis, V3& out_point) con
 		Plane virtualPlane;
 		if (VirtualPlane(axis, mainCamera->transform->forward, virtualPlane))
 		{
-			Ray ray = system->input->GetRayInWorldSpace();
+			Ray ray = system->input->GetRayInWorldSpace(mainCamera);
 			float distance;
 
 			if (virtualPlane.Raycast(ray, distance))
@@ -262,7 +262,10 @@ void GizmoScaling::GizmoUpdate()
 {
 	// Sync to handling transform
 	transform->position = handlingTransform->position;
-	transform->rotation = Q::identity();
+	if (isLocalGizmo)
+		transform->rotation = handlingTransform->rotation;
+	else
+		transform->rotation = Q::identity();
 
 	// Drag Axis
 	if (m_hitAxis != GizmoBase::Axis::None)
@@ -304,6 +307,7 @@ void GizmoScaling::GizmoUpdate()
 
 		// Apply Scaling
 		float adjustedSingedMagDelta = signedMagDelta * 0.5f;
+
 		switch (m_hitAxis)
 		{
 			case GizmoBase::Axis::X:
@@ -349,42 +353,24 @@ void GizmoScaling::SetupResources()
 	{
 		m_axisMesh = system->resource->builtIn->boxMesh;
 	}
-	//if (!m_rTexture)
-	//{
-	//	m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
-	//}
-	//if (!m_gTexture)
-	//{
-	//	m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
-	//}
-	//if (!m_bTexture)
-	//{
-	//	m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
-	//}
-	//if (!m_pTexture)
-	//{
-	//	m_pTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::grey(), 16, 16);
-	//}
-	//if (!m_rMat)
-	//{
-	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-	//	m_rMat->diffuseTexture = m_rTexture;
-	//}
-	//if (!m_gMat)
-	//{
-	//	m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-	//	m_gMat->diffuseTexture = m_gTexture;
-	//}
-	//if (!m_bMat)
-	//{
-	//	m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-	//	m_bMat->diffuseTexture = m_bTexture;
-	//}
-	//if (!m_pMat)
-	//{
-	//	m_pMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoTranslation>();
-	//	m_pMat->diffuseTexture = m_pTexture;
-	//}
+	
+	ResourceRef<Shader> shader = system->resource->builtIn->colorShader;
+
+	m_rMat = system->resource->factory->CreateMaterialByShaderUM(shader);
+	m_rMat->SetColor("_Color", Color::red());
+	m_rMat->techniqueIndex = 1;
+
+	m_gMat = system->resource->factory->CreateMaterialByShaderUM(shader);
+	m_gMat->SetColor("_Color", Color::green());
+	m_gMat->techniqueIndex = 1;
+
+	m_bMat = system->resource->factory->CreateMaterialByShaderUM(shader);
+	m_bMat->SetColor("_Color", Color::blue());
+	m_bMat->techniqueIndex = 1;
+
+	m_pMat = system->resource->factory->CreateMaterialByShaderUM(shader);
+	m_pMat->SetColor("_Color", Color::white());
+	m_pMat->techniqueIndex = 2;
 }
 
 void GizmoScaling::SetupObjects()

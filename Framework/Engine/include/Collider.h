@@ -3,9 +3,11 @@
 #include "Component.h"
 #include "ICollider.h"
 #include "PhysicsSimulationCallbackType.h"
+#include "ResourceRef.h"
 
 ENGINE_BEGIN
 class Rigidbody;
+class Mesh;
 class ENGINE_API Collider abstract : public Component, public ICollider
 {
 public:
@@ -81,6 +83,8 @@ public:
 public:
 
 	Rigidbody* GetRigidbody() const;
+	virtual ResourceRef<Mesh> GetDebugMesh() const = 0;
+	virtual M4 GetDebugRenderWorldMatrix() const = 0;
 
 	_declspec(property(get = GetRigidbody)) Rigidbody* rigidbody;
 
@@ -99,9 +103,7 @@ public:
 protected:
 
 	virtual PxGeometryHolder CreatePxGeometry(bool& out_invalid) const = 0;
-
 	virtual void OnDebugRenderModeChanged(bool value) {}
-
 	virtual void ResetShape();
 
 private:

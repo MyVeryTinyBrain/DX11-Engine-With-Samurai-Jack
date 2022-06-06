@@ -34,14 +34,21 @@ float4 PS_MAIN(PS_IN In) : SV_TARGET
 RasterizerState WireframeRasterizerState
 {
 	FillMode = Wireframe;
-	Cullmode = Back;
+	Cullmode = None;
 };
 
-DepthStencilState NoWriteDepthStencilState
+DepthStencilState NoDepthWriteStencilState
 {
 	DepthEnable = true;
 	DepthFunc = less;
-	DepthWriteMask = false;
+	DepthWriteMask = zero;
+};
+
+DepthStencilState NoDepthReadWriteStencilState
+{
+	DepthEnable = false;
+	DepthFunc = less;
+	DepthWriteMask = zero;
 };
 
 BlendState MixBlendState
@@ -52,12 +59,23 @@ BlendState MixBlendState
 	BlendOp = Add;
 };
 
-technique11 Wireframe
+technique11 NoDepthWrite
 {
 	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65534; >
 	{
 		SetRasterizerState(WireframeRasterizerState);
-		SetDepthStencilState(NoWriteDepthStencilState, 0);
+		SetDepthStencilState(NoDepthWriteStencilState, 0);
+		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+}
+technique11 NoDepthReadWrite
+{
+	pass Pass0 < string RenderGroup = "Overlay"; int RenderGroupOrder = 65535; >
+	{
+		SetRasterizerState(WireframeRasterizerState);
+		SetDepthStencilState(NoDepthReadWriteStencilState, 0);
 		SetBlendState(MixBlendState, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		VertexShader = compile vs_5_0 VS_MAIN();
 		PixelShader = compile ps_5_0 PS_MAIN();

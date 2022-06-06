@@ -3,6 +3,8 @@
 #include "EnemyBeetleDroneAnimator.h"
 #include "Player.h"
 #include "Config.h"
+#include "ParticleDust01.h"
+#include "EventSystem.h"
 
 void EnemyBeetleDrone::Awake()
 {
@@ -16,60 +18,31 @@ void EnemyBeetleDrone::Awake()
 	CCT->height = 0.675f;
 	//CCT->height = 0.01f; // Bug mode
 
-	m_characterRenderer->enable = false;
-	//CCT->rigidbody->enable = false;
+	SetState(State::HIDE);
 }
 
 void EnemyBeetleDrone::Start()
 {
 	Enemy::Start();
-	//DoAppear();
 }
 
 void EnemyBeetleDrone::Update()
 {
 	Enemy::Update();
 
-	if (DistanceBetweenPlayer() < 5.0f)
-		DoAppear();
+	if (!m_appeared && DistanceBetweenPlayer() < 5.0f)
+	{
+		SetState(State::APPEAR);
+		m_appeared = true;
+	}
 
 	if (!m_appeared)
 		return;
 
 	bool airAction = m_animator->IsPlayingAirAction();
-
 	CCT->useGravity = !airAction;
 
-	if (!isDead)
-	{
-		m_animator->MoveBProperty->valueAsBool = true;
-		RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 90.0f, system->time->deltaTime);
-
-		if (DistanceBetweenPlayer() < 3.0f)
-		{
-			m_animator->ATKTProperty->SetTriggerState();
-			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 90.0f, system->time->deltaTime);
-		}
-	}
-
-	if (isDead)
-	{
-		CCT->collisionWithCCT = false;
-		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Player, true);
-		CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, true);
-		Enemy::UnregistEnemy(this);
-
-		if (CCT->isGrounded && CCT->enable)
-		{
-			CCT->enable = false;
-			CCT->rigidbody->enable = false;
-		}
-	}
-
-	if (m_animator->DamageDirectionFProperty->valueAsFloat == 0.0f && m_animator->IsPlayingDamageDuringLookPlayerAnimation())
-	{
-		RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 180.0f, system->time->deltaTime);
-	}
+	StateUpdate();
 
 	AttackTriggerQuery();
 }
@@ -90,8 +63,8 @@ void EnemyBeetleDrone::FixedUpdate()
 void EnemyBeetleDrone::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
-	m_goCharacterRender->transform->localPosition = V3(0, -1.0f, 0);
-	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
+	m_goCharacterRender->transform->localPosition = ADJUST_BEETLEDRONE_LOCALPOSITION;
+	m_goCharacterRender->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(MESH_BEETLE_DRONE);
 	m_characterRenderer->SetupStandardMaterials();
@@ -208,7 +181,7 @@ void EnemyBeetleDrone::ClearHitBuffer()
 void EnemyBeetleDrone::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
 {
 	if (changing.GetPointer() == m_animator->DMG_STD_AIR)
-		CCT->velocity = V3::up() * 5.0f;
+		CCT->velocity = V3::up() * 3.15f * CCT->gravityScale;
 }
 
 void EnemyBeetleDrone::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
@@ -217,6 +190,24 @@ void EnemyBeetleDrone::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> 
 	{
 		OffAttackTriggers();
 		ClearHitBuffer();
+
+		if (endChanged.GetPointer() == m_animator->BH_STD_IDLE)
+		{
+			SetState(State::IDLE);
+		}
+	}
+
+	if (prev->name.find(TEXT("DMG")) != tstring::npos)
+	{
+		if (endChanged.GetPointer() == m_animator->BH_STD_IDLE)
+		{
+			SetState(State::IDLE);
+		}
+	}
+
+	if (prev.GetPointer() == m_animator->ETC_APPEAR)
+	{
+		SetState(State::IDLE);
 	}
 
 	if (endChanged.GetPointer() == m_animator->STD_ATK3A ||
@@ -250,6 +241,19 @@ void EnemyBeetleDrone::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animatio
 		OffAttackTriggers();
 		ClearHitBuffer();
 	}
+
+	if (desc.ContextByte & EnemyBeetleDroneAnimator::ByteContext::FOOT_DUST)
+	{
+		ParticleDust01::CreateWithNormal(
+			gameObject->regionScene,
+			CCT->footPosition - transform->forward,
+			V3::up(), 0.0f, 30.0f, 1.0f,
+			4.0f, 8.0f,
+			0.5f, 2.0f,
+			0.5f, 6.0f, 0.5f,
+			Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+			30);
+	}
 }
 
 void EnemyBeetleDrone::SetAttackType(uint contextUInt)
@@ -266,6 +270,192 @@ void EnemyBeetleDrone::SetAttackType(uint contextUInt)
 		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWUP;
 	if (contextUInt & EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWDOWN)
 		m_attackType = EnemyBeetleDroneAnimator::UIntContext::ATK_BLOWDOWN;
+}
+
+void EnemyBeetleDrone::SetState(EnemyBeetleDrone::State state)
+{
+	if (state == m_state)
+		return;
+
+	State before = m_state;
+	State next = state;
+	m_state = state;
+	StateEnded(before, next);
+	StateChanged(before, next);
+}
+
+void EnemyBeetleDrone::StateUpdate()
+{
+	switch (m_state)
+	{
+		case State::IDLE:
+		{
+			m_idleLeftCount -= system->time->deltaTime;
+			if (m_idleLeftCount <= 0.0f)
+			{
+				uint r = rand() % 2;
+				if (r == 0)
+					SetState(State::TRACE);
+				else
+					SetState(State::MOVEAROUND);
+			}
+
+			if (DistanceBetweenPlayer() < 3.0f)
+			{
+				SetState(State::ATK);
+			}
+		}
+		break;
+		case State::TRACE:
+		{
+			m_moveLeftCount -= system->time->deltaTime;
+			if (m_moveLeftCount <= 0.0f)
+			{
+				SetState(State::IDLE);
+			}
+
+			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 90.0f, system->time->deltaTime);
+
+			if (DistanceBetweenPlayer() < 3.0f)
+			{
+				SetState(State::ATK);
+			}
+		}
+		break;
+		case State::MOVEAROUND:
+		{
+			m_moveLeftCount -= system->time->deltaTime;
+			if (m_moveLeftCount <= 0.0f)
+			{
+				SetState(State::IDLE);
+			}
+
+			float moveAroundRadian = m_moveAroundAngle * Deg2Rad;
+			V3 toMoveAroundDir = V3(Cos(moveAroundRadian), 0.0f, Sin(moveAroundRadian));
+			RotateOnYAxisToDirection(toMoveAroundDir, 90.0f, system->time->deltaTime);
+
+			if (DistanceBetweenPlayer() < 3.0f)
+			{
+				SetState(State::ATK);
+			}
+		}
+		break;
+		case State::ATK:
+		{
+			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 90.0f, system->time->deltaTime);
+
+			m_animator->KeepATKBProperty->valueAsBool = DistanceBetweenPlayer() < 3.0f;
+		}
+		case State::DMG:
+		{
+			if (m_animator->DamageDirectionFProperty->valueAsFloat == 0.0f && m_animator->IsPlayingDamageDuringLookPlayerAnimation())
+			{
+				RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 180.0f, system->time->deltaTime);
+			}
+		}
+		break;
+	}
+}
+
+void EnemyBeetleDrone::StateChanged(EnemyBeetleDrone::State before, EnemyBeetleDrone::State next)
+{
+	switch (next)
+	{
+		case State::HIDE:
+		{
+			m_characterRenderer->enable = false;
+		}
+		break;
+		case State::APPEAR:
+		{
+			m_characterRenderer->enable = true;
+
+			PhysicsRay ray;
+			ray.Direction = V3::down();
+			ray.Length = 100.0f;
+			ray.Point = CCT->footPosition + V3::up() * 0.1f;
+			PhysicsHit hit;
+			if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider, CCT->rigidbody))
+			{
+				CCT->footPosition = hit.Point;
+			}
+			m_animator->Layer->Play(m_animator->ETC_APPEAR);
+
+			if (player)
+			{
+				transform->forward = ToPlayerDirectionXZ();
+			}
+
+			RegistEnemy(this);
+		}
+		break;
+		case State::IDLE:
+		{
+			m_idleLeftCount = 1.5f;
+		}
+		break;
+		case State::TRACE:
+		{
+			m_moveLeftCount = 3.0f;
+			m_animator->MoveBProperty->valueAsBool = true;
+		}
+		break;
+		case State::MOVEAROUND:
+		{
+			m_moveAroundAngle = float(rand() % 361);
+			m_moveLeftCount = 2.0f;
+			m_animator->MoveBProperty->valueAsBool = true;
+		}
+		break;
+		case State::ATK:
+		{
+			m_animator->ATKTProperty->SetTriggerState();
+		}
+		break;
+		case State::DMG:
+		{
+
+		}
+		break;
+		case State::DIE:
+		{
+			m_animator->Layer->OffAllTriggers();
+			m_animator->DamageTypeIProperty->valueAsInt = 2;
+			m_animator->DamageTProperty->SetTriggerState();
+
+			CCT->collisionWithCCT = false;
+			CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Player, true);
+			CCT->capsuleCollider->SetIgnoreLayerIndex(PhysicsLayer_Enemy, true);
+			EventSystem::Notify(EVENT_ENEMY_DIE, this);
+			Enemy::UnregistEnemy(this);
+		}
+		break;
+		case State::DIE_END:
+		{
+			CCT->enable = false;
+			CCT->rigidbody->enable = false;
+		}
+		break;
+	}
+}
+
+void EnemyBeetleDrone::StateEnded(EnemyBeetleDrone::State before, EnemyBeetleDrone::State current)
+{
+	switch (before)
+	{
+		case State::TRACE:
+		case State::MOVEAROUND:
+		{
+			m_moveLeftCount = 0.0f;
+			m_animator->MoveBProperty->valueAsBool = false;
+		}
+		break;
+		case State::ATK:
+		{
+			m_animator->KeepATKBProperty->valueAsBool = false;
+		}
+		break;
+	}
 }
 
 float EnemyBeetleDrone::GetHP() const
@@ -310,7 +500,7 @@ bool EnemyBeetleDrone::IsSuperarmor() const
 
 DamageOutType EnemyBeetleDrone::OnDamage(const DamageOut& out)
 {
-	if (isDead)
+	if (m_state == State::DIE || m_state == State::DIE_END || m_state == State::NONE)
 		return DamageOutType::IGNORED;
 
 	switch (out.Type)
@@ -359,7 +549,11 @@ DamageOutType EnemyBeetleDrone::OnDamage(const DamageOut& out)
 			m_animator->HPFProperty->valueAsFloat = hp;
 			if (hp <= 0.0f)
 			{
-				m_animator->DamageTypeIProperty->valueAsInt = 2;
+				SetState(State::DIE);
+			}
+			else
+			{
+				SetState(State::DMG);
 			}
 			return DamageOutType::HIT;
 		}
@@ -370,31 +564,4 @@ DamageOutType EnemyBeetleDrone::OnDamage(const DamageOut& out)
 		}
 		break;
 	}
-}
-
-void EnemyBeetleDrone::DoAppear()
-{
-	if (m_appeared)
-		return;
-
-	m_appeared = true;
-	m_characterRenderer->enable = true;
-	//CCT->rigidbody->enable = true;
-	PhysicsRay ray;
-	ray.Direction = V3::down();
-	ray.Length = 100.0f;
-	ray.Point = CCT->footPosition;
-	PhysicsHit hit;
-	if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider, CCT->rigidbody))
-	{
-		CCT->footPosition = hit.Point;
-	}
-	m_animator->Layer->Play(m_animator->ETC_APPEAR);
-
-	if (player)
-	{
-		transform->forward = ToPlayerDirectionXZ();
-	}
-
-	RegistEnemy(this);
 }

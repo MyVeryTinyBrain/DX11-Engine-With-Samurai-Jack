@@ -15,3 +15,7 @@ using namespace Engine;
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 #endif
 #pragma endregion
+
+#define EDITOR_BEGIN	namespace EDITOR {
+#define EDITOR_END		}
+#define EDITOR_USE		using namespace EDITOR;

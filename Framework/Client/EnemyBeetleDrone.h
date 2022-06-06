@@ -6,6 +6,20 @@ class EnemyBeetleDroneAnimator;
 
 class EnemyBeetleDrone : public Enemy
 {
+	enum class State
+	{
+		NONE = 0,
+		HIDE,
+		APPEAR,
+		IDLE,
+		TRACE,
+		MOVEAROUND,
+		ATK,
+		DMG,
+		DIE,
+		DIE_END,
+	};
+
 private:
 
 	virtual void Awake() override;
@@ -36,6 +50,13 @@ private:
 	void OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc& desc);
 	void SetAttackType(uint contextUInt);
 
+private:
+
+	void SetState(EnemyBeetleDrone::State state);
+	void StateUpdate();
+	void StateChanged(EnemyBeetleDrone::State before, EnemyBeetleDrone::State next);
+	void StateEnded(EnemyBeetleDrone::State before, EnemyBeetleDrone::State current);
+
 public:
 
 	virtual float GetHP() const override;
@@ -48,10 +69,6 @@ public:
 	virtual bool IsInvisible() const override;
 	virtual bool IsSuperarmor() const override;
 	virtual DamageOutType OnDamage(const DamageOut& out) override;
-
-public:
-
-	void DoAppear();
 
 private:
 
@@ -84,5 +101,10 @@ private:
 
 	bool m_appeared = false;
 	float m_hp = 20.0f;
+	float m_idleLeftCount = 0.0f;
+	float m_moveAroundAngle = 0.0f;
+	float m_moveLeftCount = 0.0f;
+
+	EnemyBeetleDrone::State m_state = EnemyBeetleDrone::State::NONE;
 };
 

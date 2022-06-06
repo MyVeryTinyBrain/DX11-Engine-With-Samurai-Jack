@@ -115,9 +115,21 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 
 	if (nullptr == (m_whiteColorMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
+
+	if (nullptr == (m_greenTransparentColorMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
+		return E_FAIL;
+	m_greenTransparentColorMaterial->SetColor("_Color", Color(0.0f, 1.0f, 0.0f, 0.5f));
+
+	if (nullptr == (m_blueTransparentColorMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
+		return E_FAIL;
+	m_blueTransparentColorMaterial->SetColor("_Color", Color(0.0f, 0.0f, 1.0f, 0.5f));
 	
 	if (nullptr == (m_greenWireframeMaterial = m_factory->CreateMaterialByShaderUM(m_wireframeShader)))
 		return E_FAIL;
+
+	if (nullptr == (m_blueWireframeMaterial = m_factory->CreateMaterialByShaderUM(m_wireframeShader)))
+		return E_FAIL;
+	m_blueWireframeMaterial->SetColor("_Color", Color::blue());
 
 	if (nullptr == (m_whiteUnlitMaterial = m_factory->CreateMaterialByShaderUM(m_unlitShader)))
 		return E_FAIL;
@@ -229,6 +241,11 @@ const ResourceRef<Shader>& BuiltInResources::GetColorShader() const
 	return m_colorShader;
 }
 
+const ResourceRef<Shader>& BuiltInResources::GetWireframeShader() const
+{
+	return m_wireframeShader;
+}
+
 const ResourceRef<Shader>& BuiltInResources::GetUnlitShader() const
 {
 	return m_unlitShader;
@@ -244,9 +261,24 @@ const ResourceRef<Material>& BuiltInResources::GetWhiteColorMaterial() const
 	return m_whiteColorMaterial;
 }
 
+const ResourceRef<Material>& BuiltInResources::GetGreenTransparentColorMaterial() const
+{
+	return m_greenTransparentColorMaterial;
+}
+
+const ResourceRef<Material>& BuiltInResources::GetBlueTransparentColorMaterial() const
+{
+	return m_blueTransparentColorMaterial;
+}
+
 const ResourceRef<Material>& BuiltInResources::GetGreenWireframeMaterial() const
 {
 	return m_greenWireframeMaterial;
+}
+
+const ResourceRef<Material>& BuiltInResources::GetBlueWireframeMaterial() const
+{
+	return m_blueWireframeMaterial;
 }
 
 const ResourceRef<Material>& BuiltInResources::GetWhiteUnlitMaterial() const

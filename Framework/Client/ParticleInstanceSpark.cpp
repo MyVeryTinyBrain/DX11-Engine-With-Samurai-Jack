@@ -81,10 +81,10 @@ void ParticleInstanceSpark::Create(
 		ParticleInstanceSpark* effect = goEffect->AddComponent<ParticleInstanceSpark>();
 		goEffect->transform->position = position;
 
-		float radianX = rdAngleGen(gen);
-		float radianY = rdAngleGen(gen);
-		float radianZ = rdAngleGen(gen);
-		Q q = Q::Euler(radianX, radianY, radianZ);
+		float angleX = rdAngleGen(gen);
+		float angleY = rdAngleGen(gen);
+		float angleZ = rdAngleGen(gen);
+		Q q = Q::Euler(angleX, angleY, angleZ);
 		V3 dir = q.MultiplyVector(normal).normalized;
 
 		float hSpeed = rdHSpeedGen(gen);

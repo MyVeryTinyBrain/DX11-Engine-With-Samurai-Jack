@@ -47,6 +47,11 @@ private:
 	vector<NodeTransform*>						m_nodeTransformsByIndex;
 
 	unordered_map<tstring, NodeTransform*>		m_nodeTransformsByName;
+
+public:
+
+	// ResourceRef<Mesh> before, ResourceRef<Mesh> after
+	delegate<void(ResourceRef<Mesh>, ResourceRef<Mesh>)> OnMeshChanged;
 };
 
 ENGINE_END

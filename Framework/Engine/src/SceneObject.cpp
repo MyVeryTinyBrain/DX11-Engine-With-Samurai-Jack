@@ -19,9 +19,9 @@ void SceneObject::Destroy()
 	if (m_shouldDestroy)
 		return;
 
-	m_shouldDestroy = true;
-
 	OnDestroyedCallback(this);
+
+	m_shouldDestroy = true;
 
 	IObject* iObject = this;
 	iObject->SetToDestroyed();

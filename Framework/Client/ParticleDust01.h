@@ -54,5 +54,16 @@ public:
 		Color startColor, Color endColor, float colorPowFactor,
 		uint numX, uint numY
 	);
+
+	static void CreateWithNormal(
+		Scene* scene,
+		const V3& position,
+		const V3& normal, float minAngle, float maxAngle, float damping,
+		float minRandomSpeed, float maxRandomSpeed,
+		float minRandomDuration, float maxRandomDuration,
+		float startScale, float endScale, float scalePowFactor,
+		Color startColor, Color endColor, float colorPowFactor,
+		uint count
+	);
 };
 

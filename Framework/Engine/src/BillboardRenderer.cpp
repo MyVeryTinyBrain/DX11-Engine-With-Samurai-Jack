@@ -53,7 +53,7 @@ void BillboardRenderer::Render()
 
 			RenderRequest input = {};
 
-			M4 localMatrix = M4::SRT(transform->localScale, V3::zero(), transform->localPosition);
+			M4 localMatrix = M4::SRT(V3::one(), V3::zero(), transform->localPosition);
 			M4 parentMatrix = transform->parent ? transform->parent->localToWorldMatrix : M4::identity();
 			input.essential.worldMatrix = localMatrix * parentMatrix;
 			input.essential.renderGroup = renderGroup;
@@ -103,8 +103,9 @@ void BillboardRenderer::OnCamera(ICamera* camera, RenderRequest* inout_prequest)
 	if (IsSelfLock(BillboardRenderer::LockFlag::Z))
 		localEulerAngles.z = 0;
 
+	M4 scaleMatrix = M4::Scale(transform->localScale);
 	M4 rotateMatrix = M4::Rotate(camEulerAngles + localEulerAngles);
-	M4 billboardWorldMatrix = rotateMatrix * inout_prequest->essential.worldMatrix;
+	M4 billboardWorldMatrix = scaleMatrix * rotateMatrix * inout_prequest->essential.worldMatrix;
 	inout_prequest->essential.worldMatrix = billboardWorldMatrix;
 }
 
@@ -190,7 +191,9 @@ void BillboardRenderer::SetMesh(const ResourceRef<Mesh>& mesh)
 	if (m_mesh == mesh)
 		return;
 
+	ResourceRef<Mesh> before = m_mesh;
 	m_mesh = mesh;
+	OnMeshChanged(before, mesh);
 
 	ClearMaterials();
 

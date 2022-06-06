@@ -151,17 +151,14 @@ V3 Input::GetMousePositionInNDC() const
 	return V3(x, y, 0);
 }
 
-V3 Input::GetMousePositionInViewSpace() const
+V3 Input::GetMousePositionInViewSpace(ICamera* camera) const
 {
-	ICamera* iMainCamera = m_system->graphic->cameraManager->GetMainCamera();
-	Camera* mainCamera = dynamic_cast<Camera*>(iMainCamera);
-
-	if (!mainCamera)
+	if (!camera)
 	{
 		return V3::zero();
 	}
 
-	const M4& projectionMatrix = mainCamera->projectionMatrix;
+	const M4& projectionMatrix = camera->GetProjectionMatrix();
 	const M4& projectionToViewSpaceMatrix = projectionMatrix.inversed;
 	const V3& ndcMouse = GetMousePositionInNDC();
 	const V3& viewSpaceMouse = projectionToViewSpaceMatrix.MultiplyPoint(ndcMouse);
@@ -169,19 +166,16 @@ V3 Input::GetMousePositionInViewSpace() const
 	return viewSpaceMouse;
 }
 
-Ray Input::GetRayInWorldSpace() const
+Ray Input::GetRayInWorldSpace(ICamera* camera) const
 {
-	ICamera* iMainCamera = m_system->graphic->cameraManager->GetMainCamera();
-	Camera* mainCamera = dynamic_cast<Camera*>(iMainCamera);
-
-	if (!mainCamera)
+	if (!camera)
 	{
 		return Ray(V3::zero(), V3::zero());
 	}
 
-	const M4& worldToViewMatrix = mainCamera->viewMatrix;
+	const M4& worldToViewMatrix = camera->GetViewMatrix();
 	const M4& viewToWorldMatrix = worldToViewMatrix.inversed;
-	const V3& viewSpaceMouse = GetMousePositionInViewSpace();
+	const V3& viewSpaceMouse = GetMousePositionInViewSpace(camera);
 
 	// x = 0, y = 0: Center of NDC
 	// z = 0: Point of camera
@@ -192,6 +186,17 @@ Ray Input::GetRayInWorldSpace() const
 	V3 worldDirection = viewToWorldMatrix.MultiplyVector(viewDirection);;
 
 	return Ray(worldOrigin, worldDirection);
+}
+
+void Input::Used(Key key)
+{
+	m_frame.DownState[(unsigned char)key] = false;
+	m_frame.UpState[(unsigned char)key] = false;
+}
+
+void Input::UsedWheelDelta()
+{
+	m_frame.WheelDelta = 0;
 }
 
 void Input::SetKeyDown(unsigned char key)

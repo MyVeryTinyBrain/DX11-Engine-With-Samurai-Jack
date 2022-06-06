@@ -14,11 +14,11 @@
 #include "GameObject.h"
 #include "VI.h"
 #include "VIBuffer.h"
-#include "Texture2D.h"
+#include "Material.h"
 
 GizmoBase::Axis GizmoRotation::PickTest() const
 {
-	Ray ray = system->input->GetRayInWorldSpace();
+	Ray ray = system->input->GetRayInWorldSpace(system->graphic->cameraManager->mainCamera);
 	V3 hitOnAxisBox;
 
 	GizmoBase::Axis minDistAxis = GizmoBase::Axis::None;
@@ -80,7 +80,7 @@ bool GizmoRotation::MouseOnVirtualPlane(const V3& normal, const V3& center, V3& 
 	Plane virtualPlane;
 	VirtualPlane(normal, center, virtualPlane);
 
-	Ray ray = system->input->GetRayInWorldSpace();
+	Ray ray = system->input->GetRayInWorldSpace(system->graphic->cameraManager->mainCamera);
 	float distance;
 
 	if (virtualPlane.Raycast(ray, distance))
@@ -308,12 +308,12 @@ void GizmoRotation::SetupSliceLineMesh()
 
 	vertices[0].position.x = +0.0f;
 	vertices[0].position.y = +0.0f;
-	vertices[0].position.z = -0.5f;
+	vertices[0].position.z = -1.0f;
 	vertices[0].uvw.y = 1.0f;
 
 	vertices[1].position.x = +0.0f;
 	vertices[1].position.y = +0.0f;
-	vertices[1].position.z = +0.5f;
+	vertices[1].position.z = +1.0f;
 	vertices[1].uvw.y = 0.0f;
 
 	// Setup Indices
@@ -347,80 +347,49 @@ void GizmoRotation::SetupResources()
 	SetupAxisMesh(32);
 	SetupAxisLineStripMesh(32);
 	SetupSliceLineMesh();
-	//if (!m_rTexture)
-	//{
-	//	m_rTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(1, 0, 0, 0.5f), 16, 16);
-	//}
-	//if (!m_gTexture)
-	//{
-	//	m_gTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 1, 0, 0.5f), 16, 16);
-	//}
-	//if (!m_bTexture)
-	//{
-	//	m_bTexture = system->resource->factory->CreateUnmanagedTexture2D(Color(0, 0, 1, 0.5f), 16, 16);
-	//}
-	//if (!m_lrTexture)
-	//{
-	//	m_lrTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::red(), 16, 16);
-	//}
-	//if (!m_lgTexture)
-	//{
-	//	m_lgTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::green(), 16, 16);
-	//}
-	//if (!m_lbTexture)
-	//{
-	//	m_lbTexture = system->resource->factory->CreateUnmanagedTexture2D(Color::blue(), 16, 16);
-	//}
-	//if (!m_rMat)
-	//{
-	//	m_rMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
-	//	m_rMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
-	//}
-	//if (!m_gMat)
-	//{
-	//	m_gMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
-	//	m_gMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
-	//}
-	//if (!m_bMat)
-	//{
-	//	m_bMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationNoHighlight>();
-	//	m_bMat->diffuseTexture = system->resourceManagement->factory->CreateUnmanagedTexture2D(Color(1, 1, 1, 0.25f), 16, 16);
-	//}
-	//if (!m_hrMat)
-	//{
-	//	m_hrMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
-	//	m_hrMat->diffuseTexture = m_rTexture;
-	//}
-	//if (!m_hgMat)
-	//{
-	//	m_hgMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
-	//	m_hgMat->diffuseTexture = m_gTexture;
-	//}
-	//if (!m_hbMat)
-	//{
-	//	m_hbMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationHighlight>();
-	//	m_hbMat->diffuseTexture = m_bTexture;
-	//}
-	//if (!m_lrMat)
-	//{
-	//	m_lrMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-	//	m_lrMat->diffuseTexture = m_lrTexture;
-	//}
-	//if (!m_lgMat)
-	//{
-	//	m_lgMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-	//	m_lgMat->diffuseTexture = m_lgTexture;
-	//}
-	//if (!m_lbMat)
-	//{
-	//	m_lbMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-	//	m_lbMat->diffuseTexture = m_lbTexture;
-	//}
-	//if (!m_slMat)
-	//{
-	//	m_slMat = system->resourceManagement->factory->CreateUnmanagedMaterial<MaterialGizmoRotationLine>();
-	//	m_slMat->diffuseTexture = system->resourceManagement->builtIn->whiteTexture;
-	//}
+
+	ResourceRef<Shader> colorShader = system->resource->builtIn->colorShader;
+	ResourceRef<Shader> wireframeShader = system->resource->builtIn->wireframeShader;
+
+	m_rMat = system->resource->factory->CreateMaterialByShaderUM(colorShader);
+	m_rMat->SetColor("_Color", Color(1.0f, 0.0f, 0.0f, 0.25f));
+	m_rMat->techniqueIndex = 1;
+
+	m_gMat = system->resource->factory->CreateMaterialByShaderUM(colorShader);
+	m_gMat->SetColor("_Color", Color(0.0f, 1.0f, 0.0f, 0.25f));
+	m_gMat->techniqueIndex = 1;
+
+	m_bMat = system->resource->factory->CreateMaterialByShaderUM(colorShader);
+	m_bMat->SetColor("_Color", Color(0.0f, 0.0f, 1.0f, 0.25f));
+	m_bMat->techniqueIndex = 1;
+
+	m_hrMat = system->resource->factory->CreateMaterialByShaderUM(colorShader);
+	m_hrMat->SetColor("_Color", Color(1.0f, 0.0f, 0.0f, 0.5f));
+	m_hrMat->techniqueIndex = 2;
+
+	m_hgMat = system->resource->factory->CreateMaterialByShaderUM(colorShader);
+	m_hgMat->SetColor("_Color", Color(0.0f, 1.0f, 0.0f, 0.5f));
+	m_hgMat->techniqueIndex = 2;
+
+	m_hbMat = system->resource->factory->CreateMaterialByShaderUM(colorShader);
+	m_hbMat->SetColor("_Color", Color(0.0f, 0.0f, 1.0f, 0.5f));
+	m_hbMat->techniqueIndex = 2;
+
+	m_lrMat = system->resource->factory->CreateMaterialByShaderUM(wireframeShader);
+	m_lrMat->SetColor("_Color", Color(1.0f, 0.0f, 0.0f, 1.0f));
+	m_lrMat->techniqueIndex = 1;
+
+	m_lgMat = system->resource->factory->CreateMaterialByShaderUM(wireframeShader);
+	m_lgMat->SetColor("_Color", Color(0.0f, 1.0f, 0.0f, 1.0f));
+	m_lgMat->techniqueIndex = 1;
+
+	m_lbMat = system->resource->factory->CreateMaterialByShaderUM(wireframeShader);
+	m_lbMat->SetColor("_Color", Color(0.0f, 0.0f, 1.0f, 1.0f));
+	m_lbMat->techniqueIndex = 1;
+
+	m_slMat = system->resource->factory->CreateMaterialByShaderUM(wireframeShader);
+	m_slMat->SetColor("_Color", Color(1.0f, 1.0f, 1.0f, 1.0f));
+	m_slMat->techniqueIndex = 1;
 }
 
 void GizmoRotation::SetupObjects()

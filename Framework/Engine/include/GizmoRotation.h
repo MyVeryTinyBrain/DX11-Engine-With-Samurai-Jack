@@ -10,9 +10,11 @@ class MeshRenderer;
 class Material;
 class ENGINE_API GizmoRotation : public GizmoBase
 {
-private:
+public:
 
-	GizmoBase::Axis PickTest() const;
+	virtual GizmoBase::Axis PickTest() const override;
+
+private:
 
 	MeshRenderer* AxisRenderer(GizmoBase::Axis axis) const;
 
@@ -52,20 +54,6 @@ private:
 
 	// Slice line mesh
 	ResourceRef<Mesh>						m_sliceLineMesh;
-
-	// Transparent Textures
-	// For Rendering to highlighted mesh
-
-	ResourceRef<Texture2D>					m_rTexture;
-	ResourceRef<Texture2D>					m_gTexture;
-	ResourceRef<Texture2D>					m_bTexture;
-
-	// Regular Textures
-	// For Rendering to lines
-
-	ResourceRef<Texture2D>					m_lrTexture;
-	ResourceRef<Texture2D>					m_lgTexture;
-	ResourceRef<Texture2D>					m_lbTexture;
 
 	// For Rendering to mesh
 

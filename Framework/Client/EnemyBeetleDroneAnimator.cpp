@@ -35,12 +35,13 @@ void EnemyBeetleDroneAnimator::SetupProperties()
 	 MoveBProperty = Layer->AddProperty(TEXT("MoveB"), AnimatorProperty::Type::BOOL);
 	 JumpTProperty = Layer->AddProperty(TEXT("JumpT"), AnimatorProperty::Type::TRIGGER);
 	 ATKTProperty = Layer->AddProperty(TEXT("ATKT"), AnimatorProperty::Type::TRIGGER);
+	 KeepATKBProperty = Layer->AddProperty(TEXT("KeepATKB"), AnimatorProperty::Type::BOOL);
 	 ATK3TypeIProperty = Layer->AddProperty(TEXT("ATK3TypeI"), AnimatorProperty::Type::INT);
 	 GuardBProperty = Layer->AddProperty(TEXT("GuardB"), AnimatorProperty::Type::BOOL);
 	 GuardHitTProperty = Layer->AddProperty(TEXT("GuardHitT"), AnimatorProperty::Type::TRIGGER);
 	 GuardBreakTProperty = Layer->AddProperty(TEXT("GuardBreakT"), AnimatorProperty::Type::TRIGGER);
 	 DamageTProperty = Layer->AddProperty(TEXT("DamageT"), AnimatorProperty::Type::TRIGGER);
-	 DamageDirectionFProperty = Layer->AddProperty(TEXT("DamageDirectionFProperty"), AnimatorProperty::Type::FLOAT);
+	 DamageDirectionFProperty = Layer->AddProperty(TEXT("DamageDirectionF"), AnimatorProperty::Type::FLOAT);
 	 DamageTypeIProperty = Layer->AddProperty(TEXT("DamageTypeI"), AnimatorProperty::Type::INT);
 	 HasGroundBProperty = Layer->AddProperty(TEXT("HasGroundB"), AnimatorProperty::Type::BOOL);
 	 HPFProperty = Layer->AddProperty(TEXT("HPF"), AnimatorProperty::Type::FLOAT);
@@ -189,6 +190,12 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 	Layer->AddNode(GAD_STD_BREAK);
 
 	ETC_APPEAR = AnimatorSingleNode::Create(GetClip(TEXT("ETC_APPEAR")), NOLOOP);
+	{
+		AnimationEventDesc e;
+		e.NormalizedTime = 10 / 40.0f;
+		e.ContextByte = ByteContext::FOOT_DUST;
+		ETC_APPEAR->AddEvent(e);
+	}
 	Layer->AddNode(ETC_APPEAR);
 }
 
@@ -228,7 +235,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK1 -> STD_ATK2
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		values.push_back(AnimatorTransition::PropertyValue::Trigger(ATKTProperty));
+		values.push_back(AnimatorTransition::PropertyValue(KeepATKBProperty, true, AnimatorTransition::Compare::EQUAL));
 		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
 		Layer->AddTransition(STD_ATK1, STD_ATK2, values, 0.5f, 0.1f);
 	}
@@ -242,8 +249,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK2 -> STD_ATK3A
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		values.push_back(AnimatorTransition::PropertyValue::Trigger(ATKTProperty));
-		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
+		values.push_back(AnimatorTransition::PropertyValue(KeepATKBProperty, true, AnimatorTransition::Compare::EQUAL));
 		values.push_back(AnimatorTransition::PropertyValue(ATK3TypeIProperty, 0, AnimatorTransition::Compare::EQUAL));
 		Layer->AddTransition(STD_ATK2, STD_ATK3A, values, 0.5f, 0.05f);
 	}
@@ -257,8 +263,7 @@ void EnemyBeetleDroneAnimator::SetupTransitions()
 	// STD_ATK2 -> STD_ATK3B
 	{
 		vector<AnimatorTransition::PropertyValue> values;
-		values.push_back(AnimatorTransition::PropertyValue::Trigger(ATKTProperty));
-		values.push_back(AnimatorTransition::PropertyValue(HasGroundBProperty, true, AnimatorTransition::Compare::EQUAL));
+		values.push_back(AnimatorTransition::PropertyValue(KeepATKBProperty, true, AnimatorTransition::Compare::EQUAL));
 		values.push_back(AnimatorTransition::PropertyValue(ATK3TypeIProperty, 0, AnimatorTransition::Compare::NOT_EQUAL));
 		Layer->AddTransition(STD_ATK2, STD_ATK3B, values, 0.5f, 0.1f);
 	}

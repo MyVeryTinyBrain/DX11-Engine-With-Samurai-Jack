@@ -87,6 +87,9 @@ public:
 	const ResourceRef<Shader>& GetColorShader() const;
 	_declspec(property(get = GetColorShader)) const ResourceRef<Shader>& colorShader;
 
+	const ResourceRef<Shader>& GetWireframeShader() const;
+	_declspec(property(get = GetWireframeShader)) const ResourceRef<Shader>& wireframeShader;
+
 	const ResourceRef<Shader>& GetUnlitShader() const;
 	_declspec(property(get = GetUnlitShader)) const ResourceRef<Shader>& unlitShader;
 
@@ -96,8 +99,17 @@ public:
 	const ResourceRef<Material>& GetWhiteColorMaterial() const;
 	_declspec(property(get = GetWhiteColorMaterial)) const ResourceRef<Material>& whiteColorMaterial;
 
+	const ResourceRef<Material>& GetGreenTransparentColorMaterial() const;
+	_declspec(property(get = GetGreenTransparentColorMaterial)) const ResourceRef<Material>& greenTransparentColorMaterial;
+
+	const ResourceRef<Material>& GetBlueTransparentColorMaterial() const;
+	_declspec(property(get = GetBlueTransparentColorMaterial)) const ResourceRef<Material>& blueTransparentColorMaterial;
+
 	const ResourceRef<Material>& GetGreenWireframeMaterial() const;
 	_declspec(property(get = GetGreenWireframeMaterial)) const ResourceRef<Material>& greenWireframeMaterial;
+
+	const ResourceRef<Material>& GetBlueWireframeMaterial() const;
+	_declspec(property(get = GetBlueWireframeMaterial)) const ResourceRef<Material>& blueWireframeMaterial;
 
 	const ResourceRef<Material>& GetWhiteUnlitMaterial() const;
 	_declspec(property(get = GetWhiteUnlitMaterial)) const ResourceRef<Material>& whiteUnlitMaterial;
@@ -155,7 +167,10 @@ private: // Built-In resources
 
 	ResourceRef<Material> m_standardMaterial;
 	ResourceRef<Material> m_whiteColorMaterial;
+	ResourceRef<Material> m_greenTransparentColorMaterial;
+	ResourceRef<Material> m_blueTransparentColorMaterial;
 	ResourceRef<Material> m_greenWireframeMaterial;
+	ResourceRef<Material> m_blueWireframeMaterial;
 	ResourceRef<Material> m_whiteUnlitMaterial;
 };
 

@@ -2,12 +2,13 @@
 #include "PlayerTestScene.h"
 #include "Player.h"
 #include "FreeCamera.h"
-#include "SoundTest.h"
 #include "EnemyBeetleDrone.h"
 #include "BossAncientKing.h"
 #include "Config.h"
 #include "BillboardAnimation.h"
 #include "EffectShockwave.h"
+#include "EventSystem.h"
+
 
 Scene* PlayerTestScene::Clone()
 {
@@ -25,576 +26,214 @@ void PlayerTestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
+	GameObject* goEventSystem = CreateGameObject();
+	goEventSystem->AddComponent<EventSystem>();
+
+	thread t0(
+		[&]
+		{
+			LOAD_CONFIGFILES(system);
+		});
+	if (t0.joinable())
+		t0.join();
 
 	//{
-	//	GameObject* goLine = CreateGameObject();
-	//	goLine->transform->position = V3(0, 2, -4);
-	//	LineRenderer* line = goLine->AddComponent<LineRenderer>();
+	//	GameObject* goMesh = CreateGameObject();
+	//	goMesh->transform->position = V3(0, 10, 0);
+	//	goMesh->transform->eulerAngles = V3(90, 0, 0);
+	//	MeshRenderer* meshRenderer = goMesh->AddComponent<MeshRenderer>();
+	//	meshRenderer->mesh = system->resource->Find(MESH_ENV_CAVE_BOSSFLOOR);
+	//	meshRenderer->SetupStandardMaterials();
 
-	//	//for (int i = 0; i <= 50; ++i)
-	//	//{
-	//	//	float p = float(i) / 50.0f;
-	//	//	float r = p * TAU;
-	//	//	float x = Cos(r);
-	//	//	float z = Sin(r);
-	//	//	line->AddPoint(V3(x, 0, z) * 3.0f);
-	//	//}
+	//	goMesh->AddComponent<Rigidbody>()->kinematic = true;
+	//	goMesh->AddComponent<ConvexCollider>();
 
-	//	line->AddPoint(V3(0, 0, 0));
-	//	line->AddPoint(V3(2, 0, 0));
-	//	line->AddPoint(V3(2, 2, 0));
-	//	line->AddPoint(V3(4, 2, 0));
-
-	//	line->SetInterpolateStep(50);
-
-	//	line->isLocalSpace = true;
-	//	//line->alignment = LineRenderer::Alignment::View;
+	//	GameObject* goGizmo = CreateGameObject();
+	//	goGizmo->transform->position = goMesh->transform->position;
+	//	Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
+	//	gizmo->show = true;
+	//	gizmo->SetHandlingTransform(goMesh->transform);
 	//}
 
-	//{
-	//	GameObject* goLine = CreateGameObject();
-	//	goLine->transform->position = V3(0, 1, -1);
-	//	LineRenderer* line = goLine->AddComponent<LineRenderer>();
-
-	//	line->AddPoint(V3(0, 0, 0));
-	//	line->AddPoint(V3(0, 2, 0));
-	//	line->AddPoint(V3(2, 2, 0));
-
-	//	line->isLocalSpace = true;
-	//	line->alignment = LineRenderer::Alignment::View;
-	//}
-
-	//*
 	{
-		thread t0(
-			[&]
-			{
-				LOAD_CONFIGFILES(system);
-			});
-		if (t0.joinable())
-			t0.join();
+		GameObject* goMesh = CreateGameObject();
+		goMesh->transform->position = V3(0, 10, 0);
+		goMesh->transform->eulerAngles = ADJUST_LOCALEULERANGLES;
+		MeshRenderer* meshRenderer = goMesh->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->Find(MESH_JACK);
+		meshRenderer->SetupStandardMaterials();
 
-		//{
-		//	GameObject* goAnim = CreateGameObject();
-		//	goAnim->transform->position = V3(0, 2, 8);
-		//	goAnim->transform->localScale = V3::one() * 3.0f;
-		//	BillboardAnimation* billboardAnimation = goAnim->AddComponent<BillboardAnimation>();
-		//	billboardAnimation->SetMesh(system->resource->Find(MESH_RING_HALF));
-		//	billboardAnimation->SetTexture(system->resource->Find(TEX_ANIM_FLAME04));
-		//	billboardAnimation->SetSliced(uint2(8, 8));
-		//	billboardAnimation->SetColor(Color::RGBA255(255, 0, 68, 255));
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(0, 20, 10);
-		//	goEnemy->AddComponent<BossAncientKing>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(0, 5, 8);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(0, 5, 10);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(0, 5, 12);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(0, 5, 14);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(2, 5, 8);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(2, 5, 10);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(2, 5, 12);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(2, 5, 14);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(4, 5, 8);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(4, 5, 10);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(4, 5, 12);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		//{
-		//	GameObject* goEnemy = CreateGameObject();
-		//	goEnemy->transform->position = V3(4, 5, 14);
-		//	goEnemy->AddComponent<EnemyBeetleDrone>();
-		//}
-
-		{
-			GameObject* go = CreateGameObject();
-			go->transform->position = V3(0, 5, 0);
-			go->AddComponent<Player>();
-		}
-
-		{
-			GameObject* goGround = CreateGameObject(TEXT("Ground"));
-			goGround->transform->position = V3::down() * 1.0f;
-			goGround->transform->localScale = V3(100, 1, 100);
-
-			Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goGround->AddComponent<BoxCollider>();
-			boxCollider->friction = 1.0f;
-			boxCollider->restitution = 1.0f;
-
-			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-			meshRenderer->material->SetTexture("_ReflectionTexture", system->resource->builtIn->whiteTexture);
-		}
-
-		{
-			GameObject* goWall = CreateGameObject(TEXT("Wall"));
-			goWall->transform->position = V3(50, 4.5f, 0);
-			goWall->transform->localScale = V3(1, 10, 100);
-
-			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
-			boxCollider->friction = 1.0f;
-			boxCollider->restitution = 1.0f;
-
-			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->SetupStandardMaterials();
-		}
-		{
-			GameObject* goWall = CreateGameObject(TEXT("Wall"));
-			goWall->transform->position = V3(-50, 4.5f, 0);
-			goWall->transform->localScale = V3(1, 10, 100);
-
-			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
-			boxCollider->friction = 1.0f;
-			boxCollider->restitution = 1.0f;
-
-			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->SetupStandardMaterials();
-		}
-		{
-			GameObject* goWall = CreateGameObject(TEXT("Wall"));
-			goWall->transform->position = V3(0, 4.5f, 50);
-			goWall->transform->localScale = V3(100, 10, 1);
-
-			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
-			boxCollider->friction = 1.0f;
-			boxCollider->restitution = 1.0f;
-
-			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->SetupStandardMaterials();
-		}
-		{
-			GameObject* goWall = CreateGameObject(TEXT("Wall"));
-			goWall->transform->position = V3(0, 4.5f, -50);
-			goWall->transform->localScale = V3(100, 10, 1);
-
-			Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
-			boxCollider->friction = 1.0f;
-			boxCollider->restitution = 1.0f;
-
-			MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->SetupStandardMaterials();
-		}
-
-		{
-			GameObject* goDirectionalLight = CreateGameObject(TEXT("DirectionalLight"));
-			goDirectionalLight->transform->position = V3(9.0f, 8.0f, -0.1f);
-			goDirectionalLight->transform->forward = -V3(9.0f, 8.0f, -0.1f).normalized;
-			DirectionalLight* directionalLight = goDirectionalLight->AddComponent<DirectionalLight>();
-			directionalLight->enable = true;
-			directionalLight->drawShadow = true;
-			directionalLight->diffuse = Color(1, 1, 1, 1);
-			directionalLight->ambient = Color(0.1f, 0.1f, 0.1f, 1.0f);
-		}
-
-		{
-			GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
-			goPointLight->transform->position = V3(0, 5, 0);
-			PointLight* pointLight = goPointLight->AddComponent<PointLight>();
-			pointLight->range = 10.0f;
-			pointLight->drawShadow = true;
-			pointLight->enable = true;
-			pointLight->intensity = 0;
-		}
-
-		{
-			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
-			goSpotLight->transform->position = V3(0, 2, -20);
-			goSpotLight->transform->forward = V3::forward();
-			SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
-			spotLight->range = 20.0f;
-			spotLight->angle = 10.0f;
-			spotLight->drawShadow = true;
-			spotLight->enable = true;
-			spotLight->intensity = 0;
-		}
-
-		{
-			GameObject* box = CreateGameObject(TEXT("Box"));
-			box->transform->eulerAngles = V3(-20, 0, 10);
-			box->transform->localScale = V3::one() * 5;
-			box->transform->position = V3(0, 0, -5);
-
-			Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
-			boxCollider->friction = 100.0f;
-
-			MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-		}
-
-		{
-			GameObject* box = CreateGameObject(TEXT("Box"));
-			box->transform->eulerAngles = V3(0, 0, 0);
-			box->transform->localScale = V3::one() * 5;
-			box->transform->position = V3(20, 0, -5);
-
-			Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
-			boxCollider->friction = 100.0f;
-
-			MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-		}
-
-		{
-			GameObject* box = CreateGameObject(TEXT("Box"));
-			box->transform->eulerAngles = V3(45, 0, 0);
-			box->transform->localScale = V3::one() * 5;
-			box->transform->position = V3(-20, -1.0f, -5);
-
-			Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
-			boxCollider->friction = 100.0f;
-
-			MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-		}
+		GameObject* goGizmo = CreateGameObject();
+		goGizmo->transform->position = goMesh->transform->position;
+		Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
+		gizmo->show = true;
+		gizmo->SetHandlingTransform(goMesh->transform);
 	}
-	/*/
-	
-	//*
+
 	{
-		{
-			GameObject* goCamera = CreateGameObject(TEXT("Camera"));
-			goCamera->transform->position = V3(0, 2, -10);
-			goCamera->transform->forward = (V3(0, 2, -9) - V3(0, 2, -10)).normalized;
-			FreeCamera* camera = goCamera->AddComponent<FreeCamera>();
-			camera->camera->fov = 45;
-			camera->camera->postProcessingState = false;
-		}
-
-		{
-			GameObject* goDirectionalLight = CreateGameObject(TEXT("DirectionalLight"));
-			goDirectionalLight->transform->position = V3(9.0f, 8.0f, -0.1f);
-			goDirectionalLight->transform->forward = -V3(9.0f, 8.0f, -0.1f).normalized;
-			DirectionalLight* directionalLight = goDirectionalLight->AddComponent<DirectionalLight>();
-			directionalLight->drawShadow = true;
-			directionalLight->enable = true;
-			directionalLight->diffuse = Color(0.25f, 0.25f, 0.25f, 1.0f);
-		}
-
-		{
-			GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
-			goPointLight->transform->position = V3(0, 5, 0);
-			PointLight* pointLight = goPointLight->AddComponent<PointLight>();
-			pointLight->range = 10.0f;
-			pointLight->drawShadow = true;
-			pointLight->enable = true;
-		}
-
-		//for (uint i = 0; i < 1000; ++i)
-		//{
-		//	int range = 100;
-		//	int range2 = range * 2;
-
-		//	int x = (rand() % range2) - range;
-		//	int z = (rand() % range2) - range;
-
-		//	float r = float(rand() % 255) / 255.0f;
-		//	float g = float(rand() % 255) / 255.0f;
-		//	float b = float(rand() % 255) / 255.0f;
-
-		//	GameObject* goPointLight = CreateGameObject();
-		//	goPointLight->transform->position = V3(x, 5, z);
-		//	PointLight* pointLight = goPointLight->AddComponent<PointLight>();
-		//	pointLight->range = 10.0f;
-		//	pointLight->drawShadow = false;
-		//	pointLight->enable = true;
-		//	pointLight->diffuse = Color(r, g, b, 1.0f);
-		//}
-
-		{
-			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
-			goSpotLight->transform->position = V3(0, 2, -10);
-			goSpotLight->transform->forward = V3::forward();
-			SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
-			spotLight->range = 30.0f;
-			spotLight->angle = 40.0f;
-			spotLight->intensity = 5.0f;
-			spotLight->drawShadow = true;
-			spotLight->enable = true;
-		}
-
-		//{
-		//	ResourceRef<Texture> texture[6];
-		//	texture[0] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/top.png"));
-		//	texture[1] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/bottom.png"));
-		//	texture[2] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/left.png"));
-		//	texture[3] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/right.png"));
-		//	texture[4] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/forward.png"));
-		//	texture[5] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/back.png"));
-
-		//	ResourceRef<Shader> priority = system->resourceManagement->factory->CreateShaderFromBinaryFolderM(TEXT("Priority.cso"));
-		//	ResourceRef<Material> material[6];
-		//	for (uint i = 0; i < 6; ++i)
-		//	{
-		//		material[i] = system->resourceManagement->factory->CreateMaterialByShaderUM(priority);
-		//		material[i]->SetTexture("_Texture", texture[i]);
-		//	}
-
-		//	GameObject* goSky[6];
-		//	for (uint i = 0; i < 6; ++i)
-		//	{
-		//		goSky[i] = CreateGameObject();
-		//		MeshRenderer* mr = goSky[i]->AddComponent<MeshRenderer>();
-		//		mr->mesh = system->resourceManagement->builtIn->quadMesh;
-		//		mr->material = material[i];
-		//	}
-
-		//	goSky[0]->transform->position = 0.25f * V3::up();
-		//	goSky[1]->transform->position = 0.25f * V3::down();
-		//	goSky[2]->transform->position = 0.25f * V3::left();
-		//	goSky[3]->transform->position = 0.25f * V3::right();
-		//	goSky[4]->transform->position = 0.25f * V3::forward();
-		//	goSky[5]->transform->position = 0.25f * V3::back();
-
-		//	goSky[0]->transform->forward = -V3::up();
-		//	goSky[1]->transform->forward = -V3::down();
-		//	goSky[2]->transform->forward = -V3::left();
-		//	goSky[3]->transform->forward = -V3::right();
-		//	goSky[4]->transform->forward = -V3::forward();
-		//	goSky[5]->transform->forward = -V3::back();
-		//}
-
-		//{
-		//	ResourceRef<Texture> texture = system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/skybox.png"));
-
-		//	//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
-		//	ResourceRef<Shader> skybox = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Skybox.cso"));
-		//	ResourceRef<Material> material;
-		//	material = system->resource->factory->CreateMaterialByShaderUM(skybox);
-		//	material->SetTexture("_Texture", texture);
-
-		//	GameObject* goSky;
-		//	goSky = CreateGameObject();
-		//	MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
-		//	mr->mesh = system->resource->builtIn->skyboxMesh;
-		//	mr->material = material;
-		//}
-
-		{
-			GameObject* goGround = CreateGameObject();
-			goGround->transform->position = V3(0.0f, 0.5f, 0.0f);
-			goGround->transform->localScale = V3(200, 1, 200);
-
-			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-
-			ResourceRef<Material> standardMaterial = system->resource->factory->CopyMaterialUM(system->resource->builtIn->standardMaterial);
-			standardMaterial->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtIn->whiteTexture);
-
-			meshRenderer->material = standardMaterial;
-
-			Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
-			rigidbody->kinematic = true;
-			BoxCollider* boxCollider = goGround->AddComponent<BoxCollider>();
-			boxCollider->friction = 1.0f;
-			boxCollider->restitution = 1.0f;
-		}
-
-		{
-			GameObject* goBox = CreateGameObject(TEXT("Box"));
-			goBox->transform->position = V3(-2.0f, 1.5f, 0.0f);
-
-			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-
-			goBox->AddComponent<Rigidbody>();
-			goBox->AddComponent<BoxCollider>();
-		}
-
-		{
-			GameObject* goBox = CreateGameObject(TEXT("Box"));
-			goBox->transform->position = V3(6.0f, 0.0f, 0.0f);
-			goBox->transform->localScale = V3(6, 6, 6);
-			goBox->transform->eulerAngles = V3(50, 0, 0);
-
-			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->boxMesh;
-			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
-
-			goBox->AddComponent<Rigidbody>()->kinematic = true;
-			goBox->AddComponent<BoxCollider>();
-		}
-
-		{
-			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
-			goSphere->transform->position = V3(2.0f, 1.5f, 0.0f);
-
-			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-			goSphere->AddComponent<Rigidbody>();
-			goSphere->AddComponent<SphereCollider>();
-		}
-
-		//{
-		//	m_sphere[0] = CreateGameObject(TEXT("Sphere"));
-
-		//	MeshRenderer* meshRenderer = m_sphere[0]->AddComponent<MeshRenderer>();
-		//	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-		//	m_katanaTrailRenderer[0] = m_sphere[0]->AddComponent<TrailRenderer>();
-
-		//	m_rigidbody = m_sphere[0]->AddComponent<Rigidbody>();
-		//	m_rigidbody->sleepThresholder = 1000;
-		//	m_sphere[0]->AddComponent<SphereCollider>();
-
-		//	ResourceRef<Shader> shader = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Trail.cso"));
-		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
-		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
-
-		//	m_katanaTrailRenderer[0]->material = material;
-
-		//	m_sphere[0]->activeSelf = true;
-		//}
-
-		//{
-		//	m_sphere[1] = CreateGameObject(TEXT("Sphere"));
-
-		//	MeshRenderer* meshRenderer = m_sphere[1]->AddComponent<MeshRenderer>();
-		//	meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-		//	m_katanaTrailRenderer[1] = m_sphere[1]->AddComponent<TrailRenderer>();
-
-		//	m_rigidbody = m_sphere[1]->AddComponent<Rigidbody>();
-		//	m_rigidbody->sleepThresholder = 1000;
-		//	m_sphere[1]->AddComponent<SphereCollider>();
-
-		//	ResourceRef<Shader> shader = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Trail.cso"));
-		//	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
-		//	material->SetTexture("_NormalMapTexture", system->resource->Find(TEXT("../Resource/Dev/Normal.png")));
-
-		//	m_katanaTrailRenderer[1]->material = system->resource->Find(TEXT("TrailMaterial"));
-
-		//	m_sphere[1]->activeSelf = true;
-		//}
-
-		{
-			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
-			goSphere->transform->position = V3(-4.5f, 1.5f, +4.5f);
-
-			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-			goSphere->AddComponent<Rigidbody>();
-			goSphere->AddComponent<SphereCollider>();
-		}
-
-		{
-			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
-			goSphere->transform->position = V3(+4.5f, 1.5f, +4.5f);
-
-			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-			goSphere->AddComponent<Rigidbody>();
-			goSphere->AddComponent<SphereCollider>();
-		}
-
-		{
-			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
-			goSphere->transform->position = V3(+4.5f, 1.5f, -4.5f);
-
-			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-			goSphere->AddComponent<Rigidbody>();
-			goSphere->AddComponent<SphereCollider>();
-		}
-
-		{
-			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
-			goSphere->transform->position = V3(-4.5f, 1.5f, -4.5f);
-
-			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
-			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
-
-			goSphere->AddComponent<Rigidbody>();
-			goSphere->AddComponent<SphereCollider>();
-		}
+		GameObject* go = CreateGameObject();
+		go->transform->position = V3(0, 5, 0);
+		go->AddComponent<Player>();
 	}
-	//*/
+
+	{
+		GameObject* goGround = CreateGameObject(TEXT("Ground"));
+		goGround->transform->position = V3::down() * 1.0f;
+		goGround->transform->localScale = V3(100, 1, 100);
+
+		Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = goGround->AddComponent<BoxCollider>();
+		boxCollider->friction = 1.0f;
+		boxCollider->restitution = 1.0f;
+
+		MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+		meshRenderer->material->SetTexture("_ReflectionTexture", system->resource->builtIn->whiteTexture);
+	}
+
+	{
+		GameObject* goWall = CreateGameObject(TEXT("Wall"));
+		goWall->transform->position = V3(50, 4.5f, 0);
+		goWall->transform->localScale = V3(1, 10, 100);
+
+		Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+		boxCollider->friction = 1.0f;
+		boxCollider->restitution = 1.0f;
+
+		MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->SetupStandardMaterials();
+	}
+	{
+		GameObject* goWall = CreateGameObject(TEXT("Wall"));
+		goWall->transform->position = V3(-50, 4.5f, 0);
+		goWall->transform->localScale = V3(1, 10, 100);
+
+		Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+		boxCollider->friction = 1.0f;
+		boxCollider->restitution = 1.0f;
+
+		MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->SetupStandardMaterials();
+	}
+	{
+		GameObject* goWall = CreateGameObject(TEXT("Wall"));
+		goWall->transform->position = V3(0, 4.5f, 50);
+		goWall->transform->localScale = V3(100, 10, 1);
+
+		Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+		boxCollider->friction = 1.0f;
+		boxCollider->restitution = 1.0f;
+
+		MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->SetupStandardMaterials();
+	}
+	{
+		GameObject* goWall = CreateGameObject(TEXT("Wall"));
+		goWall->transform->position = V3(0, 4.5f, -50);
+		goWall->transform->localScale = V3(100, 10, 1);
+
+		Rigidbody* rigidbody = goWall->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = goWall->AddComponent<BoxCollider>();
+		boxCollider->friction = 1.0f;
+		boxCollider->restitution = 1.0f;
+
+		MeshRenderer* meshRenderer = goWall->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->SetupStandardMaterials();
+	}
+
+	{
+		GameObject* goDirectionalLight = CreateGameObject(TEXT("DirectionalLight"));
+		goDirectionalLight->transform->position = V3(9.0f, 8.0f, -0.1f);
+		goDirectionalLight->transform->forward = -V3(9.0f, 8.0f, -0.1f).normalized;
+		DirectionalLight* directionalLight = goDirectionalLight->AddComponent<DirectionalLight>();
+		directionalLight->enable = true;
+		directionalLight->drawShadow = true;
+		directionalLight->diffuse = Color(1, 1, 1, 1);
+		directionalLight->ambient = Color(0.1f, 0.1f, 0.1f, 1.0f);
+	}
+
+	{
+		GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
+		goPointLight->transform->position = V3(0, 5, 0);
+		PointLight* pointLight = goPointLight->AddComponent<PointLight>();
+		pointLight->range = 10.0f;
+		pointLight->drawShadow = true;
+		pointLight->enable = true;
+		pointLight->intensity = 0;
+	}
+
+	{
+		GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
+		goSpotLight->transform->position = V3(0, 2, -20);
+		goSpotLight->transform->forward = V3::forward();
+		SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
+		spotLight->range = 20.0f;
+		spotLight->angle = 10.0f;
+		spotLight->drawShadow = true;
+		spotLight->enable = true;
+		spotLight->intensity = 0;
+	}
+
+	{
+		GameObject* box = CreateGameObject(TEXT("Box"));
+		box->transform->eulerAngles = V3(-20, 0, 10);
+		box->transform->localScale = V3::one() * 5;
+		box->transform->position = V3(0, 0, -5);
+
+		Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
+		boxCollider->friction = 100.0f;
+
+		MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+	}
+
+	{
+		GameObject* box = CreateGameObject(TEXT("Box"));
+		box->transform->eulerAngles = V3(0, 0, 0);
+		box->transform->localScale = V3::one() * 5;
+		box->transform->position = V3(20, 0, -5);
+
+		Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
+		boxCollider->friction = 100.0f;
+
+		MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+	}
+
+	{
+		GameObject* box = CreateGameObject(TEXT("Box"));
+		box->transform->eulerAngles = V3(45, 0, 0);
+		box->transform->localScale = V3::one() * 5;
+		box->transform->position = V3(-20, -1.0f, -5);
+
+		Rigidbody* rigidbody = box->AddComponent<Rigidbody>();
+		rigidbody->kinematic = true;
+		BoxCollider* boxCollider = box->AddComponent<BoxCollider>();
+		boxCollider->friction = 100.0f;
+
+		MeshRenderer* meshRenderer = box->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->builtIn->boxMesh;
+		meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+	}
 }
 
 void PlayerTestScene::OnUnload()
@@ -603,18 +242,6 @@ void PlayerTestScene::OnUnload()
 
 void PlayerTestScene::OnUpdate()
 {
-	if (m_sphere[0])
-	{
-		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
-		m_sphere[0]->transform->position = V3::up() * 2.0f + spin * 6.0f;
-	}
-
-	if (m_sphere[1])
-	{
-		V3 spin = V3(cos(system->time->accumulatedSinceStartup), 0.0f, sin(system->time->accumulatedSinceStartup));
-		m_sphere[1]->transform->position = V3::up() * 2.0f + spin * 6.0f + V3(0, 0, -8.0f);
-	}
-
 	{
 		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 

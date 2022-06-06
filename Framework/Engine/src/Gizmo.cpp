@@ -10,6 +10,11 @@
 #include "CameraManager.h"
 #include "Camera.h"
 
+GizmoBase::Axis Gizmo::PickTest() const
+{
+	return m_gizmos[m_currentGizmo]->PickTest();
+}
+
 void Gizmo::ShowGizmo(bool value)
 {
 	m_showGizmo = value;
@@ -76,7 +81,7 @@ void Gizmo::Awake()
 	SetupObjects();
 }
 
-void Gizmo::Update()
+void Gizmo::PostUpdate()
 {
 	if (system->input->GetKeyDown(Key::F1))
 		SetGizmo(0);
@@ -99,7 +104,7 @@ void Gizmo::AutoScaling()
 		float distance = V3::Distance(gizmo->transform->position, mainCamera->position);
 		XM_CONSTEXPR float fixedScalingFactor = 0.17f;
 		float scale = distance / (1.0f / fixedScalingFactor);
-		transform->localScale = V3::one() * scale;
+		transform->localScale = V3::one() * Max(0.01f, scale);
 	}
 }
 

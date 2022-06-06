@@ -85,7 +85,11 @@ bool RenderQueueLight::AddInput(const RenderRequest& input)
     else if (!input.op.boneOp)
     {
         // 메쉬에 따라 나눕니다.
-        Vector_RenderRequests& requests = m_staticRequets[input.essential.mesh];
+        IMap_RenderRequestsBySubMeshIndex& subMeshIndexMap = m_staticRequets[input.essential.mesh];
+
+        // 서브메쉬 인덱스에 따라 나눕니다.
+        uint subMeshIndex = input.essential.subMeshIndex;
+        Vector_RenderRequests& requests = subMeshIndexMap[subMeshIndex];
 
         requests.push_back(input);
 
@@ -194,7 +198,8 @@ bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const LightDesc& li
         V3 p = camera->GetPosition();
         Bounds bounds = request.op.boundsOp->GetBounds();
         float distance = bounds.GetDistanceBetweenPoint(p);
-        if (distance > light.ShadowFadeDistance)
+        float maxExtents = V3::MaxElement(bounds.extents); // 보정입니다.
+        if (distance > light.ShadowFadeDistance + maxExtents)
             return false;
     }
 
@@ -367,58 +372,69 @@ void RenderQueueLight::Render_DepthOfLight_Static(ICamera* camera, const LightDe
 
     for (auto& pairByMesh : m_staticRequets)
     {
-        Vector_RenderRequests& requests = pairByMesh.second;
-        uint instanceRequestCount = uint(requests.size());
-        RenderRequest& front = requests.front();
+        IMap_RenderRequestsBySubMeshIndex& mapByMesh = pairByMesh.second;
+        IMesh* mesh = pairByMesh.first;
 
-        uint drawCount = 0;
-        m_instanceBufferManager->BeginSetDatas(deviceContext, instanceRequestCount);
+        for (auto& pairBySubMeshIndex : mapByMesh)
         {
-            for (auto& request : requests)
+            Vector_RenderRequests& requests = pairBySubMeshIndex.second;
+            uint instanceRequestCount = uint(requests.size());
+            if (instanceRequestCount == 0)
+                continue;
+
+            RenderRequest& front = requests.front();
+
+            uint drawCount = 0;
+            m_instanceBufferManager->BeginSetDatas(deviceContext, instanceRequestCount);
             {
-                if (request.op.onCameraOp)
-                    request.op.onCameraOp->OnCamera(camera, &request);
+                for (uint i = 0; i < instanceRequestCount; ++i)
+                {
+                    RenderRequest& request = requests[i];
 
-                if (!IsValidShadowRequest(camera, lightDesc, request, boundings[i]))
-                    continue;
+                    if (request.op.onCameraOp)
+                        request.op.onCameraOp->OnCamera(camera, &request);
 
-                InstanceData data;
-                data.right = request.essential.worldMatrix.row[0];
-                data.up = request.essential.worldMatrix.row[1];
-                data.forward = request.essential.worldMatrix.row[2];
-                data.position = request.essential.worldMatrix.row[3];
+                    if (!IsValidShadowRequest(camera, lightDesc, request, boundings[projectionIndex]))
+                        continue;
 
-                data.instanceData0 = request.essential.instanceData[0];
-                data.instanceData1 = request.essential.instanceData[1];
-                data.instanceData2 = request.essential.instanceData[2];
-                data.instanceData3 = request.essential.instanceData[3];
+                    InstanceData data;
+                    data.right = request.essential.worldMatrix.row[0];
+                    data.up = request.essential.worldMatrix.row[1];
+                    data.forward = request.essential.worldMatrix.row[2];
+                    data.position = request.essential.worldMatrix.row[3];
 
-                m_instanceBufferManager->SetData(drawCount, &data);
-                ++drawCount;
+                    data.instanceData0 = request.essential.instanceData[0];
+                    data.instanceData1 = request.essential.instanceData[1];
+                    data.instanceData2 = request.essential.instanceData[2];
+                    data.instanceData3 = request.essential.instanceData[3];
+
+                    m_instanceBufferManager->SetData(uint(drawCount), &data);
+                    ++drawCount;
+                }
             }
+            m_instanceBufferManager->EndSetDatas(deviceContext);
+
+            if (drawCount == 0)
+                continue;
+
+            m_CBufferManager->BeginApply(m_shaderLightDepthWrite->GetEffect());
+            {
+                ApplyCBufferForLight(deviceContext, front, lightDesc, i);
+
+                if (FAILED(front.essential.mesh->ApplyVertexAndInstanceBuffer(deviceContext, m_instanceBufferManager->GetBuffer()))) continue;
+                if (FAILED(front.essential.mesh->ApplyIndexBuffer(deviceContext))) continue;
+
+                if (front.customPrimitiveCount.usePrimitiveCount)
+                {
+                    if (FAILED(front.essential.mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount), front.customPrimitiveCount.primitiveCount))) continue;
+                }
+                else
+                {
+                    if (FAILED(front.essential.mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount)))) continue;
+                }
+            }
+            m_CBufferManager->EndApply();
         }
-        m_instanceBufferManager->EndSetDatas(deviceContext);
-
-        if (drawCount == 0)
-            continue;
-
-        m_CBufferManager->BeginApply(m_shaderLightDepthWrite->GetEffect());
-        {
-            ApplyCBufferForLight(deviceContext, front, lightDesc, i);
-
-            if (FAILED(front.essential.mesh->ApplyVertexAndInstanceBuffer(deviceContext, m_instanceBufferManager->GetBuffer()))) continue;
-            if (FAILED(front.essential.mesh->ApplyIndexBuffer(deviceContext))) continue;
-
-            if (front.customPrimitiveCount.usePrimitiveCount)
-            {
-                if (FAILED(front.essential.mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount), front.customPrimitiveCount.primitiveCount))) continue;
-            }
-            else
-            {
-                if (FAILED(front.essential.mesh->DrawInstanceSubMesh(deviceContext, front.essential.subMeshIndex, uint(drawCount)))) continue;
-            }
-        }
-        m_CBufferManager->EndApply();
     }
 }
 

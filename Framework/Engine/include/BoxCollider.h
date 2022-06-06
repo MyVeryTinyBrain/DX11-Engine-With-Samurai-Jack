@@ -33,6 +33,11 @@ public:
 	_declspec(property(get = GetExtents, put = SetExtents)) const V3& extents;
 	_declspec(property(get = GetExtentsAsSize, put = SetExtentsAsSize)) V3 extentsAsSize;
 
+public:
+
+	virtual ResourceRef<Mesh> GetDebugMesh() const override;
+	virtual M4 GetDebugRenderWorldMatrix() const override;
+
 private:
 
 	/*
@@ -51,7 +56,6 @@ private:
 	V3						m_extents = V3::one() * 0.5f;
 
 	ResourceRef<Mesh>		m_dbgMesh;
-	ResourceRef<Material>	m_dbgMaterial;
 };
 
 ENGINE_END

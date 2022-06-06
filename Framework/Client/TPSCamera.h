@@ -1,8 +1,10 @@
 #pragma once
 
+#include "EventListener.h"
+
 class Enemy;
 
-class TPSCamera : public Component
+class TPSCamera : public Component, public EventListener
 {
 	struct Shake_t
 	{
@@ -17,10 +19,10 @@ class TPSCamera : public Component
 private:
 
 	virtual void Awake() override;
-
 	virtual void Start() override;
-
 	virtual void Update() override;
+	virtual void OnDestroyed() override;
+	virtual void OnEvent(const string& msg, void* pContext) override;
 
 public:
 

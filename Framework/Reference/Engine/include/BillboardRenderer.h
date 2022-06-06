@@ -46,6 +46,11 @@ private:
 
 	BillboardRenderer::LockFlags m_lockFlags = 0;
 	BillboardRenderer::LockFlags m_selfRotateLockFlags = LockFlag::ALL;
+
+public:
+
+	// ResourceRef<Mesh> before, ResourceRef<Mesh> after
+	delegate<void(ResourceRef<Mesh>, ResourceRef<Mesh>)> OnMeshChanged;
 };
 
 ENGINE_END

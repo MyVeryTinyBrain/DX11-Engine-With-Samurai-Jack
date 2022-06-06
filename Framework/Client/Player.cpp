@@ -9,6 +9,7 @@
 #include "EffectShockwave.h"
 #include "EffectRing01.h"
 #include "ParticleDust01.h"
+#include "EffectGlow.h"
 
 Player* Player::g_player = nullptr;
 
@@ -33,8 +34,8 @@ void Player::Awake()
 void Player::Update()
 {
 	Character::Update();
-	
-	//https://www.gamedev.net/forums/topic/605466-slimdx-setfullscreenstate-fails/
+
+	SecondGroundCheck();
 
 	UpdateKeyTimes();
 	AttackTriggerQuery();
@@ -81,7 +82,7 @@ void Player::FixedUpdate()
 {
 	Character::FixedUpdate();
 
-	m_animator->GroundStateBProperty->valueAsBool = CCT->isGrounded;
+	m_animator->GroundStateBProperty->valueAsBool = m_groundCheck;
 }
 
 void Player::LateUpdate()
@@ -107,8 +108,8 @@ void Player::SetupTPSCamera()
 void Player::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
-	m_goCharacterRender->transform->localPosition = V3(0, -1, 0);
-	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
+	m_goCharacterRender->transform->localPosition = ADJUST_PLAYER_LOCALPOSITION;
+	m_goCharacterRender->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(MESH_JACK);
 	m_characterRenderer->SetupStandardMaterials();
@@ -269,34 +270,47 @@ void Player::AttackTriggerQuery()
 					break;
 			}
 			DamageOutType damaged = enemy->Damage(damage);
-			++numHit;
+
+			if (damaged != DamageOutType::IGNORED)
+			{
+				++numHit;
+
+				V3 katanaPos = m_goAttackTrigger[KATANA_TRIGGER]->transform->position + transform->forward * 2.5f;
+				V3 effectPos = (katanaPos + overlap->transform->position) * 0.5f;
+
+				ParticleInstanceSpark::Create(
+					gameObject->regionScene,
+					effectPos,
+					-transform->forward,
+					0.0f, 45.0f,
+					1.0f, 5.0f,
+					2.0f, 9.0f,
+					0.1f, 0.355f,
+					0.5f, 2.0f,
+					50);
+
+				ParticleDust01::CreateAroundAxis(
+					gameObject->regionScene,
+					effectPos,
+					V3::up(), 1.0f,
+					0.5f, 1.5f,
+					0.5f, 1.0f,
+					1.0f, 2.0f, 0.5f,
+					Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+					10);
+
+				EffectGlow::Create(
+					gameObject->regionScene,
+					effectPos,
+					0.5f,
+					V2(20.0f, 0.5f), V2(50.0f, 0.1f), 1.0f,
+					Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
+				);
+			}
 		}
 
 		if (numHit > 0)
 		{
-			V3 katanaPos = m_goAttackTrigger[KATANA_TRIGGER]->transform->position + transform->forward * 2.5f;
-
-			ParticleInstanceSpark::Create(
-				gameObject->regionScene, 
-				katanaPos,
-				-transform->forward,
-				0.0f, 45.0f,
-				1.0f, 5.0f, 
-				2.0f, 9.0f, 
-				0.1f, 0.355f,
-				0.5f, 2.0f,
-				50);
-
-			ParticleDust01::CreateAroundAxis(
-				gameObject->regionScene,
-				katanaPos,
-				V3::up(), 1.0f,
-				0.5f, 1.5f,
-				0.5f, 1.0f,
-				1.0f, 2.0f, 0.5f,
-				Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
-				10);
-
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
 		}
@@ -354,7 +368,7 @@ void Player::XZInput()
 
 	CCT->useGravity = !airAction;
 
-	if (CCT->isGrounded)
+	if (m_groundCheck)
 	{
 		m_animator->MoveStateFProperty->valueAsFloat = translation.magnitude > 0.0f;
 	}
@@ -377,7 +391,7 @@ void Player::JumpInput()
 {
 	if (system->input->GetKeyDown(Key::Space))
 	{
-		if (CCT->isGrounded)
+		if (m_groundCheck)
 		{
 			m_animator->JumpTProperty->SetTriggerState();
 		}
@@ -645,6 +659,14 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				Color::RGBA255(255, 142, 51, 255)
 			);
 
+			EffectGlow::Create(
+				gameObject->regionScene,
+				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
+				0.5f,
+				V2(20.0f, 0.5f), V2(50.0f, 0.1f), 1.0f,
+				Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
+			);
+
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
 
@@ -677,6 +699,14 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				500.0f,
 				0.5f, 2.0f,
 				Color::RGBA255(255, 71, 51, 255)
+			);
+
+			EffectGlow::Create(
+				gameObject->regionScene,
+				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
+				0.5f,
+				V2(20.0f, 0.5f), V2(50.0f, 0.1f), 1.0f,
+				Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
 			);
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
@@ -746,6 +776,16 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				CCT->Jump(out.In.Velocity);
 			}
 
+			ParticleDust01::CreateWithNormal(
+				gameObject->regionScene,
+				transform->position,
+				-out.In.FromDirection, 30.0f, 30.0f, 1.0f,
+				0.5f, 2.0f,
+				0.5f, 2.0f,
+				1.0f, 3.0f, 0.5f,
+				Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+				10);
+
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.035f, 1.1f, 0.1f, 2.0f / 0.1f);
 			return DamageOutType::HIT;
@@ -756,6 +796,34 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			return DamageOutType::IGNORED; 
 		}
 		break;
+	}
+}
+
+void Player::SecondGroundCheck()
+{
+	// 너무 정확한 CCT->isGrounded는 작은 떨림도 공중에 뜲으로 인식합니다.
+	// 약간 부정확한 2차 검사를 통해 작은 떨림을 무시합니다.
+
+	if (!CCT->isGrounded)
+	{
+		const static float adjustHeight = 0.2f;
+
+		PhysicsRay ray;
+		bool hit = system->physics->query->SweepCapsuleTest(
+			CCT->capsuleCollider->transform->position,
+			Q::identity(),
+			CCT->capsuleCollider->radius, CCT->capsuleCollider->halfHeight,
+			V3::down(),
+			adjustHeight,
+			1 << PhysicsLayer_Default,
+			PhysicsQueryType::Collider,
+			CCT->rigidbody
+		);
+		m_groundCheck = hit;
+	}
+	else
+	{
+		m_groundCheck = true;
 	}
 }
 

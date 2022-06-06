@@ -14,6 +14,7 @@ struct PS_IN
 	float2 UV : TEXCOORD;
 };
 
+float4			_Color < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 texture2D		_Texture < string Default = "White"; > ;
 SamplerState	linearSampler
 {
@@ -50,7 +51,7 @@ PS_IN VS_MAIN(VS_IN In)
 
 half4 PS_MAIN(PS_IN In) : SV_TARGET
 {
-	return _Texture.Sample(linearSampler, In.UV);
+	return _Texture.Sample(linearSampler, In.UV) * _Color;
 }
 
 RasterizerState RasterizerState0

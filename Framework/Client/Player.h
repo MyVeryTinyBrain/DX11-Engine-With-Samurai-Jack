@@ -76,6 +76,10 @@ public:
 	virtual bool IsSuperarmor() const override;
 	virtual DamageOutType OnDamage(const DamageOut& out) override;
 
+private:
+
+	void SecondGroundCheck();
+
 public:
 
 	TPSCamera* GetTPSCamera() const { return m_tpsCamera; }
@@ -137,6 +141,10 @@ private:
 	// Damaged
 
 	V3			m_damagedDirection;
+
+	// Second Ground check
+
+	bool	m_groundCheck = true;
 
 	// Static
 

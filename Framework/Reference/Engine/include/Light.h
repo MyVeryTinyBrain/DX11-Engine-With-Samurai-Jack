@@ -92,7 +92,7 @@ private:
 	float					m_shadowWhiteness = 0.2f;
 	float					m_shadowBias = 0.0001f;
 	float					m_shadowFadeDistance = 50.0f;
-	float					m_shadowFadeBeginPercent = 0.8f;
+	float					m_shadowFadeBeginPercent = 0.9f;
 
 	bool					m_volumetricLightState = false;
 	uint					m_volumetricNumSamples = 50;

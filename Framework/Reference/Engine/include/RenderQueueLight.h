@@ -111,7 +111,7 @@ private:
 
 private:
 
-	Map_RenderRequestsByMesh		m_staticRequets;
+	IMap_RenderRequestsByMesh		m_staticRequets;
 	Map_RenderRequestsByMesh		m_skinnedRequests;
 	Map_RenderRequestsByMaterial	m_shadowPassRequests;
 	IMap_RenderRequestsByMaterial	m_shadowPassInstanceRequests;

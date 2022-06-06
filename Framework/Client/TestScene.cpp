@@ -1,30 +1,9 @@
 #include "stdafx.h"
 #include "TestScene.h"
-#include <GraphicSystem.h>
-#include <CompiledShaderDesc.h>
-#include <VIBuffer.h>
-#include <VITypes.h>
-#include <FPSChecker.h>
-#include <TechniqueDesc.h>
-#include <PassDesc.h>
-#include <VI.h>
-#include <ResourceFactory.h>
-#include <Mesh.h>
-#include <RenderQueue.h>
-#include <CBufferManager.h>
-#include <PrimitiveVI.h>
-#include <MeshRenderer.h>
-#include <AssimpData.h>
-#include <BuiltInResources.h>
-#include <Material.h>
-#include <SubResourceRef.h>
-#include <SubResourceObject.h>
-#include <NodeSet.h>
-#include <AnimationSet.h>
-#include <AnimatorSingleNode.h>
-#include <AnimatorBlendNodeElement.h>
-#include <AnimatorBlendNode.h>
+#include "Config.h"
 #include "FreeCamera.h"
+#include "RaycastTest.h"
+#include "Lava.h"
 
 Scene* TestScene::Clone()
 {
@@ -33,212 +12,219 @@ Scene* TestScene::Clone()
 
 void TestScene::OnLoad()
 {
-    // 스레드 내부에서 호출하려는 경우에는 미리 한 번 호출해줘야 합니다.
-    system->resource->factory->CreateUnmanagedTexture2DFromFile(TEXT("../Resource/TEMP/TEMP.png"));
-    thread t0(
-        [&]
-        {
-            system->resource->factory->CreateManagedTexture2DFromFile(TEXT("../Resource/Dev/Dev.png"));
-            system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Character/Jack/Jack.FBX"));
-            system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
-            system->resource->factory->CreateManagedMeshFromFile(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
-        });
-    if (t0.joinable())
-        t0.join();
+	INIT_PHYSICS_LAYER(system->physics->layerManager);
+	
+	TextureOptionDesc loadDesc = {};
+	TextureOptionDesc loadMipDesc = {};
+	loadMipDesc.GenerateMipmap = true;
 
-    {
-        GameObject* goCamera = CreateGameObject(TEXT("MainCamera"), TEXT("Camera"));
-        goCamera->AddComponent<FreeCamera>();
-        goCamera->transform->position = V3(0, 0, -5);
-    }
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
+	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
-    //{
-    //    GameObject* goJack = CreateGameObject(TEXT("TestJack1"));
-    //    goJack->transform->position = V3(3, 0, 0);
-    //    goJack->transform->localEulerAngles = V3(90, 0, 0);
-    //    MeshRenderer* meshRenderer = goJack->AddComponent<MeshRenderer>();
-    //    meshRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
-    //}
+	ResourceRef<Shader> lavaShader = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Lava.cso"));
+	ResourceRef<Texture> noise03 = system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_03);
+	ResourceRef<Texture> noise02 = system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_02);
 
-    //{
-    //    GameObject* goJack = CreateGameObject(TEXT("TestJack2"));
-    //    goJack->transform->position = V3(-3, 0, 0);
-    //    goJack->transform->localEulerAngles = V3(90, 0, 0);
-    //    SkinnedMeshRenderer* skinnedMeshRenderer = goJack->AddComponent<SkinnedMeshRenderer>();
-    //    skinnedMeshRenderer->mesh = system->resourceManagement->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
-    //}
+	{
+		{
+			GameObject* goMesh = CreateGameObject();
+			goMesh->transform->position = V3(0, 1.21f, -3);
+			goMesh->transform->localScale = V3::one() * 30.0f;
 
-    {
-        GameObject* goJack = CreateGameObject(TEXT("Jack"));
-        goJack->transform->position = V3(0, 0, 0);
-        goJack->transform->localEulerAngles = V3(90, 0, 0);
-        SkinnedMeshRenderer* skinnedMeshRenderer = goJack->AddComponent<SkinnedMeshRenderer>();
-        skinnedMeshRenderer->mesh = system->resource->Find(TEXT("../Resource/Character/Jack/Jack.FBX"));
+			goMesh->AddComponent<Lava>();
 
-        const vector<ModelMaterialDesc>& materials = skinnedMeshRenderer->mesh->materialDescs;
-        const vector<uint>& materialIndices = skinnedMeshRenderer->mesh->materialIndices;
-        skinnedMeshRenderer->SetMaterialCount(skinnedMeshRenderer->mesh->subMeshCount);
+			GameObject* goGizmo = CreateGameObject();
+			goGizmo->transform->position = goMesh->transform->position;
+			Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
+			gizmo->show = true;
+			gizmo->SetHandlingTransform(goMesh->transform);
+		}
 
-        for (uint i = 0; i < skinnedMeshRenderer->mesh->subMeshCount; ++i)
-        {
-            tstring texturePath;
-            ResourceRef<Texture2D> texture;
+		{
+			GameObject* goCamera = CreateGameObject(TEXT("Camera"));
+			goCamera->transform->position = V3(0, 2, -10);
+			goCamera->transform->forward = (V3(0, 2, -9) - V3(0, 2, -10)).normalized;
+			FreeCamera* camera = goCamera->AddComponent<FreeCamera>();
+			camera->camera->fov = 45;
+			camera->camera->postProcessingState = false;
+		}
 
-            if (i < materialIndices.size())
-            {
-                texturePath = materials[materialIndices[i]].diffuse;
-                texture = system->resource->Find(texturePath);
-            }
+		{
+			GameObject* goDirectionalLight = CreateGameObject(TEXT("DirectionalLight"));
+			goDirectionalLight->transform->position = V3(9.0f, 8.0f, -0.1f);
+			goDirectionalLight->transform->forward = -V3(9.0f, 8.0f, -0.1f).normalized;
+			DirectionalLight* directionalLight = goDirectionalLight->AddComponent<DirectionalLight>();
+			directionalLight->drawShadow = true;
+			directionalLight->enable = true;
+			directionalLight->diffuse = Color(0.25f, 0.25f, 0.25f, 1.0f);
+		}
 
-            ResourceRef<Material> material = system->resource->factory->CreateUnmanagedMaterialByShader(system->resource->builtIn->standardShader);
-            material->SetTexture("_DiffuseTexture", texture);
+		{
+			GameObject* goPointLight = CreateGameObject(TEXT("PointLight"));
+			goPointLight->transform->position = V3(0, 5, 0);
+			PointLight* pointLight = goPointLight->AddComponent<PointLight>();
+			pointLight->range = 10.0f;
+			pointLight->drawShadow = true;
+			pointLight->enable = true;
+		}
 
-            skinnedMeshRenderer->SetMaterialByIndex(i, material);
-        }
+		{
+			GameObject* goSpotLight = CreateGameObject(TEXT("SpotLight"));
+			goSpotLight->transform->position = V3(0, 2, -10);
+			goSpotLight->transform->forward = V3::forward();
+			SpotLight* spotLight = goSpotLight->AddComponent<SpotLight>();
+			spotLight->range = 30.0f;
+			spotLight->angle = 40.0f;
+			spotLight->intensity = 5.0f;
+			spotLight->drawShadow = true;
+			spotLight->enable = true;
+		}
 
-        GameObject* goGizmo = CreateGameObject();
-        Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
-        gizmo->handlingTransform = goJack->transform;
-        gizmo->show = true;
+		//{
+		//	ResourceRef<Texture> texture[6];
+		//	texture[0] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/top.png"));
+		//	texture[1] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/bottom.png"));
+		//	texture[2] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/left.png"));
+		//	texture[3] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/right.png"));
+		//	texture[4] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/forward.png"));
+		//	texture[5] = system->resourceManagement->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/back.png"));
 
-        Animator* animator = goJack->AddComponent<Animator>();
-        AnimatorLayer* layer = new AnimatorLayer;
+		//	ResourceRef<Shader> priority = system->resourceManagement->factory->CreateShaderFromBinaryFolderM(TEXT("Priority.cso"));
+		//	ResourceRef<Material> material[6];
+		//	for (uint i = 0; i < 6; ++i)
+		//	{
+		//		material[i] = system->resourceManagement->factory->CreateMaterialByShaderUM(priority);
+		//		material[i]->SetTexture("_Texture", texture[i]);
+		//	}
 
-        blendProperty0 = new AnimatorProperty(TEXT("blendProperty0"), AnimatorProperty::Type::FLOAT);
-        triggerProperty0 = new AnimatorProperty(TEXT("triggerProperty0"), AnimatorProperty::Type::TRIGGER);
-        triggerProperty1 = new AnimatorProperty(TEXT("triggerProperty1"), AnimatorProperty::Type::TRIGGER);
-        triggerProperty2 = new AnimatorProperty(TEXT("triggerProperty2"), AnimatorProperty::Type::TRIGGER);
-        triggerProperty3 = new AnimatorProperty(TEXT("triggerProperty3"), AnimatorProperty::Type::TRIGGER);
-        layer->AddProperty(blendProperty0);
-        layer->AddProperty(triggerProperty0);
-        layer->AddProperty(triggerProperty1);
-        layer->AddProperty(triggerProperty2);
-        layer->AddProperty(triggerProperty3);
+		//	GameObject* goSky[6];
+		//	for (uint i = 0; i < 6; ++i)
+		//	{
+		//		goSky[i] = CreateGameObject();
+		//		MeshRenderer* mr = goSky[i]->AddComponent<MeshRenderer>();
+		//		mr->mesh = system->resourceManagement->builtIn->quadMesh;
+		//		mr->material = material[i];
+		//	}
 
-        vector<Ref<AnimatorBlendNodeElement>> elements;
-        AnimatorSingleNode* node0 = AnimatorSingleNode::Create(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_IDL_01_Lp")), true);
-        //AnimatorSingleNode* nodeWalk1 = new AnimatorSingleNode(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_WLK_Lp_Root")), true);
-        AnimatorSingleNode* nodeRun1 = AnimatorSingleNode::Create(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_RUN_Lp_Root")), true);
-        AnimatorBlendNodeElement* element0 = AnimatorBlendNodeElement::Create(node0, 0);
-        //AnimatorBlendNodeElement* element1 = new AnimatorBlendNodeElement(nodeWalk1, 1);
-        AnimatorBlendNodeElement* element2 = AnimatorBlendNodeElement::Create(nodeRun1, 1);
-        elements.push_back(element0);
-        //elements.push_back(element1);
-        elements.push_back(element2);
-        blendNode = AnimatorBlendNode::Create(TEXT("BlendNode"), elements, blendProperty0, true);
-        layer->AddNode(blendNode);
+		//	goSky[0]->transform->position = 0.25f * V3::up();
+		//	goSky[1]->transform->position = 0.25f * V3::down();
+		//	goSky[2]->transform->position = 0.25f * V3::left();
+		//	goSky[3]->transform->position = 0.25f * V3::right();
+		//	goSky[4]->transform->position = 0.25f * V3::forward();
+		//	goSky[5]->transform->position = 0.25f * V3::back();
 
-        AnimatorSingleNode* nodeAttack0 = AnimatorSingleNode::Create(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_ATK_01Y")), false);
-        AnimatorSingleNode* nodeAttack1 = AnimatorSingleNode::Create(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_ATK_01YY")), false);
-        AnimatorSingleNode* nodeWalkSt = AnimatorSingleNode::Create(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_ATK_Kick")), false);
-        AnimatorSingleNode* nodeRunSt = AnimatorSingleNode::Create(skinnedMeshRenderer->mesh->GetAnimationClipByName(TEXT("SK_CHR_Jack_new.ao|Jack_KT_ATK_Jump_Slashing")), false);
-        layer->AddNode(nodeAttack0);
-        layer->AddNode(nodeAttack1);
-        layer->AddNode(nodeWalkSt);
-        layer->AddNode(nodeRunSt);
+		//	goSky[0]->transform->forward = -V3::up();
+		//	goSky[1]->transform->forward = -V3::down();
+		//	goSky[2]->transform->forward = -V3::left();
+		//	goSky[3]->transform->forward = -V3::right();
+		//	goSky[4]->transform->forward = -V3::forward();
+		//	goSky[5]->transform->forward = -V3::back();
+		//}
 
-        vector<AnimatorTransition::PropertyValue> propertyValues0;
-        vector<AnimatorTransition::PropertyValue> propertyValues1;
-        vector<AnimatorTransition::PropertyValue> propertyValues2;
-        vector<AnimatorTransition::PropertyValue> propertyValues3;
-        vector<AnimatorTransition::PropertyValue> propertyValuesEmpty;
+		//{
+		//	ResourceRef<Texture> texture = system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Skybox/skybox.png"));
 
-        propertyValues0.push_back(AnimatorTransition::PropertyValue::Trigger(triggerProperty0));
-        propertyValues1.push_back(AnimatorTransition::PropertyValue::Trigger(triggerProperty1));
-        propertyValues2.push_back(AnimatorTransition::PropertyValue::Trigger(triggerProperty2));
-        propertyValues3.push_back(AnimatorTransition::PropertyValue::Trigger(triggerProperty3));
-        AnimatorTransition* transition0 = AnimatorTransition::Create(nullptr, nodeAttack0, propertyValues0, 0.0f, 0.1f);
-        AnimatorTransition* transition1 = AnimatorTransition::Create(nullptr, nodeAttack1, propertyValues1, 0.0f, 0.1f, 0.1f);
-        AnimatorTransition* transition2 = AnimatorTransition::Create(nullptr, nodeWalkSt, propertyValues2, 0.0f, 0.1f);
-        AnimatorTransition* transition3 = AnimatorTransition::Create(nullptr, nodeRunSt, propertyValues3, 0.0f, 0.1f);
-        AnimatorTransition* transition4 = AnimatorTransition::Create(nodeAttack0, nullptr, propertyValuesEmpty, 0.8f, 0.2f);
-        AnimatorTransition* transition5 = AnimatorTransition::Create(nodeAttack1, nullptr, propertyValuesEmpty, 0.8f, 0.2f);
-        AnimatorTransition* transition6 = AnimatorTransition::Create(nodeWalkSt, nullptr, propertyValuesEmpty, 0.8f, 0.2f);
-        AnimatorTransition* transition7 = AnimatorTransition::Create(nodeRunSt, nullptr, propertyValuesEmpty, 0.8f, 0.2f);
-        layer->AddTransition(transition0);
-        layer->AddTransition(transition1);
-        layer->AddTransition(transition2);
-        layer->AddTransition(transition3);
-        layer->AddTransition(transition4);
-        layer->AddTransition(transition5);
-        layer->AddTransition(transition6);
-        layer->AddTransition(transition7);
+		//	//ResourceRef<Shader> skybox = system->resource->factory->CreateManagedShaderFromFile(TEXT("../Shader/Skybox.fx"));
+		//	ResourceRef<Shader> skybox = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Skybox.cso"));
+		//	ResourceRef<Material> material;
+		//	material = system->resource->factory->CreateMaterialByShaderUM(skybox);
+		//	material->SetTexture("_Texture", texture);
 
-        animator->AddLayer(layer);
+		//	GameObject* goSky;
+		//	goSky = CreateGameObject();
+		//	MeshRenderer* mr = goSky->AddComponent<MeshRenderer>();
+		//	mr->mesh = system->resource->builtIn->skyboxMesh;
+		//	mr->material = material;
+		//}
 
-        layer->SetRootNodeByName(TEXT("CharacterRoot"));
-    }
+		{
+			GameObject* goGround = CreateGameObject();
+			goGround->transform->position = V3(0.0f, 0.5f, 0.0f);
+			goGround->transform->localScale = V3(100, 1, 100);
 
-    {
-        GameObject* goKatana = CreateGameObject(TEXT("Katana"));
-        goKatana->transform->position = V3(0, 0, 0);
-        MeshRenderer* meshRenderer = goKatana->AddComponent<MeshRenderer>();
-        meshRenderer->name = TEXT("KatanaRenderer");
-        meshRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/Katana.FBX"));
+			MeshRenderer* meshRenderer = goGround->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
 
-        GameObject* goGizmo = CreateGameObject();
-        Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
-        gizmo->handlingTransform = goKatana->transform;
-        gizmo->show = true;
-    }
+			ResourceRef<Material> standardMaterial = system->resource->factory->CopyMaterialUM(system->resource->builtIn->standardMaterial);
+			standardMaterial->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
+			standardMaterial->SetTexture("_ReflectionTexture", system->resource->builtIn->whiteTexture);
 
-    {
-        GameObject* goKatanaScabbard = CreateGameObject(TEXT("KatanaSheath"));
-        goKatanaScabbard->transform->position = V3(0, 0, 0);
-        MeshRenderer* meshRenderer = goKatanaScabbard->AddComponent<MeshRenderer>();
-        meshRenderer->mesh = system->resource->Find(TEXT("../Resource/Weapon/Katana/KatanaSheath.FBX"));
+			meshRenderer->material = standardMaterial;
 
-        GameObject* goGizmo = CreateGameObject();
-        Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
-        gizmo->handlingTransform = goKatanaScabbard->transform;
-        gizmo->show = true;
-    }
+			Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			BoxCollider* boxCollider = goGround->AddComponent<BoxCollider>();
+			boxCollider->friction = 1.0f;
+			boxCollider->restitution = 1.0f;
+		}
 
-    {
-        GameObject* goGround = CreateGameObject();
+		{
+			GameObject* goBox = CreateGameObject(TEXT("Box"));
+			goBox->transform->position = V3(-2.0f, 1.5f, 0.0f);
 
-        goGround->transform->position = V3::down() * 0.5f;
-        goGround->transform->localScale = V3(30, 1, 30);
+			MeshRenderer* meshRenderer = goBox->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->boxMesh;
+			meshRenderer->material->SetTexture("_AlbedoTexture", system->resource->Find(TEXT("../Resource/Dev/Dev.png")));
 
-        Rigidbody* rigidbody = goGround->AddComponent<Rigidbody>();
-        rigidbody->kinematic = true;
-        BoxCollider* boxCollider = goGround->AddComponent<BoxCollider>();
-        boxCollider->restitution = 1.0f;
-    }
+			goBox->AddComponent<Rigidbody>();
+			goBox->AddComponent<BoxCollider>();
+		}
 
-    {
-        GameObject* goHandlingTest = CreateGameObject();
-        goHandlingTest->transform->position = V3(3, 3, 0);
+		{
+			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
+			goSphere->transform->position = V3(2.0f, 1.5f, 0.0f);
 
-        MeshRenderer* meshRenderer = goHandlingTest->AddComponent<MeshRenderer>();
-        meshRenderer->mesh = system->resource->builtIn->boxMesh;
-        meshRenderer->material = system->resource->builtIn->greenWireframeMaterial;
+			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
-        GameObject* goGizmo = CreateGameObject();
-        Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
-        gizmo->handlingTransform = goHandlingTest->transform;
-        gizmo->show = true;
-    }
+			goSphere->AddComponent<Rigidbody>();
+			goSphere->AddComponent<SphereCollider>();
+		}
 
-    //{
-    //    ResourceRef<MaterialTestInst> mat = system->resourceManagement->factory->CreateManagedMaterial<MaterialTestInst>(TEXT("MaterialTestInst"));
-    //    mat->diffuseTexture = system->resourceManagement->builtIn->whiteTexture;
+		{
+			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
+			goSphere->transform->position = V3(-4.5f, 1.5f, +4.5f);
 
-    //    for (uint i = 0; i < 10000; ++i)
-    //    {
-    //        GameObject* goCapsule = CreateGameObject();
-    //        float rx = float(rand() % 200 - 100);
-    //        float ry = float(rand() % 200 - 100);
-    //        float rz = float(rand() % 200 - 100);
-    //        goCapsule->transform->position = V3(rx, ry, rz);
+			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
 
-    //        MeshRenderer* meshRenderer = goCapsule->AddComponent<MeshRenderer>();
-    //        meshRenderer->material = mat;
-    //        meshRenderer->mesh = system->resourceManagement->builtIn->sphereMesh;
-    //    }
-    //}
+			goSphere->AddComponent<Rigidbody>();
+			goSphere->AddComponent<SphereCollider>();
+		}
 
-    int breakpoint = 0;
+		{
+			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
+			goSphere->transform->position = V3(+4.5f, 1.5f, +4.5f);
+
+			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
+
+			goSphere->AddComponent<Rigidbody>();
+			goSphere->AddComponent<SphereCollider>();
+		}
+
+		{
+			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
+			goSphere->transform->position = V3(+4.5f, 1.5f, -4.5f);
+
+			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
+
+			goSphere->AddComponent<Rigidbody>();
+			goSphere->AddComponent<SphereCollider>();
+		}
+
+		{
+			GameObject* goSphere = CreateGameObject(TEXT("Sphere"));
+			goSphere->transform->position = V3(-4.5f, 1.5f, -4.5f);
+
+			MeshRenderer* meshRenderer = goSphere->AddComponent<MeshRenderer>();
+			meshRenderer->mesh = system->resource->builtIn->sphereMesh;
+
+			goSphere->AddComponent<Rigidbody>();
+			goSphere->AddComponent<SphereCollider>();
+		}
+	}
 }
 
 void TestScene::OnUnload()
@@ -247,198 +233,416 @@ void TestScene::OnUnload()
 
 void TestScene::OnUpdate()
 {
-    GameObject* goCamera = FindGameObjectWithTag(TEXT("Camera"));
+	{
+		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 
-    if (system->input->GetKeyDown(Key::Space))
-    {
-        uint r = rand() % 3;
+		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphic->GetWidth()), int(system->graphic->GetHeight()));
+		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
 
-        GameObject* go = CreateGameObject();
-        Rigidbody* rigidbody = go->AddComponent<Rigidbody>();
-        go->transform->position = goCamera->transform->position;
-        rigidbody->velocity = system->input->GetRayInWorldSpace().direction * 10.0f;
-        rigidbody->linearDamping = 0.5f;
-        rigidbody->angularDamping = 0.5f;
-        rigidbody->SetInterpolateMode(Rigidbody::Interpolate::Interpolate);
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-		switch (r)
-		{
-			case 0:
-			{
-				BoxCollider* boxCollider = go->AddComponent<BoxCollider>();
-				boxCollider->restitution = 0.1f;
+		#ifdef _DEBUG
+		ImGui::Text("Debug Mode");
+		#else
+		ImGui::Text("Release Mode");
+		#endif
 
-				boxCollider->OnCollisionEnter += func<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
-			}
-			break;
-			case 1:
-			{
-				CapsuleCollider* capsuleCollider = go->AddComponent<CapsuleCollider>();
-				capsuleCollider->restitution = 0.1f;
+		ImGui::End();
+	}
 
-				capsuleCollider->OnCollisionEnter += func<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
-			}
-			break;
-			case 2:
-			{
-				SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
-				sphereCollider->restitution = 0.1f;
+	Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
+	ImGui::Begin("Camera");
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		ImGui::PushID("Camera");
 
-				sphereCollider->OnCollisionEnter += func<void(const Collision&)>(this, &TestScene::OnCollisionEnter);
-			}
-			break;
-		}
-    }
+		float Near = camera->Near;
+		ImGui::SliderFloat("Near", &Near, 0.0f, camera->Far);
+		camera->Near = Near;
 
-    {
-        {
-            static float f = 0.0f;
-            static int counter = 0;
+		float Far = camera->Far;
+		ImGui::SliderFloat("Far", &Far, 0.0f, 1000.0f);
+		camera->Far = Far;
 
-            ImGui::Begin("Test Window", 0, ImGuiWindowFlags_AlwaysAutoResize);        
+		float FOV = camera->fov;
+		ImGui::SliderFloat("FOV", &FOV, 0.0f, 180.0f);
+		camera->fov = FOV;
 
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);       
-            ImGui::ColorEdit4("clear color", (float*)&system->graphic->clearColor, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+		bool postProcessing = camera->postProcessingState;
+		ImGui::Checkbox("Enable", &postProcessing);
+		camera->postProcessingState = postProcessing;
 
-            if (ImGui::Button("Button"))  
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("SSAO"))
+	{
+		ImGui::PushID("SSAO");
 
-            static char InputBuf[256] = {};
-            static char ReturnBuf[256] = {};
-            if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), ImGuiInputTextFlags_EnterReturnsTrue))
-            {
-                string str = string_functions::str_utf8_to_str_ansi(InputBuf);
-                cout << str.c_str() << endl;
-                strcpy_s(ReturnBuf, InputBuf);
-            }
+		SSAODesc ssaoDesc = camera->ssaoDesc;
 
-            ImGui::Text("Return: %s", ReturnBuf);
+		bool enable = ssaoDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		ssaoDesc.Enable = enable;
 
-            ImGui::End();
-        }
+		int numSamples = (int)ssaoDesc.NumSamples;
+		ImGui::SliderInt("NumSamples", &numSamples, 0, 16);
+		ssaoDesc.NumSamples = (uint)numSamples;
 
-        {
-            ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
+		float transparency = ssaoDesc.Transparency;
+		ImGui::SliderFloat("Transparency", &transparency, 0.0f, 1.0f);
+		ssaoDesc.Transparency = transparency;
 
-            tstring resolutionTxt = tstring_format(TEXT("resolution: %f x %f"), system->graphic->GetWidth(), system->graphic->GetHeight());
-            ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
+		float minZ = ssaoDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 0.1f);
+		ssaoDesc.MinZ = minZ;
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		float radius = ssaoDesc.Radius;
+		ImGui::SliderFloat("Radius", &radius, 0.0f, 1.0f);
+		ssaoDesc.Radius = radius;
 
-            ImGui::End();
-        }
+		float power = ssaoDesc.Power;
+		ImGui::SliderFloat("Power", &power, 0.0f, 10.0f);
+		ssaoDesc.Power = power;
 
-   //     {
-   //         ImGui::Begin("Camera", 0, ImGuiWindowFlags_AlwaysAutoResize);
+		int blurNumSamples = (int)ssaoDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		ssaoDesc.BlurNumSamples = (uint)blurNumSamples;
 
-   //         V3 camPos = camera->transform->position;
-   //         V3 camEuler = camera->transform->eulerAngles;
-   //         bool perspective = camera->projection == Camera::Projection::Perspective ? true : false;
-   //         float fov = camera->fov;
-			//float orthoSize = camera->orthographicSize;
+		float blurPixelDistance = ssaoDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 2000.0f);
+		ssaoDesc.BlurPixelDistance = blurPixelDistance;
 
-   //         float camPosArr[3] = { camPos.x,camPos.y,camPos.z };
-   //         float camEulerArr[3] = { camEuler.x,camEuler.y,camEuler.z };
-   //         ImGui::DragFloat3("Position", camPosArr, 0.1f, -1000000, +1000000);
-   //         ImGui::DragFloat3("Euler angles", camEulerArr, 1.0f, -360, +360);
+		camera->ssaoDesc = ssaoDesc;
 
-			//ImGui::Checkbox("Perspective", &perspective);
-			//if (perspective)
-			//	ImGui::SliderFloat("FOV", &fov, 0.1f, 180);
-			//else
-			//	ImGui::SliderFloat("Orthographic Size", &orthoSize, 0.1f, 20);
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("SSR"))
+	{
+		ImGui::PushID("SSR");
 
-   //         camera->transform->position = V3(camPosArr[0], camPosArr[1], camPosArr[2]);
-   //         camera->transform->eulerAngles = V3(camEulerArr[0], camEulerArr[1], camEulerArr[2]);
+		SSRDesc ssrDesc = camera->ssrDesc;
 
-   //         camera->projection = perspective ? Camera::Projection::Perspective : Camera::Projection::Orthographic;
-   //         camera->fov = fov;
-   //         camera->orthographicSize = orthoSize;
+		bool enable = ssrDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		ssrDesc.Enable = enable;
 
-   //         ImGui::End();
-   //     }
+		bool blurEnable = ssrDesc.BlurEnable;
+		ImGui::Checkbox("BlurEnable", &blurEnable);
+		ssrDesc.BlurEnable = blurEnable;
 
-        {
-            ImGui::Begin("BlendNode", 0, ImGuiWindowFlags_AlwaysAutoResize);
+		const char* items[] = { "Default", "InvDepth", "Depth" };
+		int blurType = (int)ssrDesc.BlurType;
+		ImGui::Combo("BlurType", &blurType, items, 3);
+		ssrDesc.BlurType = (BlurType)blurType;
 
-            float position = blendProperty0->valueAsFloat;
-            ImGui::SliderFloat("Blend0", &position, blendNode->minPosition, blendNode->maxPosition);
-            blendProperty0->valueAsFloat = position;
+		int numSamples = (int)ssrDesc.NumSamples;
+		ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
+		ssrDesc.NumSamples = (uint)numSamples;
 
-            bool trigger0 = triggerProperty0->triggerState;
-            ImGui::Checkbox("Trigger0", &trigger0);
-            if (trigger0)
-                triggerProperty0->SetTriggerState();
+		int blurNumSamples = (int)ssrDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		ssrDesc.BlurNumSamples = (uint)blurNumSamples;
 
-            bool trigger1 = triggerProperty1->triggerState;
-            ImGui::Checkbox("Trigger1", &trigger1);
-            if (trigger1)
-                triggerProperty1->SetTriggerState();
+		float step = ssrDesc.Step;
+		ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
+		ssrDesc.Step = step;
 
-            bool trigger2 = triggerProperty2->triggerState;
-            ImGui::Checkbox("Trigger2", &trigger2);
-            if (trigger2)
-                triggerProperty2->SetTriggerState();
+		float thickness = ssrDesc.Thickness;
+		ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
+		ssrDesc.Thickness = thickness;
 
-            bool trigger3 = triggerProperty3->triggerState;
-            ImGui::Checkbox("Trigger3", &trigger3);
-            if (trigger3)
-                triggerProperty3->SetTriggerState();
+		float bias = ssrDesc.Bias;
+		ImGui::SliderFloat("Bias", &bias, 0.0f, 1.0f);
+		ssrDesc.Bias = bias;
 
-            ImGui::End();
-        }
-    }
+		float blurPixelDistance = ssrDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		ssrDesc.BlurPixelDistance = blurPixelDistance;
+
+		float resolutionScale = ssrDesc.ResolutionScale;
+		ImGui::SliderFloat("ResolutionScale", &resolutionScale, 0.0f, 1.0f);
+		ssrDesc.ResolutionScale = resolutionScale;
+
+		camera->ssrDesc = ssrDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("DOF"))
+	{
+		ImGui::PushID("DOF");
+
+		DOFDesc dofDesc = camera->dofDesc;
+
+		bool enable = dofDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		dofDesc.Enable = enable;
+
+		int blurNumSamples = (int)dofDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		dofDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float minZ = dofDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+		dofDesc.MinZ = minZ;
+
+		float rangeZ = dofDesc.RangeZ;
+		ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+		dofDesc.RangeZ = rangeZ;
+
+		float power = dofDesc.Power;
+		ImGui::SliderFloat("Power", &power, 0.0f, 100.0f);
+		dofDesc.Power = power;
+
+		float blurPixelDistance = dofDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		dofDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->dofDesc = dofDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Fog"))
+	{
+		ImGui::PushID("Fog");
+
+		FogDesc fogDesc = camera->fogDesc;
+
+		bool enable = fogDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		fogDesc.Enable = enable;
+
+		const char* items[] = { "Distance", "Z" };
+		int type = (int)fogDesc.Type;
+		ImGui::Combo("Type", &type, items, 2);
+		fogDesc.Type = (FogType)type;
+
+		float minZ = fogDesc.MinZ;
+		ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+		fogDesc.MinZ = minZ;
+
+		float rangeZ = fogDesc.RangeZ;
+		ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+		fogDesc.RangeZ = rangeZ;
+
+		Color color = fogDesc.Color;
+		ImGui::ColorPicker4("Color", (float*)&color);
+		fogDesc.Color = color;
+
+		camera->fogDesc = fogDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Bloom"))
+	{
+		ImGui::PushID("Bloom");
+
+		BloomDesc bloomDesc = camera->bloomDesc;
+
+		bool enable = bloomDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		bloomDesc.Enable = enable;
+
+		int blurNumSamples = (int)bloomDesc.BlurNumSamples;
+		ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+		bloomDesc.BlurNumSamples = (uint)blurNumSamples;
+
+		float intensity = bloomDesc.Intensity;
+		ImGui::SliderFloat("Intensity", &intensity, 0.0f, 100.0f);
+		bloomDesc.Intensity = intensity;
+
+		float threshold = bloomDesc.Threshold;
+		ImGui::SliderFloat("Threshold", &threshold, 0.0f, 1.0f);
+		bloomDesc.Threshold = threshold;
+
+		float blurPixelDistance = bloomDesc.BlurPixelDistance;
+		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 100.0f);
+		bloomDesc.BlurPixelDistance = blurPixelDistance;
+
+		camera->bloomDesc = bloomDesc;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("ChromaticAberration"))
+	{
+		ImGui::PushID("ChromaticAberration");
+
+		ChromaticAberrationDesc chromaticAberrationDesc = camera->chromaticAberrationDesc;
+
+		bool enable = chromaticAberrationDesc.Enable;
+		ImGui::Checkbox("Enable", &enable);
+		chromaticAberrationDesc.Enable = enable;
+
+		ImGui::SliderFloat3("Blend", (float*)&chromaticAberrationDesc.Blend, 0.0f, 1.0f);
+
+		ImGui::SliderFloat3("Offset", (float*)&chromaticAberrationDesc.Offset, 0.0f, 50.0f);
+
+		ImGui::SliderFloat3("Angle", (float*)&chromaticAberrationDesc.Angle, 0.0f, 360.0f);
+
+		camera->chromaticAberrationDesc = chromaticAberrationDesc;
+
+		ImGui::PopID();
+	}
+	ImGui::End();
+
+	ImGui::Begin("Lights");
+	if (ImGui::CollapsingHeader("Directional Light"))
+	{
+		ImGui::PushID("Directional Light");
+
+		GameObject* goDirectionalLight = FindGameObject(TEXT("DirectionalLight"));
+		DirectionalLight* light = goDirectionalLight->GetComponent<DirectionalLight>();
+
+		V3 eulerAngles = goDirectionalLight->transform->eulerAngles;
+		ImGui::SliderFloat3("Euler Angles", (float*)&eulerAngles, -180, +180);
+		goDirectionalLight->transform->eulerAngles = eulerAngles;
+
+		float intensity = light->intensity;
+		ImGui::SliderFloat("Intensity", &intensity, 0, 60);
+		light->intensity = intensity;
+
+		float shadowWhiteness = light->shadowWhiteness;
+		ImGui::SliderFloat("Shadow Whiteness", &shadowWhiteness, 0.0f, 1.0f);
+		light->shadowWhiteness = shadowWhiteness;
+
+		float shadowBias = light->shadowBias;
+		ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.0f, 1.0f);
+		light->shadowBias = shadowBias;
+
+		bool drawShadow = light->drawShadow;
+		ImGui::Checkbox("Draw Shadow", &drawShadow);
+		light->drawShadow = drawShadow;
+
+		Color color = light->diffuse;
+		ImGui::ColorPicker3("Color", (float*)&color);
+		light->diffuse = color;
+
+		Color ambient = light->ambient;
+		ImGui::ColorPicker3("Ambient", (float*)&ambient);
+		light->ambient = ambient;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Spot Light"))
+	{
+		ImGui::PushID("Spot Light");
+
+		GameObject* goSpotLight = FindGameObject(TEXT("SpotLight"));
+		SpotLight* light = goSpotLight->GetComponent<SpotLight>();
+
+		V3 eulerAngles = goSpotLight->transform->eulerAngles;
+		ImGui::SliderFloat3("Euler Angles", (float*)&eulerAngles, -180, +180);
+		goSpotLight->transform->eulerAngles = eulerAngles;
+
+		ImGui::DragFloat3("Positions", (float*)&goSpotLight->transform->position, 0.1f, -25, +25);
+
+		float angle = light->angle;
+		ImGui::SliderFloat("Angle", &angle, 0, 90);
+		light->angle = angle;
+
+		float range = light->range;
+		ImGui::SliderFloat("Range", &range, 0, 60);
+		light->range = range;
+
+		float intensity = light->intensity;
+		ImGui::SliderFloat("Intensity", &intensity, 0, 60);
+		light->intensity = intensity;
+
+		float shadowWhiteness = light->shadowWhiteness;
+		ImGui::SliderFloat("Shadow Whiteness", &shadowWhiteness, 0.0f, 1.0f);
+		light->shadowWhiteness = shadowWhiteness;
+
+		float shadowBias = light->shadowBias;
+		ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.0f, 1.0f);
+		light->shadowBias = shadowBias;
+
+		bool drawShadow = light->drawShadow;
+		ImGui::Checkbox("Draw Shadow", &drawShadow);
+		light->drawShadow = drawShadow;
+
+		bool drawVolumetric = light->volumetricLightState;
+		ImGui::Checkbox("Draw Volumetric", &drawVolumetric);
+		light->volumetricLightState = drawVolumetric;
+
+		int volumetricLightNumSamples = light->volumetricLightNumSamples;
+		ImGui::SliderInt("Volumetric Num Samples", &volumetricLightNumSamples, 0, 200);
+		light->volumetricLightNumSamples = volumetricLightNumSamples;
+
+		float volumetricLightIntensity = light->volumetricLightIntensity;
+		ImGui::SliderFloat("Volumetric Intensity", &volumetricLightIntensity, 0.0f, 5.0f);
+		light->volumetricLightIntensity = volumetricLightIntensity;
+
+		float volumetricLightPower = light->volumetricLightPower;
+		ImGui::SliderFloat("Volumetric Power", &volumetricLightPower, 0.0f, 5.0f);
+		light->volumetricLightPower = volumetricLightPower;
+
+		Color color = light->diffuse;
+		ImGui::ColorPicker3("Color", (float*)&color);
+		light->diffuse = color;
+
+		Color ambient = light->ambient;
+		ImGui::ColorPicker3("Ambient", (float*)&ambient);
+		light->ambient = ambient;
+
+		ImGui::PopID();
+	}
+	if (ImGui::CollapsingHeader("Point Light"))
+	{
+		ImGui::PushID("Point Light");
+
+		GameObject* goPointLight = FindGameObject(TEXT("PointLight"));
+		PointLight* light = goPointLight->GetComponent<PointLight>();
+
+		ImGui::DragFloat3("Positions", (float*)&goPointLight->transform->position, 0.1f, -25, +25);
+
+		float range = light->range;
+		ImGui::SliderFloat("Range", &range, 0, 60);
+		light->range = range;
+
+		float intensity = light->intensity;
+		ImGui::SliderFloat("Intensity", &intensity, 0, 60);
+		light->intensity = intensity;
+
+		float shadowWhiteness = light->shadowWhiteness;
+		ImGui::SliderFloat("Shadow Whiteness", &shadowWhiteness, 0.0f, 1.0f);
+		light->shadowWhiteness = shadowWhiteness;
+
+		float shadowBias = light->shadowBias;
+		ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.0f, 1.0f);
+		light->shadowBias = shadowBias;
+
+		bool drawShadow = light->drawShadow;
+		ImGui::Checkbox("Draw Shadow", &drawShadow);
+		light->drawShadow = drawShadow;
+
+		bool drawVolumetric = light->volumetricLightState;
+		ImGui::Checkbox("Draw Volumetric", &drawVolumetric);
+		light->volumetricLightState = drawVolumetric;
+
+		int volumetricLightNumSamples = light->volumetricLightNumSamples;
+		ImGui::SliderInt("Volumetric Num Samples", &volumetricLightNumSamples, 0, 200);
+		light->volumetricLightNumSamples = volumetricLightNumSamples;
+
+		float volumetricLightIntensity = light->volumetricLightIntensity;
+		ImGui::SliderFloat("Volumetric Intensity", &volumetricLightIntensity, 0.0f, 5.0f);
+		light->volumetricLightIntensity = volumetricLightIntensity;
+
+		float volumetricLightPower = light->volumetricLightPower;
+		ImGui::SliderFloat("Volumetric Power", &volumetricLightPower, 0.0f, 5.0f);
+		light->volumetricLightPower = volumetricLightPower;
+
+		Color color = light->diffuse;
+		ImGui::ColorPicker3("Color", (float*)&color);
+		light->diffuse = color;
+
+		Color ambient = light->ambient;
+		ImGui::ColorPicker3("Ambient", (float*)&ambient);
+		light->ambient = ambient;
+
+		ImGui::PopID();
+	}
+	ImGui::End();
 }
 
 void TestScene::OnLateUpdate()
 {
-    GameObject* goCamera = FindGameObjectWithTag(TEXT("Camera"));
-
-    {
-        GameObject* goJack = FindGameObject(TEXT("Jack"));
-        SkinnedMeshRenderer* skinnedMehsRenderer = goJack->GetComponent<SkinnedMeshRenderer>();
-        Ref<NodeTransform> node = skinnedMehsRenderer->GetNodeTransformByName(TEXT("R_Hand_Weapon_cnt_tr"));
-
-        GameObject* goKatana = FindGameObject(TEXT("Katana"));
-        goKatana->transform->position = node->position;
-        goKatana->transform->rotation = node->rotation;
-    }
-
-    {
-        // Sword_cnt_tr
-        // Scabbard_cnt_tr
-        GameObject* goJack = FindGameObject(TEXT("Jack"));
-        SkinnedMeshRenderer* skinnedMehsRenderer = goJack->GetComponent<SkinnedMeshRenderer>();
-        Ref<NodeTransform> node = skinnedMehsRenderer->GetNodeTransformByName(TEXT("Scabbard_cnt_tr"));
-
-        GameObject* goKatanaScabbard = FindGameObject(TEXT("KatanaSheath"));
-        goKatanaScabbard->transform->position = node->position;
-        goKatanaScabbard->transform->rotation = node->rotation;
-    }
-
-    if (lookCamera)
-    {
-        GameObject* goJack = FindGameObject(TEXT("Jack"));
-        auto coms = goJack->GetComponents<SkinnedMeshRenderer>();
-        for (auto& com : coms)
-        {
-            Ref<NodeTransform> node = com->GetNodeTransformByName(TEXT("Spine"));
-
-            V3 dir = goCamera->transform->position - node->position;
-            dir.Normalize();
-
-            Q q = Q::FromToRotation(node->up, dir);
-            node->SetRotationWithCurrentRotation(Q::RotateTowards(Q::identity(), q, 60));
-        }
-    }
-
-    if (system->input->GetKeyDown(Key::Return))
-        lookCamera = !lookCamera;
-}
-
-void TestScene::OnCollisionEnter(const Collision& collision)
-{
-    cout << "collision" << endl;
 }

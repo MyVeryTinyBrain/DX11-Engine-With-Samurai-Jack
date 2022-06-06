@@ -1,0 +1,21 @@
+#pragma once
+
+#include "ISerializableLight.h"
+
+EDITOR_BEGIN
+
+class SerializablePointLight : public ISerializableLight
+{
+	virtual Light* InitLight() override;
+	virtual string GetType() const override;
+
+	virtual void OnImGui() override;
+	virtual void OnSerialize(Json::Value& json) const override;
+	virtual void OnDeserialize(const Json::Value& json) override;
+
+private:
+
+	PointLight* m_pointLight;
+};
+
+EDITOR_END

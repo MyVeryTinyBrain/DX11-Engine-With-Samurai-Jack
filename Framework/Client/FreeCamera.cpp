@@ -34,20 +34,20 @@ void FreeCamera::Update()
     
     if (system->input->GetKeyDown(Key::Space) || system->input->GetKeyDown(Key::Q))
     {
-        uint r = rand() % 3;
+        uint r = rand() % 4;
 
         GameObject* go = CreateGameObject();
         Rigidbody* rigidbody = go->AddComponent<Rigidbody>();
         go->transform->position = transform->position;
         go->transform->localScale = V3::one() * float(rand() % 100 + 50) * 0.01f;
-        rigidbody->velocity = system->input->GetRayInWorldSpace().direction * 10.0f;
+        rigidbody->velocity = system->input->GetRayInWorldSpace(system->graphic->cameraManager->mainCamera).direction * 10.0f;
         rigidbody->linearDamping = 0.5f;
         rigidbody->angularDamping = 0.5f;
         rigidbody->SetInterpolateMode(Rigidbody::Interpolate::Interpolate);
 
         if (system->input->GetKey(Key::Q))
         {
-            r = 3;
+            r = 4;
         }
 
         switch (r)
@@ -74,6 +74,13 @@ void FreeCamera::Update()
             }
             break;
             case 3:
+            {
+                ConvexCollider* convexCollider = go->AddComponent<ConvexCollider>();
+                convexCollider->restitution = 0.1f;
+                go->AddComponent<MeshRenderer>()->mesh = system->resource->builtIn->cylinderMesh;
+            }
+            break;
+            case 4:
             {
                 SphereCollider* sphereCollider = go->AddComponent<SphereCollider>();
                 sphereCollider->restitution = 0.0f;
@@ -106,6 +113,10 @@ void FreeCamera::UpdateTranslation()
         camPos += transform->forward * system->time->deltaTime * speedFactor;
     if (system->input->GetKey(Key::S))
         camPos -= transform->forward * system->time->deltaTime * speedFactor;
+    if (system->input->GetMouseWheelDelta() > 0.0f)
+        camPos += transform->forward * m_translationSpeed * m_translationFactor;
+    if (system->input->GetMouseWheelDelta() < 0.0f)
+        camPos -= transform->forward * m_translationSpeed * m_translationFactor;
     transform->position = camPos;
 }
 

@@ -23,6 +23,11 @@ public:
 
 	_declspec(property(get = GetMesh, put = SetMesh)) const ResourceRef<Mesh>& mesh;
 
+public:
+
+	// ResourceRef<Mesh> before, ResourceRef<Mesh> after
+	delegate<void(ResourceRef<Mesh>, ResourceRef<Mesh>)> OnMeshChanged;
+
 };
 
 ENGINE_END

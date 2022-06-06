@@ -230,6 +230,17 @@ AnimatorTransition* AnimatorLayer::AddTransition(
 	return transition;
 }
 
+void AnimatorLayer::OffAllTriggers()
+{
+	for (auto& _property : m_properties)
+	{
+		if (_property.second->type == AnimatorProperty::Type::TRIGGER)
+		{
+			_property.second->OffTriggerState();
+		}
+	}
+}
+
 void AnimatorLayer::Play(Ref<AnimatorNode> node, float normalizedTime)
 {
 	m_prevNode = m_currentNode;

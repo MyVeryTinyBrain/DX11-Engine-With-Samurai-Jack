@@ -20,6 +20,10 @@ public:
 
 public:
 
+	virtual GizmoBase::Axis PickTest() const = 0;
+
+public:
+
 	inline bool IsLocalGizmo() const { return m_localGizmo; }
 
 	void SetGizmoSpace(bool localSpace);
@@ -53,7 +57,7 @@ private:
 
 	void NotifyChangedGizmoState();
 
-	virtual void Update() final override;
+	virtual void PostUpdate() final override;
 
 	virtual void OnEnable() final override;
 

@@ -11,6 +11,7 @@
 #include "EffectElectricBeam.h"
 #include "EffectGroundImapct.h"
 #include "ParticleDust01.h"
+#include "EventSystem.h"
 
 #define ATK_NEAR_MAX_DIST 6.0f
 #define ATK_NEAR_MAX_ANGLE 20.0f
@@ -109,9 +110,9 @@ void BossAncientKing::SetupCollider()
 void BossAncientKing::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
-	m_goCharacterRender->transform->localPosition = V3(0, -3.05f, 0);
-	m_goCharacterRender->transform->localEulerAngles = V3(90, 180, 0);
-	m_goCharacterRender->transform->localScale = V3::one() * 1.5f;
+	m_goCharacterRender->transform->localPosition = ADJUST_ANCIENTKING_LOCALPOSITION;
+	m_goCharacterRender->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
+	m_goCharacterRender->transform->localScale = ADJUST_ANCIENTKING_LOCALSCALE;
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(MESH_ANCIENT_KING);
 	m_characterRenderer->SetupStandardMaterials();
@@ -1123,6 +1124,9 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		break;
 		case State::DIE:
 		{
+			EventSystem::Notify(EVENT_ENEMY_DIE, this);
+			Enemy::UnregistEnemy(this);
+			m_animator->Layer->OffAllTriggers();
 			m_animator->DIE_TProperty->SetTriggerState();
 		}
 		break;

@@ -2,11 +2,14 @@
 #include "TPSCamera.h"
 #include "Config.h"
 #include "Enemy.h"
+#include "EventSystem.h"
 
 void TPSCamera::Awake()
 {
 	m_goCamera = CreateGameObjectToChild(transform);
     m_camera = m_goCamera->AddComponent<Camera>();
+
+    EventSystem::RegistListener(this);
 }
 
 void TPSCamera::Start()
@@ -38,6 +41,20 @@ void TPSCamera::Update()
     UpdateDistance();
 }
 
+void TPSCamera::OnDestroyed()
+{
+    EventSystem::UnregistListener(this);
+}
+
+void TPSCamera::OnEvent(const string& msg, void* pContext)
+{
+    if (msg == EVENT_ENEMY_DIE)
+    {
+        if (m_lookTarget)
+            LookNearEnemy();
+    }
+}
+
 void TPSCamera::SetLookTarget(const Ref<Transform>& target)
 {
     m_lookTarget = target;
@@ -49,6 +66,10 @@ void TPSCamera::LookNearEnemy()
     if (nearEnemy)
     {
         SetLookTarget(nearEnemy->transform);
+    }
+    else
+    {
+        Unlook();
     }
 }
 
@@ -80,6 +101,8 @@ Enemy* TPSCamera::FindNearEnemy() const
     for (uint i = 0; i < numEnemies; ++i)
     {
         Enemy* enemy = Enemy::GetEnemyByIndex(i);
+        if (enemy->isDead) continue;
+
         V3 toEnemyVector = enemy->transform->position - m_goCamera->transform->position;
         float angle = V3::Angle(m_goCamera->transform->forward, toEnemyVector);
 

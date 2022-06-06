@@ -7,6 +7,9 @@
 // KeyDown 및 KeyUp 이 동시에 활성화 될 수 있음을 인지해야 합니다.
 
 ENGINE_BEGIN
+
+class ICamera;
+
 class ENGINE_API Input : public IInput
 {
 public:
@@ -37,8 +40,6 @@ public:
 
 	const float& GetMouseWheelDelta();
 
-	void ResetMouseDelta();
-
 	// x: [0 ~ monitor width]
 	// y: [1 ~ monitor height]
 	// z: 0
@@ -57,10 +58,13 @@ public:
 
 	// Return mouse position on surface of near plane
 	// * The main camera is must exist
-	V3 GetMousePositionInViewSpace() const;
+	V3 GetMousePositionInViewSpace(ICamera* camera) const;
 
 	// * The main camera is must exist
-	Ray GetRayInWorldSpace() const;
+	Ray GetRayInWorldSpace(ICamera* camera) const;
+
+	void Used(Key key);
+	void UsedWheelDelta();
 
 private:
 
