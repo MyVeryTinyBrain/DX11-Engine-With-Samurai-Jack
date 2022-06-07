@@ -38,16 +38,16 @@ void EffectGroundImapct::Update()
 
 	m_elapsed += system->time->deltaTime;
 	float percent = Clamp01(m_elapsed / m_duration);
+	float powPercent = pow(percent, m_colorPowFactor);
 
-	float scale = Lerp(m_startScale, m_endScale, pow(percent, m_scalePowFactor));
-	m_parent->transform->localScale = V3::one() * scale;
+	float scale = Lerp(m_startScale, m_endScale, powPercent);
+	m_renderer->transform->localScale = V3::one() * scale;
 
-	float distortion = Lerp(m_distortion, 0.0f, percent);
+	float distortion = Lerp(m_distortion, 0.0f, powPercent);
 	m_renderer->material->SetFloat("_DistortionPower", distortion);
 
 	Color color = m_initColor;
-	color.a = Clamp01(1.0f - percent);
-	color.a = pow(color.a, m_colorPowFactor);
+	color.a = Clamp01(1.0f - powPercent);
 	m_renderer->material->SetColor("_Color", color);
 
 	if (percent >= 1.0f)

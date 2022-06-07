@@ -6,10 +6,9 @@ EDITOR_USE
 
 void SerializableSphereCollider::Awake()
 {
-	ISerializableCollider::Awake();
-
 	m_sphereCollider = gameObject->AddComponent<SphereCollider>();
-	m_sphereCollider->debugRender = true;
+
+	ISerializableCollider::Awake();
 }
 
 Collider* SerializableSphereCollider::GetCollider() const
@@ -69,4 +68,9 @@ void SerializableSphereCollider::OnDeserialize(const Json::Value& json)
 	ISerializableCollider::OnDeserialize(json);
 
 	m_sphereCollider->radius = json["radius"].asFloat();
+}
+
+void SerializableSphereCollider::OnDeserializeInRuntime(const Json::Value& json)
+{
+	OnDeserialize(json);
 }

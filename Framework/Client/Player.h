@@ -10,6 +10,7 @@ class Player : public Character
 private:
 
 	virtual void Awake() override;
+	virtual void Start() override;
 	virtual void Update() override;
 	virtual void FixedUpdate() override;
 	virtual void LateUpdate() override;

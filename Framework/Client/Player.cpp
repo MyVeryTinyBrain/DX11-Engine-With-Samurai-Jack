@@ -29,6 +29,14 @@ void Player::Awake()
 
 	g_player = this;
 }
+
+void Player::Start()
+{
+	Character::Start();
+
+	m_tpsCamera->transform->forward = transform->forward;
+}
+
 #include "BossAncientKing.h"
 #include "EnemyBeetleDrone.h"
 void Player::Update()

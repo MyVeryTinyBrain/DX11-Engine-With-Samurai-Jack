@@ -104,6 +104,26 @@ void IEditorObject::Deserialize(const Json::Value& json)
 	OnDeserialize(json);
 }
 
+void IEditorObject::DeserializeInRuntime(const Json::Value& json)
+{
+	gameObject->name = string_to_tstring(json["name"].asString());
+	gameObject->tag = string_to_tstring(json["tag"].asString());
+
+	V4 localPosition;
+	JsonUtility::ToVector4(json["localPosition"].asString(), localPosition);
+	transform->localPosition = localPosition;
+
+	Q localRotation;
+	JsonUtility::ToQuaternion(json["localRotation"].asString(), localRotation);
+	transform->localRotation = localRotation;
+
+	V4 localScale;
+	JsonUtility::ToVector4(json["localScale"].asString(), localScale);
+	transform->localScale = localScale;
+
+	OnDeserializeInRuntime(json);
+}
+
 Editor* IEditorObject::GetEditor() const
 {
 	Editor* editor = Editor::GetInstance();

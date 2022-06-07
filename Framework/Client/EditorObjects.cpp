@@ -94,7 +94,7 @@ void EditorObjects::Serialize(Json::Value& root) const
 	root["EditorObjects"] = objects;
 }
 
-#include "EditorObjectDeserializeByType.h"
+#include "EditorDeserialize.h"
 void EditorObjects::Deserialize(const Json::Value& root)
 {
 	ClearObjects();
@@ -107,7 +107,7 @@ void EditorObjects::Deserialize(const Json::Value& root)
 	{
 		const Json::Value& value = objects[i];
 
-		IEditorObject* object = EditorObjectDeserializeByType::DeserializeByType(gameObject->regionScene, value);
+		IEditorObject* object = EditorDeserialize::NewEditorObjectByType(gameObject->regionScene, value);
 		if (!object) continue;
 
 		object->Deserialize(value);

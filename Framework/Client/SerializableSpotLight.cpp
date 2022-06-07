@@ -48,3 +48,8 @@ void SerializableSpotLight::OnDeserialize(const Json::Value& json)
 
 	ISerializableLight::OnDeserialize(json);
 }
+
+void SerializableSpotLight::OnDeserializeInRuntime(const Json::Value& json)
+{
+	OnDeserialize(json);
+}

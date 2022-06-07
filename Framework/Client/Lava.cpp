@@ -56,3 +56,7 @@ void Lava::OnSerialize(Json::Value& json) const
 void Lava::OnDeserialize(const Json::Value& json)
 {
 }
+
+void Lava::OnDeserializeInRuntime(const Json::Value& json)
+{
+}

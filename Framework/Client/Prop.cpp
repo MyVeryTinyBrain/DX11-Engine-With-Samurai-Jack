@@ -126,6 +126,11 @@ void Prop::OnDeserialize(const Json::Value& json)
 	SetMakeShadow(makeShadow);
 }
 
+void Prop::OnDeserializeInRuntime(const Json::Value& json)
+{
+	OnDeserialize(json);
+}
+
 void Prop::OnEvent(const string& msg, void* pContext)
 {
 	if (msg == EDITOR_EVENT_MESH_SELECTED)
@@ -149,8 +154,17 @@ void Prop::SetCollider(bool value)
 {
 	if (value)
 	{
-		m_collider = m_meshRenderer->gameObject->AddComponent<ConvexCollider>();
-		m_collider->debugRender = true;
+		if (Editor::IsEditorMode())
+		{
+			m_collider = m_meshRenderer->gameObject->AddComponent<ConvexCollider>();
+			m_collider->debugRender = true;
+		}
+		else
+		{
+			Rigidbody* rigidbody = gameObject->AddComponent<Rigidbody>();
+			rigidbody->kinematic = true;
+			m_collider = m_meshRenderer->gameObject->AddComponent<ConvexCollider>();
+		}
 	}
 	else
 	{

@@ -12,6 +12,7 @@ class SerializablePointLight : public ISerializableLight
 	virtual void OnImGui() override;
 	virtual void OnSerialize(Json::Value& json) const override;
 	virtual void OnDeserialize(const Json::Value& json) override;
+	virtual void OnDeserializeInRuntime(const Json::Value& json) override;
 
 private:
 

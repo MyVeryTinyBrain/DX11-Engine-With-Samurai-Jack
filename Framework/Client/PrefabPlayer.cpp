@@ -2,19 +2,24 @@
 #include "PrefabPlayer.h"
 #include "EditorConfig.h"
 #include "Config.h"
+#include "Player.h"
+#include "Editor.h"
 
 EDITOR_USE
 
 void PrefabPlayer::Awake()
 {
-	IEditorObject::Awake();
+	if (Editor::IsEditorMode())
+	{
+		IEditorObject::Awake();
 
-    GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
-    goMeshRenderer->transform->localPosition = ADJUST_PLAYER_LOCALPOSITION;
-    goMeshRenderer->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
-    m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();
-	m_meshRenderer->mesh = system->resource->Find(MESH_JACK);
-	m_meshRenderer->SetupStandardMaterials();
+		GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
+		goMeshRenderer->transform->localPosition = ADJUST_PLAYER_LOCALPOSITION;
+		goMeshRenderer->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
+		m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();
+		m_meshRenderer->mesh = system->resource->Find(MESH_JACK);
+		m_meshRenderer->SetupStandardMaterials();
+	}
 }
 
 void PrefabPlayer::OnImGui()
@@ -49,4 +54,9 @@ void PrefabPlayer::OnSerialize(Json::Value& json) const
 
 void PrefabPlayer::OnDeserialize(const Json::Value& json)
 {
+}
+
+void PrefabPlayer::OnDeserializeInRuntime(const Json::Value& json)
+{
+	gameObject->AddComponent<Player>();
 }

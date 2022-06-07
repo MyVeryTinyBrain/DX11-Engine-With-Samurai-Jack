@@ -2,19 +2,24 @@
 #include "PrefabBeetleDrone.h"
 #include "EditorConfig.h"
 #include "Config.h"
+#include "EnemyBeetleDrone.h"
+#include "Editor.h"
 
 EDITOR_USE
 
 void PrefabBeetleDrone::Awake()
 {
-	IEditorObject::Awake();
+	if (Editor::IsEditorMode())
+	{
+		IEditorObject::Awake();
 
-    GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
-	goMeshRenderer->transform->localPosition = ADJUST_BEETLEDRONE_LOCALPOSITION;
-	goMeshRenderer->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
-    m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();
-    m_meshRenderer->mesh = system->resource->Find(MESH_BEETLE_DRONE);
-    m_meshRenderer->SetupStandardMaterials();
+		GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
+		goMeshRenderer->transform->localPosition = ADJUST_BEETLEDRONE_LOCALPOSITION;
+		goMeshRenderer->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
+		m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();
+		m_meshRenderer->mesh = system->resource->Find(MESH_BEETLE_DRONE);
+		m_meshRenderer->SetupStandardMaterials();
+	}
 }
 
 void PrefabBeetleDrone::OnImGui()
@@ -49,4 +54,9 @@ void PrefabBeetleDrone::OnSerialize(Json::Value& json) const
 
 void PrefabBeetleDrone::OnDeserialize(const Json::Value& json)
 {
+}
+
+void PrefabBeetleDrone::OnDeserializeInRuntime(const Json::Value& json)
+{
+	gameObject->AddComponent<EnemyBeetleDrone>();
 }

@@ -23,6 +23,7 @@ private:
 	virtual string GetType() const override;
 	virtual void OnSerialize(Json::Value& json) const override;
 	virtual void OnDeserialize(const Json::Value& json) override;
+	virtual void OnDeserializeInRuntime(const Json::Value& json) override;
 	virtual void OnEvent(const string& msg, void* pContext) override;
 
 private:

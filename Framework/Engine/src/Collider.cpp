@@ -310,7 +310,7 @@ void Collider::ApplyPose(bool unconditionally)
 	if (rigidBody)
 	{
 		localPositionFromBody = rigidBody->transform->worldToLocalMatrix.MultiplyPoint(transform->position);
-		localRotationFromBody = rigidBody->transform->rotation.inversed * transform->rotation;
+		localRotationFromBody = transform->rotation * rigidBody->transform->rotation.inversed;
 	}
 	else
 	{

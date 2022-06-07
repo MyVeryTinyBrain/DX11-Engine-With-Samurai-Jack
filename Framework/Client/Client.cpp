@@ -7,6 +7,7 @@
 #include "TestScene.h"
 #include "PlayerTestScene.h"
 #include "EditorScene.h"
+#include "SceneAncientKing.h"
 
 EngineWorld world;
 
@@ -48,7 +49,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     //world.GetSystem()->GetSceneManagement()->ChangeScene(new TestScene);
     //world.GetSystem()->GetSceneManagement()->ChangeScene(new PlayerTestScene);
-    world.GetSystem()->GetSceneManagement()->ChangeScene(new EDITOR::EditorScene);
+    //world.GetSystem()->GetSceneManagement()->ChangeScene(new EDITOR::EditorScene);
+    world.GetSystem()->GetSceneManagement()->ChangeScene(new SceneAncientKing);
 
     MSG msg = {};
     while (msg.message != WM_QUIT)

@@ -155,7 +155,7 @@ void Renderer::SetupStandardNoShadowMaterials()
     SetMaterialCount(numMaterials);
 
     ResourceRef<Shader> standardNoShadowShader = system->resource->builtIn->standardNoShadowShader;
-    assert(standardShader != nullptr);
+    assert(standardNoShadowShader != nullptr);
 
     for (uint i = 0; i < numMaterials; ++i)
     {

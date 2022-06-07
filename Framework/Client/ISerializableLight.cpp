@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ISerializableLight.h"
 #include "EditorConfig.h"
+#include "Editor.h"
 
 EDITOR_USE
 
@@ -8,12 +9,15 @@ void ISerializableLight::Awake()
 {
 	IEditorObject::Awake();
 
-	GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
-	goMeshRenderer->transform->localScale = V3::one() * 0.25f;
-	goMeshRenderer->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
-	m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();
-	m_meshRenderer->mesh = system->resource->builtIn->cylinderMesh;
-	m_meshRenderer->material = system->resource->builtIn->whiteUnlitMaterial;
+	if (Editor::IsEditorMode())
+	{
+		GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
+		goMeshRenderer->transform->localScale = V3::one() * 0.25f;
+		goMeshRenderer->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
+		m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();
+		m_meshRenderer->mesh = system->resource->builtIn->cylinderMesh;
+		m_meshRenderer->material = system->resource->builtIn->whiteUnlitMaterial;
+	}
 
 	m_light = InitLight();
 }
@@ -126,4 +130,9 @@ void ISerializableLight::OnDeserialize(const Json::Value& json)
 	m_light->volumetricLightNumSamples = json["volumetricLightNumSamples"].asUInt();
 	m_light->volumetricLightIntensity = json["volumetricLightIntensity"].asFloat();
 	m_light->volumetricLightPower = json["volumetricLightPower"].asFloat();
+}
+
+void ISerializableLight::OnDeserializeInRuntime(const Json::Value& json)
+{
+	OnDeserialize(json);
 }

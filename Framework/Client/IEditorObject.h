@@ -21,6 +21,7 @@ public:
 	virtual bool Raycast(ICamera* camera, V3& out_hit) const = 0;
 	virtual Json::Value Serialize() const override;
 	virtual void Deserialize(const Json::Value& json) override;
+	virtual void DeserializeInRuntime(const Json::Value& json) override;
 
 public:
 
@@ -30,6 +31,7 @@ protected:
 
 	virtual void OnSerialize(Json::Value& json) const = 0;
 	virtual void OnDeserialize(const Json::Value& json) = 0;
+	virtual void OnDeserializeInRuntime(const Json::Value& json) = 0;
 
 public:
 

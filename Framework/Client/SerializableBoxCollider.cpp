@@ -6,10 +6,9 @@ EDITOR_USE
 
 void SerializableBoxCollider::Awake()
 {
-	ISerializableCollider::Awake();
-
 	m_boxCollider = gameObject->AddComponent<BoxCollider>();
-	m_boxCollider->debugRender = true;
+
+	ISerializableCollider::Awake();
 }
 
 Collider* SerializableBoxCollider::GetCollider() const
@@ -71,4 +70,9 @@ void SerializableBoxCollider::OnDeserialize(const Json::Value& json)
 	V4 extents;
 	JsonUtility::ToVector4(json["extents"].asString(), extents);
 	m_boxCollider->extents = extents;
+}
+
+void SerializableBoxCollider::OnDeserializeInRuntime(const Json::Value& json)
+{
+	OnDeserialize(json);
 }

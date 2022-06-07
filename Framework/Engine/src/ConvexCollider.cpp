@@ -21,11 +21,11 @@ PxGeometryHolder ConvexCollider::CreatePxGeometry(bool& out_invalid) const
 		return PxGeometryHolder();
 	}
 
-	Q worldRotation = transform->rotation;
+	//Q worldRotation = transform->rotation;
 	V3 lossyScale = V3::Abs(transform->lossyScale);
 
 	PxMeshScale scale;
-	scale.rotation = ToPxQuat(worldRotation);
+	scale.rotation = PxIdentity;
 	scale.scale = ToPxVec3(lossyScale);
 
 	return PxConvexMeshGeometry(m_pxConvexMesh, scale);

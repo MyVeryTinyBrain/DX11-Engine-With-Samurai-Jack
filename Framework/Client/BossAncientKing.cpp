@@ -52,8 +52,8 @@ void BossAncientKing::Awake()
 	SetupHammer();
 	SetupAttackTrigger();
 
-	SetState(State::IDLE);
-	m_idleLeftCounter = 2.0f;
+	SetState(State::NONE);
+	m_idleLeftCounter = 0.1f;
 }
 
 void BossAncientKing::Start()
@@ -67,8 +67,14 @@ void BossAncientKing::Update()
 {
 	Boss::Update();
 
-	if (system->input->GetKeyDown(Key::One))
-		SetState(State::ATK_RUSH);
+	if (m_state == State::NONE)
+	{
+		if (XZDistanceBetweenPlayer() < 10.0f)
+		{
+			EventSystem::Notify(EVENT_FIGHT_START, this);
+			SetState(State::IDLE);
+		}
+	}
 
 	StateUpdate();
 	AttackTriggerQuery();
@@ -526,10 +532,10 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 
 		EffectGroundImapct::Create(
 			gameObject->regionScene,
-			position + V3::up() * 0.1f,
-			0.5f,
-			0.1f, 40.0f, 0.8f,
-			1000.0f, Color::red(), 1.25f
+			position + V3::up() * 1.0f,
+			1.0f,
+			0.1f, 80.0f, 0.8f,
+			1000.0f, Color::red(), 0.5f
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::LF_GROUND_IMPACT)
@@ -548,10 +554,10 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 
 		EffectGroundImapct::Create(
 			gameObject->regionScene,
-			position + V3::up() * 0.1f,
-			0.5f,
-			0.1f, 40.0f, 0.8f,
-			1000.0f, Color::red(), 1.25f
+			position + V3::up() * 1.0f,
+			1.0f,
+			0.1f, 80.0f, 0.8f,
+			1000.0f, Color::red(), 0.5f
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::RF_GROUND_IMPACT)
@@ -570,10 +576,10 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 
 		EffectGroundImapct::Create(
 			gameObject->regionScene,
-			position + V3::up() * 0.1f,
-			0.5f,
-			0.1f, 40.0f, 0.8f,
-			1000.0f, Color::red(), 1.25f
+			position + V3::up() * 1.0f,
+			1.0f,
+			0.1f, 80.0f, 0.8f,
+			1000.0f, Color::red(), 0.5f
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::HAMMER_DUST)
@@ -1125,6 +1131,7 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		case State::DIE:
 		{
 			EventSystem::Notify(EVENT_ENEMY_DIE, this);
+			EventSystem::Notify(EVENT_FIGHT_END, this);
 			Enemy::UnregistEnemy(this);
 			m_animator->Layer->OffAllTriggers();
 			m_animator->DIE_TProperty->SetTriggerState();

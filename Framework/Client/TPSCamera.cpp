@@ -265,15 +265,23 @@ void TPSCamera::UpdateDistance()
     float distance = m_distance;
     V3 targetPos = CalcTargetPos();
 
-    PhysicsHit hit;
+    vector<PhysicsHit> hits;
     PhysicsRay ray;
     ray.Direction = -m_goCamera->transform->forward;
     ray.Length = m_distance + 100.0f;
     ray.Point = targetPos;
-    if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+    hits = system->physics->query->RaycastAll(ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider);
+    if (!hits.empty())
     {
-        float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 1.0f);
-        distance = Min(distance, hitDistance);
+        for (auto& hit : hits)
+        {
+            if (hit.Collider->rigidbody->gameObject->tag != TAG_FIGHT_COLLIDER)
+            {
+                float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 1.0f);
+                distance = Min(distance, hitDistance);
+                break;
+            }
+        }
     }
 
     m_goCamera->transform->localPosition = V3(0, 0, -distance);

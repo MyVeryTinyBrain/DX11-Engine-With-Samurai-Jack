@@ -6,10 +6,9 @@ EDITOR_USE
 
 void SerializableCapsuleCollider::Awake()
 {
-	ISerializableCollider::Awake();
-
 	m_capsuleCollider = gameObject->AddComponent<CapsuleCollider>();
-	m_capsuleCollider->debugRender = true;
+
+	ISerializableCollider::Awake();
 }
 
 Collider* SerializableCapsuleCollider::GetCollider() const
@@ -77,4 +76,9 @@ void SerializableCapsuleCollider::OnDeserialize(const Json::Value& json)
 
 	m_capsuleCollider->radius = json["radius"].asFloat();
 	m_capsuleCollider->halfHeight = json["halfHeight"].asFloat();
+}
+
+void SerializableCapsuleCollider::OnDeserializeInRuntime(const Json::Value& json)
+{
+	OnDeserialize(json);
 }

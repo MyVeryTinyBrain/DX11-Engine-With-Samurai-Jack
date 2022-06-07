@@ -37,23 +37,23 @@ void PlayerTestScene::OnLoad()
 	if (t0.joinable())
 		t0.join();
 
-	//{
-	//	GameObject* goMesh = CreateGameObject();
-	//	goMesh->transform->position = V3(0, 10, 0);
-	//	goMesh->transform->eulerAngles = V3(90, 0, 0);
-	//	MeshRenderer* meshRenderer = goMesh->AddComponent<MeshRenderer>();
-	//	meshRenderer->mesh = system->resource->Find(MESH_ENV_CAVE_BOSSFLOOR);
-	//	meshRenderer->SetupStandardMaterials();
+	{
+		GameObject* goMesh = CreateGameObject();
+		goMesh->transform->position = V3(0, 10, 0);
+		goMesh->transform->eulerAngles = V3(90, 0, 0);
+		MeshRenderer* meshRenderer = goMesh->AddComponent<MeshRenderer>();
+		meshRenderer->mesh = system->resource->Find(MESH_ENV_CAVE_ROCK_CYLINDERM02);
+		meshRenderer->SetupStandardMaterials();
 
-	//	goMesh->AddComponent<Rigidbody>()->kinematic = true;
-	//	goMesh->AddComponent<ConvexCollider>();
+		goMesh->AddComponent<Rigidbody>()->kinematic = true;
+		goMesh->AddComponent<ConvexCollider>();
 
-	//	GameObject* goGizmo = CreateGameObject();
-	//	goGizmo->transform->position = goMesh->transform->position;
-	//	Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
-	//	gizmo->show = true;
-	//	gizmo->SetHandlingTransform(goMesh->transform);
-	//}
+		GameObject* goGizmo = CreateGameObject();
+		goGizmo->transform->position = goMesh->transform->position;
+		Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
+		gizmo->show = true;
+		gizmo->SetHandlingTransform(goMesh->transform);
+	}
 
 	{
 		GameObject* go = CreateGameObject();

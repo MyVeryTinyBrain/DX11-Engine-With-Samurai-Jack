@@ -96,6 +96,8 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 // Event
 
 #define EVENT_ENEMY_DIE						"EVENT_ENEMY_DIE"
+#define EVENT_FIGHT_START					"EVENT_FIGHT_START"
+#define EVENT_FIGHT_END						"EVENT_FIGHT_END"
 
 // ADJUST
 
@@ -104,6 +106,10 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define ADJUST_BEETLEDRONE_LOCALPOSITION	V3(0, -1, 0)
 #define ADJUST_ANCIENTKING_LOCALPOSITION	V3(0, -3.05f, 0)
 #define ADJUST_ANCIENTKING_LOCALSCALE		(V3::one() * 1.5f)
+
+// TAG
+
+#define TAG_FIGHT_COLLIDER					TEXT("FightCollider")
 
 inline void LOAD_MESHES(System* system)
 {
