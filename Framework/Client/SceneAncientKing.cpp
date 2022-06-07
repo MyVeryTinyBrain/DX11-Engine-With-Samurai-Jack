@@ -50,6 +50,22 @@ void SceneAncientKing::OnUnload()
 
 void SceneAncientKing::OnUpdate()
 {
+	{
+		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
+
+		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphic->GetWidth()), int(system->graphic->GetHeight()));
+		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+		#ifdef _DEBUG
+		ImGui::Text("Debug Mode");
+		#else
+		ImGui::Text("Release Mode");
+		#endif
+
+		ImGui::End();
+	}
 }
 
 void SceneAncientKing::OnLateUpdate()

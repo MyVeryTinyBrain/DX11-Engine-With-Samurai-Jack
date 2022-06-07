@@ -109,7 +109,7 @@ void BossAncientKing::SetupCollider()
 	GameObject* goCollider = CreateGameObjectToChild(transform);
 	m_collider = goCollider->AddComponent<CapsuleCollider>();
 	m_collider->layerIndex = PhysicsLayer_Enemy;
-	m_collider->radius = CCT->radius;
+	m_collider->radius = CCT->radius + 0.1f;
 	m_collider->halfHeight = 5.0f;
 }
 
