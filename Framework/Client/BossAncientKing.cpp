@@ -72,7 +72,7 @@ void BossAncientKing::Update()
 		if (XZDistanceBetweenPlayer() < 10.0f)
 		{
 			EventSystem::Notify(EVENT_FIGHT_START, this);
-			SetState(State::IDLE);
+			SetState(State::RAGE);
 		}
 	}
 
@@ -348,7 +348,7 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 
 	if (prev.GetPointer() == m_animator->ETC_RAGE)
 	{
-		SetState(State::WAIT);
+		SetState(State::ATK_NEAR_RAND);
 	}
 }
 

@@ -13,7 +13,8 @@ void EffectGroundImapct::Awake()
 	m_renderer = goRenderer->AddComponent<MeshRenderer>();
 	m_renderer->mesh = system->resource->builtIn->quadMesh;
 
-	m_trigger = m_parent->AddComponent<BoxCollider>();
+	GameObject* goTrigger = CreateGameObjectToChild(m_parent->transform);
+	m_trigger = goTrigger->AddComponent<BoxCollider>();
 	m_trigger->isTrigger = true;
 
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_RING);
@@ -42,6 +43,8 @@ void EffectGroundImapct::Update()
 
 	float scale = Lerp(m_startScale, m_endScale, powPercent);
 	m_renderer->transform->localScale = V3::one() * scale;
+
+	m_trigger->transform->localScale = V3::one() * scale * 0.5f;
 
 	float distortion = Lerp(m_distortion, 0.0f, powPercent);
 	m_renderer->material->SetFloat("_DistortionPower", distortion);
@@ -81,7 +84,7 @@ void EffectGroundImapct::AttackTriggerQuery()
 		V3 xzCharacterPosition = character->transform->position;
 		xzPosition.y = xzCharacterPosition.y = 0;
 		float dist = V3::Distance(xzPosition, xzCharacterPosition);
-		if (dist > m_parent->transform->lossyScale.x * 0.5f) continue;
+		if (dist > m_trigger->transform->lossyScale.x * 0.5f) continue;
 
 		auto result = m_hitBuffer.insert(rigidbody);
 		if (!result.second) continue; // 이미 힛 버퍼에 존재합니다.

@@ -7,6 +7,7 @@ class Lava : public EDITOR::IEditorObject
 private:
 
 	virtual void Awake() override;
+	virtual void Update() override;
 
 	virtual void OnImGui() override;
 	virtual bool Raycast(ICamera* camera, V3& out_hit) const override;

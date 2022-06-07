@@ -23,6 +23,15 @@ void Lava::Awake()
 	m_meshRenderer->material = lavaMaterial;
 }
 
+void Lava::Update()
+{
+	V2 uvScale;
+	uvScale.x = transform->lossyScale.x;
+	uvScale.y = transform->lossyScale.z;
+	uvScale *= 0.08f;
+	m_meshRenderer->material->SetVector("_UVScale", uvScale);
+}
+
 void Lava::OnImGui()
 {
 }

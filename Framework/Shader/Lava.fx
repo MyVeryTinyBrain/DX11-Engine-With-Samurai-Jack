@@ -29,17 +29,13 @@ struct PS_OUT
 
 float4			_MinColor < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 float4			_MaxColor < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
+float4			_UVScale < float4 Default = float4(1.0f, 1.0f, 0.0f, 0.0f); > ;
 texture2D		_DistortionTexture < string Default = "White"; > ;
 float			_DistortionScale < float Default = 0.3f; > ;
 float			_DistortionSpeed < float Default = 2.0f; > ;
 texture2D		_BaseNoiseTexture < string Default = "White"; > ;
 float			_Time : TIME;
 //texture2D		_DepthTexture : DEPTH_TEXTURE;
-SamplerState	linearSampler
-{
-	AddressU = wrap;
-	AddressV = wrap;
-};
 SamplerState	mirrorSampler
 {
 	AddressU = mirror;
@@ -83,9 +79,12 @@ PS_OUT PS_MAIN(PS_IN In)
 	//else
 	//	deltaVDepth = (1.0f - deltaVDepth / deltaLength);
 
-	half4 distortion = _DistortionTexture.Sample(linearSampler, In.UV);
+	half4 distortion = _DistortionTexture.Sample(mirrorSampler, In.UV * _UVScale.xy);
 	half adjustUV = distortion.r * _DistortionScale;
-	adjustUV *= _Time * _DistortionSpeed;
+	half adjustScale = (fmod(_Time, 20.0f) / 10.0f);
+	if (adjustScale > 1.0f)
+		adjustScale = 2.0f - adjustScale;
+	adjustUV *= adjustScale * _DistortionSpeed;
 
 	half4 color = _BaseNoiseTexture.Sample(mirrorSampler, In.UV + adjustUV);
 	color *= lerp(_MinColor, _MaxColor, color.r);
