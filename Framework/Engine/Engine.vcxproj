@@ -456,6 +456,7 @@
     <FxCompile Include="..\Shader\PostProcessing.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />
+    <FxCompile Include="..\Shader\StandardNoShadow.fx" />
     <FxCompile Include="..\Shader\Unlit.fx" />
     <FxCompile Include="..\Shader\Wireframe.fx" />
   </ItemGroup>

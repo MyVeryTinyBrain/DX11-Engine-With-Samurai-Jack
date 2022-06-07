@@ -57,9 +57,14 @@ void Prop::OnImGui()
 		if (m_meshRenderer->mesh)
 		{
 			bool useCollider = m_collider != nullptr;
-			if (ImGui::Checkbox("Collider", &useCollider))
+			if (ImGui::Checkbox("collider", &useCollider))
 			{
 				SetCollider(useCollider);
+			}
+			bool makeShadow = m_makeShadow;
+			if (ImGui::Checkbox("makeShadow", &makeShadow))
+			{
+				SetMakeShadow(makeShadow);
 			}
 			string strMeshName = tstring_to_string(m_meshRenderer->mesh->name);
 			ImGui::Text(strMeshName.c_str());
@@ -98,6 +103,7 @@ void Prop::OnSerialize(Json::Value& json) const
 		mesh = m_meshRenderer->mesh->path;
 	json["mesh"] = tstring_to_string(mesh);
 	json["collider"] = m_collider != nullptr;
+	json["makeShadow"] = m_makeShadow;
 }
 
 void Prop::OnDeserialize(const Json::Value& json)
@@ -115,6 +121,9 @@ void Prop::OnDeserialize(const Json::Value& json)
 
 	bool useCollider = json["collider"].asBool();
 	SetCollider(useCollider);
+
+	bool makeShadow = json["makeShadow"].asBool();
+	SetMakeShadow(makeShadow);
 }
 
 void Prop::OnEvent(const string& msg, void* pContext)
@@ -151,4 +160,15 @@ void Prop::SetCollider(bool value)
 			m_collider = nullptr;
 		}
 	}
+}
+
+void Prop::SetMakeShadow(bool value)
+{
+	if (value == m_makeShadow)
+		return;
+
+	m_makeShadow = value;
+
+	if (m_makeShadow) m_meshRenderer->SetupStandardMaterials();
+	else m_meshRenderer->SetupStandardNoShadowMaterials();
 }

@@ -139,6 +139,68 @@ void Renderer::SetupStandardMaterials()
     }
 }
 
+void Renderer::SetupStandardNoShadowMaterials()
+{
+    ClearMaterials();
+
+    if (!m_mesh)
+    {
+        return;
+    }
+
+    vector<ModelMaterialDesc> materialDescs = m_mesh->materialDescs;
+    vector<uint> materialIndices = m_mesh->materialIndices;
+
+    uint numMaterials = m_mesh->subMeshCount;
+    SetMaterialCount(numMaterials);
+
+    ResourceRef<Shader> standardNoShadowShader = system->resource->builtIn->standardNoShadowShader;
+    assert(standardShader != nullptr);
+
+    for (uint i = 0; i < numMaterials; ++i)
+    {
+        ResourceRef<Texture> albedoTexture;
+        ResourceRef<Texture> normalMapTexture;
+        ResourceRef<Texture> emissiveTexture;
+
+        if (i < (uint)materialIndices.size())
+        {
+            const uint& materialIndex = materialIndices[i];
+            const ModelMaterialDesc& materialDesc = materialDescs[materialIndex];
+
+            if (materialDesc.HasDiffuse())
+            {
+                albedoTexture = system->resource->Find(materialDesc.diffuse);
+            }
+            if (materialDesc.HasNormals())
+            {
+                normalMapTexture = system->resource->Find(materialDesc.normals);
+            }
+            if (materialDesc.HasEmission())
+            {
+                emissiveTexture = system->resource->Find(materialDesc.emission);
+            }
+        }
+
+        ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(standardNoShadowShader);
+
+        if (albedoTexture)
+        {
+            material->SetTexture("_AlbedoTexture", albedoTexture);
+        }
+        if (normalMapTexture)
+        {
+            material->SetTexture("_NormalMapTexture", normalMapTexture);
+        }
+        if (emissiveTexture)
+        {
+            material->SetTexture("_EmissiveTexture", emissiveTexture);
+        }
+
+        SetMaterialByIndex(i, material);
+    }
+}
+
 void Renderer::SetupDefaultMaterials()
 {
     ClearMaterials();

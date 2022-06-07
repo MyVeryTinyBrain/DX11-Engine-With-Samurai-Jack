@@ -47,6 +47,7 @@ public:
 	// 메쉬가 설정되어 있지 않다면 재질을 비우게 됩니다.
 
 	void SetupStandardMaterials();
+	void SetupStandardNoShadowMaterials();
 
 	// 메쉬에 기본 재질을 설정합니다.
 

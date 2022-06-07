@@ -28,12 +28,14 @@ private:
 private:
 
 	void SetCollider(bool value);
+	void SetMakeShadow(bool value);
 
 private:
 
 	GameObject* m_goMeshRenderer;
 	MeshRenderer* m_meshRenderer;
 	ConvexCollider* m_collider;
+	bool m_makeShadow = true;
 };
 
 EDITOR_END

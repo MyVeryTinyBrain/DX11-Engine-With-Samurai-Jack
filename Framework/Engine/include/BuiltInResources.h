@@ -84,6 +84,9 @@ public:
 	const ResourceRef<Shader>& GetStandardShader() const;
 	_declspec(property(get = GetStandardShader)) const ResourceRef<Shader>& standardShader;
 
+	const ResourceRef<Shader>& GetStandardNoShadowShader() const;
+	_declspec(property(get = GetStandardNoShadowShader)) const ResourceRef<Shader>& standardNoShadowShader;
+
 	const ResourceRef<Shader>& GetColorShader() const;
 	_declspec(property(get = GetColorShader)) const ResourceRef<Shader>& colorShader;
 
@@ -159,6 +162,7 @@ private: // Built-In resources
 	// Shader =============================================
 
 	ResourceRef<Shader> m_standardShader;
+	ResourceRef<Shader> m_standardNoShadowShader;
 	ResourceRef<Shader> m_colorShader;
 	ResourceRef<Shader> m_wireframeShader;
 	ResourceRef<Shader> m_unlitShader;

@@ -1526,6 +1526,9 @@
     <FxCompile Include="..\Shader\Wireframe.fx">
       <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Shader\StandardNoShadow.fx">
+      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="include\Engine.natvis" />

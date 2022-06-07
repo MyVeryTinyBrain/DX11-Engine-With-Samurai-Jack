@@ -31,7 +31,8 @@ bool GraphicSystem::Initialize(HWND hWnd, unsigned int width, unsigned int heigh
 	flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	IDXGIAdapter* adapter = DxUtility::GetBestAdapter();
+	//IDXGIAdapter* adapter = DxUtility::GetBestAdapter();
+	IDXGIAdapter* adapter = nullptr;
 	D3D_FEATURE_LEVEL feature;
 	if (!adapter)
 	{

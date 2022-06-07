@@ -96,3 +96,8 @@ using namespace Engine;
 #include "EngineFunction.h"
 
 // ============================================================================
+
+// Non optimus
+extern "C" {
+    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
