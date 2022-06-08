@@ -59,6 +59,38 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define MESH_ENV_CAVE_TUNNEL_DIVIDER		TEXT("../Resource/Environment/Cave/Tunnel_Divider.fbx")
 #define MESH_ENV_CAVE_TUNNEL_DOME			TEXT("../Resource/Environment/Cave/Tunnel_Dome.fbx")
 #define MESH_ENV_CAVE_TUNNEL_FLOOR			TEXT("../Resource/Environment/Cave/Tunnel_Floor.fbx")
+#define MESH_ENV_CAVE_CLIFF_L				TEXT("../Resource/Environment/Cave/CaveCliffL.fbx")
+#define MESH_ENV_CAVE_CLIFF_M				TEXT("../Resource/Environment/Cave/CaveCliffM.fbx")
+#define MESH_ENV_CAVE_CLIIF_S				TEXT("../Resource/Environment/Cave/CaveCliffS.fbx")
+#define MESH_ENV_CAVE_FLOOR_L				TEXT("../Resource/Environment/Cave/CaveFloorL.fbx")
+#define MESH_ENV_CAVE_WALLDOORFRAME			TEXT("../Resource/Environment/Cave/CaveWallDoorFrame.fbx")
+#define MESH_ENV_CAVE_WALL_L				TEXT("../Resource/Environment/Cave/CaveWallL.fbx")
+#define MESH_ENV_CAVE_WALL_L_ENTRANCE		TEXT("../Resource/Environment/Cave/CaveWallLEntrance.fbx")
+#define MESH_ENV_CAVE_WALL_M				TEXT("../Resource/Environment/Cave/CaveWallM.fbx")
+#define MESH_ENV_CAVE_WALL_PILLAR			TEXT("../Resource/Environment/Cave/CaveWallPillar.fbx")
+#define MESH_ENV_CAVE_WALL_S				TEXT("../Resource/Environment/Cave/CaveWallS.fbx")
+#define MESH_ENV_CAVE_WALL_S_ENTRANCE		TEXT("../Resource/Environment/Cave/CaveWallSEntrance.fbx")
+#define MESH_ENV_CAVE_TRAPWALL				TEXT("../Resource/Environment/Cave/TrapWall.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG01			TEXT("../Resource/Environment/Cave/FloorDmg01.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG02			TEXT("../Resource/Environment/Cave/FloorDmg02.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG03			TEXT("../Resource/Environment/Cave/FloorDmg03.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG05			TEXT("../Resource/Environment/Cave/FloorDmg05.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG06			TEXT("../Resource/Environment/Cave/FloorDmg06.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG_CORNER01	TEXT("../Resource/Environment/Cave/FloorDmgCorner01.fbx")
+#define MESH_ENV_CAVE_FLOOR_DMG_CORNER02	TEXT("../Resource/Environment/Cave/FloorDmgCorner02.fbx")
+#define MESH_ENV_CAVE_FLOOR_DOME			TEXT("../Resource/Environment/Cave/FloorDome.fbx")
+#define MESH_ENV_CAVE_FLOOR_SLOPE01			TEXT("../Resource/Environment/Cave/FloorSlop01.fbx")
+#define MESH_ENV_CAVE_FLOOR_SLOPE02			TEXT("../Resource/Environment/Cave/FloorSlop02.fbx")
+#define MESH_ENV_CAVE_PILLAR01				TEXT("../Resource/Environment/Cave/Pillar01.fbx")
+#define MESH_ENV_CAVE_PILLAR02				TEXT("../Resource/Environment/Cave/Pillar02.fbx")
+#define MESH_ENV_CAVE_ROCK01				TEXT("../Resource/Environment/Cave/Rock01.fbx")
+#define MESH_ENV_CAVE_ROCK02				TEXT("../Resource/Environment/Cave/Rock02.fbx")
+#define MESH_ENV_CAVE_ROCK03				TEXT("../Resource/Environment/Cave/Rock03.fbx")
+#define MESH_ENV_CAVE_ROCK04				TEXT("../Resource/Environment/Cave/Rock04.fbx")
+#define MESH_ENV_CAVE_ROCK05				TEXT("../Resource/Environment/Cave/Rock05.fbx")
+#define MESH_ENV_CAVE_ROCK06				TEXT("../Resource/Environment/Cave/Rock06.fbx")
+#define MESH_ENV_CAVE_ROCK07				TEXT("../Resource/Environment/Cave/Rock07.fbx")
+#define MESH_ENV_CAVE_ROCK08				TEXT("../Resource/Environment/Cave/Rock08.fbx")
 
 // Textures
 
@@ -137,6 +169,38 @@ inline void LOAD_MESHES(System* system)
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_TUNNEL_DIVIDER);
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_TUNNEL_DOME);
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_TUNNEL_FLOOR);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_CLIFF_L);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_CLIFF_M);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_CLIIF_S);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_L);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALLDOORFRAME);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALL_L);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALL_L_ENTRANCE);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALL_M);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALL_PILLAR);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALL_S);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_WALL_S_ENTRANCE);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_TRAPWALL);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG01);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG02);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG03);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG05);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG06);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG_CORNER01);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DMG_CORNER02);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_DOME);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_SLOPE01);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_FLOOR_SLOPE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_PILLAR01);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_PILLAR02);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK01);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK02);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK03);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK04);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK05);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK06);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK07);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK08);
 }
 
 inline void LOAD_CONFIGFILES(System* system)

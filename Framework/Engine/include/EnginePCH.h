@@ -97,7 +97,9 @@ using namespace Engine;
 
 // ============================================================================
 
-// Non optimus
-extern "C" {
+// Indicates to hybrid graphics systems to prefer the discrete part by default
+extern "C" 
+{
     _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+    _declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }

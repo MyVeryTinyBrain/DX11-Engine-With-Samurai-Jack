@@ -962,6 +962,7 @@ void BossAncientKing::StateUpdate()
 		case State::ATK_STEPON:
 		case State::ATK_JUMP:
 		case State::ATK_DOWNSTRIKE:
+		case State::RAGE:
 		{
 			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), SPIN_ON_ATK_NEAR_ANGLE_PER_SEC, system->time->deltaTime);
 		}

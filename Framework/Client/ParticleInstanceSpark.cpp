@@ -11,8 +11,9 @@ void ParticleInstanceSpark::Awake()
 	
 	m_collider = gameObject->AddComponent<SphereCollider>();
 	m_collider->layerIndex = PhysicsLayer_Particle;
-	m_collider->restitution = 0.9f;
-	m_collider->friction = 0.0f;
+	m_collider->restituionCombineMode = Collider::CombineMode::Max;
+	m_collider->restitution = 0.5f;
+	m_collider->friction = 0.5f;
 	m_collider->radius = 0.1f;
 	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &ParticleInstanceSpark::OnCollisionEnter);
 

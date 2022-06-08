@@ -25,7 +25,7 @@ void Hierarchy::OnImGuiRender()
 	if (!ImGui::CollapsingHeader("Hierarchy"))
 		return;
 
-	if (ImGui::BeginListBox("GameObjects", ImVec2(-FLT_MIN, 5 * ImGui::GetTextLineHeightWithSpacing())))
+	if (ImGui::BeginListBox("GameObjects", ImVec2(-FLT_MIN, 0)))
 	{
 		IEditorObject* selectedObject = inspector->GetSelected().GetPointer();
 		uint numObjects = editorObjects->GetNumObjects();

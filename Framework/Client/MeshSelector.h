@@ -4,6 +4,8 @@ EDITOR_BEGIN
 
 class MeshSelector : public Component
 {
+	enum class Mode { Name, Path };
+
 private:
 
 	virtual void Awake() override;
@@ -26,6 +28,7 @@ private:
 	vector<ResourceRef<Mesh>> m_meshes;
 	ResourceRef<Mesh> m_selected;
 	string m_strSearch;
+	MeshSelector::Mode m_mode = MeshSelector::Mode::Name;
 };
 
 EDITOR_END

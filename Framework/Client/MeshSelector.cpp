@@ -15,6 +15,7 @@ void MeshSelector::Update()
 {
 	ImGui::Begin("Mesh selector", NULL);
 
+	// Search string
 	char cstrSearch[MAX_PATH];
 	strcpy_s(cstrSearch, m_strSearch.c_str());
 	if (ImGui::InputText("search", cstrSearch, MAX_PATH))
@@ -24,10 +25,18 @@ void MeshSelector::Update()
 	string strLowerSearch = m_strSearch;
 	std::transform(strLowerSearch.begin(), strLowerSearch.end(), strLowerSearch.begin(), ::tolower);
 
+	// Switch Path <-> Name
+	const char* modes[2] = { "Name", "Path" };
+	ImGui::Combo("Display mode", (int*)&m_mode, modes, 2);
+
+	// Mesh list
 	ImGui::BeginChild("Meshes", ImVec2(0, 400), true);
 	for (auto& mesh : m_meshes)
 	{
-		string strName = tstring_to_string(mesh->name);
+		string strName;
+		if (m_mode == MeshSelector::Mode::Name) strName = tstring_to_string(mesh->name);
+		else if (m_mode == MeshSelector::Mode::Path) strName = tstring_to_string(mesh->path);
+
 		bool isSelected = m_selected == mesh;
 
 		string strLowerName = strName;
@@ -47,6 +56,7 @@ void MeshSelector::Update()
 	}
 	ImGui::EndChild();
 
+	// Selected button
 	ImGui::BeginChild("Selected", ImVec2(0, 0), false);
 	if (m_selected)
 	{
@@ -100,6 +110,11 @@ void MeshSelector::FindAllMeshes()
 			m_meshes.push_back(mesh);
 		}
 	}
+
+	std::sort(m_meshes.begin(), m_meshes.end(),
+		[](const ResourceRef<Mesh>& lhs, const ResourceRef<Mesh>& rhs) {
+			return lhs->path < rhs->path;
+		});
 }
 
 void MeshSelector::NotifySelected(bool close)
