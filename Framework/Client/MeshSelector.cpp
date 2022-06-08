@@ -15,17 +15,34 @@ void MeshSelector::Update()
 {
 	ImGui::Begin("Mesh selector", NULL);
 
+	char cstrSearch[MAX_PATH];
+	strcpy_s(cstrSearch, m_strSearch.c_str());
+	if (ImGui::InputText("search", cstrSearch, MAX_PATH))
+	{
+		m_strSearch = cstrSearch;
+	}
+	string strLowerSearch = m_strSearch;
+	std::transform(strLowerSearch.begin(), strLowerSearch.end(), strLowerSearch.begin(), ::tolower);
+
 	ImGui::BeginChild("Meshes", ImVec2(0, 400), true);
 	for (auto& mesh : m_meshes)
 	{
 		string strName = tstring_to_string(mesh->name);
 		bool isSelected = m_selected == mesh;
-		ImGui::Selectable(strName.c_str(), &isSelected);
 
-		if (isSelected)
+		string strLowerName = strName;
+		std::transform(strLowerName.begin(), strLowerName.end(), strLowerName.begin(), ::tolower);
+		bool strMatch = true;
+		if (m_strSearch != "")
+			strMatch = strLowerName.find(strLowerSearch) != string::npos;
+
+		if (strMatch && ImGui::Selectable(strName.c_str(), &isSelected))
 		{
-			m_selected = mesh;
-			NotifySelected(false);
+			if (isSelected)
+			{
+				m_selected = mesh;
+				NotifySelected(false);
+			}
 		}
 	}
 	ImGui::EndChild();

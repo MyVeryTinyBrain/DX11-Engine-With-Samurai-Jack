@@ -25,6 +25,7 @@ private:
 
 	vector<ResourceRef<Mesh>> m_meshes;
 	ResourceRef<Mesh> m_selected;
+	string m_strSearch;
 };
 
 EDITOR_END

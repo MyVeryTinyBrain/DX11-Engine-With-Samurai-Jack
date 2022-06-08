@@ -9,6 +9,7 @@ class Hierarchy : public EditorWindow
 private:
 
 	virtual void OnImGuiRender() override;
+
 };
 
 EDITOR_END

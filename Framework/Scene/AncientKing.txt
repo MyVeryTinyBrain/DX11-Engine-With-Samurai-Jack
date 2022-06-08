@@ -32,7 +32,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/bossfloor/bossfloor.fbx",
+         "mesh" : "../resource/environment/cave/bossfloor.fbx",
          "name" : "Prop0",
          "tag" : "",
          "type" : "Prop"
@@ -43,7 +43,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderl02/rockcylinderl02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderl02.fbx",
          "name" : "Prop1",
          "tag" : "",
          "type" : "Prop"
@@ -54,7 +54,7 @@
          "localRotation" : "[\n\t4.4701630486088106e-07,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderm02/rockcylinderm02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderm02.fbx",
          "name" : "Prop2",
          "tag" : "",
          "type" : "Prop"
@@ -65,7 +65,7 @@
          "localRotation" : "[\n\t8.7748887267480313e-08,\n\t0.38216665387153625,\n\t1.3869083659301396e-09,\n\t0.92409342527389526\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderm02/rockcylinderm02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderm02.fbx",
          "name" : "Prop3",
          "tag" : "",
          "type" : "Prop"
@@ -76,7 +76,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t2.0560220193033274e-08,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderm02/rockcylinderm02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderm02.fbx",
          "name" : "Prop4",
          "tag" : "",
          "type" : "Prop"
@@ -183,7 +183,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t3.0,\n\t3.0,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/tunnel_dome/tunnel_dome.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_dome.fbx",
          "name" : "Prop5",
          "tag" : "",
          "type" : "Prop"
@@ -194,7 +194,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t3.0,\n\t3.0,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/tunnel_divider/tunnel_divider.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_divider.fbx",
          "name" : "Prop6",
          "tag" : "",
          "type" : "Prop"
@@ -205,7 +205,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t3.0,\n\t3.0,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/tunnel_divider/tunnel_divider.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_divider.fbx",
          "name" : "Prop7",
          "tag" : "",
          "type" : "Prop"
@@ -216,7 +216,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t3.0,\n\t3.0,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/tunnel_ceiling/tunnel_ceiling.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_ceiling.fbx",
          "name" : "Prop8",
          "tag" : "",
          "type" : "Prop"
@@ -227,7 +227,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t4.0,\n\t4.0,\n\t4.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/shutterdoor_floor/shutterdoor_floor.fbx",
+         "mesh" : "../resource/environment/cave/shutterdoor_floor.fbx",
          "name" : "Prop9",
          "tag" : "",
          "type" : "Prop"
@@ -238,7 +238,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t2.5380935668945312,\n\t1.0,\n\t3.3061838150024414,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/tunnel_floor/tunnel_floor.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_floor.fbx",
          "name" : "Prop10",
          "tag" : "",
          "type" : "Prop"
@@ -249,7 +249,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderm02/rockcylinderm02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderm02.fbx",
          "name" : "Prop11",
          "tag" : "",
          "type" : "Prop"
@@ -260,7 +260,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderl02/rockcylinderl02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderl02.fbx",
          "name" : "Prop12",
          "tag" : "",
          "type" : "Prop"
@@ -271,7 +271,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t4.0,\n\t4.0,\n\t4.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/shutterdoor_floor/shutterdoor_floor.fbx",
+         "mesh" : "../resource/environment/cave/shutterdoor_floor.fbx",
          "name" : "Prop13",
          "tag" : "",
          "type" : "Prop"
@@ -282,7 +282,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t3.0,\n\t3.0,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/tunnel_ceiling/tunnel_ceiling.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_ceiling.fbx",
          "name" : "Prop14",
          "tag" : "",
          "type" : "Prop"
@@ -293,7 +293,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "makeShadow" : true,
-         "mesh" : "../resource/environment/cave/rockcylinderm02/rockcylinderm02.fbx",
+         "mesh" : "../resource/environment/cave/rockcylinderm02.fbx",
          "name" : "Prop15",
          "tag" : "",
          "type" : "Prop"
@@ -304,7 +304,7 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t2.5380001068115234,\n\t1.0,\n\t3.3059999942779541,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/tunnel_floor/tunnel_floor.fbx",
+         "mesh" : "../resource/environment/cave/tunnel_floor.fbx",
          "name" : "Prop16",
          "tag" : "",
          "type" : "Prop"
