@@ -41,14 +41,14 @@ DepthStencilState NoDepthWriteDepthStencilState
 {
 	DepthEnable = true;
 	DepthFunc = less;
-	DepthWriteMask = false;
+	DepthWriteMask = zero;
 };
 
 DepthStencilState NoDepthReadWriteDepthStencilState
 {
 	DepthEnable = false;
 	DepthFunc = less;
-	DepthWriteMask = false;
+	DepthWriteMask = zero;
 };
 
 BlendState MixBlendState

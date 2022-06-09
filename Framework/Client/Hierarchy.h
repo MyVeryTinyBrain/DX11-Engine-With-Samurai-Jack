@@ -6,7 +6,7 @@ EDITOR_BEGIN
 
 class Hierarchy : public EditorWindow
 {
-private:
+public:
 
 	virtual void OnImGuiRender() override;
 

@@ -183,6 +183,12 @@
     <ClInclude Include="SceneAncientKing.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="SceneCave01.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="BeetleSpawner.h">
+      <Filter>Object\Editable\BeetleSpawner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -306,6 +312,9 @@
     </Filter>
     <Filter Include="Object\Editable\Lava">
       <UniqueIdentifier>{9c0bc470-ca94-452d-9cf0-46ef511a289b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Editable\BeetleSpawner">
+      <UniqueIdentifier>{9ea634f5-e4c8-47e5-9c05-00aaf3b4ebd7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -482,6 +491,12 @@
     </ClCompile>
     <ClCompile Include="SceneAncientKing.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneCave01.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BeetleSpawner.cpp">
+      <Filter>Object\Editable\BeetleSpawner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

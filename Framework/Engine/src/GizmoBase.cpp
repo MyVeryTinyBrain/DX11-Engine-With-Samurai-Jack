@@ -43,10 +43,14 @@ void GizmoBase::PostUpdate()
 	}
 
 	GizmoUpdate();
+
+	m_onEnabled = false;
 }
 
 void GizmoBase::OnEnable()
 {
+	m_onEnabled = true;
+
 	NotifyChangedGizmoState();
 
 	GizmoOnEnable();

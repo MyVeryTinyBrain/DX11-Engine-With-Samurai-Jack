@@ -20,6 +20,13 @@ public:
 		Multiply = PxCombineMode::eMULTIPLY,
 	};
 
+	enum class DebugRenderMode
+	{
+		None,
+		Wireframe,
+		Fill,
+	};
+
 protected:
 
 	virtual void Awake() override;
@@ -29,7 +36,7 @@ protected:
 	virtual void OnDisable() override;
 	virtual void OnDestroyed() override;
 
-	virtual void Render() final override { if (m_debugRender)DebugRender(); }
+	virtual void Render() final override { if (m_debugRenderMode != Collider::DebugRenderMode::None) DebugRender(); }
 	virtual void DebugRender() = 0;
 
 protected:
@@ -72,13 +79,13 @@ public:
 
 	inline bool IsValid() const { return m_valid; }
 
-	inline bool IsDebugRenderMode() const { return m_debugRender; }
-	void SetDebugRenderMode(bool value);
+	inline Collider::DebugRenderMode GetDebugRenderMode() const { return m_debugRenderMode; }
+	void SetDebugRenderMode(Collider::DebugRenderMode value);
 
 	_declspec(property(get = GetIgnoreLayerBits, put = SetIngoreLayerBits)) uint32 ignoreLayerBits;
 	_declspec(property(get = GetLayerIndex, put = SetLayerIndex)) uint8 layerIndex;
 	_declspec(property(get = IsValid)) bool isValid;
-	_declspec(property(get = IsDebugRenderMode, put = SetDebugRenderMode)) bool debugRender;
+	_declspec(property(get = GetDebugRenderMode, put = SetDebugRenderMode)) Collider::DebugRenderMode debugRenderMode;
 
 public:
 
@@ -103,7 +110,6 @@ public:
 protected:
 
 	virtual PxGeometryHolder CreatePxGeometry(bool& out_invalid) const = 0;
-	virtual void OnDebugRenderModeChanged(bool value) {}
 	virtual void ResetShape();
 
 private:
@@ -137,7 +143,7 @@ private:
 
 	bool			m_valid = false;
 
-	bool			m_debugRender = false;
+	DebugRenderMode	m_debugRenderMode = DebugRenderMode::None;
 
 	bool			m_isCCTComponent = false;
 

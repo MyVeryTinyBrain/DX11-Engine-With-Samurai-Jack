@@ -36,16 +36,6 @@ PxGeometryHolder CapsuleCollider::CreatePxGeometry(bool& out_invalid) const
 	return capsule;
 }
 
-void CapsuleCollider::ResetShape()
-{
-	Collider::ResetShape();
-
-	if (debugRender)
-	{
-		ResetDebugShape();
-	}
-}
-
 void CapsuleCollider::Awake()
 {
 	// PhysX의 캡슐은 기본적으로 누워 있습니다.
@@ -55,10 +45,7 @@ void CapsuleCollider::Awake()
 
 	Collider::Awake();
 
-	if (debugRender)
-	{
-		CreateDebugShape();
-	}
+	CreateDebugShape();
 }
 
 void CapsuleCollider::Awake(void* arg)
@@ -67,10 +54,14 @@ void CapsuleCollider::Awake(void* arg)
 
 	Collider::Awake(arg);
 
-	if (debugRender)
-	{
-		CreateDebugShape();
-	}
+	CreateDebugShape();
+}
+
+void CapsuleCollider::Start()
+{
+	Collider::Start();
+
+	ResetDebugShape();
 }
 
 void CapsuleCollider::DebugRender()
@@ -84,8 +75,21 @@ void CapsuleCollider::DebugRender()
 		return;
 
 	ResourceRef<Material> material;
-	if (!isTrigger) material = system->resource->builtIn->greenWireframeMaterial;
-	else  material = system->resource->builtIn->blueWireframeMaterial;
+	switch (debugRenderMode)
+	{
+		case Collider::DebugRenderMode::Wireframe:
+		{
+			if (!isTrigger) material = system->resource->builtIn->greenWireframeMaterial;
+			else  material = system->resource->builtIn->blueWireframeMaterial;
+		}
+		break;
+		case Collider::DebugRenderMode::Fill:
+		{
+			if (!isTrigger) material = system->resource->builtIn->greenTransparentColorMaterial;
+			else  material = system->resource->builtIn->blueTransparentColorMaterial;
+		}
+		break;
+	}
 
 	if (!material || !material->isValid)
 		return;
@@ -128,17 +132,6 @@ bool CapsuleCollider::CullTest(ICamera* camera) const
 	return camera->Intersects(GetBounds());
 }
 
-void CapsuleCollider::OnDebugRenderModeChanged(bool value)
-{
-	if (value == true)
-	{
-		if (!m_dbgMesh)
-			CreateDebugShape();
-
-		ResetDebugShape();
-	}
-}
-
 Bounds CapsuleCollider::GetBounds() const
 {
 	PxCapsuleGeometry capsule = GetPxGeometry().capsule();
@@ -159,6 +152,7 @@ void CapsuleCollider::SetRadius(float value)
 
 	m_radius = value;
 
+	ResetDebugShape();
 	ResetShape();
 }
 
@@ -171,6 +165,7 @@ void CapsuleCollider::SetHalfHeight(float value)
 
 	m_halfHeight = value;
 
+	ResetDebugShape();
 	ResetShape();
 }
 

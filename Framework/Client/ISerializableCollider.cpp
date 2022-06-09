@@ -11,7 +11,7 @@ void ISerializableCollider::Awake()
 	if (Editor::IsEditorMode())
 	{
 		Collider* collider = GetCollider();
-		collider->debugRender = true;
+		collider->debugRenderMode = Collider::DebugRenderMode::Fill;
 	}
 	else
 	{

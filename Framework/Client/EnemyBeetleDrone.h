@@ -70,6 +70,10 @@ public:
 	virtual bool IsSuperarmor() const override;
 	virtual DamageOutType OnDamage(const DamageOut& out) override;
 
+public:
+
+	void Appear();
+
 private:
 
 	// Character Renderers
@@ -100,7 +104,7 @@ private:
 	// Stat
 
 	bool m_appeared = false;
-	float m_hp = 20.0f;
+	float m_hp = 12.0f;
 	float m_idleLeftCount = 0.0f;
 	float m_moveAroundAngle = 0.0f;
 	float m_moveLeftCount = 0.0f;

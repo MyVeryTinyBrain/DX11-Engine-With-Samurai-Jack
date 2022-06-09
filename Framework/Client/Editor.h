@@ -58,8 +58,6 @@ private:
 	EditorEventSystem* m_editorEventSystem;
 	Hierarchy* m_hierarchy;
 
-	vector<EditorWindow*> m_editorWindows;
-
 	tstring m_path;
 
 private:

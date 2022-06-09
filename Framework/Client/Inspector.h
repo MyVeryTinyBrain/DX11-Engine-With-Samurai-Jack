@@ -8,7 +8,7 @@ class IEditorObject;
 
 class Inspector : public EditorWindow
 {
-private:
+public:
 
 	virtual void OnImGuiRender() override;
 

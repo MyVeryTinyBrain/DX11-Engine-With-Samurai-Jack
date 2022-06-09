@@ -63,6 +63,10 @@ private:
 
 	virtual void OnDisable() final override;
 
+protected:
+
+	bool IsOnEnabled() const { return m_onEnabled; }
+
 private:
 
 	bool				m_localGizmo = false;
@@ -70,6 +74,9 @@ private:
 	// 조작하게 되는 트랜스폼입니다.
 	// 이 기즈모가 활성화되었을때 업데이트 함수에서 검사하여 이 변수가 비어있다면 이 기즈모를 비활성화합니다.
 	Ref<Transform>		m_handlingTransform;
+
+	// 기즈모가 나타나자마자 선택되는 현상을 방지하기 위함입니다.
+	bool				m_onEnabled = false;
 };
 
 ENGINE_END

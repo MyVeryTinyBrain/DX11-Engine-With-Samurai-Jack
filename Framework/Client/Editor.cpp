@@ -73,15 +73,12 @@ void Editor::Update()
 			}
 			ImGui::EndMenuBar();
 		}
-		for (auto& editorWindow : m_editorWindows)
-		{
-			editorWindow->OnImGuiRender();
-			ImGui::Separator();
-			ImGui::Spacing();
-			ImGui::Separator();
-		}
+		m_spawner->OnImGuiRender();
 	}
 	ImGui::End();
+
+	m_inspector->OnImGuiRender();
+	m_hierarchy->OnImGuiRender();
 }
 
 void Editor::Init()
@@ -137,10 +134,6 @@ void Editor::Init()
 		m_meshSelector = gameObject->AddComponent<MeshSelector>();
 		m_editorEventSystem = gameObject->AddComponent<EditorEventSystem>();
 		m_hierarchy = gameObject->AddComponent<Hierarchy>();
-
-		m_editorWindows.push_back(m_hierarchy);
-		m_editorWindows.push_back(m_inspector);
-		m_editorWindows.push_back(m_spawner);
 	}
 
 	{
@@ -186,7 +179,7 @@ bool Editor::OpenFileDialog(tstring& out_path)
 
 	memset(&OFN, 0, sizeof(OPENFILENAME));
 	OFN.lStructSize = sizeof(OPENFILENAME);
-	OFN.hwndOwner = system->graphic->windowHandle;
+	OFN.hwndOwner = 0;
 	OFN.lpstrFilter = filter;
 	OFN.lpstrFile = lpstrFile;
 	OFN.nMaxFile = MAX_PATH;
@@ -213,7 +206,7 @@ bool Editor::SaveFileDialog(tstring& out_path)
 
 	memset(&OFN, 0, sizeof(OPENFILENAME));
 	OFN.lStructSize = sizeof(OPENFILENAME);
-	OFN.hwndOwner = system->graphic->windowHandle;
+	OFN.hwndOwner = 0;
 	OFN.lpstrFilter = filter;
 	OFN.lpstrFile = lpstrFile;
 	OFN.nMaxFile = MAX_PATH;

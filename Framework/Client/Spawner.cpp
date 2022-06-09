@@ -21,6 +21,7 @@
 #include "PrefabAncientKing.h"
 
 #include "Lava.h"
+#include "BeetleSpawner.h"
 
 EDITOR_USE
 
@@ -157,6 +158,14 @@ void Spawner::OnImGuiRender()
 			GameObject* go = CreateGameObject();
 			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
 			o = go->AddComponent<Lava>();
+
+			inspector->Select(o);
+		}
+		if (ImGui::Selectable("BeetleSpawner"))
+		{
+			GameObject* go = CreateGameObject();
+			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
+			o = go->AddComponent<BeetleSpawner>();
 
 			inspector->Select(o);
 		}

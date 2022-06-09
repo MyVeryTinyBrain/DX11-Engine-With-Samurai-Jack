@@ -47,8 +47,21 @@ void BoxCollider::DebugRender()
 		return;
 
 	ResourceRef<Material> material;
-	if (!isTrigger) material = system->resource->builtIn->greenWireframeMaterial;
-	else  material = system->resource->builtIn->blueWireframeMaterial;
+	switch (debugRenderMode)
+	{
+		case Collider::DebugRenderMode::Wireframe:
+		{
+			if (!isTrigger) material = system->resource->builtIn->greenWireframeMaterial;
+			else  material = system->resource->builtIn->blueWireframeMaterial;
+		}
+		break;
+		case Collider::DebugRenderMode::Fill:
+		{
+			if (!isTrigger) material = system->resource->builtIn->greenTransparentColorMaterial;
+			else  material = system->resource->builtIn->blueTransparentColorMaterial;
+		}
+		break;
+	}
 
 	if (!material || !material->isValid)
 		return;

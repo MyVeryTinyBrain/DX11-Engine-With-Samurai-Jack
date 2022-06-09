@@ -167,7 +167,7 @@ void GizmoRotation::GizmoUpdate()
 	}
 
 	// Select Axis
-	if (system->input->GetKeyDown(Key::LeftMouse) && m_highlightedAxis != GizmoBase::Axis::None)
+	if (!IsOnEnabled() && system->input->GetKeyDown(Key::LeftMouse) && m_highlightedAxis != GizmoBase::Axis::None)
 	{
 		m_hitAxis = m_highlightedAxis;
 

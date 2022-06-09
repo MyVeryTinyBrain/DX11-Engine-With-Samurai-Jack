@@ -279,7 +279,6 @@ void TPSCamera::UpdateDistance()
             {
                 float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 1.0f);
                 distance = Min(distance, hitDistance);
-                break;
             }
         }
     }

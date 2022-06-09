@@ -121,11 +121,11 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 
 	if (nullptr == (m_greenTransparentColorMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
-	m_greenTransparentColorMaterial->SetColor("_Color", Color(0.0f, 1.0f, 0.0f, 0.5f));
+	m_greenTransparentColorMaterial->SetColor("_Color", Color(0.0f, 1.0f, 0.0f, 0.1f));
 
 	if (nullptr == (m_blueTransparentColorMaterial = m_factory->CreateMaterialByShaderUM(m_colorShader)))
 		return E_FAIL;
-	m_blueTransparentColorMaterial->SetColor("_Color", Color(0.0f, 0.0f, 1.0f, 0.5f));
+	m_blueTransparentColorMaterial->SetColor("_Color", Color(0.0f, 0.0f, 1.0f, 0.1f));
 	
 	if (nullptr == (m_greenWireframeMaterial = m_factory->CreateMaterialByShaderUM(m_wireframeShader)))
 		return E_FAIL;

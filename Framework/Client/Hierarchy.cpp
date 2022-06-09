@@ -22,10 +22,10 @@ void Hierarchy::OnImGuiRender()
 	FreeCamera* freeCamera = editor->GetFreeCamera();
 	if (!freeCamera) return;
 
-	if (!ImGui::CollapsingHeader("Hierarchy"))
+	if (!ImGui::Begin("Hierarchy"))
 		return;
 
-	if (ImGui::BeginListBox("GameObjects", ImVec2(-FLT_MIN, 0)))
+	if (ImGui::BeginListBox("GameObjects", ImVec2(-FLT_MIN, -FLT_MIN)))
 	{
 		IEditorObject* selectedObject = inspector->GetSelected().GetPointer();
 		uint numObjects = editorObjects->GetNumObjects();
@@ -54,4 +54,6 @@ void Hierarchy::OnImGuiRender()
 		}
 		ImGui::EndListBox();
 	}
+
+	ImGui::End();
 }

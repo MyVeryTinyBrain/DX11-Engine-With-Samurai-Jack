@@ -396,14 +396,14 @@ void EnemyBeetleDrone::StateChanged(EnemyBeetleDrone::State before, EnemyBeetleD
 		break;
 		case State::TRACE:
 		{
-			m_moveLeftCount = 3.0f;
+			m_moveLeftCount = 5.0f;
 			m_animator->MoveBProperty->valueAsBool = true;
 		}
 		break;
 		case State::MOVEAROUND:
 		{
 			m_moveAroundAngle = float(rand() % 361);
-			m_moveLeftCount = 2.0f;
+			m_moveLeftCount = 1.0f;
 			m_animator->MoveBProperty->valueAsBool = true;
 		}
 		break;
@@ -564,4 +564,10 @@ DamageOutType EnemyBeetleDrone::OnDamage(const DamageOut& out)
 		}
 		break;
 	}
+}
+
+void EnemyBeetleDrone::Appear()
+{
+	SetState(State::APPEAR);
+	m_appeared = true;
 }

@@ -11,16 +11,13 @@ class ENGINE_API CapsuleCollider final : public Collider, public IRendererCullOp
 {
 	virtual PxGeometryHolder CreatePxGeometry(bool& out_invalid) const override;
 
-	virtual void ResetShape() override;
-
 	virtual void Awake() override;
 	virtual void Awake(void* arg /* PxShape */) override;
+	virtual void Start() override;
 
 	virtual void DebugRender() override;
 
 	virtual bool CullTest(ICamera* camera) const override;
-
-	virtual void OnDebugRenderModeChanged(bool value) override;
 
 public:
 

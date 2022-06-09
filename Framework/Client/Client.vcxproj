@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BeetleSpawner.h" />
     <ClInclude Include="BillboardAnimation.h" />
     <ClInclude Include="BillboardSpritesheet.h" />
     <ClInclude Include="BossAncientKingAnimator.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="PlayerTestScene.h" />
     <ClInclude Include="Prop.h" />
     <ClInclude Include="SceneAncientKing.h" />
+    <ClInclude Include="SceneCave01.h" />
     <ClInclude Include="SerializableBoxCollider.h" />
     <ClInclude Include="SerializableCapsuleCollider.h" />
     <ClInclude Include="SerializableSphereCollider.h" />
@@ -227,6 +229,7 @@
     <ClInclude Include="TPSCamera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BeetleSpawner.cpp" />
     <ClCompile Include="BillboardAnimation.cpp" />
     <ClCompile Include="BillboardSpritesheet.cpp" />
     <ClCompile Include="BossAncientKingAnimator.cpp" />
@@ -273,6 +276,7 @@
     <ClCompile Include="ParticleElectricBeam.cpp" />
     <ClCompile Include="Prop.cpp" />
     <ClCompile Include="SceneAncientKing.cpp" />
+    <ClCompile Include="SceneCave01.cpp" />
     <ClCompile Include="SerializableBoxCollider.cpp" />
     <ClCompile Include="SerializableCapsuleCollider.cpp" />
     <ClCompile Include="SerializableSphereCollider.cpp" />

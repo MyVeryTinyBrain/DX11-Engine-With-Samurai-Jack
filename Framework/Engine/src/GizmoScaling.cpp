@@ -326,7 +326,7 @@ void GizmoScaling::GizmoUpdate()
 	}
 
 	// Select Axis
-	if (system->input->GetKeyDown(Key::LeftMouse))
+	if (!IsOnEnabled() && system->input->GetKeyDown(Key::LeftMouse))
 	{
 		m_hitAxis = PickTest();
 

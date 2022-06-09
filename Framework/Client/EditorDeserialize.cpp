@@ -18,6 +18,7 @@
 #include "PrefabAncientKing.h"
 
 #include "Lava.h"
+#include "BeetleSpawner.h"
 
 EDITOR_USE
 
@@ -51,6 +52,8 @@ IEditorObject* EditorDeserialize::NewEditorObjectByType(Scene* scene, const Json
 
     if (json["type"] == EDITOR_OBJECT_TYPE_EDITABLE_LAVA)
         return go->AddComponent<Lava>();
+    if (json["type"] == EDITOR_OBJECT_TYPE_BEETLE_SPAWNER)
+        return go->AddComponent<BeetleSpawner>();
 
     return nullptr;
 }

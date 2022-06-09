@@ -7,7 +7,7 @@ EDITOR_USE
 
 void Inspector::OnImGuiRender()
 {
-	if (!ImGui::CollapsingHeader("Inspector"))
+	if (!ImGui::Begin("Inspector"))
 		return;
 	
 	if (m_object && system->input->GetKeyDown(Key::Delete))
@@ -31,6 +31,8 @@ void Inspector::OnImGuiRender()
 	{
 		m_object->ImGuiRender();
 	}
+
+	ImGui::End();
 }
 
 void Inspector::Select(Ref<IEditorObject> object)

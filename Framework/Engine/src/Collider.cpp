@@ -169,14 +169,9 @@ void Collider::SetLayerIndex(uint8 layerIndex)
 	ApplyLayer();
 }
 
-void Collider::SetDebugRenderMode(bool value)
+void Collider::SetDebugRenderMode(Collider::DebugRenderMode value)
 {
-	if (m_debugRender == value)
-		return;
-
-	OnDebugRenderModeChanged(value);
-
-	m_debugRender = value;
+	m_debugRenderMode = value;
 }
 
 Rigidbody* Collider::GetRigidbody() const
@@ -291,8 +286,17 @@ void Collider::ApplyFlags()
 	// eTRIGGER_SHAPE 플래그를 활성화 하기 전에는 반드시 eSIMULATION_SHAPE 플래그가 비활성화 상태여야 합니다.
 	// 때문에 아래와 같은 순서로 플래그를 설정합니다.
 
-	m_shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, simulationFlag);
-	m_shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, triggerFlag);
+	if (triggerFlag)
+	{
+		m_shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, simulationFlag);
+		m_shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, triggerFlag);
+	}
+	else
+	{
+		m_shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, triggerFlag);
+		m_shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, simulationFlag);
+	}
+
 	m_shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, queryFlag);
 	m_shape->setFlag(PxShapeFlag::eVISUALIZATION, visualizationFlag);
 }

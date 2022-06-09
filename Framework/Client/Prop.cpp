@@ -38,6 +38,8 @@ void Prop::SetMesh(const tstring& path)
 {
 	m_meshRenderer->mesh = system->resource->Find(path);
 	m_meshRenderer->SetupStandardMaterials();
+
+	SetMakeShadow(m_makeShadow, true);
 }
 
 void Prop::OnImGui()
@@ -64,7 +66,7 @@ void Prop::OnImGui()
 			bool makeShadow = m_makeShadow;
 			if (ImGui::Checkbox("makeShadow", &makeShadow))
 			{
-				SetMakeShadow(makeShadow);
+				SetMakeShadow(makeShadow, false);
 			}
 			string strMeshName = tstring_to_string(m_meshRenderer->mesh->name);
 			ImGui::Text(strMeshName.c_str());
@@ -123,7 +125,7 @@ void Prop::OnDeserialize(const Json::Value& json)
 	SetCollider(useCollider);
 
 	bool makeShadow = json["makeShadow"].asBool();
-	SetMakeShadow(makeShadow);
+	SetMakeShadow(makeShadow, true);
 }
 
 void Prop::OnDeserializeInRuntime(const Json::Value& json)
@@ -157,7 +159,7 @@ void Prop::SetCollider(bool value)
 		if (Editor::IsEditorMode())
 		{
 			m_collider = m_meshRenderer->gameObject->AddComponent<ConvexCollider>();
-			m_collider->debugRender = true;
+			m_collider->debugRenderMode = Collider::DebugRenderMode::Wireframe;
 		}
 		else
 		{
@@ -176,9 +178,9 @@ void Prop::SetCollider(bool value)
 	}
 }
 
-void Prop::SetMakeShadow(bool value)
+void Prop::SetMakeShadow(bool value, bool nocondition)
 {
-	if (value == m_makeShadow)
+	if (!nocondition && value == m_makeShadow)
 		return;
 
 	m_makeShadow = value;
