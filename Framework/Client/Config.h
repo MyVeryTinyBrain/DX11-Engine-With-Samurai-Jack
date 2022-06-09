@@ -91,6 +91,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define MESH_ENV_CAVE_ROCK06				TEXT("../Resource/Environment/Cave/Rock06.fbx")
 #define MESH_ENV_CAVE_ROCK07				TEXT("../Resource/Environment/Cave/Rock07.fbx")
 #define MESH_ENV_CAVE_ROCK08				TEXT("../Resource/Environment/Cave/Rock08.fbx")
+#define MESH_ENV_CAVE_CEILING				TEXT("../Resource/Environment/Cave/CaveCeiling.fbx")
 
 // Textures
 
@@ -201,6 +202,7 @@ inline void LOAD_MESHES(System* system)
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK06);
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK07);
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK08);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_CEILING);
 }
 
 inline void LOAD_CONFIGFILES(System* system)
