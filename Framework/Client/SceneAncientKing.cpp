@@ -50,6 +50,9 @@ void SceneAncientKing::OnUnload()
 
 void SceneAncientKing::OnUpdate()
 {
+	if (system->input->GetKeyDown(Key::Zero))
+		system->sceneManagement->ReloadScene();
+
 	{
 		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 

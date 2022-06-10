@@ -611,6 +611,9 @@
     <ClInclude Include="include\CCTFilterCallback.h">
       <Filter>EngineWorld\System\Physics\Callback</Filter>
     </ClInclude>
+    <ClInclude Include="include\MaterialUtil.h">
+      <Filter>Object\Resource\Material</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Transform.cpp">
@@ -1177,6 +1180,9 @@
     <ClCompile Include="src\CCTFilterCallback.cpp">
       <Filter>EngineWorld\System\Physics\Callback</Filter>
     </ClCompile>
+    <ClCompile Include="src\MaterialUtil.cpp">
+      <Filter>Object\Resource\Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Object">
@@ -1524,9 +1530,6 @@
       <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\Wireframe.fx">
-      <Filter>Object\Resource\Shader\Built-in Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Shader\StandardNoShadow.fx">
       <Filter>Object\Resource\Shader\Built-in Shader</Filter>
     </FxCompile>
   </ItemGroup>

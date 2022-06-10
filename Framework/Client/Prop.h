@@ -31,8 +31,6 @@ private:
 	void SetCollider(bool value);
 	void SetMakeShadow(bool value, bool nocondition = false);
 
-	void ToInstanceMaterial(bool makeShadow);
-
 private:
 
 	GameObject* m_goMeshRenderer;

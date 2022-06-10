@@ -44,10 +44,11 @@ public:
 
 	// 적용된 메쉬에 알맞은 재질의 수를 설정하고
 	// 알맞은 StandardMaterial을 관리되지 않는 리소스로 생성해 적용합니다.
+	// instance = true 이면 관리되는 리소스를 생성하거나 검색하여 적용합니다.
 	// 메쉬가 설정되어 있지 않다면 재질을 비우게 됩니다.
 
-	void SetupStandardMaterials();
-	void SetupStandardNoShadowMaterials();
+	void SetupStandardMaterials(bool instance = false);
+	void SetupStandardNoShadowMaterials(bool instance = false);
 
 	// 메쉬에 기본 재질을 설정합니다.
 

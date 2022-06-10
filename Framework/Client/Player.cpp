@@ -34,6 +34,7 @@ void Player::Start()
 {
 	Character::Start();
 
+	m_tpsCamera->transform->position = transform->position;
 	m_tpsCamera->transform->forward = transform->forward;
 }
 

@@ -155,9 +155,20 @@ BlendState BlendState0
 	BlendOp[0] = Add;
 };
 
-technique11 Technique0
+technique11 Default
 {
 	pass Pass0 < string RenderGroup = "Standard"; int RenderGroupOrder = 0; bool Instancing = true; >
+	{
+		SetRasterizerState(RasterizerState0);
+		SetDepthStencilState(DepthStencilState0, 0);
+		SetBlendState(BlendState0, vector(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		VertexShader = compile vs_5_0 VS_MAIN();
+		PixelShader = compile ps_5_0 PS_MAIN();
+	}
+}
+technique11 NoShadow
+{
+	pass Pass0 < string RenderGroup = "Standard"; int RenderGroupOrder = 0; bool Instancing = true; bool DrawShadow = false; >
 	{
 		SetRasterizerState(RasterizerState0);
 		SetDepthStencilState(DepthStencilState0, 0);

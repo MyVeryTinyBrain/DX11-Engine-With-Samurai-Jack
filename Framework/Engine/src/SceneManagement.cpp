@@ -52,8 +52,9 @@ bool SceneManagement::TryChangeScene()
 
 	if (before)
 	{
-		iBefore->MoveGameObjects(next);
 		iBefore->OnUnload();
+		iBefore->DeleteAllObjects(false);
+		iBefore->MoveGameObjects(next);
 		SafeDelete(before);
 	}
 

@@ -101,7 +101,7 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateShader(TEXT("Standard.cso"), &m_standardShader)))
 		return hr;
 
-	if (FAILED(hr = CreateShader(TEXT("StandardNoShadow.cso"), &m_standardNoShadowShader)))
+	if (FAILED(hr = CreateShader(TEXT("StandardInstancing.cso"), &m_standardInstancingShader)))
 		return hr;
 
 	if (FAILED(hr = CreateShader(TEXT("Color.cso"), &m_colorShader)))
@@ -239,9 +239,9 @@ const ResourceRef<Shader>& BuiltInResources::GetStandardShader() const
 	return m_standardShader;
 }
 
-const ResourceRef<Shader>& BuiltInResources::GetStandardNoShadowShader() const
+const ResourceRef<Shader>& BuiltInResources::GetStandardInstancingShader() const
 {
-	return m_standardNoShadowShader;
+	return m_standardInstancingShader;
 }
 
 const ResourceRef<Shader>& BuiltInResources::GetColorShader() const

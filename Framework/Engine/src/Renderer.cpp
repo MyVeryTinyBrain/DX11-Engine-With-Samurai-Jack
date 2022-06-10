@@ -8,6 +8,7 @@
 #include "ResourceRef.h"
 #include "Texture.h"
 #include "ResourceFactory.h"
+#include "MaterialUtil.h"
 
 ResourceRef<Material> Renderer::GetMaterial() const
 {
@@ -77,127 +78,27 @@ void Renderer::ClearMaterials()
     m_materials.clear();
 }
 
-void Renderer::SetupStandardMaterials()
+void Renderer::SetupStandardMaterials(bool instance)
 {
-    ClearMaterials();
-
-    if (!m_mesh)
+    if (!instance)
     {
-        return;
+        MaterialUtil::SetupPBRMaterials(this, system->resource->builtIn->standardShader, 0);
     }
-
-    vector<ModelMaterialDesc> materialDescs = m_mesh->materialDescs;
-    vector<uint> materialIndices = m_mesh->materialIndices;
-
-    uint numMaterials = m_mesh->subMeshCount;
-    SetMaterialCount(numMaterials);
-
-    ResourceRef<Shader> standardShader = system->resource->builtIn->standardShader;
-    assert(standardShader != nullptr);
-
-    for (uint i = 0; i < numMaterials; ++i)
+    else
     {
-        ResourceRef<Texture> albedoTexture;
-        ResourceRef<Texture> normalMapTexture;
-        ResourceRef<Texture> emissiveTexture;
-
-        if (i < (uint)materialIndices.size())
-        {
-            const uint& materialIndex = materialIndices[i];
-            const ModelMaterialDesc& materialDesc = materialDescs[materialIndex];
-
-            if (materialDesc.HasDiffuse())
-            {
-                albedoTexture = system->resource->Find(materialDesc.diffuse);
-            }
-            if (materialDesc.HasNormals())
-            {
-                normalMapTexture = system->resource->Find(materialDesc.normals);
-            }
-            if (materialDesc.HasEmission())
-            {
-                emissiveTexture = system->resource->Find(materialDesc.emission);
-            }
-        }
-
-        ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(standardShader);
-        
-        if (albedoTexture)
-        {
-            material->SetTexture("_AlbedoTexture", albedoTexture);
-        }
-        if (normalMapTexture)
-        {
-            material->SetTexture("_NormalMapTexture", normalMapTexture);
-        }
-        if (emissiveTexture)
-        {
-            material->SetTexture("_EmissiveTexture", emissiveTexture);
-        }
-
-        SetMaterialByIndex(i, material);
+        MaterialUtil::SetupInstancePBRMaterials(this, system->resource->builtIn->standardInstancingShader, 0);
     }
 }
 
-void Renderer::SetupStandardNoShadowMaterials()
+void Renderer::SetupStandardNoShadowMaterials(bool instance)
 {
-    ClearMaterials();
-
-    if (!m_mesh)
+    if (!instance)
     {
-        return;
+        MaterialUtil::SetupPBRMaterials(this, system->resource->builtIn->standardShader, 1);
     }
-
-    vector<ModelMaterialDesc> materialDescs = m_mesh->materialDescs;
-    vector<uint> materialIndices = m_mesh->materialIndices;
-
-    uint numMaterials = m_mesh->subMeshCount;
-    SetMaterialCount(numMaterials);
-
-    ResourceRef<Shader> standardNoShadowShader = system->resource->builtIn->standardNoShadowShader;
-    assert(standardNoShadowShader != nullptr);
-
-    for (uint i = 0; i < numMaterials; ++i)
+    else
     {
-        ResourceRef<Texture> albedoTexture;
-        ResourceRef<Texture> normalMapTexture;
-        ResourceRef<Texture> emissiveTexture;
-
-        if (i < (uint)materialIndices.size())
-        {
-            const uint& materialIndex = materialIndices[i];
-            const ModelMaterialDesc& materialDesc = materialDescs[materialIndex];
-
-            if (materialDesc.HasDiffuse())
-            {
-                albedoTexture = system->resource->Find(materialDesc.diffuse);
-            }
-            if (materialDesc.HasNormals())
-            {
-                normalMapTexture = system->resource->Find(materialDesc.normals);
-            }
-            if (materialDesc.HasEmission())
-            {
-                emissiveTexture = system->resource->Find(materialDesc.emission);
-            }
-        }
-
-        ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(standardNoShadowShader);
-
-        if (albedoTexture)
-        {
-            material->SetTexture("_AlbedoTexture", albedoTexture);
-        }
-        if (normalMapTexture)
-        {
-            material->SetTexture("_NormalMapTexture", normalMapTexture);
-        }
-        if (emissiveTexture)
-        {
-            material->SetTexture("_EmissiveTexture", emissiveTexture);
-        }
-
-        SetMaterialByIndex(i, material);
+        MaterialUtil::SetupInstancePBRMaterials(this, system->resource->builtIn->standardInstancingShader, 1);
     }
 }
 

@@ -14,7 +14,7 @@ void PrefabAncientKing::Awake()
 		IEditorObject::Awake();
 
 		GameObject* goMeshRenderer = CreateGameObjectToChild(transform);
-		goMeshRenderer->transform->localPosition = ADJUST_ANCIENTKING_LOCALSCALE;
+		goMeshRenderer->transform->localPosition = ADJUST_ANCIENTKING_LOCALPOSITION;
 		goMeshRenderer->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
 		goMeshRenderer->transform->localScale = ADJUST_ANCIENTKING_LOCALSCALE;
 		m_meshRenderer = goMeshRenderer->AddComponent<MeshRenderer>();

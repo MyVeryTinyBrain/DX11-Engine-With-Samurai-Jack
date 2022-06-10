@@ -188,7 +188,3 @@ void Prop::SetMakeShadow(bool value, bool nocondition)
 	if (m_makeShadow) m_meshRenderer->SetupStandardMaterials();
 	else m_meshRenderer->SetupStandardNoShadowMaterials();
 }
-
-void Prop::ToInstanceMaterial(bool makeShadow)
-{
-}
