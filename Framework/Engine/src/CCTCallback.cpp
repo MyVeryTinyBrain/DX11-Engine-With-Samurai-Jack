@@ -49,6 +49,8 @@ void CCTCallback::onObstacleHit(const PxControllerObstacleHit& hit)
 
 PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxShape& shape, const PxActor& actor)
 {
+    const static PxControllerBehaviorFlags defaultFlags = (PxControllerBehaviorFlags)0;
+
     ICharacterController* iCharacterController = m_characterController;
 
     V3 up = m_characterController->upDirection;
@@ -57,14 +59,14 @@ PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxShape& shape, co
     V3 foot = m_characterController->footPosition + down * contactOffset;
 
     PxGeometryHolder cctGeometry = m_characterController->capsuleCollider->pxGeometry;
-    Collider* cctCollider = (Collider*)shape.userData;
+    Collider* cctCollider = m_characterController->capsuleCollider;
 
     PxGeometryHolder targetGeometry = shape.getGeometry();
     Collider* targetCollider = (Collider*)shape.userData;
 
     if (!cctCollider || !targetCollider)
     {
-        return PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+        return defaultFlags;
     }
 
     PxTransform cctPose, targetPose;
@@ -95,19 +97,19 @@ PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxShape& shape, co
         if (Abs(c0) < Abs(c1))
         {
             // SlopeLimit보다 큰 각도차이이면 미끄러짐을 활성화합니다.
-            return PxControllerBehaviorFlag::eCCT_SLIDE | PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+            return PxControllerBehaviorFlag::eCCT_SLIDE;
         }
         else
         {
-            return PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+            return defaultFlags;
         }
     }
     else
     {
-        return PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+        return defaultFlags;
     }
 
-    return PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+    return defaultFlags;
 }
 
 PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxController& controller)
@@ -117,7 +119,7 @@ PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxController& cont
 
 PxControllerBehaviorFlags CCTCallback::getBehaviorFlags(const PxObstacle& obstacle)
 {
-    return PxControllerBehaviorFlag::eCCT_SLIDE | PxControllerBehaviorFlag::eCCT_CAN_RIDE_ON_OBJECT;
+    return PxControllerBehaviorFlag::eCCT_SLIDE;
 }
 
 PxQueryHitType::Enum CCTCallback::preFilter(const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, PxHitFlags& queryFlags)

@@ -27,6 +27,7 @@ private:
 	void SetupKatana();
 	void SetupFootCnt();
 	void SetupAttackTrigger();
+	void SetupAudioSource();
 
 	// Character update
 
@@ -146,6 +147,10 @@ private:
 	// Second Ground check
 
 	bool	m_groundCheck = true;
+
+	// Audio
+
+	AudioSource* m_audioSource;
 
 	// Static
 

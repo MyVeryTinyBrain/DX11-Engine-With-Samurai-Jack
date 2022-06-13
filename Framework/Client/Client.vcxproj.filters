@@ -77,7 +77,7 @@
     <ClInclude Include="EffectShockwave.h">
       <Filter>Effect\Shockwave</Filter>
     </ClInclude>
-    <ClInclude Include="ParticleInstanceSpark.h">
+    <ClInclude Include="ParticleSpark.h">
       <Filter>Effect\Spark</Filter>
     </ClInclude>
     <ClInclude Include="BillboardSpritesheet.h">
@@ -188,6 +188,25 @@
     </ClInclude>
     <ClInclude Include="BeetleSpawner.h">
       <Filter>Object\Editable\BeetleSpawner</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleFlame.h">
+      <Filter>Effect\Flame</Filter>
+    </ClInclude>
+    <ClInclude Include="GasVent.h">
+      <Filter>Object\Editable\Vent</Filter>
+    </ClInclude>
+    <ClInclude Include="FlameVent.h">
+      <Filter>Object\Editable\Vent</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneCave02.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioTest.h" />
+    <ClInclude Include="BossAshiAnimator.h">
+      <Filter>Object\Ashi</Filter>
+    </ClInclude>
+    <ClInclude Include="BossAshi.h">
+      <Filter>Object\Ashi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +335,15 @@
     <Filter Include="Object\Editable\BeetleSpawner">
       <UniqueIdentifier>{9ea634f5-e4c8-47e5-9c05-00aaf3b4ebd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Editable\Vent">
+      <UniqueIdentifier>{fe771bfa-1434-4593-8998-544411dda4f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect\Flame">
+      <UniqueIdentifier>{48732477-12f6-4fe4-b41a-b992ac622dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Ashi">
+      <UniqueIdentifier>{4379fead-163c-4cd5-a5be-37b8cd890d32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -389,7 +417,7 @@
     <ClCompile Include="EffectShockwave.cpp">
       <Filter>Effect\Shockwave</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleInstanceSpark.cpp">
+    <ClCompile Include="ParticleSpark.cpp">
       <Filter>Effect\Spark</Filter>
     </ClCompile>
     <ClCompile Include="BillboardSpritesheet.cpp">
@@ -498,6 +526,25 @@
     <ClCompile Include="BeetleSpawner.cpp">
       <Filter>Object\Editable\BeetleSpawner</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleFlame.cpp">
+      <Filter>Effect\Flame</Filter>
+    </ClCompile>
+    <ClCompile Include="FlameVent.cpp">
+      <Filter>Object\Editable\Vent</Filter>
+    </ClCompile>
+    <ClCompile Include="GasVent.cpp">
+      <Filter>Object\Editable\Vent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneCave02.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioTest.cpp" />
+    <ClCompile Include="BossAshi.cpp">
+      <Filter>Object\Ashi</Filter>
+    </ClCompile>
+    <ClCompile Include="BossAshiAnimator.cpp">
+      <Filter>Object\Ashi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">
@@ -525,6 +572,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\Lava.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\Fire.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

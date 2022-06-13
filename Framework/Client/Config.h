@@ -41,6 +41,8 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define MESH_BEETLE_DRONE					TEXT("../Resource/BeetleDrone/BeetleDrone.FBX")
 #define MESH_ANCIENT_KING					TEXT("../Resource/AncientKing/AncientKing.FBX")
 #define MESH_ANCIENT_KING_HAMMER			TEXT("../Resource/AncientKing/AncientKingHammer.FBX")
+#define MESH_ASHI							TEXT("../Resource/Ashi/Ashi.FBX")
+#define MESH_ASHI_SWORD						TEXT("../Resource/Ashi/AshiSword.FBX")
 #define MESH_CYILNDER_THIN_TWOSIDES			TEXT("../Resource/Cylinder_Thin_Twosides/Cylinder_Thin_Twosides.FBX")
 #define MESH_WAVE							TEXT("../Resource/Wave/Wave.FBX")
 #define MESH_DOME							TEXT("../Resource/Dome/Dome.FBX")
@@ -92,6 +94,18 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define MESH_ENV_CAVE_ROCK07				TEXT("../Resource/Environment/Cave/Rock07.fbx")
 #define MESH_ENV_CAVE_ROCK08				TEXT("../Resource/Environment/Cave/Rock08.fbx")
 #define MESH_ENV_CAVE_CEILING				TEXT("../Resource/Environment/Cave/CaveCeiling.fbx")
+#define MESH_ENV_CAVE_VENT					TEXT("../Resource/Environment/Cave/Vent.fbx")
+#define MESH_ENV_TRAPFLOORL					TEXT("../Resource/Environment/Cave/TrapFloorL.fbx")
+#define MESH_ENV_TRAPFLOORM01				TEXT("../Resource/Environment/Cave/TrapFloorM01.fbx")
+#define MESH_ENV_TRAPFLOORM02				TEXT("../Resource/Environment/Cave/TrapFloorM02.fbx")
+#define MESH_ENV_TRAPFLOORM03				TEXT("../Resource/Environment/Cave/TrapFloorM03.fbx")
+#define MESH_ENV_TRAPFLOORS01				TEXT("../Resource/Environment/Cave/TrapFloorS01.fbx")
+#define MESH_ENV_TRAPFLOORS02				TEXT("../Resource/Environment/Cave/TrapFloorS02.fbx")
+#define MESH_ENV_TRAPFLOORS03				TEXT("../Resource/Environment/Cave/TrapFloorS03.fbx")
+#define MESH_ENV_TRAPFLOORS04				TEXT("../Resource/Environment/Cave/TrapFloorS04.fbx")
+#define MESH_ENV_TRAPFLOORS05				TEXT("../Resource/Environment/Cave/TrapFloorS05.fbx")
+#define MESH_ENV_TRAPFLOORS06				TEXT("../Resource/Environment/Cave/TrapFloorS06.fbx")
+#define MESH_ENV_CRYSTAL					TEXT("../Resource/Environment/Crystal/Crystal.fbx")
 
 // Textures
 
@@ -113,6 +127,40 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define TEX_DUST_PARTICLE_02				TEXT("../Resource/Dust/DustParticle02.dds")
 #define TEX_DUST_PARTICLE_03				TEXT("../Resource/Dust/DustParticle03.dds")
 #define TEX_DUST_PARTICLE_04				TEXT("../Resource/Dust/DustParticle04.dds")
+#define TEX_FIRE_01							TEXT("../Resource/Fire/Fire01.dds")
+#define TEX_FIRE_02							TEXT("../Resource/Fire/Fire02.dds")
+#define TEX_FIRE_03							TEXT("../Resource/Fire/Fire03.dds")
+#define TEX_FLAME_01						TEXT("../Resource/Fire/Flame01.dds")
+
+// Sounds
+
+#define SOUND_GUARD_01						TEXT("../Resource/Sound/Guard/Guard01.wav")
+#define SOUND_GUARD_02						TEXT("../Resource/Sound/Guard/Guard02.wav")
+#define SOUND_KATANA_SWING_LIGHT01			TEXT("../Resource/Sound/KatanaSwing/Light01.wav")
+#define SOUND_KATANA_SWING_LIGHT02			TEXT("../Resource/Sound/KatanaSwing/Light02.wav")
+#define SOUND_KATANA_SWING_LIGHT03			TEXT("../Resource/Sound/KatanaSwing/Light03.wav")
+#define SOUND_KATANA_SWING_HEAVY01			TEXT("../Resource/Sound/KatanaSwing/Heavy01.wav")
+#define SOUND_KATANA_SWING_HEAVY02			TEXT("../Resource/Sound/KatanaSwing/Heavy02.wav")
+#define SOUND_KATANA_SWING_HEAVY03			TEXT("../Resource/Sound/KatanaSwing/Heavy03.wav")
+#define SOUND_KATANA_SWING_HEAVY04			TEXT("../Resource/Sound/KatanaSwing/Heavy04.wav")
+#define SOUND_MELEE_SWING_01				TEXT("../Resource/Sound/MeleeSwing/MeleeSwing01.wav")
+#define SOUND_BEHAVIOR_FOOTSTEP_01			TEXT("../Resource/Sound/Behavior/Footstep01.wav")
+#define SOUND_BEHAVIOR_FOOTSTEP_02			TEXT("../Resource/Sound/Behavior/Footstep02.wav")
+#define SOUND_BEHAVIOR_FOOTSTEP_03			TEXT("../Resource/Sound/Behavior/Footstep03.wav")
+#define SOUND_BEHAVIOR_FOOTSTEP_04			TEXT("../Resource/Sound/Behavior/Footstep04.wav")
+#define SOUND_BEHAVIOR_ROLL					TEXT("../Resource/Sound/Behavior/Roll.wav")
+#define SOUND_BEHAVIOR_ARMOR				TEXT("../Resource/Sound/Behavior/Armor.wav")
+#define SOUND_CRASH_01						TEXT("../Resource/Sound/Crash/Crash01.wav")
+#define SOUND_CRASH_02						TEXT("../Resource/Sound/Crash/Crash02.wav")
+#define SOUND_BIG_SWING_01					TEXT("../Resource/Sound/BigSwing/BigSwing01.wav")
+#define SOUND_DAMAGE_01						TEXT("../Resource/Sound/Damage/Damage01.wav")
+#define SOUND_DAMAGE_02						TEXT("../Resource/Sound/Damage/Damage02.wav")
+#define SOUND_DAMAGE_03						TEXT("../Resource/Sound/Damage/Damage03.wav")
+#define SOUND_ELECTRIC_01					TEXT("../Resource/Sound/Electric/Electric01.wav")
+#define SOUND_ELECTRIC_02					TEXT("../Resource/Sound/Electric/Electric02.wav")
+#define SOUND_FLAME_01						TEXT("../Resource/Sound/Flame/Flame01.wav")
+#define SOUND_SWING_01						TEXT("../Resource/Sound/Swing/Swing01.wav")
+#define SOUND_SWING_02						TEXT("../Resource/Sound/Swing/Swing02.wav")
 
 // Shaders
 
@@ -125,6 +173,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define SHADER_RING							TEXT("Ring.cso")
 #define SHADER_SPARK						TEXT("Spark.cso")
 #define SHADER_LAVA							TEXT("Lava.cso")
+#define SHADER_FIRE							TEXT("Fire.cso")
 
 // Event
 
@@ -139,10 +188,13 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define ADJUST_BEETLEDRONE_LOCALPOSITION	V3(0, -1, 0)
 #define ADJUST_ANCIENTKING_LOCALPOSITION	V3(0, -3.05f, 0)
 #define ADJUST_ANCIENTKING_LOCALSCALE		(V3::one() * 1.5f)
+#define ADJUST_ASHI_LOCALPOSITION			V3(0, -1.6f, 0)
+#define ADJUST_ASHI_LOCALSCALE				(V3::one() * 1.5f)
 
 // TAG
 
 #define TAG_FIGHT_COLLIDER					TEXT("FightCollider")
+#define TAG_NEXTSCENE_TRIGGER				TEXT("NextSceneTrigger")
 
 inline void LOAD_MESHES(System* system)
 {
@@ -152,6 +204,8 @@ inline void LOAD_MESHES(System* system)
 	system->resource->factory->LoadMeshM(MESH_BEETLE_DRONE);
 	system->resource->factory->LoadMeshM(MESH_ANCIENT_KING);
 	system->resource->factory->LoadMeshM(MESH_ANCIENT_KING_HAMMER);
+	system->resource->factory->LoadMeshM(MESH_ASHI);
+	system->resource->factory->LoadMeshM(MESH_ASHI_SWORD);
 	system->resource->factory->LoadMeshM(MESH_CYILNDER_THIN_TWOSIDES);
 	system->resource->factory->LoadMeshM(MESH_WAVE);
 	system->resource->factory->LoadMeshM(MESH_DOME);
@@ -203,11 +257,55 @@ inline void LOAD_MESHES(System* system)
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK07);
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_ROCK08);
 	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_CEILING);
+	system->resource->factory->LoadMeshM(MESH_ENV_CAVE_VENT);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORL);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORM01);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORM02);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORM03);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS01);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS02);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS03);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS04);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS05);
+	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS06);
+	system->resource->factory->LoadMeshM(MESH_ENV_CRYSTAL);
+}
+
+inline void LOAD_SOUNDS(System* system)
+{
+	system->resource->factory->LoadAudioClipM(SOUND_GUARD_01);
+	system->resource->factory->LoadAudioClipM(SOUND_GUARD_02);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_LIGHT01);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_LIGHT02);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_LIGHT03);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_HEAVY01);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_HEAVY02);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_HEAVY03);
+	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_HEAVY04);
+	system->resource->factory->LoadAudioClipM(SOUND_MELEE_SWING_01);
+	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_01);
+	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_02);
+	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_03);
+	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_04);
+	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_ROLL);
+	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_ARMOR);
+	system->resource->factory->LoadAudioClipM(SOUND_CRASH_01);
+	system->resource->factory->LoadAudioClipM(SOUND_CRASH_02);
+	system->resource->factory->LoadAudioClipM(SOUND_BIG_SWING_01);
+	system->resource->factory->LoadAudioClipM(SOUND_DAMAGE_01);
+	system->resource->factory->LoadAudioClipM(SOUND_DAMAGE_02);
+	system->resource->factory->LoadAudioClipM(SOUND_DAMAGE_03);
+	system->resource->factory->LoadAudioClipM(SOUND_ELECTRIC_01);
+	system->resource->factory->LoadAudioClipM(SOUND_ELECTRIC_02);
+	system->resource->factory->LoadAudioClipM(SOUND_FLAME_01);
+	system->resource->factory->LoadAudioClipM(SOUND_SWING_01);
+	system->resource->factory->LoadAudioClipM(SOUND_SWING_02);
 }
 
 inline void LOAD_CONFIGFILES(System* system)
 {
 	LOAD_MESHES(system);
+	LOAD_SOUNDS(system);
 	TextureOptionDesc loadDesc = {};
 	TextureOptionDesc loadMipDesc = {};
 	loadMipDesc.GenerateMipmap = true;
@@ -229,6 +327,10 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_03);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_DUST_PARTICLE_04);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_01);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_02);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_03);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FLAME_01);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_SPRITESHEET);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_INSTANCE_UNLIT);
@@ -238,6 +340,7 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_RING);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SPARK);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_LAVA);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_FIRE);
 }
 
 #endif

@@ -38,6 +38,7 @@ texture2D		_NormalMapTexture < string Default = "Normal"; > ;
 texture2D		_LightMaskTexture < string Default = "White"; > ;
 texture2D		_ShadowMaskTexture < string Default = "White"; > ;
 texture2D		_RoughnessTexture < string Default = "Roughness"; > ; // Green Channel
+float			_RoughnessMultiplier < float Default = 1.0f; > ;
 texture2D		_MetallicTexture < string Default = "Black"; > ; // Red Channel
 texture2D		_EmissiveTexture < string Default = "Clear"; > ;
 texture2D		_OcclusionTexture < string Default = "White"; > ;
@@ -117,7 +118,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	half shadowMask = _ShadowMaskTexture.Sample(diffuseSampler, In.UV).r;
 	output.Light_Shadow = half4(lightMask, shadowMask, 0.0f, 1.0f);
 
-	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).g;
+	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).g * _RoughnessMultiplier;
 	half metallic = _MetallicTexture.Sample(diffuseSampler, In.UV).r;
 	output.Roughness_Metallic = half4(roughness, metallic, 0.0f, 1.0f);
 
@@ -149,6 +150,11 @@ DepthStencilState DepthStencilState0
 BlendState BlendState0
 {
 	BlendEnable[0] = false;
+	SrcBlend[0] = Src_Alpha;
+	DestBlend[0] = Inv_Src_Alpha;
+	BlendOp[0] = Add;
+
+	BlendEnable[5] = true;
 	SrcBlend[0] = Src_Alpha;
 	DestBlend[0] = Inv_Src_Alpha;
 	BlendOp[0] = Add;

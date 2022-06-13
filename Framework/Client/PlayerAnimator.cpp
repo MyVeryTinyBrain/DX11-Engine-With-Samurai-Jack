@@ -66,6 +66,19 @@ void PlayerAnimator::SetupNodes()
 		blendNodeElements.push_back(AnimatorBlendNodeElement::Create(BH_DASH, 1.0f));
 
 		BH_RUN_BH_DASH = AnimatorBlendNode::Create(TEXT("BH_RUN_BH_DASH"), blendNodeElements, DashStateFProperty, LOOP);
+		{
+			AnimationEventDesc s0, s1;
+			s0.NormalizedTime = 3 / 16.0f;
+			s1.NormalizedTime = 10 / 16.0f;
+			s0.ContextByte = ByteContext::PLAY_SOUND;
+			s1.ContextByte = ByteContext::PLAY_SOUND;
+			s0.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_01;
+			s1.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_02;
+			s0.ContextFloat = 0.2f;
+			s1.ContextFloat = 0.2f;
+			BH_RUN_BH_DASH->AddEvent(s0);
+			BH_RUN_BH_DASH->AddEvent(s1);
+		}
 		Layer->AddNode(BH_RUN_BH_DASH);
 	}
 
@@ -76,6 +89,13 @@ void PlayerAnimator::SetupNodes()
 		desc.ContextByte = ByteContext::JUMP;
 		desc.ContextFloat = JUMP_SPEED;
 		BH_JUMP->AddEvent(desc);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 0.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_03;
+		s.ContextFloat = 1.0f;
+		BH_JUMP->AddEvent(s);
 	}
 	Layer->AddNode(BH_JUMP);
 
@@ -86,6 +106,13 @@ void PlayerAnimator::SetupNodes()
 		desc.ContextByte = ByteContext::JUMP;
 		desc.ContextFloat = AIRJUMP_SPEED;
 		BH_AIR_JUMP->AddEvent(desc);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 0.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_03;
+		s.ContextFloat = 1.0f;
+		BH_AIR_JUMP->AddEvent(s);
 	}
 	Layer->AddNode(BH_AIR_JUMP);
 
@@ -93,9 +120,30 @@ void PlayerAnimator::SetupNodes()
 	Layer->AddNode(BH_FALL);
 
 	BH_LAND = AnimatorSingleNode::Create(GetClip(TEXT("BH_LAND")), NOLOOP);
+	{
+		AnimationEventDesc s;
+		s.NormalizedTime = 0.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_03;
+		s.ContextFloat = 1.0f;
+		BH_LAND->AddEvent(s);
+	}
 	Layer->AddNode(BH_LAND);
 
 	BH_ROLL = AnimatorSingleNode::Create(GetClip(TEXT("BH_ROLL")), NOLOOP);
+	{
+		AnimationEventDesc s0, s1;
+		s0.NormalizedTime = 0.0f;
+		s1.NormalizedTime = 0.0f;
+		s0.ContextByte = ByteContext::PLAY_SOUND;
+		s1.ContextByte = ByteContext::PLAY_SOUND;
+		s0.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_03;
+		s1.ContextTStr = SOUND_BEHAVIOR_ROLL;
+		s0.ContextFloat = 1.0f;
+		s1.ContextFloat = 0.5f;
+		BH_ROLL->AddEvent(s0);
+		BH_ROLL->AddEvent(s1);
+	}
 	Layer->AddNode(BH_ROLL);
 
 	{
@@ -109,6 +157,14 @@ void PlayerAnimator::SetupNodes()
 		blendNodeElements.push_back(AnimatorBlendNodeElement::Create(GAD_START_DASH, 1.0f));
 
 		GAD_START = AnimatorBlendNode::Create(TEXT("GAD_START"), blendNodeElements, LastDashStateFProperty, NOLOOP);
+		{
+			AnimationEventDesc s;
+			s.NormalizedTime = 0.0f;
+			s.ContextByte = ByteContext::PLAY_SOUND;
+			s.ContextTStr = SOUND_BEHAVIOR_ARMOR;
+			s.ContextFloat = 1.0f;
+			GAD_START->AddEvent(s);
+		}
 		Layer->AddNode(GAD_START);
 	}
 
@@ -170,6 +226,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_X->AddEvent(e0);
 		ATK_X->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 7 / 34.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_LIGHT01;
+		s.ContextFloat = 1.0f;
+		ATK_X->AddEvent(s);
 	}
 	ATK_X->speed = 1.25f;
 	Layer->AddNode(ATK_X);
@@ -184,6 +247,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_XX->AddEvent(e0);
 		ATK_XX->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 14 / 45.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_LIGHT02;
+		s.ContextFloat = 1.0f;
+		ATK_XX->AddEvent(s);
 	}
 	ATK_XX->speed = 1.25f;
 	Layer->AddNode(ATK_XX);
@@ -198,6 +268,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::FOOT_END;
 		ATK_XXX->AddEvent(e0);
 		ATK_XXX->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 11 / 70.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_MELEE_SWING_01;
+		s.ContextFloat = 1.0f;
+		ATK_XXX->AddEvent(s);
 	}
 	Layer->AddNode(ATK_XXX);
 
@@ -211,6 +288,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_XXXX->AddEvent(e0);
 		ATK_XXXX->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 10 / 35.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_HEAVY01;
+		s.ContextFloat = 1.0f;
+		ATK_XXXX->AddEvent(s);
 	}
 	Layer->AddNode(ATK_XXXX);
 
@@ -224,6 +308,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_XXXXX->AddEvent(e0);
 		ATK_XXXXX->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 20 / 53.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_HEAVY02;
+		s.ContextFloat = 1.0f;
+		ATK_XXXXX->AddEvent(s);
 	}
 	Layer->AddNode(ATK_XXXXX);
 
@@ -244,6 +335,18 @@ void PlayerAnimator::SetupNodes()
 		ATK_AIR_X->AddEvent(e1);
 		ATK_AIR_X->AddEvent(e2);
 		ATK_AIR_X->AddEvent(e3);
+
+		AnimationEventDesc s0, s1;
+		s0.NormalizedTime = 4 / 40.0f;
+		s1.NormalizedTime = 13 / 40.0f;
+		s0.ContextByte = ByteContext::PLAY_SOUND;
+		s1.ContextByte = ByteContext::PLAY_SOUND;
+		s0.ContextTStr = SOUND_KATANA_SWING_LIGHT01;
+		s1.ContextTStr = SOUND_KATANA_SWING_LIGHT02;
+		s0.ContextFloat = 1.0f;
+		s1.ContextFloat = 1.0f;
+		ATK_AIR_X->AddEvent(s0);
+		ATK_AIR_X->AddEvent(s1);
 	}
 	ATK_AIR_X->speed = 1.2f;
 	Layer->AddNode(ATK_AIR_X);
@@ -258,6 +361,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_AIR_XX->AddEvent(e0);
 		ATK_AIR_XX->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 13 / 40.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_LIGHT03;
+		s.ContextFloat = 1.0f;
+		ATK_AIR_XX->AddEvent(s);
 	}
 	ATK_AIR_XX->speed = 1.2f;
 	Layer->AddNode(ATK_AIR_XX);
@@ -272,6 +382,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::FOOT_END;
 		ATK_AIR_XXX->AddEvent(e0);
 		ATK_AIR_XXX->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 10 / 34.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_MELEE_SWING_01;
+		s.ContextFloat = 1.0f;
+		ATK_AIR_XXX->AddEvent(s);
 	}
 	ATK_AIR_XXX->speed = 1.2f;
 	Layer->AddNode(ATK_AIR_XXX);
@@ -286,6 +403,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_Y->AddEvent(e0);
 		ATK_Y->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 9 / 60.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_HEAVY01;
+		s.ContextFloat = 1.0f;
+		ATK_Y->AddEvent(s);
 	}
 	Layer->AddNode(ATK_Y);
 
@@ -306,6 +430,18 @@ void PlayerAnimator::SetupNodes()
 		ATK_YY->AddEvent(e1);
 		ATK_YY->AddEvent(e2);
 		ATK_YY->AddEvent(e3);
+
+		AnimationEventDesc s0, s1;
+		s0.NormalizedTime = 6 / 72.0f;
+		s1.NormalizedTime = 16 / 72.0f;
+		s0.ContextByte = ByteContext::PLAY_SOUND;
+		s1.ContextByte = ByteContext::PLAY_SOUND;
+		s0.ContextTStr = SOUND_KATANA_SWING_HEAVY02;
+		s1.ContextTStr = SOUND_KATANA_SWING_HEAVY03;
+		s0.ContextFloat = 1.0f;
+		s1.ContextFloat = 1.0f;
+		ATK_YY->AddEvent(s0);
+		ATK_YY->AddEvent(s1);
 	}
 	Layer->AddNode(ATK_YY);
 
@@ -319,6 +455,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_STING_END;
 		ATK_YYY->AddEvent(e0);
 		ATK_YYY->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 6 / 60.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_HEAVY04;
+		s.ContextFloat = 1.0f;
+		ATK_YYY->AddEvent(s);
 	}
 	Layer->AddNode(ATK_YYY);
 
@@ -335,6 +478,20 @@ void PlayerAnimator::SetupNodes()
 		e2.ContextInt = IntContext::KT_END;
 		ATK_XY->AddEvent(e0);
 		ATK_XY->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 6 / 30.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_LIGHT03;
+		s.ContextFloat = 1.0f;
+		ATK_XY->AddEvent(s);
+
+		AnimationEventDesc jumpSound;
+		jumpSound.NormalizedTime = 6 / 30.0f;
+		jumpSound.ContextByte = ByteContext::PLAY_SOUND;
+		jumpSound.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_03;
+		jumpSound.ContextFloat = 1.0f;
+		ATK_XY->AddEvent(jumpSound);
 	}
 	Layer->AddNode(ATK_XY);
 
@@ -356,6 +513,23 @@ void PlayerAnimator::SetupNodes()
 		ATK_XXXY->AddEvent(e1);
 		ATK_XXXY->AddEvent(e2);
 		ATK_XXXY->AddEvent(e3);
+
+		AnimationEventDesc s0, s1, s2;
+		s0.NormalizedTime = 8 / 68.0f;
+		s1.NormalizedTime = 16 / 68.0f;
+		s2.NormalizedTime = 24 / 68.0f;
+		s0.ContextByte = ByteContext::PLAY_SOUND;
+		s1.ContextByte = ByteContext::PLAY_SOUND;
+		s2.ContextByte = ByteContext::PLAY_SOUND;
+		s0.ContextTStr = SOUND_MELEE_SWING_01;
+		s1.ContextTStr = SOUND_MELEE_SWING_01;
+		s2.ContextTStr = SOUND_MELEE_SWING_01;
+		s0.ContextFloat = 1.0f;
+		s1.ContextFloat = 1.0f;
+		s2.ContextFloat = 1.0f;
+		ATK_XXXY->AddEvent(s0);
+		ATK_XXXY->AddEvent(s1);
+		ATK_XXXY->AddEvent(s2);
 	}
 	Layer->AddNode(ATK_XXXY);
 
@@ -369,6 +543,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_XXXXY->AddEvent(e0);
 		ATK_XXXXY->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 17 / 56.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_HEAVY02;
+		s.ContextFloat = 1.0f;
+		ATK_XXXXY->AddEvent(s);
 	}
 	Layer->AddNode(ATK_XXXXY);
 
@@ -390,6 +571,23 @@ void PlayerAnimator::SetupNodes()
 		ATK_XXXXXY->AddEvent(e1);
 		ATK_XXXXXY->AddEvent(e2);
 		ATK_XXXXXY->AddEvent(e3);
+
+		AnimationEventDesc s0, s1, s2;
+		s0.NormalizedTime = 11 / 52.0f;
+		s1.NormalizedTime = 19 / 52.0f;
+		s2.NormalizedTime = 27 / 52.0f;
+		s0.ContextByte = ByteContext::PLAY_SOUND;
+		s1.ContextByte = ByteContext::PLAY_SOUND;
+		s2.ContextByte = ByteContext::PLAY_SOUND;
+		s0.ContextTStr = SOUND_KATANA_SWING_HEAVY01;
+		s1.ContextTStr = SOUND_KATANA_SWING_HEAVY01;
+		s2.ContextTStr = SOUND_KATANA_SWING_HEAVY01;
+		s0.ContextFloat = 1.0f;
+		s1.ContextFloat = 1.0f;
+		s2.ContextFloat = 1.0f;
+		ATK_XXXXXY->AddEvent(s0);
+		ATK_XXXXXY->AddEvent(s1);
+		ATK_XXXXXY->AddEvent(s2);
 	}
 	Layer->AddNode(ATK_XXXXXY);
 
@@ -400,6 +598,13 @@ void PlayerAnimator::SetupNodes()
 		e0.ContextInt = IntContext::KT_START;
 		e0.ContextUInt = UIntContext::ATK_BLOWDOWN;
 		ATK_AIR_Y_START->AddEvent(e0);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 11 / 13.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_KATANA_SWING_HEAVY03;
+		s.ContextFloat = 1.0f;
+		ATK_AIR_Y_START->AddEvent(s);
 	}
 	ATK_AIR_Y_START->speed = 1.2f;
 	Layer->AddNode(ATK_AIR_Y_START);
@@ -424,6 +629,13 @@ void PlayerAnimator::SetupNodes()
 		e1.ContextInt = IntContext::KT_END;
 		ATK_AIR_Y_END->AddEvent(e0);
 		ATK_AIR_Y_END->AddEvent(e1);
+
+		AnimationEventDesc jumpSound;
+		jumpSound.NormalizedTime = 0.0f;
+		jumpSound.ContextByte = ByteContext::PLAY_SOUND;
+		jumpSound.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_03;
+		jumpSound.ContextFloat = 1.0f;
+		ATK_AIR_Y_END->AddEvent(jumpSound);
 	}
 	Layer->AddNode(ATK_AIR_Y_END);
 }

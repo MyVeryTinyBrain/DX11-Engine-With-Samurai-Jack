@@ -170,7 +170,7 @@
          "type" : "BoxCollider"
       },
       {
-         "localPosition" : "[\n\t-0.65430194139480591,\n\t3.2371912002563477,\n\t0.080244608223438263,\n\t0.0\n]",
+         "localPosition" : "[\n\t-0.65428459644317627,\n\t2.3775787353515625,\n\t0.080244198441505432,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.70710676908493042,\n\t0.0,\n\t0.70710676908493042\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "AncientKing0",
@@ -555,6 +555,232 @@
          "name" : "Prop27",
          "tag" : "",
          "type" : "Prop"
+      },
+      {
+         "localPosition" : "[\n\t59.686519622802734,\n\t-3.3156545162200928,\n\t-3.6399126052856445,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "GasVent0",
+         "tag" : "",
+         "type" : "GasVent"
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t66.66278076171875,\n\t-3.5458319187164307,\n\t-6.4574623107910156,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/crystal/crystal.fbx",
+         "name" : "Prop28",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t66.174446105957031,\n\t-3.5351512432098389,\n\t-5.6526422500610352,\n\t0.0\n]",
+         "localRotation" : "[\n\t1.6667762281485921e-07,\n\t-0.64210319519042969,\n\t2.5543499759805854e-07,\n\t0.76661819219589233\n]",
+         "localScale" : "[\n\t2.0408449172973633,\n\t2.0408449172973633,\n\t2.0408449172973633,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/crystal/crystal.fbx",
+         "name" : "Prop29",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "ambient" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "diffuse" : "[\n\t0.79333335161209106,\n\t0.11106665432453156,\n\t0.11106665432453156,\n\t1.0\n]",
+         "drawShadow" : false,
+         "intensity" : 1.0,
+         "localPosition" : "[\n\t66.067840576171875,\n\t-0.63188660144805908,\n\t-5.6970367431640625,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "PointLight1",
+         "range" : 21.481000900268555,
+         "shadowBias" : 9.9999997473787516e-05,
+         "shadowWhiteness" : 0.20000000298023224,
+         "tag" : "",
+         "type" : "PointLight",
+         "volumetricLightIntensity" : 1.5,
+         "volumetricLightNumSamples" : 50,
+         "volumetricLightPower" : 1.5,
+         "volumetricLightState" : false
+      },
+      {
+         "localPosition" : "[\n\t-15.276218414306641,\n\t7.8656959533691406,\n\t-34.774471282958984,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.62102335691452026,\n\t0.24853204190731049,\n\t-0.21710260212421417,\n\t0.71093481779098511\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "GasVent1",
+         "tag" : "",
+         "type" : "GasVent"
+      },
+      {
+         "localPosition" : "[\n\t-13.719322204589844,\n\t8.266108512878418,\n\t-35.997097015380859,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.67272984981536865,\n\t0.20166964828968048,\n\t-0.20441675186157227,\n\t0.68189287185668945\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "GasVent2",
+         "tag" : "",
+         "type" : "GasVent"
+      },
+      {
+         "localPosition" : "[\n\t-13.978877067565918,\n\t5.0798664093017578,\n\t-35.434024810791016,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.61375534534454346,\n\t0.201126828789711,\n\t-0.23774102330207825,\n\t0.72548705339431763\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "GasVent3",
+         "tag" : "",
+         "type" : "GasVent"
+      },
+      {
+         "localPosition" : "[\n\t18.978435516357422,\n\t5.3302783966064453,\n\t32.209754943847656,\n\t0.0\n]",
+         "localRotation" : "[\n\t-0.60986793041229248,\n\t0.26406106352806091,\n\t0.24569714069366455,\n\t0.70566684007644653\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "GasVent4",
+         "tag" : "",
+         "type" : "GasVent"
+      },
+      {
+         "localPosition" : "[\n\t17.648344039916992,\n\t4.9910340309143066,\n\t33.332115173339844,\n\t0.0\n]",
+         "localRotation" : "[\n\t-0.59391874074935913,\n\t0.2537110447883606,\n\t0.20488354563713074,\n\t0.73546850681304932\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "GasVent5",
+         "tag" : "",
+         "type" : "GasVent"
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t11.675173759460449,\n\t9.1870527267456055,\n\t-34.206428527832031,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.43806770443916321,\n\t0.1772693395614624,\n\t0.08856356143951416,\n\t0.87682884931564331\n]",
+         "localScale" : "[\n\t2.1546797752380371,\n\t2.1546797752380371,\n\t2.1546797752380371,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/crystal/crystal.fbx",
+         "name" : "Prop30",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "ambient" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "diffuse" : "[\n\t0.7866666316986084,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "drawShadow" : false,
+         "intensity" : 1.0,
+         "localPosition" : "[\n\t11.567401885986328,\n\t9.5591201782226562,\n\t-31.920810699462891,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "PointLight2",
+         "range" : 10.369999885559082,
+         "shadowBias" : 9.9999997473787516e-05,
+         "shadowWhiteness" : 0.20000000298023224,
+         "tag" : "",
+         "type" : "PointLight",
+         "volumetricLightIntensity" : 1.5,
+         "volumetricLightNumSamples" : 50,
+         "volumetricLightPower" : 1.5,
+         "volumetricLightState" : false
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t-24.017560958862305,\n\t6.5314006805419922,\n\t29.644233703613281,\n\t0.0\n]",
+         "localRotation" : "[\n\t-0.43669727444648743,\n\t-0.39115476608276367,\n\t-0.21900811791419983,\n\t0.77995443344116211\n]",
+         "localScale" : "[\n\t2.4738607406616211,\n\t2.4738607406616211,\n\t2.4738607406616211,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/crystal/crystal.fbx",
+         "name" : "Prop31",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "ambient" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "diffuse" : "[\n\t0.72666668891906738,\n\t0.12111113220453262,\n\t0.12111113220453262,\n\t1.0\n]",
+         "drawShadow" : false,
+         "intensity" : 1.0,
+         "localPosition" : "[\n\t-22.258701324462891,\n\t7.3037533760070801,\n\t27.081924438476562,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t-0.31660574674606323,\n\t0.0,\n\t0.94855719804763794\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "PointLight3",
+         "range" : 9.630000114440918,
+         "shadowBias" : 9.9999997473787516e-05,
+         "shadowWhiteness" : 0.20000000298023224,
+         "tag" : "",
+         "type" : "PointLight",
+         "volumetricLightIntensity" : 1.5,
+         "volumetricLightNumSamples" : 50,
+         "volumetricLightPower" : 1.5,
+         "volumetricLightState" : false
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t-97.56634521484375,\n\t-0.014000352472066879,\n\t0.0,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t16.899999618530273,\n\t3.0,\n\t3.0,\n\t0.0\n]",
+         "makeShadow" : false,
+         "mesh" : "../resource/environment/cave/tunnel_ceiling.fbx",
+         "name" : "Prop32",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t-106.42123413085938,\n\t-3.43499755859375,\n\t-10.769697189331055,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t-0.70710676908493042,\n\t0.0,\n\t0.70710676908493042\n]",
+         "localScale" : "[\n\t1.4119999408721924,\n\t0.10000000149011612,\n\t10.534000396728516,\n\t0.0\n]",
+         "makeShadow" : false,
+         "mesh" : "../resource/environment/cave/floorslop02.fbx",
+         "name" : "Prop33",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t305.94378662109375,\n\t-3.6220862865447998,\n\t-11.180335998535156,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t-0.70710676908493042,\n\t0.0,\n\t0.70710676908493042\n]",
+         "localScale" : "[\n\t1.5290000438690186,\n\t0.10000000149011612,\n\t6.7516036033630371,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/cave/floorslop02.fbx",
+         "name" : "Prop34",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : false,
+         "localPosition" : "[\n\t305.24459838867188,\n\t-0.014000797644257545,\n\t0.0,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t10.399999618530273,\n\t3.0,\n\t3.0,\n\t0.0\n]",
+         "makeShadow" : false,
+         "mesh" : "../resource/environment/cave/tunnel_ceiling.fbx",
+         "name" : "Prop35",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "extents" : "[\n\t0.5,\n\t8.5,\n\t9.6000003814697266,\n\t0.0\n]",
+         "isTrigger" : false,
+         "layerIndex" : 0,
+         "localPosition" : "[\n\t-98.835884094238281,\n\t4.4075827598571777,\n\t1.0987750291824341,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "BoxCollider17",
+         "tag" : "",
+         "type" : "BoxCollider"
+      },
+      {
+         "extents" : "[\n\t3.0,\n\t9.3000001907348633,\n\t9.8999996185302734,\n\t0.0\n]",
+         "isTrigger" : true,
+         "layerIndex" : 0,
+         "localPosition" : "[\n\t-66.943038940429688,\n\t5.5694375038146973,\n\t0.26233023405075073,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "BoxCollider18",
+         "tag" : "NextSceneTrigger",
+         "type" : "BoxCollider"
+      },
+      {
+         "extents" : "[\n\t0.5,\n\t9.6999998092651367,\n\t15.199999809265137,\n\t0.0\n]",
+         "isTrigger" : false,
+         "layerIndex" : 0,
+         "localPosition" : "[\n\t95.019523620605469,\n\t6.092348575592041,\n\t0.37860772013664246,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "name" : "BoxCollider19",
+         "tag" : "",
+         "type" : "BoxCollider"
       }
    ]
 }

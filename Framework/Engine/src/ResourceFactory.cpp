@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "AudioClip.h"
 
 ResourceFactory::ResourceFactory()
 {
@@ -121,6 +122,16 @@ ResourceRef<Material> ResourceFactory::LoadMaterialM(const tstring& jsonPath)
 ResourceRef<Material> ResourceFactory::LoadMaterialUM(const tstring& jsonPath)
 {
 	return Material::LoadMaterialUM(m_management, jsonPath);
+}
+
+ResourceRef<AudioClip> ResourceFactory::LoadAudioClipM(const tstring& path)
+{
+	return AudioClip::LoadAudioClipM(m_management, path);
+}
+
+ResourceRef<AudioClip> ResourceFactory::LoadAudioClipUM(const tstring& path)
+{
+	return AudioClip::LoadAudioClipUM(m_management, path);
 }
 
 ResourceManagement* ResourceFactory::GetManagement() const

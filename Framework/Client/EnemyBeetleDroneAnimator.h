@@ -24,6 +24,7 @@ public:
 	enum ByteContext : byte
 	{
 		FOOT_DUST = 0b1,
+		PLAY_SOUND = 0b10,
 	};
 
 private:

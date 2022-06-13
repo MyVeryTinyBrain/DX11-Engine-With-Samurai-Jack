@@ -41,6 +41,23 @@ void SceneAncientKing::OnLoad()
 		if (collider)
 			m_fightColliders.push_back(collider);
 	}
+
+	vector<GameObject*> goNextSceneTriggers = FindGameObjectsWithTag(TAG_NEXTSCENE_TRIGGER);
+	for (auto& go : goNextSceneTriggers)
+	{
+		Collider* collider = go->GetComponent<Collider>();
+		if (collider)
+			m_nextSceneTriggers.push_back(collider);
+	}
+
+	Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
+	FogDesc fogDesc = camera->GetFogDesc();
+	fogDesc.Enable = true;
+	fogDesc.Type = FogType::Z;
+	fogDesc.MinZ = 60.0f;
+	fogDesc.RangeZ = 30.0f;
+	fogDesc.Color = Color::black();
+	camera->SetFogDesc(fogDesc);
 }
 
 void SceneAncientKing::OnUnload()
@@ -50,25 +67,6 @@ void SceneAncientKing::OnUnload()
 
 void SceneAncientKing::OnUpdate()
 {
-	if (system->input->GetKeyDown(Key::Zero))
-		system->sceneManagement->ReloadScene();
-
-	{
-		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
-
-		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphic->GetWidth()), int(system->graphic->GetHeight()));
-		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-		#ifdef _DEBUG
-		ImGui::Text("Debug Mode");
-		#else
-		ImGui::Text("Release Mode");
-		#endif
-
-		ImGui::End();
-	}
 }
 
 void SceneAncientKing::OnLateUpdate()

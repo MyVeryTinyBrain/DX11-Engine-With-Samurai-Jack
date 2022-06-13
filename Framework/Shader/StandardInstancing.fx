@@ -3,10 +3,12 @@
 struct VS_IN
 {
 	float3 Position : POSITION;
+
 	float4 Right : INSTANCE_RIGHT;
 	float4 Up : INSTANCE_UP;
 	float4 Forward : INSTANCE_FORWARD;
 	float4 Instance_Position : INSTANCE_POSITION;
+
 	float2 UV : TEXCOORD;
 	float3 Normal : NORMAL;
 	float3 Tangent : TANGENT;
@@ -17,6 +19,11 @@ struct VS_IN
 
 struct PS_IN
 {
+	float4 Right : INSTANCE_RIGHT;
+	float4 Up : INSTANCE_UP;
+	float4 Forward : INSTANCE_FORWARD;
+	float4 Instance_Position : INSTANCE_POSITION;
+
 	float4 Screen : SV_POSITION;
 	float2 UV : TEXCOORD;
 	float3 Normal : NORMAL; // Local Normal
@@ -42,6 +49,7 @@ texture2D		_NormalMapTexture < string Default = "Normal"; > ;
 texture2D		_LightMaskTexture < string Default = "White"; > ;
 texture2D		_ShadowMaskTexture < string Default = "White"; > ;
 texture2D		_RoughnessTexture < string Default = "Roughness"; > ; // Green Channel
+float			_RoughnessMultiplier < float Default = 1.0f; > ;
 texture2D		_MetallicTexture < string Default = "Black"; > ; // Red Channel
 texture2D		_EmissiveTexture < string Default = "Clear"; > ;
 texture2D		_OcclusionTexture < string Default = "White"; > ;
@@ -88,6 +96,11 @@ PS_IN VS_MAIN(VS_IN In)
 	half4 vPosition = mul(worldPosition, _ViewMatrix);
 	half4 outputPosition = mul(vPosition, _ProjectionMatrix);
 
+	output.Right = In.Right;
+	output.Up = In.Up;
+	output.Forward = In.Forward;
+	output.Instance_Position = In.Instance_Position;
+
 	output.Screen = outputPosition;
 	output.UV = In.UV;
 	output.Normal.xyz = normal.xyz;
@@ -105,9 +118,15 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	output.Albedo = _AlbedoTexture.Sample(diffuseSampler, In.UV);
 
+	float4x4 instanceWorldMatrix;
+	instanceWorldMatrix[0] = In.Right;
+	instanceWorldMatrix[1] = In.Up;
+	instanceWorldMatrix[2] = In.Forward;
+	instanceWorldMatrix[3] = In.Instance_Position;
+
 	half3 packedNormalMap = _NormalMapTexture.Sample(diffuseSampler, In.UV).rgb;
 	half3 unpackedNormalMap = UnpackNormalMap(packedNormalMap, In.Normal, In.Tangent, In.Binormal);
-	half3 normal = mul(half4(unpackedNormalMap, 0.0f), NormalizeTransformationMatrix(_WorldMatrix)).xyz;
+	half3 normal = mul(half4(unpackedNormalMap, 0.0f), NormalizeTransformationMatrix(instanceWorldMatrix)).xyz;
 	normal = normalize(normal);
 	output.Normal = PackNormal(normal);
 
@@ -118,7 +137,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	half shadowMask = _ShadowMaskTexture.Sample(diffuseSampler, In.UV).r;
 	output.Light_Shadow = half4(lightMask, shadowMask, 0.0f, 1.0f);
 
-	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).g;
+	half roughness = _RoughnessTexture.Sample(diffuseSampler, In.UV).g * _RoughnessMultiplier;
 	half metallic = _MetallicTexture.Sample(diffuseSampler, In.UV).r;
 	output.Roughness_Metallic = half4(roughness, metallic, 0.0f, 1.0f);
 
@@ -150,6 +169,11 @@ DepthStencilState DepthStencilState0
 BlendState BlendState0
 {
 	BlendEnable[0] = true;
+	SrcBlend[0] = Src_Alpha;
+	DestBlend[0] = Inv_Src_Alpha;
+	BlendOp[0] = Add;
+
+	BlendEnable[5] = true;
 	SrcBlend[0] = Src_Alpha;
 	DestBlend[0] = Inv_Src_Alpha;
 	BlendOp[0] = Add;

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ProjectileInstanceWaveBeam.h"
 #include "Config.h"
-#include "ParticleInstanceSpark.h"
+#include "ParticleSpark.h"
 #include "EffectRing01.h"
 #include "Player.h"
 
@@ -78,7 +78,7 @@ void ProjectileInstanceWaveBeam::OnDestroyed()
 {
 	V3 position = transform->position + m_hitNormal * 1.0f;
 
-	ParticleInstanceSpark::Create(
+	ParticleSpark::Create(
 		gameObject->regionScene,
 		position,
 		m_hitNormal,

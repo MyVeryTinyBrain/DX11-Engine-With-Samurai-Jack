@@ -40,32 +40,38 @@ void SceneCave01::OnLoad()
 		if (collider)
 			m_fightColliders.push_back(collider);
 	}
+
+	vector<GameObject*> goNextSceneTriggers = FindGameObjectsWithTag(TAG_NEXTSCENE_TRIGGER);
+	for (auto& go : goNextSceneTriggers)
+	{
+		Collider* collider = go->GetComponent<Collider>();
+		if (collider)
+			m_nextSceneTriggers.push_back(collider);
+	}
+
+	Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
+	FogDesc fogDesc = camera->GetFogDesc();
+	fogDesc.Enable = true;
+	fogDesc.Type = FogType::Z;
+	fogDesc.MinZ = 40.0f;
+	fogDesc.RangeZ = 30.0f;
+	fogDesc.Color = Color::black();
+	camera->SetFogDesc(fogDesc);
 }
 
 void SceneCave01::OnUnload()
 {
+	EventSystem::UnregistListener(this);
 }
-#include "SceneAncientKing.h"
+#include "SceneCave02.h"
 void SceneCave01::OnUpdate()
 {
-	if (system->input->GetKeyDown(Key::Zero))
-		system->sceneManagement->ChangeScene(new SceneAncientKing);
-
+	for (auto& nextSceneTrigger : m_nextSceneTriggers)
 	{
-		ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
-
-		tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphic->GetWidth()), int(system->graphic->GetHeight()));
-		ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-		#ifdef _DEBUG
-		ImGui::Text("Debug Mode");
-		#else
-		ImGui::Text("Release Mode");
-		#endif
-
-		ImGui::End();
+		if (system->physics->query->OverlapTest(nextSceneTrigger, 1 << PhysicsLayer_Player))
+		{
+			system->sceneManagement->ChangeScene(new SceneCave02);
+		}
 	}
 }
 

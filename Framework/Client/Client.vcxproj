@@ -163,18 +163,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AudioTest.h" />
     <ClInclude Include="BeetleSpawner.h" />
     <ClInclude Include="BillboardAnimation.h" />
     <ClInclude Include="BillboardSpritesheet.h" />
     <ClInclude Include="BossAncientKingAnimator.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="BossAncientKing.h" />
+    <ClInclude Include="BossAshi.h" />
+    <ClInclude Include="BossAshiAnimator.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="EditorConfig.h" />
     <ClInclude Include="EditorDeserialize.h" />
     <ClInclude Include="EditorWindow.h" />
+    <ClInclude Include="FlameVent.h" />
+    <ClInclude Include="GasVent.h" />
+    <ClInclude Include="ParticleFlame.h" />
     <ClInclude Include="Hierarchy.h" />
     <ClInclude Include="IEditorEventListener.h" />
     <ClInclude Include="EditorEventSystem.h" />
@@ -193,7 +199,7 @@
     <ClInclude Include="ISerializableLight.h" />
     <ClInclude Include="Lava.h" />
     <ClInclude Include="MeshSelector.h" />
-    <ClInclude Include="ParticleInstanceSpark.h" />
+    <ClInclude Include="ParticleSpark.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBeetleDrone.h" />
     <ClInclude Include="EnemyBeetleDroneAnimator.h" />
@@ -212,6 +218,7 @@
     <ClInclude Include="Prop.h" />
     <ClInclude Include="SceneAncientKing.h" />
     <ClInclude Include="SceneCave01.h" />
+    <ClInclude Include="SceneCave02.h" />
     <ClInclude Include="SerializableBoxCollider.h" />
     <ClInclude Include="SerializableCapsuleCollider.h" />
     <ClInclude Include="SerializableSphereCollider.h" />
@@ -229,17 +236,23 @@
     <ClInclude Include="TPSCamera.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioTest.cpp" />
     <ClCompile Include="BeetleSpawner.cpp" />
     <ClCompile Include="BillboardAnimation.cpp" />
     <ClCompile Include="BillboardSpritesheet.cpp" />
     <ClCompile Include="BossAncientKingAnimator.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="BossAncientKing.cpp" />
+    <ClCompile Include="BossAshi.cpp" />
+    <ClCompile Include="BossAshiAnimator.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="EditorDeserialize.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
+    <ClCompile Include="FlameVent.cpp" />
+    <ClCompile Include="GasVent.cpp" />
+    <ClCompile Include="ParticleFlame.cpp" />
     <ClCompile Include="Hierarchy.cpp" />
     <ClCompile Include="IEditorEventListener.cpp" />
     <ClCompile Include="EditorEventSystem.cpp" />
@@ -258,7 +271,7 @@
     <ClCompile Include="ISerializableLight.cpp" />
     <ClCompile Include="Lava.cpp" />
     <ClCompile Include="MeshSelector.cpp" />
-    <ClCompile Include="ParticleInstanceSpark.cpp" />
+    <ClCompile Include="ParticleSpark.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBeetleDrone.cpp" />
     <ClCompile Include="EnemyBeetleDroneAnimator.cpp" />
@@ -277,6 +290,7 @@
     <ClCompile Include="Prop.cpp" />
     <ClCompile Include="SceneAncientKing.cpp" />
     <ClCompile Include="SceneCave01.cpp" />
+    <ClCompile Include="SceneCave02.cpp" />
     <ClCompile Include="SerializableBoxCollider.cpp" />
     <ClCompile Include="SerializableCapsuleCollider.cpp" />
     <ClCompile Include="SerializableSphereCollider.cpp" />
@@ -302,6 +316,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Shader\Fire.fx" />
     <FxCompile Include="..\Shader\InstanceUnlit.fx" />
     <FxCompile Include="..\Shader\Lava.fx" />
     <FxCompile Include="..\Shader\Spark.fx" />

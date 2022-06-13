@@ -3,7 +3,11 @@
 #include "Config.h"
 #include "FreeCamera.h"
 #include "RaycastTest.h"
-#include "Lava.h"
+
+#include "FlameVent.h"
+#include "GasVent.h"
+
+#include "AudioTest.h"
 
 Scene* TestScene::Clone()
 {
@@ -21,23 +25,18 @@ void TestScene::OnLoad()
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Dev.png"));
 	system->resource->factory->LoadTexture2DM(loadDesc, TEXT("../Resource/Dev/Normal.png"));
 
-	ResourceRef<Shader> lavaShader = system->resource->factory->LoadShaderFromBinaryFolderM(TEXT("Lava.cso"));
-	ResourceRef<Texture> noise03 = system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_03);
-	ResourceRef<Texture> noise02 = system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_02);
+	LOAD_SOUNDS(system);
 
 	{
 		{
-			GameObject* goMesh = CreateGameObject();
-			goMesh->transform->position = V3(0, 1.21f, -3);
-			goMesh->transform->localScale = V3::one() * 30.0f;
-
-			goMesh->AddComponent<Lava>();
+			GameObject* go = CreateGameObject();
+			go->AddComponent<AudioTest>();
 
 			GameObject* goGizmo = CreateGameObject();
-			goGizmo->transform->position = goMesh->transform->position;
+			goGizmo->transform->position = go->transform->position;
 			Gizmo* gizmo = goGizmo->AddComponent<Gizmo>();
 			gizmo->show = true;
-			gizmo->SetHandlingTransform(goMesh->transform);
+			gizmo->SetHandlingTransform(go->transform);
 		}
 
 		{

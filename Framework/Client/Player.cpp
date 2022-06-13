@@ -5,7 +5,7 @@
 #include "Config.h"
 #include "Enemy.h"
 
-#include "ParticleInstanceSpark.h"
+#include "ParticleSpark.h"
 #include "EffectShockwave.h"
 #include "EffectRing01.h"
 #include "ParticleDust01.h"
@@ -26,6 +26,7 @@ void Player::Awake()
 	SetupKatana();
 	SetupFootCnt();
 	SetupAttackTrigger();
+	SetupAudioSource();
 
 	g_player = this;
 }
@@ -38,11 +39,12 @@ void Player::Start()
 	m_tpsCamera->transform->forward = transform->forward;
 }
 
-#include "BossAncientKing.h"
-#include "EnemyBeetleDrone.h"
 void Player::Update()
 {
 	Character::Update();
+
+	m_audioSource->minDistance = 5.0f;
+	m_audioSource->maxDistance = 10.0f;
 
 	SecondGroundCheck();
 
@@ -63,28 +65,6 @@ void Player::Update()
 		else
 			m_tpsCamera->Unlook();
 	}
-
-	ImGui::Begin("Monster");
-	if (ImGui::Button("Beetle"))
-	{
-		GameObject* goEnemy = CreateGameObject();
-		goEnemy->transform->position = transform->position + transform->forward * 3.0f + V3::up() * 5.0f;
-		goEnemy->AddComponent<EnemyBeetleDrone>();
-	}
-	if (ImGui::Button("AncientKing"))
-	{
-		GameObject* goEnemy = CreateGameObject();
-		goEnemy->transform->position = transform->position + transform->forward * 6.0f + V3::up() * 8.0f;
-		goEnemy->AddComponent<BossAncientKing>();
-	}
-	if (ImGui::Button("Destroy"))
-	{
-		while (Enemy::GetEnemyCount() > 0)
-		{
-			Enemy::GetEnemyByIndex(0)->gameObject->Destroy();
-		}
-	}
-	ImGui::End();
 }
 
 void Player::FixedUpdate()
@@ -204,6 +184,12 @@ void Player::SetupAttackTrigger()
 	m_attackTrigger[FOOT_TRIGGER]->enable = false;
 }
 
+void Player::SetupAudioSource()
+{
+	GameObject* goAudioSource = CreateGameObjectToChild(transform);
+	m_audioSource = goAudioSource->AddComponent<AudioSource>();
+}
+
 void Player::UpdateCCT()
 {
 	CCT->MoveOnGround(m_animator->Layer->deltaPosition, system->time->deltaTime);
@@ -287,7 +273,7 @@ void Player::AttackTriggerQuery()
 				V3 katanaPos = m_goAttackTrigger[KATANA_TRIGGER]->transform->position + transform->forward * 2.5f;
 				V3 effectPos = (katanaPos + overlap->transform->position) * 0.5f;
 
-				ParticleInstanceSpark::Create(
+				ParticleSpark::Create(
 					gameObject->regionScene,
 					effectPos,
 					-transform->forward,
@@ -320,6 +306,20 @@ void Player::AttackTriggerQuery()
 
 		if (numHit > 0)
 		{
+			uint randomSound = rand() % 3;
+			switch (randomSound)
+			{
+				case 0:
+					m_audioSource->PlayOneshot(system->resource->Find(SOUND_DAMAGE_01), 0.5f);
+					break;
+				case 1:
+					m_audioSource->PlayOneshot(system->resource->Find(SOUND_DAMAGE_02), 0.5f);
+					break;
+				case 2:
+					m_audioSource->PlayOneshot(system->resource->Find(SOUND_DAMAGE_03), 0.5f);
+					break;
+			}
+
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
 		}
@@ -575,6 +575,11 @@ void Player::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDesc
 			0.2f, 2.5f
 		);
 	}
+	if (desc.ContextByte & PlayerAnimator::ByteContext::PLAY_SOUND)
+	{
+		ResourceRef<AudioClip> audioClip = system->resource->Find(desc.ContextTStr);
+		m_audioSource->PlayOneshot(audioClip, desc.ContextFloat);
+	}
 }
 
 void Player::SetAttackType(uint contextUInt)
@@ -647,7 +652,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			m_damagedDirection.y = 0;
 			m_damagedDirection.Normalize();
 
-			ParticleInstanceSpark::Create(
+			ParticleSpark::Create(
 				gameObject->regionScene,
 				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
 				-transform->forward,
@@ -679,6 +684,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
 
+			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_01), 0.5f);
+
 			m_animator->GuardHitTProperty->SetTriggerState();
 			return DamageOutType::GUARDED;
 		}
@@ -689,7 +696,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			m_damagedDirection.y = 0;
 			m_damagedDirection.Normalize();
 
-			ParticleInstanceSpark::Create(
+			ParticleSpark::Create(
 				gameObject->regionScene,
 				m_goAttackTrigger[KATANA_TRIGGER]->transform->position,
 				-transform->forward,
@@ -720,6 +727,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
+
+			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_02), 0.5f);
 
 			m_animator->GuardBreakTProperty->SetTriggerState();
 			return DamageOutType::GUARD_BREAKED;
@@ -794,6 +803,20 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				1.0f, 3.0f, 0.5f,
 				Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
 				10);
+
+			uint randomSound = rand() % 3;
+			switch (randomSound)
+			{
+				case 0:
+					m_audioSource->PlayOneshot(system->resource->Find(SOUND_DAMAGE_01), 0.5f);
+					break;
+				case 1:
+					m_audioSource->PlayOneshot(system->resource->Find(SOUND_DAMAGE_02), 0.5f);
+					break;
+				case 2:
+					m_audioSource->PlayOneshot(system->resource->Find(SOUND_DAMAGE_03), 0.5f);
+					break;
+			}
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.035f, 1.1f, 0.1f, 2.0f / 0.1f);

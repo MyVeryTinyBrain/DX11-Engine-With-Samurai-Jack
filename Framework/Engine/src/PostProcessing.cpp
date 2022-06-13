@@ -160,6 +160,12 @@ void PostProcessing::PostProcess_AfterDeferred(ICamera* camera)
 		Render_SSR_Write(camera, ssrDesc);
 		Render_SSR_Apply(camera, ssrDesc);
 	}
+
+	const FogDesc& fogDesc = camera->GetFogDesc();
+	if (fogDesc.Enable)
+	{
+		Render_Fog_Apply(camera, fogDesc);
+	}
 }
 
 void PostProcessing::PostProcess_AfterEmissive(ICamera* camera)
@@ -174,12 +180,6 @@ void PostProcessing::PostProcess_AfterEmissive(ICamera* camera)
 
 void PostProcessing::PostProcess_AfterTransparent(ICamera* camera)
 {
-	const FogDesc& fogDesc = camera->GetFogDesc();
-	if (fogDesc.Enable)
-	{
-		Render_Fog_Apply(camera, fogDesc);
-	}
-
 	const BloomDesc& bloomDesc = camera->GetBloomDesc();
 	if (bloomDesc.Enable)
 	{

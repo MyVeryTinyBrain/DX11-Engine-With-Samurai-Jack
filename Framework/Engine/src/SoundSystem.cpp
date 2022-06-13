@@ -89,9 +89,6 @@ Com<SoundChannel> SoundSystem::Play(Com<Sound> sound, const SoundPlayDesc& desc)
 	if (FMOD_OK != FMOD_Channel_SetPriority(fmodchannel, desc.Priority))
 		return nullptr;
 
-	FMOD_CHANNELGROUP* channelGroup = nullptr;
-	if (!desc.Group)	{ FMOD_System_GetMasterChannelGroup(m_fmod, &channelGroup); }
-	else				{ channelGroup = desc.Group; }
 	if (desc.Group && FMOD_OK != FMOD_Channel_SetChannelGroup(fmodchannel, desc.Group))
 		return nullptr;
 	

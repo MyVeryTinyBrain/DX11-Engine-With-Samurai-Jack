@@ -8,6 +8,8 @@ void TPSCamera::Awake()
 {
 	m_goCamera = CreateGameObjectToChild(transform);
     m_camera = m_goCamera->AddComponent<Camera>();
+    m_goCamera->AddComponent<AudioListener>();
+    //m_camera->drawGBuffer = true;
 
     EventSystem::RegistListener(this);
 }

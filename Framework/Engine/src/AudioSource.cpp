@@ -13,9 +13,11 @@ void AudioSource::Awake()
 	FMOD_RESULT fr = FMOD_System_CreateChannelGroup(system->sound->fmod, NULL, &m_fmodChannelGroup);
 	assert(FMOD_OK == fr); // 채널그룹 생성이 실패했습니다.
 
+	FMOD_ChannelGroup_SetMode(m_fmodChannelGroup, FMOD_3D_LINEARROLLOFF);
+
 	SetPlayAnywhere(false + fr * 0.0f);
-	Set3DMinDistance(10.0f);
-	Set3DMaxDistance(0.0f);
+	Set3DMinDistance(5.0f);
+	Set3DMaxDistance(10.0f);
 }
 
 void AudioSource::LateUpdate()
@@ -72,8 +74,8 @@ void AudioSource::PlayOneshot(ResourceRef<AudioClip> clip, float volume, float p
 
 	SoundPlayDesc desc = {};
 	desc.Loop = false;
-	desc.Pitch = clip->volume * volume;
-	desc.Volume = clip->pitch * pitch;
+	desc.Volume = clip->volume * volume;
+	desc.Pitch = clip->pitch * pitch;
 	desc.Priority = m_priority;
 	desc.Group = m_fmodChannelGroup;
 

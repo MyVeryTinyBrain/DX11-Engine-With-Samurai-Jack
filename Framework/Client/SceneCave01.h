@@ -15,5 +15,6 @@ class SceneCave01 : public Scene, public EventListener
 private:
 
 	vector<Ref<Collider>> m_fightColliders;
+	vector<Ref<Collider>> m_nextSceneTriggers;
 };
 

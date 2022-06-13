@@ -78,6 +78,18 @@ void BossAncientKingAnimator::SetupNodes()
         e1.ContextFloat = 0.5f;
         BH_TURN_ROTATE->AddEvent(e0);
         BH_TURN_ROTATE->AddEvent(e1);
+
+        AnimationEventDesc s0, s1;
+        s0.NormalizedTime = 22 / 44.0f;
+        s1.NormalizedTime = 42 / 44.0f;
+        s0.ContextByte = ByteContext::PLAY_SOUND;
+        s1.ContextByte = ByteContext::PLAY_SOUND;
+        s0.ContextTStr = SOUND_CRASH_01;
+        s1.ContextTStr = SOUND_CRASH_01;
+        s0.ContextFloat = 0.5f;
+        s1.ContextFloat = 0.5f;
+        BH_TURN_ROTATE->AddEvent(s0);
+        BH_TURN_ROTATE->AddEvent(s1);
     }
     Layer->AddNode(BH_TURN_ROTATE);
 
@@ -95,6 +107,18 @@ void BossAncientKingAnimator::SetupNodes()
         e1.ContextFloat = 0.5f;
         BH_WLK_ST->AddEvent(e0);
         BH_WLK_ST->AddEvent(e1);
+
+        AnimationEventDesc s0, s1;
+        s0.NormalizedTime = 16 / 60.0f;
+        s1.NormalizedTime = 44 / 60.0f;
+        s0.ContextByte = ByteContext::PLAY_SOUND;
+        s1.ContextByte = ByteContext::PLAY_SOUND;
+        s0.ContextTStr = SOUND_CRASH_01;
+        s1.ContextTStr = SOUND_CRASH_01;
+        s0.ContextFloat = 0.5f;
+        s1.ContextFloat = 0.5f;        
+        BH_WLK_ST->AddEvent(s0);
+        BH_WLK_ST->AddEvent(s1);
     }
     Layer->AddNode(BH_WLK_ST);
 
@@ -109,6 +133,18 @@ void BossAncientKingAnimator::SetupNodes()
         e1.ContextFloat = 0.5f;
         BH_WLK_LP->AddEvent(e0);
         BH_WLK_LP->AddEvent(e1);
+
+        AnimationEventDesc s0, s1;
+        s0.NormalizedTime = 24 / 80.0f;
+        s1.NormalizedTime = 65 / 80.0f;
+        s0.ContextByte = ByteContext::PLAY_SOUND;
+        s1.ContextByte = ByteContext::PLAY_SOUND;
+        s0.ContextTStr = SOUND_CRASH_01;
+        s1.ContextTStr = SOUND_CRASH_01;
+        s0.ContextFloat = 0.5f;
+        s1.ContextFloat = 0.5f;
+        BH_WLK_LP->AddEvent(s0);
+        BH_WLK_LP->AddEvent(s1);
     }
     Layer->AddNode(BH_WLK_LP);
 
@@ -123,6 +159,18 @@ void BossAncientKingAnimator::SetupNodes()
         e1.ContextFloat = 0.5f;
         BH_WLK_ED->AddEvent(e0);
         BH_WLK_ED->AddEvent(e1);
+
+        AnimationEventDesc s0, s1;
+        s0.NormalizedTime = 24 / 70.0f;
+        s1.NormalizedTime = 60 / 70.0f;
+        s0.ContextByte = ByteContext::PLAY_SOUND;
+        s1.ContextByte = ByteContext::PLAY_SOUND;
+        s0.ContextTStr = SOUND_CRASH_01;
+        s1.ContextTStr = SOUND_CRASH_01;
+        s0.ContextFloat = 0.5f;
+        s1.ContextFloat = 0.5f;
+        BH_WLK_ED->AddEvent(s0);
+        BH_WLK_ED->AddEvent(s1);
     }
     Layer->AddNode(BH_WLK_ED);
 
@@ -134,6 +182,13 @@ void BossAncientKingAnimator::SetupNodes()
         e0.ContextUInt = UIntContext::RF_DUST | UIntContext::LF_DUST | UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         DMG_GROGY_ST->AddEvent(e0);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 15 / 35.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_CRASH_01;
+        s.ContextFloat = 1.0f;
+        DMG_GROGY_ST->AddEvent(s);
     }
     Layer->AddNode(DMG_GROGY_ST);
 
@@ -154,16 +209,32 @@ void BossAncientKingAnimator::SetupNodes()
         e0.ContextUInt = UIntContext::RF_DUST | UIntContext::LF_DUST | UIntContext::HAMMER_DUST;
         e0.ContextFloat = 1.0f;
         DMG_DIE->AddEvent(e0);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 88 / 100.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_CRASH_01;
+        s.ContextFloat = 1.0f;
+        DMG_DIE->AddEvent(s);
     }
     Layer->AddNode(DMG_DIE);
   
     ATK_TURN = AnimatorSingleNode::Create(GetClip(TEXT("ATK_TURN")), NOLOOP);
     {
-        AnimationEventDesc e0;
-        e0.NormalizedTime = 29 / 75.0f;
-        e0.ContextByte = ByteContext::CAM_SHAKE;
-        e0.ContextFloat = 0.5f;
-        ATK_TURN->AddEvent(e0);
+        {
+            AnimationEventDesc e0;
+            e0.NormalizedTime = 10 / 75.0f;
+            e0.ContextByte = ByteContext::CAM_SHAKE;
+            e0.ContextFloat = 0.5f;
+            ATK_TURN->AddEvent(e0);
+        }
+        {
+            AnimationEventDesc e0;
+            e0.NormalizedTime = 29 / 75.0f;
+            e0.ContextByte = ByteContext::CAM_SHAKE;
+            e0.ContextFloat = 0.5f;
+            ATK_TURN->AddEvent(e0);
+        }
 
         AnimationEventDesc a0, a1;
         a0.NormalizedTime = 20 / 75.0f;
@@ -173,6 +244,31 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::HAMMER_END;
         ATK_TURN->AddEvent(a0);
         ATK_TURN->AddEvent(a1);
+
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 10 / 75.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_CRASH_01;
+            s.ContextFloat = 0.5f;
+            ATK_TURN->AddEvent(s);
+        }
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 29 / 75.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_CRASH_01;
+            s.ContextFloat = 0.5f;
+            ATK_TURN->AddEvent(s);
+        }
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 20 / 75.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_TURN->AddEvent(swingSound);
+        }
     }
     Layer->AddNode(ATK_TURN);
 
@@ -186,6 +282,15 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::HAMMER_END;
         ATK_SWING_L->AddEvent(a0);
         ATK_SWING_L->AddEvent(a1);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 27 / 100.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_SWING_L->AddEvent(swingSound);
+        }
     }
     Layer->AddNode(ATK_SWING_L);
 
@@ -199,6 +304,15 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::HAMMER_END;
         ATK_SWING_R->AddEvent(a0);
         ATK_SWING_R->AddEvent(a1);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 18 / 89.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_SWING_R->AddEvent(swingSound);
+        }
     }
     Layer->AddNode(ATK_SWING_R);
         
@@ -219,6 +333,23 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::HAMMER_END;
         ATK_SWING_V->AddEvent(a0);
         ATK_SWING_V->AddEvent(a1);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 34 / 85.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_SWING_V->AddEvent(swingSound);
+        }
+        {
+            AnimationEventDesc crashSound;
+            crashSound.NormalizedTime = 39 / 85.0f;
+            crashSound.ContextByte = ByteContext::PLAY_SOUND;
+            crashSound.ContextTStr = SOUND_CRASH_02;
+            crashSound.ContextFloat = 1.0f;
+            ATK_SWING_V->AddEvent(crashSound);
+        }
     }
     Layer->AddNode(ATK_SWING_V);
 
@@ -260,6 +391,23 @@ void BossAncientKingAnimator::SetupNodes()
 		a1.ContextInt = IntContext::HAMMER_END;
 		ATK_STOMP->AddEvent(a0);
 		ATK_STOMP->AddEvent(a1);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 72 / 260.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_STOMP->AddEvent(swingSound);
+        }
+        {
+            AnimationEventDesc crashSound;
+            crashSound.NormalizedTime = 78 / 260.0f;
+            crashSound.ContextByte = ByteContext::PLAY_SOUND;
+            crashSound.ContextTStr = SOUND_CRASH_02;
+            crashSound.ContextFloat = 1.0f;
+            ATK_STOMP->AddEvent(crashSound);
+        }
     }
     Layer->AddNode(ATK_STOMP);
 
@@ -273,13 +421,20 @@ void BossAncientKingAnimator::SetupNodes()
         ATK_STEPON_L->AddEvent(e0);
 
         AnimationEventDesc a0, a1;
-        a0.NormalizedTime = 58 / 123.0f;
+        a0.NormalizedTime = 59 / 123.0f;
         a1.NormalizedTime = 61 / 123.0f;
         a0.ContextInt = IntContext::LF_START;
         a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
         a1.ContextInt = IntContext::LF_END;
         ATK_STEPON_L->AddEvent(a0);
         ATK_STEPON_L->AddEvent(a1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 59 / 123.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_CRASH_01;
+        s.ContextFloat = 1.0f;
+        ATK_STEPON_L->AddEvent(s);
     }
     Layer->AddNode(ATK_STEPON_L);
 
@@ -300,6 +455,13 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::RF_END;
         ATK_STEPON_R->AddEvent(a0);
         ATK_STEPON_R->AddEvent(a1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 40 / 110.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_CRASH_01;
+        s.ContextFloat = 1.0f;
+        ATK_STEPON_R->AddEvent(s);
     }
     Layer->AddNode(ATK_STEPON_R);
 
@@ -316,14 +478,26 @@ void BossAncientKingAnimator::SetupNodes()
     ATK_RUSH_LP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_LP")), LOOP);
     {
         AnimationEventDesc e0, e1;
-        e0.NormalizedTime = 4 / 20.0f;
-        e1.NormalizedTime = 14 / 20.0f;
+        e0.NormalizedTime = 3 / 20.0f;
+        e1.NormalizedTime = 13 / 20.0f;
         e0.ContextByte = ByteContext::CAM_SHAKE;
         e1.ContextByte = ByteContext::CAM_SHAKE;
         e0.ContextFloat = 0.5f;
         e1.ContextFloat = 0.5f;
         ATK_RUSH_LP->AddEvent(e0);
         ATK_RUSH_LP->AddEvent(e1);
+
+        AnimationEventDesc s0, s1;
+        s0.NormalizedTime = 3 / 20.0f;
+        s1.NormalizedTime = 13 / 20.0f;
+        s0.ContextByte = ByteContext::PLAY_SOUND;
+        s1.ContextByte = ByteContext::PLAY_SOUND;
+        s0.ContextTStr = SOUND_CRASH_01;
+        s1.ContextTStr = SOUND_CRASH_01;
+        s0.ContextFloat = 0.5f;
+        s1.ContextFloat = 0.5f;
+        ATK_RUSH_LP->AddEvent(s0);
+        ATK_RUSH_LP->AddEvent(s1);
     }
     Layer->AddNode(ATK_RUSH_LP);
 
@@ -351,14 +525,12 @@ void BossAncientKingAnimator::SetupNodes()
         groundimpact.ContextUInt = UIntContext::LF_GROUND_IMPACT | UIntContext::RF_GROUND_IMPACT;
         ATK_JUMP->AddEvent(groundimpact);
 
-        //AnimationEventDesc a0, a1;
-        //a0.NormalizedTime = 31 / 110.0f;
-        //a1.NormalizedTime = 34 / 110.0f;
-        //a0.ContextInt = IntContext::RF_START | IntContext::LF_START;
-        //a0.ContextUInt = UIntContext::ATK_BLOW;
-        //a1.ContextInt = IntContext::RF_END | IntContext::LF_END;
-        //ATK_JUMP->AddEvent(a0);
-        //ATK_JUMP->AddEvent(a1);
+        AnimationEventDesc s;
+        s.NormalizedTime = 33 / 110.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_CRASH_01;
+        s.ContextFloat = 1.0f;
+        ATK_JUMP->AddEvent(s);
     }
     Layer->AddNode(ATK_JUMP);
 
@@ -376,14 +548,12 @@ void BossAncientKingAnimator::SetupNodes()
         groundimpact.ContextUInt = UIntContext::LF_GROUND_IMPACT | UIntContext::RF_GROUND_IMPACT;
         ATK_BACKJUMP->AddEvent(groundimpact);
 
-        //AnimationEventDesc a0, a1;
-        //a0.NormalizedTime = 31 / 110.0f;
-        //a1.NormalizedTime = 34 / 110.0f;
-        //a0.ContextInt = IntContext::RF_START | IntContext::LF_START;
-        //a0.ContextUInt = UIntContext::ATK_BLOW;
-        //a1.ContextInt = IntContext::RF_END | IntContext::LF_END;
-        //ATK_BACKJUMP->AddEvent(a0);
-        //ATK_BACKJUMP->AddEvent(a1);
+        AnimationEventDesc s;
+        s.NormalizedTime = 33 / 110.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_CRASH_01;
+        s.ContextFloat = 1.0f;
+        ATK_BACKJUMP->AddEvent(s);
 
         AnimationEventDesc bjend;
         bjend.NormalizedTime = 45 / 110.0f;
@@ -423,6 +593,14 @@ void BossAncientKingAnimator::SetupNodes()
             ATK_ELECTRIC->AddEvent(e0);
             ATK_ELECTRIC->AddEvent(e1);
         }
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 50 / 123.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_ELECTRIC_02;
+            s.ContextFloat = 1.0f;
+            ATK_ELECTRIC->AddEvent(s);
+        }
     }
     Layer->AddNode(ATK_ELECTRIC);
 
@@ -443,6 +621,23 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::HAMMER_END;
         ATK_DOWNSTRIKE_L->AddEvent(a0);
         ATK_DOWNSTRIKE_L->AddEvent(a1);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 46 / 115.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_DOWNSTRIKE_L->AddEvent(swingSound);
+        }
+        {
+            AnimationEventDesc crashSound;
+            crashSound.NormalizedTime = 52 / 115.0f;
+            crashSound.ContextByte = ByteContext::PLAY_SOUND;
+            crashSound.ContextTStr = SOUND_CRASH_02;
+            crashSound.ContextFloat = 1.0f;
+            ATK_DOWNSTRIKE_L->AddEvent(crashSound);
+        }
     }
     Layer->AddNode(ATK_DOWNSTRIKE_L);
 
@@ -463,6 +658,23 @@ void BossAncientKingAnimator::SetupNodes()
         a1.ContextInt = IntContext::HAMMER_END;
         ATK_DOWNSTRIKE_R->AddEvent(a0);
         ATK_DOWNSTRIKE_R->AddEvent(a1);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 43 / 115.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_01;
+            swingSound.ContextFloat = 1.0f;
+            ATK_DOWNSTRIKE_R->AddEvent(swingSound);
+        }
+        {
+            AnimationEventDesc crashSound;
+            crashSound.NormalizedTime = 49 / 120.0f;
+            crashSound.ContextByte = ByteContext::PLAY_SOUND;
+            crashSound.ContextTStr = SOUND_CRASH_02;
+            crashSound.ContextFloat = 1.0f;
+            ATK_DOWNSTRIKE_R->AddEvent(crashSound);
+        }
     }
     Layer->AddNode(ATK_DOWNSTRIKE_R);
 
@@ -488,6 +700,15 @@ void BossAncientKingAnimator::SetupNodes()
         e1.ContextUInt = UIntContext::MANUALLOOK_END;
         ATK_BEAM->AddEvent(e0);
         ATK_BEAM->AddEvent(e1);
+
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 42 / 123.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_ELECTRIC_01;
+            s.ContextFloat = 1.0f;
+            ATK_BEAM->AddEvent(s);
+        }
     }
     Layer->AddNode(ATK_BEAM);
 

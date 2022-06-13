@@ -19,6 +19,8 @@
 
 #include "Lava.h"
 #include "BeetleSpawner.h"
+#include "GasVent.h"
+#include "FlameVent.h"
 
 EDITOR_USE
 
@@ -54,6 +56,10 @@ IEditorObject* EditorDeserialize::NewEditorObjectByType(Scene* scene, const Json
         return go->AddComponent<Lava>();
     if (json["type"] == EDITOR_OBJECT_TYPE_BEETLE_SPAWNER)
         return go->AddComponent<BeetleSpawner>();
+    if (json["type"] == EDITOR_OBJECT_TYPE_GAS_VENT)
+        return go->AddComponent<GasVent>();
+    if (json["type"] == EDITOR_OBJECT_TYPE_FLAME_VENT)
+        return go->AddComponent<FlameVent>();
 
     return nullptr;
 }

@@ -11,7 +11,7 @@ struct AnimationEventDesc
 	int				ContextInt = 0;
 	unsigned int	ContextUInt = 0;
 	float			ContextFloat = 0.0f;
-	char			ContextStr[MAX_CONTEXT] = {};
+	tstring			ContextTStr;
 };
 
 struct AnimationEvent

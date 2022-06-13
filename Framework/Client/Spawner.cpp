@@ -22,6 +22,8 @@
 
 #include "Lava.h"
 #include "BeetleSpawner.h"
+#include "GasVent.h"
+#include "FlameVent.h"
 
 EDITOR_USE
 
@@ -166,6 +168,22 @@ void Spawner::OnImGuiRender()
 			GameObject* go = CreateGameObject();
 			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
 			o = go->AddComponent<BeetleSpawner>();
+
+			inspector->Select(o);
+		}
+		if (ImGui::Selectable("GasVent"))
+		{
+			GameObject* go = CreateGameObject();
+			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
+			o = go->AddComponent<GasVent>();
+
+			inspector->Select(o);
+		}
+		if (ImGui::Selectable("FlameVent"))
+		{
+			GameObject* go = CreateGameObject();
+			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
+			o = go->AddComponent<FlameVent>();
 
 			inspector->Select(o);
 		}

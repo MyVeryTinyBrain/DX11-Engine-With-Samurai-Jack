@@ -33,6 +33,7 @@ private:
 	void SetupCharacterRenderers();
 	void SetupAnimator();
 	void SetupAttackTrigger();
+	void SetupAudioSource();
 
 private:
 
@@ -100,6 +101,10 @@ private:
 	SphereCollider* m_attackTrigger[2];
 	uint m_attackType = 0;
 	unordered_set<Rigidbody*> m_hitBuffer;
+
+	// Audio
+
+	AudioSource* m_audioSource;
 
 	// Stat
 

@@ -40,10 +40,11 @@ void BossAncientKing::Awake()
 	Boss::Awake();
 
 	CCT->radius = 3.0f;
-	CCT->height = 0.01f;
+	CCT->height = 0.1f;
 	CCT->capsuleCollider->layerIndex = PhysicsLayer_Enemy;
 	CCT->collisionWithCCT = false;
 	CCT->OnCollision += func<void(const CCTCollision&)>(this, &BossAncientKing::OnCCTCollision);
+	CCT->enable = false;
 
 	SetupCollider();
 	SetupCharacterRenderers();
@@ -51,6 +52,7 @@ void BossAncientKing::Awake()
 	SetupLight();
 	SetupHammer();
 	SetupAttackTrigger();
+	SetupAudioSource();
 
 	SetState(State::NONE);
 	m_idleLeftCounter = 0.1f;
@@ -102,6 +104,8 @@ void BossAncientKing::LateUpdate()
 void BossAncientKing::FixedUpdate()
 {
 	Boss::FixedUpdate();
+
+	CCT->enable = true;
 }
 
 void BossAncientKing::SetupCollider()
@@ -116,9 +120,10 @@ void BossAncientKing::SetupCollider()
 void BossAncientKing::SetupCharacterRenderers()
 {
 	m_goCharacterRender = CreateGameObjectToChild(transform);
-	m_goCharacterRender->transform->localPosition = ADJUST_ANCIENTKING_LOCALPOSITION;
 	m_goCharacterRender->transform->localEulerAngles = ADJUST_LOCALEULERANGLES;
+	m_goCharacterRender->transform->localPosition = ADJUST_ANCIENTKING_LOCALPOSITION;
 	m_goCharacterRender->transform->localScale = ADJUST_ANCIENTKING_LOCALSCALE;
+
 	m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
 	m_characterRenderer->mesh = system->resource->Find(MESH_ANCIENT_KING);
 	m_characterRenderer->SetupStandardMaterials();
@@ -204,6 +209,13 @@ void BossAncientKing::SetupAttackTrigger()
 	GameObject* goElectricBeam = CreateGameObjectToChild(transform);
 	m_electricBeam = goElectricBeam->AddComponent<EffectElectricBeam>();
 	m_electricBeam->enable = false;
+}
+
+void BossAncientKing::SetupAudioSource()
+{
+	m_audioSource = gameObject->AddComponent<AudioSource>();
+	m_audioSource->minDistance = 8.0f;
+	m_audioSource->maxDistance = m_audioSource->minDistance + 30.0f;
 }
 
 void BossAncientKing::UpdateCCT()
@@ -437,6 +449,11 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			3.0f,
 			1.0f, 12.0f
 		);
+	}
+	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::PLAY_SOUND)
+	{
+		ResourceRef<AudioClip> audioClip = system->resource->Find(desc.ContextTStr);
+		m_audioSource->PlayOneshot(audioClip, desc.ContextFloat);
 	}
 
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::ATK_GADABLE)

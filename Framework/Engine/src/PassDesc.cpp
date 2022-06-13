@@ -54,10 +54,6 @@ bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_
 		if (FAILED(vertexShader->GetInputSignatureElementDesc(vertexShade.ShaderIndex, i, &inputSignatureElementDesc)))
 			continue;
 
-		// ½Ã¸àÆ½ ÀÎµ¦½º°¡ ¾ø°Å³ª 0ÀÌ ¾Æ´Ï¶ó¸é ½ºÅµÇÕ´Ï´Ù.
-		else if (inputSignatureElementDesc.SemanticIndex != 0)
-			continue;
-
 		D3D11_INPUT_ELEMENT_DESC element = {};
 		bool isValidElement = true;
 
@@ -160,35 +156,32 @@ bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_
 			element.InputSlot = InstanceData::InputSlot();
 			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
 		}
-		else if (!strcmp(element.SemanticName, InstanceData::InstanceData0Name0()) ||
-			!strcmp(element.SemanticName, InstanceData::InstanceData0Name1()))
+		else if (!strcmp(element.SemanticName, InstanceData::InstanceDataName()))
 		{
-			element.AlignedByteOffset = InstanceData::InstanceData0Position();
-			element.Format = InstanceData::InstanceData0Format();
-			element.InputSlotClass = InstanceData::InputSlotClass();
-			element.InputSlot = InstanceData::InputSlot();
-			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
-		}
-		else if (!strcmp(element.SemanticName, InstanceData::InstanceData1Name()))
-		{
-			element.AlignedByteOffset = InstanceData::InstanceData1Position();
-			element.Format = InstanceData::InstanceData1Format();
-			element.InputSlotClass = InstanceData::InputSlotClass();
-			element.InputSlot = InstanceData::InputSlot();
-			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
-		}
-		else if (!strcmp(element.SemanticName, InstanceData::InstanceData2Name()))
-		{
-			element.AlignedByteOffset = InstanceData::InstanceData2Position();
-			element.Format = InstanceData::InstanceData2Format();
-			element.InputSlotClass = InstanceData::InputSlotClass();
-			element.InputSlot = InstanceData::InputSlot();
-			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();
-		}
-		else if (!strcmp(element.SemanticName, InstanceData::InstanceData3Name()))
-		{
-			element.AlignedByteOffset = InstanceData::InstanceData3Position();
-			element.Format = InstanceData::InstanceData3Format();
+			if (element.SemanticIndex == 0)
+			{
+				element.AlignedByteOffset = InstanceData::InstanceData0Position();
+				element.Format = InstanceData::InstanceData0Format();
+			}
+			else if (element.SemanticIndex == 1)
+			{
+				element.AlignedByteOffset = InstanceData::InstanceData1Position();
+				element.Format = InstanceData::InstanceData1Format();
+			}
+			else if (element.SemanticIndex == 2)
+			{
+				element.AlignedByteOffset = InstanceData::InstanceData2Position();
+				element.Format = InstanceData::InstanceData2Format();
+			}
+			else if (element.SemanticIndex == 3)
+			{
+				element.AlignedByteOffset = InstanceData::InstanceData3Position();
+				element.Format = InstanceData::InstanceData3Format();
+			}
+			else
+			{
+				isValidElement = false;
+			}
 			element.InputSlotClass = InstanceData::InputSlotClass();
 			element.InputSlot = InstanceData::InputSlot();
 			element.InstanceDataStepRate = InstanceData::InstanceDataStepRate();

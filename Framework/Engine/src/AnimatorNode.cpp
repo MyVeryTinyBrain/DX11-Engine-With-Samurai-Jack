@@ -11,7 +11,7 @@ AnimatorNode::AnimatorNode(const tstring& name, bool loop, bool isEmpty) :
 
 void AnimatorNode::AddEvent(const AnimationEventDesc& eventDesc)
 {
-	AnimationEvent animationEvent = {};
+	AnimationEvent animationEvent;
 	animationEvent.Desc = eventDesc;
 	animationEvent.used = false;
 	m_events.push_back(animationEvent);
@@ -81,15 +81,17 @@ void AnimatorNode::ClearEventUsed()
 
 void AnimatorNode::EventProcess(vector<AnimationEventDesc>& out_notifications)
 {
+	float loopedNormalizedTime = Repeat(m_normalizedTime, 1.0f);
+
 	uint numEvents = uint(m_events.size());
 	for (uint i = 0; i < numEvents; ++i)
 	{
 		AnimationEvent& animationEvent = m_events[i];
 
-		if (animationEvent.Desc.NormalizedTime > m_normalizedTime)
+		if (animationEvent.Desc.NormalizedTime > loopedNormalizedTime)
 			return;
 
-		if (!animationEvent.used && animationEvent.Desc.NormalizedTime < m_normalizedTime)
+		if (!animationEvent.used && animationEvent.Desc.NormalizedTime < loopedNormalizedTime)
 		{
 			animationEvent.used = true;
 			out_notifications.push_back(animationEvent.Desc);

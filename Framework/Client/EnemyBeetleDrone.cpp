@@ -12,6 +12,7 @@ void EnemyBeetleDrone::Awake()
 	SetupCharacterRenderers();
 	SetupAnimator();
 	SetupAttackTrigger();
+	SetupAudioSource();
 
 	UnregistEnemy(this);
 	CCT->radius = 0.8f;
@@ -96,6 +97,13 @@ void EnemyBeetleDrone::SetupAttackTrigger()
 	m_attackTrigger[LH_TRIGGER]->radius = 1.0f;
 	m_attackTrigger[LH_TRIGGER]->isTrigger = true;
 	m_attackTrigger[LH_TRIGGER]->enable = false;
+}
+
+void EnemyBeetleDrone::SetupAudioSource()
+{
+	m_audioSource = gameObject->AddComponent<AudioSource>();
+	m_audioSource->minDistance = 3.0f;
+	m_audioSource->maxDistance = 30.0f;
 }
 
 void EnemyBeetleDrone::UpdateCCT()
@@ -254,6 +262,11 @@ void EnemyBeetleDrone::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animatio
 			Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
 			30);
 	}
+	if (desc.ContextByte & EnemyBeetleDroneAnimator::ByteContext::PLAY_SOUND)
+	{
+		ResourceRef<AudioClip> audioClip = system->resource->Find(desc.ContextTStr);
+		m_audioSource->PlayOneshot(audioClip, desc.ContextFloat);
+	}
 }
 
 void EnemyBeetleDrone::SetAttackType(uint contextUInt)
@@ -300,7 +313,7 @@ void EnemyBeetleDrone::StateUpdate()
 					SetState(State::MOVEAROUND);
 			}
 
-			if (DistanceBetweenPlayer() < 3.0f)
+			if (DistanceBetweenPlayer() < 4.0f)
 			{
 				SetState(State::ATK);
 			}
@@ -316,7 +329,7 @@ void EnemyBeetleDrone::StateUpdate()
 
 			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 90.0f, system->time->deltaTime);
 
-			if (DistanceBetweenPlayer() < 3.0f)
+			if (DistanceBetweenPlayer() < 4.0f)
 			{
 				SetState(State::ATK);
 			}
@@ -334,7 +347,7 @@ void EnemyBeetleDrone::StateUpdate()
 			V3 toMoveAroundDir = V3(Cos(moveAroundRadian), 0.0f, Sin(moveAroundRadian));
 			RotateOnYAxisToDirection(toMoveAroundDir, 90.0f, system->time->deltaTime);
 
-			if (DistanceBetweenPlayer() < 3.0f)
+			if (DistanceBetweenPlayer() < 4.0f)
 			{
 				SetState(State::ATK);
 			}
@@ -344,7 +357,7 @@ void EnemyBeetleDrone::StateUpdate()
 		{
 			RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 90.0f, system->time->deltaTime);
 
-			m_animator->KeepATKBProperty->valueAsBool = DistanceBetweenPlayer() < 3.0f;
+			m_animator->KeepATKBProperty->valueAsBool = DistanceBetweenPlayer() < 5.0f;
 		}
 		case State::DMG:
 		{

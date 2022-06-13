@@ -26,6 +26,7 @@ public:
 	enum ByteContext : byte
 	{
 		JUMP = 0b1,
+		PLAY_SOUND = 0b10,
 	};
 
 private:

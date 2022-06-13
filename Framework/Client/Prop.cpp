@@ -37,7 +37,7 @@ void Prop::OnDestroyed()
 void Prop::SetMesh(const tstring& path)
 {
 	m_meshRenderer->mesh = system->resource->Find(path);
-	m_meshRenderer->SetupStandardMaterials();
+	m_meshRenderer->SetupStandardMaterials(true);
 
 	SetMakeShadow(m_makeShadow, true);
 }
@@ -118,7 +118,7 @@ void Prop::OnDeserialize(const Json::Value& json)
 	else
 	{
 		m_meshRenderer->mesh = system->resource->Find(mesh);
-		m_meshRenderer->SetupStandardMaterials();
+		m_meshRenderer->SetupStandardMaterials(true);
 	}
 
 	bool useCollider = json["collider"].asBool();
@@ -185,6 +185,6 @@ void Prop::SetMakeShadow(bool value, bool nocondition)
 
 	m_makeShadow = value;
 
-	if (m_makeShadow) m_meshRenderer->SetupStandardMaterials();
-	else m_meshRenderer->SetupStandardNoShadowMaterials();
+	if (m_makeShadow) m_meshRenderer->SetupStandardMaterials(true);
+	else m_meshRenderer->SetupStandardNoShadowMaterials(true);
 }

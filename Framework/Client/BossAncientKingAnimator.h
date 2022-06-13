@@ -46,6 +46,7 @@ public:
 		RF_SHOCKWAVE = 0b100,
 		HAMMER_SHOCKWAVE = 0b1000,
 		BACKJUMP_END = 0b10000,
+		PLAY_SOUND = 0b100000,
 	};
 
 private:

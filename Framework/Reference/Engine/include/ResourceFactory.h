@@ -11,6 +11,7 @@ class Shader;
 class Mesh;
 class VIBuffer;
 class Material;
+class AudioClip;
 ENGINE_END
 
 ENGINE_BEGIN
@@ -47,6 +48,9 @@ public:
 	ResourceRef<Material> CopyMaterialUM(ResourceRef<Material> material);
 	ResourceRef<Material> LoadMaterialM(const tstring& jsonPath);
 	ResourceRef<Material> LoadMaterialUM(const tstring& jsonPath);
+
+	ResourceRef<AudioClip> LoadAudioClipM(const tstring& path);
+	ResourceRef<AudioClip> LoadAudioClipUM(const tstring& path);
 
 public:
 

@@ -117,6 +117,12 @@ bool EngineWorldBase::Step()
 
 		const ComponentManagement::ComponentsByExecutionOrder& componentsByExecutionOrder = componentManagement->GetComponentsByExecutionOrders();
 
+		if (update)
+		{
+			IPhysicsSystem* iPhysics = m_system->physics;
+			iPhysics->OnUpate();
+		}
+
 		// 고정 업데이트를 진행합니다.
 		if (fixedUpdate)
 		{
@@ -135,9 +141,6 @@ bool EngineWorldBase::Step()
 			IInput* iInput = m_system->input;
 			iInput->SetEnable(!ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 			iInput->Fetch();
-
-			IPhysicsSystem* iPhysics = m_system->physics;
-			iPhysics->OnUpate();
 
 			for (auto& coms : componentsByExecutionOrder)
 			{

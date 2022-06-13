@@ -74,6 +74,13 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		e1.ContextInt = IntContext::RH_END;
 		STD_ATK1->AddEvent(e0);
 		STD_ATK1->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 18 / 45.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_MELEE_SWING_01;
+		s.ContextFloat = 1.0f;
+		STD_ATK1->AddEvent(s);
 	}
 	Layer->AddNode(STD_ATK1);
 
@@ -87,6 +94,13 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		e1.ContextInt = IntContext::LH_END;
 		STD_ATK2->AddEvent(e0);
 		STD_ATK2->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 7 / 50.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_MELEE_SWING_01;
+		s.ContextFloat = 1.0f;
+		STD_ATK2->AddEvent(s);
 	}
 	Layer->AddNode(STD_ATK2);
 
@@ -100,6 +114,13 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		e1.ContextInt = IntContext::RH_END;
 		STD_ATK3A->AddEvent(e0);
 		STD_ATK3A->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 3 / 51.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_MELEE_SWING_01;
+		s.ContextFloat = 1.0f;
+		STD_ATK3A->AddEvent(s);
 	}
 	Layer->AddNode(STD_ATK3A);
 
@@ -113,6 +134,13 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		e1.ContextInt = IntContext::RH_END | IntContext::LH_END;
 		STD_ATK3B->AddEvent(e0);
 		STD_ATK3B->AddEvent(e1);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 19 / 45.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_MELEE_SWING_01;
+		s.ContextFloat = 1.0f;
+		STD_ATK3B->AddEvent(s);
 	}
 	Layer->AddNode(STD_ATK3B);
 
@@ -195,6 +223,13 @@ void EnemyBeetleDroneAnimator::SetupNodes()
 		e.NormalizedTime = 10 / 40.0f;
 		e.ContextByte = ByteContext::FOOT_DUST;
 		ETC_APPEAR->AddEvent(e);
+
+		AnimationEventDesc s;
+		s.NormalizedTime = 1 / 40.0f;
+		s.ContextByte = ByteContext::PLAY_SOUND;
+		s.ContextTStr = SOUND_SWING_01;
+		s.ContextFloat = 1.0f;
+		ETC_APPEAR->AddEvent(s);
 	}
 	Layer->AddNode(ETC_APPEAR);
 }

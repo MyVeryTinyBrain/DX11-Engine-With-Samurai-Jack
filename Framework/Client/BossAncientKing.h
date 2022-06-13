@@ -59,6 +59,7 @@ private:
 	void SetupLight();
 	void SetupHammer();
 	void SetupAttackTrigger();
+	void SetupAudioSource();
 
 private:
 
@@ -137,7 +138,7 @@ private:
 	GameObject* m_goHammerTip;
 
 	// Collider for push the player
-	GameObject* m_goCollider;
+
 	CapsuleCollider* m_collider;
 
 	// Attack
@@ -145,18 +146,23 @@ private:
 	enum
 	{
 		HAMMER_TRIGGER = 0,
-		FOOT_L_TRIGGER = 1,
-		FOOT_R_TRIGGER = 2,
-		HAMMER_TIP_TRIGGER = 3,
+		FOOT_L_TRIGGER,
+		FOOT_R_TRIGGER,
+		HAMMER_TIP_TRIGGER,
 		MAX_TRIGGERS,
 	};
 
 	GameObject* m_goAttackTrigger[MAX_TRIGGERS];
 	Collider* m_attackTrigger[MAX_TRIGGERS];
 	uint m_attackType = 0;
-	unordered_set<Rigidbody*>	m_hitBuffer;
+	unordered_set<Rigidbody*> m_hitBuffer;
+	bool m_gadableAttack = false;
 
 	EffectElectricBeam* m_electricBeam;
+
+	// Audio
+
+	AudioSource* m_audioSource;
 
 	// Stat
 
@@ -170,7 +176,6 @@ private:
 	// 다른 공격을 한 번 하면 다시 비활성화됩니다.
 	bool m_usedSATK_TURN = false; 
 	float m_farATKCounter = 0.0f;
-	bool m_gadableAttack = false;
 	V3 m_aimPosition;
 	bool m_manualLook = false;
 	bool m_rushDamageReady = false;
