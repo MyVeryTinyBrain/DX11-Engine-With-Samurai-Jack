@@ -230,7 +230,7 @@ void GizmoRotation::SetupAxisMesh(uint edge)
 	{
 		triangles[i]._0 = i;
 		triangles[i]._1 = centerIndex;
-		triangles[i]._2 = Repeat(i + 1, centerIndex);
+		triangles[i]._2 = (i + 1) % centerIndex;
 	}
 
 	// Setup VI
@@ -276,8 +276,8 @@ void GizmoRotation::SetupAxisLineStripMesh(uint edge)
 	Index* indices = new Index[numIndices]{};
 	for (uint i = 0; i < edge; ++i)
 	{
-		indices[i * 2] = Repeat(i, edge);
-		indices[i * 2 + 1] = Repeat(i + 1, edge);
+		indices[i * 2] = i % edge;
+		indices[i * 2 + 1] = (i + 1) % edge;
 	}
 
 	// Setup VI

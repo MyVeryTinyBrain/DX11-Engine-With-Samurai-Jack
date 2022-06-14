@@ -44,7 +44,7 @@ public:
 public:
 
 	AnimatorProperty* MoveFProperty; // 0: NoMove, 1: Walk, 2: Run
-	AnimatorProperty* WalkDirectionFProperty; // 0: F, 1: B, 2: L, 3: R
+	AnimatorProperty* WalkDirectionFProperty; // 0.0: F, 0.25: R, 0.5: B, 0.75: L, 1.0: F
 
 	AnimatorProperty* AdditiveDamageTProperty;
 

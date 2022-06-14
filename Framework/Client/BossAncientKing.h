@@ -11,7 +11,6 @@ class BossAncientKing : public Boss
 		NONE = 0,
 
 		IDLE,
-		WAIT, // waitCounter를 설정해줄수 있습니다. 동작은 IDLE과 같습니다. waitCounter를 설정하지 않으면 정의된 기본값을 사용합니다.
 		LOOK,
 		TRACE,
 		GROGY,
@@ -164,22 +163,52 @@ private:
 
 	AudioSource* m_audioSource;
 
+	// State
+
+	State m_state = State::NONE;
+
 	// Stat
 
 	float m_hp = 250.0f;
-	State m_state = State::NONE;
+
+	// Idle
+
 	float m_idleLeftCounter = 0.0f;
 	float m_waitLeftCounter = 0.0f; // 직접 설정해서 사용하는 값입니다.
+
+	// Trace
+
 	float m_traceOutAngleAccCounter = 0.0f;
 	float m_traceOrLookAccCounter = 0.0f;
+
+	// Spin attack
+
 	// 뒤돌기 공격을 사용하면 활성화됩니다.
 	// 다른 공격을 한 번 하면 다시 비활성화됩니다.
 	bool m_usedSATK_TURN = false; 
+	
+	// Far attack
+	
 	float m_farATKCounter = 0.0f;
+
+	// Aimming
+
 	V3 m_aimPosition;
+
+	// Look
+
 	bool m_manualLook = false;
+	
+	// Rush
+
 	bool m_rushDamageReady = false;
+	
+	// Grogy
+	
 	uint m_hitCount = 0;
+	
+	// Backjump
+
 	int m_backJumpLeftCount = 5;
 };
 

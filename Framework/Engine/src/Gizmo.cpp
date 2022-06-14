@@ -41,7 +41,7 @@ void Gizmo::SetGizmo(uint index)
 	for (auto& gizmo : m_gizmos)
 		gizmo->gameObject->activeSelf = false;
 
-	index = Repeat(index, 3u);
+	index = index % 3u;
 	m_currentGizmo = index;
 
 	GizmoBase* currentGizmo = m_gizmos[m_currentGizmo];

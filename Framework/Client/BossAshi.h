@@ -11,7 +11,6 @@ class BossAshi : public Boss
 		NONE = 0,
 
 		IDLE,
-		WAIT, // waitCounter를 설정해줄수 있습니다. 동작은 IDLE과 같습니다. waitCounter를 설정하지 않으면 정의된 기본값을 사용합니다.
 		LOOK,
 		WALK_ANYWHERE,
 		WALK_TRACE,
@@ -77,6 +76,11 @@ private:
 
 private:
 
+	void WalkDirectionLerp();
+	void SetWalkDirectionLerp(float angle, float duration);
+
+private:
+
 	// Character Renderers
 
 	GameObject* m_goCharacterRender;
@@ -122,5 +126,18 @@ private:
 	// Stat
 
 	float m_hp = 1000.0f;
+
+	// State
+
+	BossAshi::State m_state = BossAshi::State::NONE;
+
+	// Walk
+
+	float m_walkLeftTime = 0.0f;
+	float m_startWalkAngle = 0.0f;
+	float m_targetWalkAngle = 0.0f;
+	float m_walkDirectionLerpDuration = 1.0f;
+	bool m_walkDirectionLerp = false;
+	float m_walkDirectionLerpAcc = 0.0f;
 };
 

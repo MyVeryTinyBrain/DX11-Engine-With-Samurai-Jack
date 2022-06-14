@@ -42,13 +42,13 @@ void PlayerTestScene::OnLoad()
 
 	{
 		GameObject* go = CreateGameObject();
-		go->transform->position = V3(0, 3, 0);
+		go->transform->position = V3(0, 3, 12);
 		go->AddComponent<BossAshi>();
 	}
 
 	{
 		GameObject* go = CreateGameObject();
-		go->transform->position = V3(0, 5, 0);
+		go->transform->position = V3(0, 5, 15);
 		go->AddComponent<Player>();
 	}
 

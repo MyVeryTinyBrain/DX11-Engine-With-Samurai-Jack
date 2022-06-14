@@ -42,13 +42,9 @@ namespace XmMathPlus
 
 		XMMATHPLUS_API Real DeltaAngle(Real from, Real to);
 
-		XMMATHPLUS_API inline Real LerpAngle(Real from, Real to, Real t) { return from + Lerp(0, DeltaAngle(from, to), t); }
+		XMMATHPLUS_API Real LerpAngle(Real from, Real to, Real t);
 
 		XMMATHPLUS_API Real Repeat(Real value, Real max);
-
-		XMMATHPLUS_API int Repeat(int value, int max);
-
-		XMMATHPLUS_API uint Repeat(uint value, uint max);
 
 		XMMATHPLUS_API inline Real Max(Real a, Real b) { return a >= b ? a : b; }
 

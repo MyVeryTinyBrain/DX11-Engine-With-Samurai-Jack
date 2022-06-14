@@ -336,7 +336,8 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 	if (prev && prev->name.find(TEXT("ATK")) != tstring::npos &&
 		endChanged.GetPointer() == m_animator->BH_IDLE)
 	{
-		SetState(State::WAIT);
+		SetState(State::IDLE);
+		m_idleLeftCounter = WAIT_DEFAULT_TIME;
 	}
 
 	if (prev && prev->name.find(TEXT("ATK")) != tstring::npos && 
@@ -355,7 +356,8 @@ void BossAncientKing::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> e
 
 	if (prev.GetPointer() == m_animator->DMG_GROGY_ED)
 	{
-		SetState(State::WAIT);
+		SetState(State::IDLE);
+		m_idleLeftCounter = WAIT_DEFAULT_TIME;
 	}
 
 	if (prev.GetPointer() == m_animator->ETC_RAGE)
@@ -860,18 +862,6 @@ void BossAncientKing::StateUpdate()
 			}
 		}
 		break;
-		case State::WAIT:
-		{
-			if (m_waitLeftCounter <= 0.0f)
-			{
-				SetState(State::TRACE);
-			}
-			else
-			{
-				m_waitLeftCounter -= system->time->deltaTime;
-			}
-		}
-		break;
 		case State::TRACE:
 		{
 			m_traceOrLookAccCounter += system->time->deltaTime;
@@ -995,15 +985,6 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		{
 			m_animator->WalkBProperty->valueAsBool = false;
 			m_idleLeftCounter = IDLE_TIME;
-		}
-		break;
-		case State::WAIT:
-		{
-			m_animator->WalkBProperty->valueAsBool = false;
-
-			// 실수로 설정 안했을 경우에는 기본값을 사용합니다.
-			if(m_waitLeftCounter <= 0.0f)
-				m_waitLeftCounter = WAIT_DEFAULT_TIME;
 		}
 		break;
 		case State::TRACE:
@@ -1165,11 +1146,6 @@ void BossAncientKing::StateEnded(BossAncientKing::State before, BossAncientKing:
 		case State::IDLE:
 		{
 			m_idleLeftCounter = 0.0f;
-		}
-		break;
-		case State::WAIT:
-		{
-			m_waitLeftCounter = 0.0f;
 		}
 		break;
 		case State::TRACE:

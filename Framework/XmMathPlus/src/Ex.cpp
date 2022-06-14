@@ -101,41 +101,23 @@ uint XmMathPlus::Ex::Closet(uint value, uint min, uint max)
 
 Real Ex::DeltaAngle(Real from, Real to)
 {
-	Real delta = to - from;
-
-	//while (delta > 180.0f)
-	//	delta -= 360.0f;
-
-	//while (delta < -180.0f)
-	//	delta += 360.0f;
-
+	float delta = Repeat((to - from), 360.0f);
 	if (delta > 180.0f)
-	{
-		Real temp = delta - 180.0f;
-		delta -= int(temp / 360.0f + 1) * 360.0f;
-	}
-	else if (delta < -180.0f)
-	{
-		Real temp = delta + 180.0f;
-		delta += int(temp / 360.0f + 1) * 360.0f;
-	}
-
+		delta -= 360.0f;
 	return delta;
+}
+
+Real Ex::LerpAngle(Real from, Real to, Real t)
+{
+	float delta = Repeat((to - from), 360.0f);
+	if (delta > 180.0f)
+		delta -= 360.0f;
+	return from + delta * Clamp01(t);
 }
 
 Real Ex::Repeat(Real value, Real max)
 {
-	return fmod(value, max);
-}
-
-int XmMathPlus::Ex::Repeat(int value, int max)
-{
-	return value % max;
-}
-
-uint XmMathPlus::Ex::Repeat(uint value, uint max)
-{
-	return value % max;
+	return Clamp(value - floor(value / max) * max, 0.0f, max);
 }
 
 Real XmMathPlus::Ex::Sign(Real value)

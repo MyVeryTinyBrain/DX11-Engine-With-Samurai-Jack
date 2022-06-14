@@ -37,6 +37,35 @@ void BossAshi::Start()
 void BossAshi::Update()
 {
     Boss::Update();
+
+    WalkDirectionLerp();
+
+    if (ImGui::Begin("Ashi controll test"))
+    {
+        static float multiplier = 1.0f;
+        float direction = m_animator->WalkDirectionFProperty->valueAsFloat;
+        ImGui::SliderFloat("direction", &direction, 0.0f, 1.0f);
+        m_animator->WalkDirectionFProperty->valueAsFloat = direction;
+
+        if (ImGui::Button("Forward"))
+        {
+            SetWalkDirectionLerp(0.0f, 1.0f);
+        }
+        if (ImGui::Button("Right"))
+        {
+            SetWalkDirectionLerp(90.0f, 1.0f);
+        }
+        if (ImGui::Button("Back"))
+        {
+            SetWalkDirectionLerp(180.0f, 1.0f);
+        }
+        if (ImGui::Button("Left"))
+        {
+            SetWalkDirectionLerp(270.0f, 1.0f);
+        }
+
+        ImGui::End();
+    }
 }
 
 void BossAshi::LateUpdate()
@@ -307,16 +336,74 @@ void BossAshi::OnCCTCollision(const CCTCollision& collision)
 
 void BossAshi::SetState(BossAshi::State state)
 {
+    if (state == m_state)
+        return;
+
+    State before = m_state;
+    State next = state;
+    m_state = state;
+    StateEnded(before, next);
+    StateChanged(before, next);
 }
 
 void BossAshi::StateUpdate()
 {
+    switch (m_state)
+    {
+        case State::IDLE:
+        {
+        }
+        break;
+    }
 }
 
 void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
 {
+    switch (next)
+    {
+        case State::IDLE:
+        {
+        }
+        break;
+    }
 }
 
 void BossAshi::StateEnded(BossAshi::State before, BossAshi::State current)
 {
+    switch (before)
+    {
+        case State::IDLE:
+        {
+        }
+        break;
+    }
+}
+
+void BossAshi::WalkDirectionLerp()
+{
+    if (m_walkDirectionLerp)
+    {
+        m_walkDirectionLerpAcc += system->time->deltaTime;
+
+        float percent = m_walkDirectionLerpAcc / m_walkDirectionLerpDuration;
+        float angle = LerpAngle(m_startWalkAngle, m_targetWalkAngle, percent);
+        float direction = Repeat(angle, 360.0f) / 360.0f;
+        m_animator->WalkDirectionFProperty->valueAsFloat = direction;
+
+        if (m_walkDirectionLerpAcc >= m_walkDirectionLerpDuration)
+        {
+            m_walkDirectionLerpAcc = 0.0f;
+            m_walkDirectionLerp = false;
+        }
+    }
+}
+
+void BossAshi::SetWalkDirectionLerp(float angle, float duration)
+{
+    float curDirection = m_animator->WalkDirectionFProperty->valueAsFloat;
+    m_startWalkAngle = Repeat(curDirection * 360.0f, 360.0f);
+    m_targetWalkAngle = angle;
+    m_walkDirectionLerpDuration = duration;
+    m_walkDirectionLerpAcc = 0.0f;
+    m_walkDirectionLerp = true;
 }
