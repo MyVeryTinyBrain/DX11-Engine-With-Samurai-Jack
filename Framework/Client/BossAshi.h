@@ -11,11 +11,31 @@ class BossAshi : public Boss
 		NONE = 0,
 
 		IDLE,
-		LOOK,
+		TURN,
 		WALK_ANYWHERE,
 		WALK_TRACE,
 		RUN_TRACE,
 		DIE,
+
+		ATK_NEAR_RAND,
+		ATK_FAR_RAND,
+
+		__ATK_NEAR_BEGIN,
+		ATK_DOUBLEHAND_SLASH,
+		ATK_H_SLASH,
+		ATK_SHOLDER_SLASH,
+		ATK_SLASHUP,
+
+		ATK_DROPKICK,
+		ATK_LEGSTEP,
+		ATK_SPINKICK,
+		__ATK_NEAR_END,
+
+		__ATK_FAR_BEGIN,
+		ATK_LASER,
+		ATK_RAGE,
+		ATK_RUSH,
+		__ATK_FAR_END,
 
 		APPEAR,
 	};
@@ -78,6 +98,8 @@ private:
 
 	void WalkDirectionLerp();
 	void SetWalkDirectionLerp(float angle, float duration);
+	void StopWalkDirectionLerp();
+	float RandomWalkDirectionChangeTime() const;
 
 private:
 
@@ -116,6 +138,7 @@ private:
 	uint m_attackType = 0;
 	unordered_set<Rigidbody*> m_hitBuffer;
 	bool m_gadableAttack = false;
+	int m_numComboAttack = 0;
 
 	// Audio
 
@@ -131,7 +154,7 @@ private:
 
 	BossAshi::State m_state = BossAshi::State::NONE;
 
-	// Walk
+	// Walk Anywhere
 
 	float m_walkLeftTime = 0.0f;
 	float m_startWalkAngle = 0.0f;
@@ -139,5 +162,14 @@ private:
 	float m_walkDirectionLerpDuration = 1.0f;
 	bool m_walkDirectionLerp = false;
 	float m_walkDirectionLerpAcc = 0.0f;
+	float m_walkDirectionChangeLeftTime = 0.0f;
+
+	// Move
+
+	float m_moveAcc = 0.0f;
+
+	// Manual Look
+
+	bool m_manualLook = false;
 };
 

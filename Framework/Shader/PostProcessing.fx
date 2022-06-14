@@ -511,7 +511,7 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 	half4 ex = saturate((sampleColor - _BloomDesc.Threshold) / (1.0f - _BloomDesc.Threshold));
-	ex.a = 1.0f;
+	//ex.a = 1.0f;
 	return ex;
 }
 

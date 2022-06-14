@@ -327,4 +327,5 @@ void TPSCamera::SetCursorToCenter()
 V3 TPSCamera::CalcTargetPos() const
 {
     return m_traceTarget->position + V3::up() * m_height;
+    //return m_traceTarget->position + V3::up() * m_height;
 }

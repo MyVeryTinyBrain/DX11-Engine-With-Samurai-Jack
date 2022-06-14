@@ -862,6 +862,17 @@ void Player::SecondGroundCheck()
 V3 Player::GetTranslateDirection() const
 {
 	V3 forward = m_tpsCamera->camera->transform->forward;
+	if (m_tpsCamera->lookTarget)
+	{
+		forward = m_tpsCamera->lookTarget->position - transform->position;
+		forward.y = 0.0f;
+		forward.Normalize();
+	}
+	else
+	{
+		forward = m_tpsCamera->camera->transform->forward;
+	}
+	V3 up = m_tpsCamera->camera->up;
 	V3 right = m_tpsCamera->camera->transform->right;
 
 	forward.y = right.y = 0;
