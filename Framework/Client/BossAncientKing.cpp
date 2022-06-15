@@ -6,7 +6,7 @@
 #include "Player.h"
 #include "TPSCamera.h"
 #include "EffectShockwave.h"
-#include "ProjectileInstanceWaveBeam.h"
+#include "ProjectileWaveBeam.h"
 #include "EffectRing01.h"
 #include "EffectElectricBeam.h"
 #include "EffectGroundImapct.h"
@@ -506,7 +506,7 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 		GameObject* goBeam = CreateGameObject();
 		goBeam->transform->position = m_Head->position;
 		goBeam->transform->forward = direction;
-		ProjectileInstanceWaveBeam* beam = goBeam->AddComponent<ProjectileInstanceWaveBeam>();
+		ProjectileWaveBeam* beam = goBeam->AddComponent<ProjectileWaveBeam>();
 
 		EffectRing01::Create(
 			gameObject->regionScene,
@@ -556,6 +556,16 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			0.1f, 80.0f, 0.8f,
 			1000.0f, Color::red(), 0.5f
 		);
+
+		EffectRing01::Create(
+			gameObject->regionScene,
+			position,
+			0.5f,
+			0.5f,
+			500.0f,
+			1.0f, 10.0f,
+			Color(1.0f, 0.0f, 0.0f, 1.0f)
+		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::LF_GROUND_IMPACT)
 	{
@@ -578,6 +588,16 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			0.1f, 80.0f, 0.8f,
 			1000.0f, Color::red(), 0.5f
 		);
+
+		EffectRing01::Create(
+			gameObject->regionScene,
+			position,
+			0.5f,
+			0.5f,
+			500.0f,
+			1.0f, 7.0f,
+			Color(1.0f, 0.0f, 0.0f, 1.0f)
+		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::RF_GROUND_IMPACT)
 	{
@@ -599,6 +619,16 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 			1.0f,
 			0.1f, 80.0f, 0.8f,
 			1000.0f, Color::red(), 0.5f
+		);
+
+		EffectRing01::Create(
+			gameObject->regionScene,
+			position,
+			0.5f,
+			0.5f,
+			500.0f,
+			1.0f, 7.0f,
+			Color(1.0f, 0.0f, 0.0f, 1.0f)
 		);
 	}
 	if (desc.ContextUInt & BossAncientKingAnimator::UIntContext::HAMMER_DUST)
@@ -938,7 +968,7 @@ void BossAncientKing::StateUpdate()
 				RotateOnYAxisToDirection(ToPlayerDirectionXZ(), RUSH_SPIN_ANGLE_PER_SEC, system->time->deltaTime);
 			}
 
-			if (system->physics->query->SweepTest(m_collider, transform->forward, 0.5f, 1 << PhysicsLayer_Player, PhysicsQueryType::Collider))
+			if (system->physics->query->SweepTest(m_collider, transform->forward, 0.1f, 1 << PhysicsLayer_Player, PhysicsQueryType::Collider))
 			{
 				if (m_rushDamageReady &&
 					m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_LP))

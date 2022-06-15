@@ -120,6 +120,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define TEX_EFFECT_RING02					TEXT("../Resource/Effect/T_E_Ring_02.dds")
 #define TEX_EFFECT_RING_DISTORTION			TEXT("../Resource/Effect/T_E_Ring_04.dds")
 #define TEX_EFFECT_GLOW						TEXT("../Resource/Effect/Glow.dds")
+#define TEX_EFFECT_SWORDTRAIL				TEXT("../Resource/Effect/SwordTrail.dds")
 #define TEX_NOISE_01						TEXT("../Resource/Noise/Noise01.dds")
 #define TEX_NOISE_02						TEXT("../Resource/Noise/Noise02.dds")
 #define TEX_NOISE_03						TEXT("../Resource/Noise/Noise03.dds")
@@ -174,6 +175,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define SHADER_SPARK						TEXT("Spark.cso")
 #define SHADER_LAVA							TEXT("Lava.cso")
 #define SHADER_FIRE							TEXT("Fire.cso")
+#define SHADER_SWORDTRAIL					TEXT("SwordTrail.cso")
 
 // Event
 
@@ -189,7 +191,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define ADJUST_ANCIENTKING_LOCALPOSITION	V3(0, -3.05f, 0)
 #define ADJUST_ANCIENTKING_LOCALSCALE		(V3::one() * 1.5f)
 #define ADJUST_ASHI_LOCALPOSITION			V3(0, -1.6f, 0)
-#define ADJUST_ASHI_LOCALSCALE				(V3::one() * 1.5f)
+#define ADJUST_ASHI_LOCALSCALE				(V3::one() * 2.0f)
 
 // TAG
 
@@ -302,10 +304,8 @@ inline void LOAD_SOUNDS(System* system)
 	system->resource->factory->LoadAudioClipM(SOUND_SWING_02);
 }
 
-inline void LOAD_CONFIGFILES(System* system)
+inline void LOAD_TEXTURES(System* system)
 {
-	LOAD_MESHES(system);
-	LOAD_SOUNDS(system);
 	TextureOptionDesc loadDesc = {};
 	TextureOptionDesc loadMipDesc = {};
 	loadMipDesc.GenerateMipmap = true;
@@ -320,6 +320,7 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_RING_DISTORTION);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_GLOW);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_EFFECT_SWORDTRAIL);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_01);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_NOISE_03);
@@ -331,6 +332,10 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_03);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FLAME_01);
+}
+
+inline void LOAD_SHADERS(System* system)
+{
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_EFFECT);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_BILLBOARD_SPRITESHEET);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_INSTANCE_UNLIT);
@@ -341,6 +346,15 @@ inline void LOAD_CONFIGFILES(System* system)
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SPARK);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_LAVA);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_FIRE);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SWORDTRAIL);
+}
+
+inline void LOAD_CONFIGFILES(System* system)
+{
+	LOAD_MESHES(system);
+	LOAD_SOUNDS(system);
+	LOAD_TEXTURES(system);
+	LOAD_SHADERS(system);
 }
 
 #endif

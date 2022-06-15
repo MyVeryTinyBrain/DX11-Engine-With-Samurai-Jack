@@ -264,28 +264,54 @@ void TPSCamera::UpdateDistance()
     if (!m_traceTarget)
         return;
 
-    float distance = m_distance;
-    V3 targetPos = CalcTargetPos();
+    {   // Back distance
+        float distance = m_distance;
+        V3 targetPos = CalcTargetPos();
 
-    vector<PhysicsHit> hits;
-    PhysicsRay ray;
-    ray.Direction = -m_goCamera->transform->forward;
-    ray.Length = m_distance + 100.0f;
-    ray.Point = targetPos;
-    hits = system->physics->query->RaycastAll(ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider);
-    if (!hits.empty())
-    {
-        for (auto& hit : hits)
+        vector<PhysicsHit> hits;
+        PhysicsRay ray;
+        ray.Direction = -m_goCamera->transform->forward;
+        ray.Length = m_distance + 100.0f;
+        ray.Point = targetPos;
+        hits = system->physics->query->RaycastAll(ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider);
+        if (!hits.empty())
         {
-            if (hit.Collider->rigidbody->gameObject->tag != TAG_FIGHT_COLLIDER)
+            for (auto& hit : hits)
             {
-                float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 1.0f);
-                distance = Min(distance, hitDistance);
+                if (hit.Collider->rigidbody->gameObject->tag != TAG_FIGHT_COLLIDER)
+                {
+                    float hitDistance = Max(m_camera->Near, hit.Distance - m_camera->Near - 1.0f);
+                    distance = Min(distance, hitDistance);
+                }
             }
         }
-    }
 
-    m_goCamera->transform->localPosition = V3(0, 0, -distance);
+        m_goCamera->transform->localPosition = V3(0, 0, -distance);
+    }
+    //{   // Right distance
+    //    float distance = 1.0f;
+    //    vector<PhysicsHit> hits;
+    //    PhysicsRay ray;
+    //    ray.Direction = m_goCamera->transform->right;
+    //    ray.Length = 100.0f;
+    //    ray.Point = m_goCamera->transform->position;
+    //    hits = system->physics->query->RaycastAll(ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider);
+
+    //    if (!hits.empty())
+    //    {
+    //        for (auto& hit : hits)
+    //        {
+    //            if (hit.Collider->rigidbody->gameObject->tag != TAG_FIGHT_COLLIDER)
+    //            {
+    //                distance = Min(distance, hit.Distance);
+    //            }
+    //        }
+    //    }
+
+    //    V3 localPos = m_goCamera->transform->localPosition;
+    //    localPos.x = distance;
+    //    m_goCamera->transform->localPosition = localPos;
+    //}
 }
 
 V2 TPSCamera::DeltaCursor() const

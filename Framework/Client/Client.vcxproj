@@ -211,7 +211,7 @@
     <ClInclude Include="PrefabAncientKing.h" />
     <ClInclude Include="PrefabBeetleDrone.h" />
     <ClInclude Include="PrefabPlayer.h" />
-    <ClInclude Include="ProjectileInstanceWaveBeam.h" />
+    <ClInclude Include="ProjectileWaveBeam.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimator.h" />
     <ClInclude Include="PlayerTestScene.h" />
@@ -281,7 +281,7 @@
     <ClCompile Include="PrefabAncientKing.cpp" />
     <ClCompile Include="PrefabBeetleDrone.cpp" />
     <ClCompile Include="PrefabPlayer.cpp" />
-    <ClCompile Include="ProjectileInstanceWaveBeam.cpp" />
+    <ClCompile Include="ProjectileWaveBeam.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="PlayerTestScene.cpp" />
@@ -324,6 +324,7 @@
     <FxCompile Include="..\Shader\BillboardEffect.fx" />
     <FxCompile Include="..\Shader\Ring.fx" />
     <FxCompile Include="..\Shader\Shockwave.fx" />
+    <FxCompile Include="..\Shader\SwordTrail.fx" />
     <FxCompile Include="..\Shader\Trail.fx" />
     <FxCompile Include="..\Shader\WaveBeam.fx" />
   </ItemGroup>

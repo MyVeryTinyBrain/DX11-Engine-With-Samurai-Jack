@@ -28,9 +28,7 @@ class BossAshi : public Boss
 		ATK_SHOLDER_SLASH,
 		ATK_SLASHUP,
 		ATK_DROPKICK,
-		ATK_LEGSTEP,
 		ATK_SPINKICK,
-		ATK_NEAR_RAGE,
 		__ATK_NEAR_END,
 
 		__ATK_FAR_BEGIN,
@@ -111,12 +109,15 @@ private:
 	SkinnedMeshRenderer* m_characterRenderer;
 	Ref<NodeTransform> m_R_Hand_Weapon_cnt_tr;
 	Ref<NodeTransform> m_RightFoot;
+	Ref<NodeTransform> m_Head;
 
 	// Sword
 
 	GameObject* m_goSword;
 	MeshRenderer* m_swordRenderer;
 	GameObject* m_goSwordTip;
+	GameObject* m_goSwordTrail;
+	TrailRenderer* m_swordTrail;
 
 	// Animator
 

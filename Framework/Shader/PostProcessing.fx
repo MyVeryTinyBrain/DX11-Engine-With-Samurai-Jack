@@ -522,7 +522,8 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 
 float4 AdjustSaturation(half4 color, half saturation)
 {
-	half3 grayscale = half3(0.2125f, 0.7154f, 0.0721f);
+	//half3 grayscale = half3(0.2125f, 0.7154f, 0.0721f);
+	half3 grayscale = (color.r + color.g + color.b) / 3.0f;
 	half gray = dot(color.rgb, grayscale);
 	return lerp(gray, color, saturation);
 }

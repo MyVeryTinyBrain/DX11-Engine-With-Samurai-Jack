@@ -100,6 +100,11 @@ void BossAshiAnimator::SetupNodes()
         m1.ContextUInt = UIntContext::END_MANUAL_LOOK;
         BH_BACKJUMP->AddEvent(m0);
         BH_BACKJUMP->AddEvent(m1);
+
+        AnimationEventDesc f;
+        f.NormalizedTime = 20 / 30.0f;
+        f.ContextUInt = UIntContext::ATK_FAR;
+        BH_BACKJUMP->AddEvent(f);
     }
     Layer->AddNode(BH_BACKJUMP);
 
@@ -126,6 +131,14 @@ void BossAshiAnimator::SetupNodes()
         c.NormalizedTime = 45 / 80.0f;
         c.ContextUInt = UIntContext::ATK_COMBO;
         ATK_DOUBLEHAND_SLASH->AddEvent(c);
+
+        AnimationEventDesc st0, st1;
+        st0.NormalizedTime = 19 / 80.0f;
+        st1.NormalizedTime = 26 / 80.0f;
+        st0.ContextInt = IntContext::SWORDTRAIL_START;
+        st1.ContextInt = IntContext::SWORDTRAIL_END;
+        ATK_DOUBLEHAND_SLASH->AddEvent(st0);
+        ATK_DOUBLEHAND_SLASH->AddEvent(st1);
     }
     ATK_DOUBLEHAND_SLASH->speed = 1.1f;
     Layer->AddNode(ATK_DOUBLEHAND_SLASH);
@@ -153,6 +166,14 @@ void BossAshiAnimator::SetupNodes()
         c.NormalizedTime = 62 / 115.0f;
         c.ContextUInt = UIntContext::ATK_COMBO;
         ATK_H_SLASH->AddEvent(c);
+
+        AnimationEventDesc st0, st1;
+        st0.NormalizedTime = 45 / 115.0f;
+        st1.NormalizedTime = 59 / 115.0f;
+        st0.ContextInt = IntContext::SWORDTRAIL_START;
+        st1.ContextInt = IntContext::SWORDTRAIL_END;
+        ATK_H_SLASH->AddEvent(st0);
+        ATK_H_SLASH->AddEvent(st1);
     }
     ATK_H_SLASH->speed = 1.5f;
     Layer->AddNode(ATK_H_SLASH);
@@ -180,6 +201,14 @@ void BossAshiAnimator::SetupNodes()
         c.NormalizedTime = 35 / 62.0f;
         c.ContextUInt = UIntContext::ATK_COMBO;
         ATK_SHOLDER_SLASH->AddEvent(c);
+
+        AnimationEventDesc st0, st1;
+        st0.NormalizedTime = 22 / 62.0f;
+        st1.NormalizedTime = 30 / 62.0f;
+        st0.ContextInt = IntContext::SWORDTRAIL_START;
+        st1.ContextInt = IntContext::SWORDTRAIL_END;
+        ATK_SHOLDER_SLASH->AddEvent(st0);
+        ATK_SHOLDER_SLASH->AddEvent(st1);
     }
     ATK_SHOLDER_SLASH->speed = 1.5f;
     Layer->AddNode(ATK_SHOLDER_SLASH);
@@ -207,6 +236,14 @@ void BossAshiAnimator::SetupNodes()
         c.NormalizedTime = 50 / 72.0f;
         c.ContextUInt = UIntContext::ATK_COMBO;
         ATK_SLASHUP->AddEvent(c);
+
+        AnimationEventDesc st0, st1;
+        st0.NormalizedTime = 24 / 72.0f;
+        st1.NormalizedTime = 34 / 72.0f;
+        st0.ContextInt = IntContext::SWORDTRAIL_START;
+        st1.ContextInt = IntContext::SWORDTRAIL_END;
+        ATK_SLASHUP->AddEvent(st0);
+        ATK_SLASHUP->AddEvent(st1);
     }
     Layer->AddNode(ATK_SLASHUP);
 
@@ -243,8 +280,8 @@ void BossAshiAnimator::SetupNodes()
         m1.NormalizedTime = 36 / 100.0f;
         m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
         m1.ContextUInt = UIntContext::END_MANUAL_LOOK;
-        ATK_DROPKICK->AddEvent(m0);
-        ATK_DROPKICK->AddEvent(m1);
+        ATK_LEGSTEP->AddEvent(m0);
+        ATK_LEGSTEP->AddEvent(m1);
 
         {
             AnimationEventDesc a0, a1;
@@ -307,6 +344,14 @@ void BossAshiAnimator::SetupNodes()
         m0.NormalizedTime = 0.0f;
         m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
         ATK_LASER_ST->AddEvent(m0);
+
+        for (uint i = 0; i < 20; ++i)
+        {
+            AnimationEventDesc beam;
+            beam.NormalizedTime = (30 + i) / 50.0f;
+            beam.ContextUInt = UIntContext::ATK_SHOOT_BEAM;
+            ATK_LASER_ST->AddEvent(beam);
+        }
     }
     Layer->AddNode(ATK_LASER_ST);
 
@@ -323,16 +368,39 @@ void BossAshiAnimator::SetupNodes()
     Layer->AddNode(ATK_LASER_ED);
 
     ATK_RAGE = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RAGE")), NOLOOP);
+    {
+        AnimationEventDesc i0, i1, i2;
+        i0.NormalizedTime = 21 / 129.0f;
+        i1.NormalizedTime = 38 / 129.0f;
+        i2.NormalizedTime = 55 / 129.0f;
+        i0.ContextUInt = i1.ContextUInt = i2.ContextUInt = UIntContext::ATK_GROUND_IMPACT;
+        ATK_RAGE->AddEvent(i0);
+        ATK_RAGE->AddEvent(i1);
+        ATK_RAGE->AddEvent(i2);
+    }
+    ATK_RAGE->speed = 1.25f;
     Layer->AddNode(ATK_RAGE);
 
     ATK_RUSH_ST_1 = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ST_1")), NOLOOP);
-    ATK_RUSH_ST_1->speed = 2.0f;
+    ATK_RUSH_ST_1->speed = 1.4f;
     Layer->AddNode(ATK_RUSH_ST_1);
 
     ATK_RUSH_ST_2 = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ST_2")), NOLOOP);
+    {
+        AnimationEventDesc m;
+        m.NormalizedTime = 0.0f;
+        m.ContextUInt = UIntContext::START_MANUAL_LOOK;
+        ATK_RUSH_ST_2->AddEvent(m);
+    }
     Layer->AddNode(ATK_RUSH_ST_2);
 
     ATK_RUSH_LP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_LP")), LOOP);
+    {
+        AnimationEventDesc m;
+        m.NormalizedTime = 0.0f;
+        m.ContextUInt = UIntContext::START_MANUAL_LOOK;
+        ATK_RUSH_LP->AddEvent(m);
+    }
     Layer->AddNode(ATK_RUSH_LP);
 
     ATK_RUSH_ED = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ED")), NOLOOP);
@@ -344,8 +412,25 @@ void BossAshiAnimator::SetupNodes()
         m1.ContextUInt = UIntContext::END_MANUAL_LOOK;
         ATK_RUSH_ED->AddEvent(m0);
         ATK_RUSH_ED->AddEvent(m1);
+
+        AnimationEventDesc a0, a1;
+        a0.NormalizedTime = 23 / 92.0f;
+        a1.NormalizedTime = 27 / 92.0f;
+        a0.ContextInt = IntContext::SWORD_START;
+        a0.ContextUInt = UIntContext::ATK_BLOW | UIntContext::ATK_GADABLE;
+        a1.ContextInt = IntContext::SWORD_END;
+        ATK_RUSH_ED->AddEvent(a0);
+        ATK_RUSH_ED->AddEvent(a1);
+
+        AnimationEventDesc st0, st1;
+        st0.NormalizedTime = 22 / 92.0f;
+        st1.NormalizedTime = 30 / 92.0f;
+        st0.ContextInt = IntContext::SWORDTRAIL_START;
+        st1.ContextInt = IntContext::SWORDTRAIL_END;
+        ATK_RUSH_ED->AddEvent(st0);
+        ATK_RUSH_ED->AddEvent(st1);
     }
-    ATK_RUSH_ED->speed = 2.0f;
+    ATK_RUSH_ED->speed = 1.5f;
     Layer->AddNode(ATK_RUSH_ED);
 
     DMG_DIE_ST = AnimatorSingleNode::Create(GetClip(TEXT("DMG_DIE_ST")), NOLOOP);
@@ -378,7 +463,7 @@ void BossAshiAnimator::SetupTransitions()
     // BH_WALK_LP -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 1.0f, AnimatorTransition::Compare::NOT_EQUAL));
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 0.0f, AnimatorTransition::Compare::EQUAL));
         Layer->AddTransition(BH_WALK_LP, EXIT, values, 0.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
@@ -386,14 +471,28 @@ void BossAshiAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 2.0f, AnimatorTransition::Compare::EQUAL));
-        Layer->AddTransition(BH_IDLE, BH_RUN_LP, values, 0.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
+        Layer->AddTransition(BH_IDLE, BH_RUN_LP, values, 0.0f, 0.5f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // BH_RUN_LP -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 2.0f, AnimatorTransition::Compare::NOT_EQUAL));
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 0.0f, AnimatorTransition::Compare::EQUAL));
         Layer->AddTransition(BH_RUN_LP, EXIT, values, 0.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // BH_WALK_LP -> BH_RUN_LP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 2.0f, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(BH_WALK_LP, BH_RUN_LP, values, 0.0f, 0.5f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // BH_RUN_LP -> BH_WALK_LP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue(MoveFProperty, 1.0f, AnimatorTransition::Compare::EQUAL));
+        Layer->AddTransition(BH_RUN_LP, BH_WALK_LP, values, 0.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // BH_IDLE -> BH_TURN
@@ -414,13 +513,13 @@ void BossAshiAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(BackjumpTProperty));
-        Layer->AddTransition(ANY, BH_BACKJUMP, values, 0.0f, 0.05f, 0.0f, AnimatorTransition::Interrupt::Current, true);
+        Layer->AddTransition(ANY, BH_BACKJUMP, values, 0.0f, 0.1f, 0.0f, AnimatorTransition::Interrupt::Current, true);
     }
 
     // BH_BACKJUMP -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(BH_BACKJUMP, EXIT, values, 0.5f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
+        Layer->AddTransition(BH_BACKJUMP, EXIT, values, 0.9f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> DMG_DIE_ST
@@ -440,13 +539,13 @@ void BossAshiAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(ATK_DOUBLEHAND_SLASH_TProperty));
-        Layer->AddTransition(ANY, ATK_DOUBLEHAND_SLASH, values, 0.0f, 0.1f, 0.0f);
+        Layer->AddTransition(ANY, ATK_DOUBLEHAND_SLASH, values, 0.0f, 0.2f, 0.0f);
     }
 
     // ATK_DOUBLEHAND_SLASH -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_DOUBLEHAND_SLASH, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_DOUBLEHAND_SLASH, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_H_SLASH
@@ -459,7 +558,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_H_SLASH -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_H_SLASH, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_H_SLASH, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_SHOLDER_SLASH
@@ -472,7 +571,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_SHOLDER_SLASH -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_SHOLDER_SLASH, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_SHOLDER_SLASH, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_SLASHUP
@@ -485,7 +584,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_SLASHUP -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_SLASHUP, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_SLASHUP, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_DROPKICK
@@ -498,7 +597,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_DROPKICK -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_DROPKICK, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_DROPKICK, EXIT, values, 0.9f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_LEGSTEP
@@ -511,7 +610,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_LEGSTEP -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_LEGSTEP, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_LEGSTEP, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_SPINKICK
@@ -524,7 +623,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_SPINKICK -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_SPINKICK, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_SPINKICK, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_LASER_ST
@@ -543,7 +642,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_LASER_ED -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_LASER_ED, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_LASER_ED, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_RAGE
@@ -556,7 +655,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_RAGE -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_RAGE, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_RAGE, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_RUSH_ST_1
@@ -569,13 +668,13 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_RUSH_ST_1 -> ATK_RUSH_ST_2
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_RUSH_ST_1, ATK_RUSH_ST_2, values, 0.9f, 0.05f, 0.0f);
+        Layer->AddTransition(ATK_RUSH_ST_1, ATK_RUSH_ST_2, values, 0.9f, 0.1f, 0.0f);
     }
 
     // ATK_RUSH_ST_2 -> ATK_RUSH_LP
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_RUSH_ST_2, ATK_RUSH_LP, values, 0.9f, 0.05f, 0.0f);
+        Layer->AddTransition(ATK_RUSH_ST_2, ATK_RUSH_LP, values, 0.9f, 0.1f, 0.0f);
     }
 
     // ATK_RUSH_LP -> ATK_RUSH_ED
@@ -588,7 +687,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_RUSH_ED -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_RUSH_ED, EXIT, values, 0.8f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_RUSH_ED, EXIT, values, 0.8f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_ANGRY

@@ -480,6 +480,7 @@ void PlayerAnimator::SetupNodes()
 		e2.ContextInt = IntContext::KT_END;
 		ATK_XY->AddEvent(e0);
 		ATK_XY->AddEvent(e1);
+		ATK_XY->AddEvent(e2);
 
 		AnimationEventDesc s;
 		s.NormalizedTime = 6 / 30.0f;

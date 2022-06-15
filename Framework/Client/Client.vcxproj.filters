@@ -59,7 +59,7 @@
     <ClInclude Include="Boss.h">
       <Filter>Character</Filter>
     </ClInclude>
-    <ClInclude Include="ProjectileInstanceWaveBeam.h">
+    <ClInclude Include="ProjectileWaveBeam.h">
       <Filter>Projectile</Filter>
     </ClInclude>
     <ClInclude Include="EffectElectricBeam.h">
@@ -399,7 +399,7 @@
     <ClCompile Include="Boss.cpp">
       <Filter>Character</Filter>
     </ClCompile>
-    <ClCompile Include="ProjectileInstanceWaveBeam.cpp">
+    <ClCompile Include="ProjectileWaveBeam.cpp">
       <Filter>Projectile</Filter>
     </ClCompile>
     <ClCompile Include="EffectElectricBeam.cpp">
@@ -575,6 +575,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\Fire.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\SwordTrail.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

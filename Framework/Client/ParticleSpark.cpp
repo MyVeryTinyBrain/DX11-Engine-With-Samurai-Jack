@@ -4,19 +4,6 @@
 
 void ParticleSpark::Awake()
 {
-	m_rigidbody = gameObject->AddComponent<Rigidbody>();
-	m_rigidbody->SetRotationLock(Rigidbody::Axis::All, true);
-	m_rigidbody->positionSolverIterationCount = 1;
-	m_rigidbody->velocitySolverIterationCount = 1;
-	
-	m_collider = gameObject->AddComponent<SphereCollider>();
-	m_collider->layerIndex = PhysicsLayer_Particle;
-	m_collider->restituionCombineMode = Collider::CombineMode::Max;
-	m_collider->restitution = 0.5f;
-	m_collider->friction = 0.5f;
-	m_collider->radius = 0.1f;
-	m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &ParticleSpark::OnCollisionEnter);
-
 	GameObject* goRenderer = CreateGameObjectToChild(transform);
 	m_renderer = goRenderer->AddComponent<BillboardRenderer>();
 	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_SPARK);
@@ -34,7 +21,17 @@ void ParticleSpark::Update()
 		return;
 	}
 
-	m_elapsed += system->time->deltaTime;
+	float dt = system->time->deltaTime;
+
+	if (!m_useRigidbody)
+	{
+		const static float damping = 1.0f;
+		transform->position += m_fakeVelocity * dt;
+		m_fakeVelocity = V3::Lerp(m_fakeVelocity, V3::zero(), dt * damping);
+		m_fakeVelocity += V3(0.0f, -9.81f, 0.0f) * dt;
+	}
+
+	m_elapsed += dt;
 	float percent = Clamp01(m_elapsed / m_duration);
 
 	float scale = (1.0f - percent) * m_initScale;
@@ -51,9 +48,37 @@ void ParticleSpark::OnCollisionEnter(const Collision& collision)
 {
 }
 
+void ParticleSpark::Init(bool useRigidbody)
+{
+	m_useRigidbody = useRigidbody;
+
+	if (m_useRigidbody)
+	{
+		m_rigidbody = gameObject->AddComponent<Rigidbody>();
+		m_rigidbody->SetRotationLock(Rigidbody::Axis::All, true);
+		m_rigidbody->positionSolverIterationCount = 1;
+		m_rigidbody->velocitySolverIterationCount = 1;
+
+		m_collider = gameObject->AddComponent<SphereCollider>();
+		m_collider->layerIndex = PhysicsLayer_Particle;
+		m_collider->restituionCombineMode = Collider::CombineMode::Max;
+		m_collider->restitution = 0.5f;
+		m_collider->friction = 0.5f;
+		m_collider->radius = 0.1f;
+		m_collider->OnCollisionEnter += func<void(const Collision&)>(this, &ParticleSpark::OnCollisionEnter);
+	}
+}
+
 void ParticleSpark::SetVelocity(const V3& velocity)
 {
-	m_rigidbody->velocity = velocity;
+	if (m_useRigidbody)
+	{
+		m_rigidbody->velocity = velocity;
+	}
+	else
+	{
+		m_fakeVelocity = velocity;
+	}
 }
 
 void ParticleSpark::Create(
@@ -66,6 +91,7 @@ void ParticleSpark::Create(
 	float minScale, float maxScale, 
 	float minDuration, float maxDuration,
 	uint count,
+	bool useRigidbody,
 	const Color& color)
 {
 	std::random_device rd;
@@ -81,6 +107,8 @@ void ParticleSpark::Create(
 		GameObject* goEffect = scene->CreateGameObject();
 		ParticleSpark* effect = goEffect->AddComponent<ParticleSpark>();
 		goEffect->transform->position = position;
+
+		effect->Init(useRigidbody);
 
 		float angleX = rdAngleGen(gen);
 		float angleY = rdAngleGen(gen);

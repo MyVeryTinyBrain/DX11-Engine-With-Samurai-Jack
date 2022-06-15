@@ -140,12 +140,17 @@ void Player::SetupKatana()
 	m_katanaTrailRenderer->width = 2.0f;
 	m_katanaTrailRenderer->autoTrail = false;
 	m_katanaTrailRenderer->interpolateStep = 30;
-	//m_katanaTrailRenderer->fitVToLength = false;
+	m_katanaTrailRenderer->applyWidthByLength = false;
+	m_katanaTrailRenderer->fitVToLength = true;
 
-	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_TRAIL);
+	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_SWORDTRAIL);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
-	material->SetTexture("_GradientTexture", system->resource->Find(TEX_GRADIENT_TO_RIGHT));
-	//material->SetTexture("_DistortionTexture", system->resource->Find(TEX_EFFECT_ELECTRIC_V));
+	ResourceRef<Texture> baseTexture = system->resource->Find(TEX_EFFECT_SWORDTRAIL);
+	ResourceRef<Texture> distortionTexture = system->resource->Find(TEX_NOISE_01);
+	material->SetTexture("_BaseTexture", baseTexture);
+	material->SetTexture("_DistortionTexture", distortionTexture);
+	material->SetColor("_MinColor", Color::RGBA255(255, 255, 194, 255));
+	material->SetColor("_MaxColor", Color::RGBA255(254, 128, 0, 255));
 	m_katanaTrailRenderer->material = material;
 }
 
@@ -154,16 +159,22 @@ void Player::SetupFootCnt()
 	m_goFootCnt = CreateGameObjectToChild(m_goCharacterRender->transform);
 	m_footTrailRenderer = m_goFootCnt->AddComponent<TrailRenderer>();
 	m_footTrailRenderer->shrinkDistance = 30.0f;
-	m_footTrailRenderer->width = 2.0f;
+	m_footTrailRenderer->width = 1.0f;
 	m_footTrailRenderer->autoTrail = false;
 	m_footTrailRenderer->alignment = TrailRenderer::Alignment::Local;
-	//m_footTrailRenderer->fitVToLength = false;
+	m_footTrailRenderer->interpolateStep = 30;
+	m_footTrailRenderer->applyWidthByLength = false;
+	m_footTrailRenderer->fitVToLength = true;
 
-	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_TRAIL);
+	ResourceRef<Shader> shader = system->resource->FindBinrayShader(SHADER_SWORDTRAIL);
 	ResourceRef<Material> material = system->resource->factory->CreateMaterialByShaderUM(shader);
-	material->SetTexture("_GradientTexture", system->resource->Find(TEX_GRADIENT_CENTER));
-	//material->SetTexture("_DistortionTexture", system->resource->Find(TEX_EFFECT_ELECTRIC_V));
-	material->SetFloat("_SideAttenFactor", 1.5f);
+	ResourceRef<Texture> baseTexture = system->resource->Find(TEX_EFFECT_SWORDTRAIL);
+	ResourceRef<Texture> distortionTexture = system->resource->Find(TEX_NOISE_01);
+	material->SetTexture("_BaseTexture", baseTexture);
+	material->SetTexture("_DistortionTexture", distortionTexture);
+	material->SetColor("_MinColor", Color::RGBA255(255, 255, 194, 255));
+	material->SetColor("_MaxColor", Color::RGBA255(254, 128, 0, 255));
+	material->SetFloat("_InvU", 1.0f);
 	m_footTrailRenderer->material = material;
 }
 
@@ -282,7 +293,8 @@ void Player::AttackTriggerQuery()
 					2.0f, 9.0f,
 					0.1f, 0.355f,
 					0.5f, 2.0f,
-					50);
+					50,
+					true);
 
 				ParticleDust01::CreateAroundAxis(
 					gameObject->regionScene,
@@ -661,7 +673,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				2.0f, 9.0f,
 				0.1f, 0.5f,
 				0.5f, 2.0f,
-				50);
+				50,
+				true);
 
 			EffectRing01::Create(
 				gameObject->regionScene,
@@ -705,7 +718,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				2.0f, 9.0f,
 				0.1f, 0.5f,
 				0.5f, 2.0f,
-				50);
+				50,
+				true);
 
 			EffectRing01::Create(
 				gameObject->regionScene,
