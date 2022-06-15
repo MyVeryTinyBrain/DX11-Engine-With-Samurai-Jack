@@ -227,8 +227,13 @@ void BossAshi::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChang
     if (prev && prev->name.find(TEXT("ATK")) != tstring::npos &&
         endChanged.GetPointer() == m_animator->BH_IDLE)
     {
-        SetState(State::WALK_ANYWHERE);
+        SetState(State::IDLE);
         m_manualLook = false;
+    }
+
+    if (prev && prev.GetPointer() == m_animator->BH_BACKJUMP)
+    {
+        SetState(State::ATK_FAR_RAND);
     }
 }
 
@@ -282,7 +287,6 @@ void BossAshi::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDe
                 int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
                 int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
                 atk = (State)indexATK;
-                m_numComboAttack = rand() % 3;
             }
             SetState(atk);
         }
@@ -485,6 +489,14 @@ void BossAshi::StateUpdate()
             m_moveAcc += dt;
         }
         break;
+        case State::ATK_RUSH:
+        {
+            if (XZDistanceBetweenPlayer() < 5.0f)
+            {
+                m_animator->ATK_RUSH_End_TProperty->SetTriggerState();
+            }
+        }
+        break;
     }
 
     switch (m_state)
@@ -498,6 +510,14 @@ void BossAshi::StateUpdate()
         }
         break;
     }
+
+    if (m_state == State::ATK_RUSH)
+    {
+        if (!m_animator->Layer->IsPlaying(m_animator->ATK_RUSH_ED))
+        {
+            RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 180.0f, system->time->deltaTime);
+        }
+    }
 }
 
 void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
@@ -506,7 +526,7 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
     {
         case State::IDLE:
         {
-            m_idleLeftCounter = 1.0f;
+            m_idleLeftCounter = 0.3f;
             m_animator->MoveFProperty->valueAsFloat = 0.0f;
             m_animator->TurnBProperty->valueAsBool = false;
         }
@@ -527,7 +547,7 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
         case State::WALK_TRACE:
         {
             m_animator->MoveFProperty->valueAsFloat = 1.0f;
-            SetWalkDirectionLerp(0.0f, 0.5f);
+            SetWalkDirectionLerp(0.0f, 1.0f);
             m_walkLeftTime = 2.5f + float(rand() % 3);
         }
         break;
@@ -541,19 +561,30 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
             m_animator->DieTProperty->SetTriggerState();
         }
         break;
+        case State::BACKJUMP:
+        case State::ATK_BACKJUMP:
+        {
+            m_numComboAttack = 0;
+            m_animator->BackjumpTProperty->SetTriggerState();
+        }
+        break;
         case State::ATK_NEAR_RAND:
         {
             int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
             int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
             State atk = (State)indexATK;
-            m_numComboAttack = rand() % 5;
+            m_numComboAttack = 1 + (rand() % 5);
             SetState(atk);
         }
         break;
         case State::ATK_FAR_RAND:
         {
-            int numATK = (int)State::__ATK_FAR_END - (int)State::__ATK_FAR_BEGIN;
-            int indexATK = (int)State::__ATK_FAR_BEGIN + (rand() % (numATK - 1)) + 1;
+            int numATK = (int)State::__ATK_FAR_END - (int)State::__ATK_FAR_BEGIN - 1;
+
+            ++m_farAttackIndex;
+            if (m_farAttackIndex >= numATK) m_farAttackIndex = 0;
+
+            int indexATK = (int)State::__ATK_FAR_BEGIN + m_farAttackIndex + 1;
             State atk = (State)indexATK;
             SetState(atk);
         }
@@ -598,9 +629,15 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
             m_animator->ATK_LASER_TProperty->SetTriggerState();
         }
         break;
-        case State::ATK_RAGE:
+        case State::ATK_FAR_RAGE:
         {
+            m_numComboAttack = 0;
             m_animator->ATK_RAGE_TProperty->SetTriggerState();
+        }
+        break;
+        case State::ATK_NEAR_RAGE:
+        {
+            m_animator->ATK_ANGRY_TProperty->SetTriggerState();
         }
         break;
         case State::ATK_RUSH:

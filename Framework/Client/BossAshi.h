@@ -15,25 +15,27 @@ class BossAshi : public Boss
 		WALK_ANYWHERE,
 		WALK_TRACE,
 		RUN_TRACE,
+		BACKJUMP,
 		DIE,
 
 		ATK_NEAR_RAND,
 		ATK_FAR_RAND,
 
 		__ATK_NEAR_BEGIN,
+		ATK_BACKJUMP,
 		ATK_DOUBLEHAND_SLASH,
 		ATK_H_SLASH,
 		ATK_SHOLDER_SLASH,
 		ATK_SLASHUP,
-
 		ATK_DROPKICK,
 		ATK_LEGSTEP,
 		ATK_SPINKICK,
+		ATK_NEAR_RAGE,
 		__ATK_NEAR_END,
 
 		__ATK_FAR_BEGIN,
 		ATK_LASER,
-		ATK_RAGE,
+		ATK_FAR_RAGE,
 		ATK_RUSH,
 		__ATK_FAR_END,
 
@@ -171,5 +173,9 @@ private:
 	// Manual Look
 
 	bool m_manualLook = false;
+
+	// Far attack
+
+	int m_farAttackIndex = -1;
 };
 

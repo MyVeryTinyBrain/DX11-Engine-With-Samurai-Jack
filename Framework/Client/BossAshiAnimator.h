@@ -55,6 +55,7 @@ public:
 	AnimatorProperty* MoveFProperty; // 0: NoMove, 1: Walk, 2: Run
 	AnimatorProperty* WalkDirectionFProperty; // 0.0: F, 0.25: R, 0.5: B, 0.75: L, 1.0: F
 	AnimatorProperty* TurnBProperty;
+	AnimatorProperty* BackjumpTProperty;
 	AnimatorProperty* DieTProperty;
 
 	AnimatorProperty* ATK_DOUBLEHAND_SLASH_TProperty;
@@ -73,6 +74,8 @@ public:
 	AnimatorProperty* ATK_RUSH_Start_TProperty;
 	AnimatorProperty* ATK_RUSH_End_TProperty;
 
+	AnimatorProperty* ATK_ANGRY_TProperty;
+
 	AnimatorProperty* AdditiveDamageTProperty;
 
 public:
@@ -84,6 +87,7 @@ public:
 	AnimatorNode* BH_WALK_LP; // Blend, Loop
 	AnimatorNode* BH_RUN_LP; // Loop
 	AnimatorNode* BH_TURN; // Loop
+	AnimatorNode* BH_BACKJUMP;
 
 	AnimatorNode* ATK_DOUBLEHAND_SLASH;
 	AnimatorNode* ATK_H_SLASH;
@@ -98,6 +102,8 @@ public:
 	AnimatorNode* ATK_LASER_ED;
 
 	AnimatorNode* ATK_RAGE;
+
+	AnimatorNode* ATK_ANGRY;
 
 	AnimatorNode* ATK_RUSH_ST_1;
 	AnimatorNode* ATK_RUSH_ST_2;

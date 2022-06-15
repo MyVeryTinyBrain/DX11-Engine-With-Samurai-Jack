@@ -39,6 +39,7 @@ void BossAshiAnimator::SetupProperties()
     MoveFProperty = Layer->AddProperty(TEXT("MoveFProperty"), AnimatorProperty::Type::FLOAT);
     WalkDirectionFProperty = Layer->AddProperty(TEXT("WalkDirectionFProperty"), AnimatorProperty::Type::FLOAT);
     TurnBProperty = Layer->AddProperty(TEXT("TurnBProperty"), AnimatorProperty::Type::BOOL);
+    BackjumpTProperty = Layer->AddProperty(TEXT("BackjumpTProperty"), AnimatorProperty::Type::TRIGGER);
     DieTProperty = Layer->AddProperty(TEXT("DieTProperty"), AnimatorProperty::Type::TRIGGER);
 
     ATK_DOUBLEHAND_SLASH_TProperty = Layer->AddProperty(TEXT("ATK_DOUBLEHAND_SLASH_TProperty"), AnimatorProperty::Type::TRIGGER);
@@ -55,6 +56,8 @@ void BossAshiAnimator::SetupProperties()
     ATK_RAGE_TProperty = Layer->AddProperty(TEXT("ATK_RAGE_TProperty"), AnimatorProperty::Type::TRIGGER);
     ATK_RUSH_Start_TProperty = Layer->AddProperty(TEXT("ATK_RUSH_Start_TProperty"), AnimatorProperty::Type::TRIGGER);
     ATK_RUSH_End_TProperty = Layer->AddProperty(TEXT("ATK_RUSH_End_TProperty"), AnimatorProperty::Type::TRIGGER);
+
+    ATK_ANGRY_TProperty = Layer->AddProperty(TEXT("ATK_ANGRY_TProperty"), AnimatorProperty::Type::TRIGGER);
 
     // Additive ===============================================================================================================
 
@@ -87,6 +90,18 @@ void BossAshiAnimator::SetupNodes()
 
     BH_TURN = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN")), LOOP);
     Layer->AddNode(BH_TURN);
+
+    BH_BACKJUMP = AnimatorSingleNode::Create(GetClip(TEXT("BH_BACKJUMP")), NOLOOP);
+    {
+        AnimationEventDesc m0, m1;
+        m0.NormalizedTime = 0 / 30.0f;
+        m1.NormalizedTime = 5 / 30.0f;
+        m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
+        m1.ContextUInt = UIntContext::END_MANUAL_LOOK;
+        BH_BACKJUMP->AddEvent(m0);
+        BH_BACKJUMP->AddEvent(m1);
+    }
+    Layer->AddNode(BH_BACKJUMP);
 
     ATK_DOUBLEHAND_SLASH = AnimatorSingleNode::Create(GetClip(TEXT("ATK_DOUBLEHAND_SLASH")), NOLOOP);
     {
@@ -287,24 +302,50 @@ void BossAshiAnimator::SetupNodes()
     Layer->AddNode(ATK_SPINKICK);
 
     ATK_LASER_ST = AnimatorSingleNode::Create(GetClip(TEXT("ATK_LASER_ST")), NOLOOP);
+    {
+        AnimationEventDesc m0, m1;
+        m0.NormalizedTime = 0.0f;
+        m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
+        ATK_LASER_ST->AddEvent(m0);
+    }
     Layer->AddNode(ATK_LASER_ST);
 
     ATK_LASER_ED = AnimatorSingleNode::Create(GetClip(TEXT("ATK_LASER_ED")), NOLOOP);
+    {
+        AnimationEventDesc m0, m1;
+        m0.NormalizedTime = 0.0f;
+        m1.NormalizedTime = 25 / 93.0f;
+        m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
+        m1.ContextUInt = UIntContext::END_MANUAL_LOOK;
+        ATK_LASER_ED->AddEvent(m0);
+        ATK_LASER_ED->AddEvent(m1);
+    }
     Layer->AddNode(ATK_LASER_ED);
 
     ATK_RAGE = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RAGE")), NOLOOP);
     Layer->AddNode(ATK_RAGE);
 
     ATK_RUSH_ST_1 = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ST_1")), NOLOOP);
+    ATK_RUSH_ST_1->speed = 2.0f;
     Layer->AddNode(ATK_RUSH_ST_1);
 
     ATK_RUSH_ST_2 = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ST_2")), NOLOOP);
     Layer->AddNode(ATK_RUSH_ST_2);
 
-    ATK_RUSH_LP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_LP")), NOLOOP);
+    ATK_RUSH_LP = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_LP")), LOOP);
     Layer->AddNode(ATK_RUSH_LP);
 
     ATK_RUSH_ED = AnimatorSingleNode::Create(GetClip(TEXT("ATK_RUSH_ED")), NOLOOP);
+    {
+        AnimationEventDesc m0, m1;
+        m0.NormalizedTime = 0 / 92.0f;
+        m1.NormalizedTime = 30 / 92.0f;
+        m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
+        m1.ContextUInt = UIntContext::END_MANUAL_LOOK;
+        ATK_RUSH_ED->AddEvent(m0);
+        ATK_RUSH_ED->AddEvent(m1);
+    }
+    ATK_RUSH_ED->speed = 2.0f;
     Layer->AddNode(ATK_RUSH_ED);
 
     DMG_DIE_ST = AnimatorSingleNode::Create(GetClip(TEXT("DMG_DIE_ST")), NOLOOP);
@@ -312,6 +353,9 @@ void BossAshiAnimator::SetupNodes()
 
     DMG_DIE_ED = AnimatorSingleNode::Create(GetClip(TEXT("DMG_DIE_ED")), NOLOOP);
     Layer->AddNode(DMG_DIE_ED);
+
+    ATK_ANGRY = AnimatorSingleNode::Create(GetClip(TEXT("ATK_ANGRY")), NOLOOP);
+    Layer->AddNode(ATK_ANGRY);
 
     // Additive ===============================================================================================================
 
@@ -364,6 +408,19 @@ void BossAshiAnimator::SetupTransitions()
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue(TurnBProperty, false, AnimatorTransition::Compare::EQUAL));
         Layer->AddTransition(BH_TURN, EXIT, values, 0.0f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
+    }
+
+    // ANY -> BH_BACKJUMP
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(BackjumpTProperty));
+        Layer->AddTransition(ANY, BH_BACKJUMP, values, 0.0f, 0.05f, 0.0f, AnimatorTransition::Interrupt::Current, true);
+    }
+
+    // BH_BACKJUMP -> EXIT
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(BH_BACKJUMP, EXIT, values, 0.5f, 0.1f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> DMG_DIE_ST
@@ -532,6 +589,19 @@ void BossAshiAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         Layer->AddTransition(ATK_RUSH_ED, EXIT, values, 0.8f, 0.1f, 0.0f);
+    }
+
+    // ANY -> ATK_ANGRY
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(ATK_ANGRY_TProperty));
+        Layer->AddTransition(ANY, ATK_ANGRY, values, 0.0f, 0.1f, 0.1f);
+    }
+
+    // ATK_ANGRY -> ATK_RAGE
+    {
+        vector<AnimatorTransition::PropertyValue> values;
+        Layer->AddTransition(ATK_ANGRY, ATK_RAGE, values, 0.6f, 0.1f, 0.0f);
     }
 
     // Additive ===============================================================================================================

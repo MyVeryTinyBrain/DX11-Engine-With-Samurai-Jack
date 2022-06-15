@@ -187,7 +187,7 @@ void PlayerAnimator::SetupNodes()
 		blendNodeElements.push_back(AnimatorBlendNodeElement::Create(DMG_BACK, 1.0f));
 
 		DMG_LIGHT = AnimatorBlendNode::Create(TEXT("DMG_LIGHT"), blendNodeElements, DamageDirectionFProperty, NOLOOP);
-		DMG_LIGHT->speed = 2.0f;
+		DMG_LIGHT->speed = 2.5f;
 		Layer->AddNode(DMG_LIGHT);
 	}
 
@@ -211,9 +211,11 @@ void PlayerAnimator::SetupNodes()
 	Layer->AddNode(DMG_BLOW_LOOP);
 
 	DMG_BLOW_END = AnimatorSingleNode::Create(GetClip(TEXT("DMG_BLOW_END")), NOLOOP);
+	DMG_BLOW_END->speed = 2.0f;
 	Layer->AddNode(DMG_BLOW_END);
 
 	DMG_BLOW_GETUP = AnimatorSingleNode::Create(GetClip(TEXT("DMG_BLOW_GETUP")), NOLOOP);
+	DMG_BLOW_GETUP->speed = 1.5f;
 	Layer->AddNode(DMG_BLOW_GETUP);
 
 	ATK_X = AnimatorSingleNode::Create(GetClip(TEXT("ATK_X")), NOLOOP);
