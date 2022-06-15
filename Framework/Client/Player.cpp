@@ -742,7 +742,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
 			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
 
-			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_02), 0.5f);
+			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_02), 1.0f);
 
 			m_animator->GuardBreakTProperty->SetTriggerState();
 			return DamageOutType::GUARD_BREAKED;
