@@ -50,8 +50,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     //world.GetSystem()->GetSceneManagement()->ChangeScene(new TestScene);
-    world.GetSystem()->GetSceneManagement()->ChangeScene(new PlayerTestScene);
-    //world.GetSystem()->GetSceneManagement()->ChangeScene(new EDITOR::EditorScene);
+    //world.GetSystem()->GetSceneManagement()->ChangeScene(new PlayerTestScene);
+    world.GetSystem()->GetSceneManagement()->ChangeScene(new EDITOR::EditorScene);
     //world.GetSystem()->GetSceneManagement()->ChangeScene(new SceneAncientKing);
     //world.GetSystem()->GetSceneManagement()->ChangeScene(new SceneCave01);
     //world.GetSystem()->GetSceneManagement()->ChangeScene(new SceneCave02);

@@ -50,11 +50,11 @@
       },
       {
          "collider" : false,
-         "localPosition" : "[\n\t-16.176519393920898,\n\t0.0,\n\t34.9769287109375,\n\t0.0\n]",
+         "localPosition" : "[\n\t-16.176528930664062,\n\t-0.091472148895263672,\n\t34.975608825683594,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
-         "localScale" : "[\n\t3.0,\n\t0.10000000149011612,\n\t3.0,\n\t0.0\n]",
+         "localScale" : "[\n\t5.8000001907348633,\n\t0.10000000149011612,\n\t5.8000001907348633,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/floorslop01.fbx",
+         "mesh" : "../resource/environment/cave/cavefloorl.fbx",
          "name" : "Prop2",
          "tag" : "",
          "type" : "Prop"
@@ -820,7 +820,7 @@
       },
       {
          "collider" : true,
-         "localPosition" : "[\n\t-9.5929622650146484,\n\t-0.079133681952953339,\n\t74.296073913574219,\n\t0.0\n]",
+         "localPosition" : "[\n\t-9.5929708480834961,\n\t0.089525766670703888,\n\t74.296150207519531,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t3.0,\n\t1.0,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : true,
@@ -1007,7 +1007,7 @@
          "type" : "GasVent"
       },
       {
-         "localPosition" : "[\n\t23.118951797485352,\n\t0.43073034286499023,\n\t73.603103637695312,\n\t0.0\n]",
+         "localPosition" : "[\n\t23.119455337524414,\n\t0.75496482849121094,\n\t73.605094909667969,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "GasVent1",
@@ -1424,6 +1424,61 @@
          "name" : "BoxCollider5",
          "tag" : "NextSceneTrigger",
          "type" : "BoxCollider"
+      },
+      {
+         "collider" : true,
+         "localPosition" : "[\n\t-10.69825553894043,\n\t0.32554352283477783,\n\t71.789688110351562,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/cave/floordmg01.fbx",
+         "name" : "Prop65",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : true,
+         "localPosition" : "[\n\t23.158100128173828,\n\t0.10462618619203568,\n\t74.208885192871094,\n\t0.0\n]",
+         "localRotation" : "[\n\t4.7147722170848283e-08,\n\t-0.32430005073547363,\n\t7.3984999460208201e-08,\n\t0.94595426321029663\n]",
+         "localScale" : "[\n\t1.3498437404632568,\n\t1.3498437404632568,\n\t1.3498437404632568,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/cave/floordmg01.fbx",
+         "name" : "Prop66",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : true,
+         "localPosition" : "[\n\t12.623638153076172,\n\t-0.03964686393737793,\n\t49.240043640136719,\n\t0.0\n]",
+         "localRotation" : "[\n\t-3.1754535001482509e-08,\n\t0.39223837852478027,\n\t-3.9087474590360216e-08,\n\t0.91986358165740967\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/cave/floordmg02.fbx",
+         "name" : "Prop67",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : true,
+         "localPosition" : "[\n\t-0.81566417217254639,\n\t-0.1509321928024292,\n\t53.386913299560547,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/cave/floordmg03.fbx",
+         "name" : "Prop68",
+         "tag" : "",
+         "type" : "Prop"
+      },
+      {
+         "collider" : true,
+         "localPosition" : "[\n\t13.744473457336426,\n\t-0.24688982963562012,\n\t59.508529663085938,\n\t0.0\n]",
+         "localRotation" : "[\n\t5.8820376347412662e-10,\n\t0.66933846473693848,\n\t5.0552472430354101e-08,\n\t0.74295759201049805\n]",
+         "localScale" : "[\n\t2.8969449996948242,\n\t2.8969449996948242,\n\t2.8969449996948242,\n\t0.0\n]",
+         "makeShadow" : true,
+         "mesh" : "../resource/environment/cave/floordmg05.fbx",
+         "name" : "Prop69",
+         "tag" : "",
+         "type" : "Prop"
       }
    ]
 }
