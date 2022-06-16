@@ -204,6 +204,11 @@ void Player::SetupAudioSource()
 void Player::UpdateCCT()
 {
 	CCT->MoveOnGround(m_animator->Layer->deltaPosition, system->time->deltaTime);
+
+	if (m_animator->Layer->IsPlaying(m_animator->GAD_HIT))
+	{
+		CCT->MoveOnGround(-transform->forward * system->time->deltaTime, system->time->deltaTime);
+	}
 }
 
 void Player::UpdateAttachmentObjects()
@@ -332,8 +337,8 @@ void Player::AttackTriggerQuery()
 					break;
 			}
 
-			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
-			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 91 - 45));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.06f, 1.5f, 0.1f, 2.0f / 0.1f);
 		}
 	}
 }
@@ -694,8 +699,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
 			);
 
-			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
-			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
+			m_tpsCamera->Shake(V3::up(), 0.1f, 1.1f, 0.1f, 2.0f / 0.1f);
 
 			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_01), 0.5f);
 
@@ -740,7 +744,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			);
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
-			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.025f, 1.1f, 0.1f, 2.0f / 0.1f);
+			m_tpsCamera->Shake(V3::up(), 0.2f, 1.1f, 0.1f, 2.0f / 0.1f);
 
 			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_02), 1.0f);
 
@@ -833,7 +837,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 			}
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
-			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.035f, 1.1f, 0.1f, 2.0f / 0.1f);
+			m_tpsCamera->Shake(V3::up(), 0.2f, 1.1f, 0.1f, 2.0f / 0.1f);
 			return DamageOutType::HIT;
 		}
 		break;

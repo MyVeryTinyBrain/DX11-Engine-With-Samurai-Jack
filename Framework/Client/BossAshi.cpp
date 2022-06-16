@@ -77,7 +77,7 @@ void BossAshi::SetupCollider()
     GameObject* goCollider = CreateGameObjectToChild(transform);
     m_collider = goCollider->AddComponent<CapsuleCollider>();
     m_collider->layerIndex = PhysicsLayer_Enemy;
-    m_collider->radius = CCT->radius + 0.3f;
+    m_collider->radius = CCT->radius + 0.4f;
     m_collider->halfHeight = CCT->height * 0.5f + 0.2f;
 }
 
@@ -137,6 +137,7 @@ void BossAshi::SetupSword()
     ResourceRef<Texture> distortionTexture = system->resource->Find(TEX_NOISE_01);
     material->SetTexture("_BaseTexture", baseTexture);
     material->SetTexture("_DistortionTexture", distortionTexture);
+    material->SetFloat("_DistortionPower", 100.0f);
     material->SetColor("_MinColor", Color::RGBA255(255, 255, 194, 255));
     material->SetColor("_MaxColor", Color::RGBA255(254, 128, 0, 255));
     m_swordTrail->material = material;
