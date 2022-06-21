@@ -44,6 +44,7 @@ struct PS_OUT
 	float4 Occlusion_Reflection_ReflectionBlur_ReflectMask : SV_TARGET6;
 };
 
+float4			_UVScale < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 texture2D		_AlbedoTexture < string Default = "White"; > ;
 texture2D		_NormalMapTexture < string Default = "Normal"; > ;
 texture2D		_LightMaskTexture < string Default = "White"; > ;
@@ -115,6 +116,8 @@ PS_IN VS_MAIN(VS_IN In)
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;
+
+	In.UV *= _UVScale.xy;
 
 	output.Albedo = _AlbedoTexture.Sample(diffuseSampler, In.UV);
 

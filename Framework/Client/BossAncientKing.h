@@ -29,7 +29,7 @@ class BossAncientKing : public Boss
 		ATK_JUMP,
 		ATK_DOWNSTRIKE,
 		ATK_NEAR_RUSH,
-		ATK_NEAR_BEAM,
+		//ATK_NEAR_BEAM,
 		ATK_BACKJUMP,
 		__ATK_NEAR_END,
 
@@ -78,6 +78,7 @@ private:
 
 public:
 
+	virtual float GetMaxHP() const override;
 	virtual float GetHP() const override;
 	virtual void SetHP(float value) override;
 
@@ -169,7 +170,7 @@ private:
 
 	// Stat
 
-	float m_hp = 250.0f;
+	float m_hp = GetMaxHP();
 
 	// Idle
 
@@ -187,9 +188,14 @@ private:
 	// 다른 공격을 한 번 하면 다시 비활성화됩니다.
 	bool m_usedSATK_TURN = false; 
 	
+	// Near attack
+	stack<int> m_nearAttackStack;
+
 	// Far attack
 	
 	float m_farATKCounter = 0.0f;
+	int m_farATKIndex = 0;
+	int m_backJumpFarATKIndex = 0;
 
 	// Aimming
 
@@ -206,9 +212,5 @@ private:
 	// Grogy
 	
 	uint m_hitCount = 0;
-	
-	// Backjump
-
-	int m_backJumpLeftCount = 5;
 };
 

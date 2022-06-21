@@ -75,6 +75,7 @@ private:
 
 public:
 
+	virtual float GetMaxHP() const override;
 	virtual float GetHP() const override;
 	virtual void SetHP(float value) override;
 
@@ -100,6 +101,7 @@ private:
 	void SetWalkDirectionLerp(float angle, float duration);
 	void StopWalkDirectionLerp();
 	float RandomWalkDirectionChangeTime() const;
+	void MakeDarkDust();
 
 private:
 
@@ -110,6 +112,20 @@ private:
 	Ref<NodeTransform> m_R_Hand_Weapon_cnt_tr;
 	Ref<NodeTransform> m_RightFoot;
 	Ref<NodeTransform> m_Head;
+
+	Ref<NodeTransform> m_Neck;
+	Ref<NodeTransform> m_Spine1;
+	Ref<NodeTransform> m_Spine;
+	Ref<NodeTransform> m_Hips;
+	Ref<NodeTransform> m_RightArmRoll;
+	Ref<NodeTransform> m_LeftArmRoll;
+	Ref<NodeTransform> m_RightForeArmRoll;
+	Ref<NodeTransform> m_LeftForeArmRoll;
+	Ref<NodeTransform> m_L_Hand_Weapon_cnt_tr;
+	
+	// Head
+
+	V3 m_toPlayerDirection;
 
 	// Sword
 
@@ -147,11 +163,13 @@ private:
 
 	AudioSource* m_audioSource;
 
+	// Idle
+
 	float m_idleLeftCounter = 0.0f;
 
 	// Stat
 
-	float m_hp = 1000.0f;
+	float m_hp = GetMaxHP();
 
 	// State
 
@@ -178,5 +196,9 @@ private:
 	// Far attack
 
 	int m_farAttackIndex = -1;
+
+	// Distortion
+
+	float m_distortionPercent = 0.0f;
 };
 

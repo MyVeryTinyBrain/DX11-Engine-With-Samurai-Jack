@@ -73,5 +73,6 @@
 #include "TrailRenderer.h"
 #include "LineRenderer.h"
 #include "BillboardRenderer.h"
+#include "ScreenRenderer.h"
 
 #include "JsonUtility.h"

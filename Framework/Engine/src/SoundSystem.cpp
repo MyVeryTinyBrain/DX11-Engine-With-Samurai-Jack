@@ -48,7 +48,7 @@ void SoundSystem::ReleaseListener(Com<SoundListener>& listener)
 {
 	// 리스너 목록에서 제거합니다.
 	auto find_it = std::find(m_listeners.begin(), m_listeners.end(), listener);
-	if (find_it == m_listeners.end())
+	if (find_it != m_listeners.end())
 	{
 		m_listeners.erase(find_it);
 	}

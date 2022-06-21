@@ -13,6 +13,8 @@ void PlayerAnimator::Awake()
 	SetupNodes();
 	SetupTransitions();
 	speed = 1.2f;
+
+	GroundStateBProperty->valueAsBool = true;
 }
 
 SubResourceRef<AnimationClip> PlayerAnimator::GetClip(const tstring& name)
@@ -74,8 +76,8 @@ void PlayerAnimator::SetupNodes()
 			s1.ContextByte = ByteContext::PLAY_SOUND;
 			s0.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_01;
 			s1.ContextTStr = SOUND_BEHAVIOR_FOOTSTEP_02;
-			s0.ContextFloat = 0.2f;
-			s1.ContextFloat = 0.2f;
+			s0.ContextFloat = 0.4f;
+			s1.ContextFloat = 0.4f;
 			BH_RUN_BH_DASH->AddEvent(s0);
 			BH_RUN_BH_DASH->AddEvent(s1);
 		}

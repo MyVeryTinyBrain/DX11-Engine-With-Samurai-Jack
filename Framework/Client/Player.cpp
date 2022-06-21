@@ -11,6 +11,8 @@
 #include "ParticleDust01.h"
 #include "EffectGlow.h"
 
+#include "GameSystem.h"
+
 Player* Player::g_player = nullptr;
 
 void Player::Awake()
@@ -37,6 +39,8 @@ void Player::Start()
 
 	m_tpsCamera->transform->position = transform->position;
 	m_tpsCamera->transform->forward = transform->forward;
+
+	GameSystem::GetInstance()->ShowPlayerHP(this);
 }
 
 void Player::Update()
@@ -199,6 +203,7 @@ void Player::SetupAudioSource()
 {
 	GameObject* goAudioSource = CreateGameObjectToChild(transform);
 	m_audioSource = goAudioSource->AddComponent<AudioSource>();
+	m_audioSource->playAnywhere = true;
 }
 
 void Player::UpdateCCT()
@@ -259,7 +264,7 @@ void Player::AttackTriggerQuery()
 					break;
 				case PlayerAnimator::UIntContext::ATK_HEAVY:
 					damage.Type = DamageInType::HEAVY;
-					damage.Damage = 2.5f;
+					damage.Damage = 3.0f;
 					break;
 				case PlayerAnimator::UIntContext::ATK_BLOW:
 					damage.Type = DamageInType::BLOW;
@@ -270,7 +275,7 @@ void Player::AttackTriggerQuery()
 				case PlayerAnimator::UIntContext::ATK_BLOWUP:
 					damage.Damage = 2.0f;
 					damage.Type = DamageInType::BLOWUP;
-					damage.Velocity = BLOWUP_VELOCITY;
+					damage.Velocity = BLOWUP_VELOCITY + V3::up() * 1.0f;
 					damage.SetVelocity = true;
 					break;
 				case PlayerAnimator::UIntContext::ATK_BLOWDOWN:
@@ -318,6 +323,8 @@ void Player::AttackTriggerQuery()
 					V2(20.0f, 0.5f), V2(50.0f, 0.1f), 1.0f,
 					Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
 				);
+
+				GameSystem::GetInstance()->ShowEnemyHP(enemy);
 			}
 		}
 
@@ -338,7 +345,7 @@ void Player::AttackTriggerQuery()
 			}
 
 			Q q = Q::AxisAngle(transform->forward, float(rand() % 91 - 45));
-			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.06f, 1.5f, 0.1f, 2.0f / 0.1f);
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.03f, 1.5f, 0.1f, 2.0f / 0.1f);
 		}
 	}
 }
@@ -615,13 +622,19 @@ void Player::SetAttackType(uint contextUInt)
 		m_attackType = PlayerAnimator::UIntContext::ATK_BLOWDOWN;
 }
 
+float Player::GetMaxHP() const
+{
+	return 100.0f;
+}
+
 float Player::GetHP() const
 {
-	return 0.0f;
+	return m_hp;
 }
 
 void Player::SetHP(float value)
 {
+	m_hp = value;
 }
 
 V3 Player::GetDirection() const
@@ -699,7 +712,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
 			);
 
-			m_tpsCamera->Shake(V3::up(), 0.1f, 1.1f, 0.1f, 2.0f / 0.1f);
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 91 - 45));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.05f, 1.1f, 0.1f, 2.0f / 0.1f);
 
 			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_01), 0.5f);
 
@@ -709,6 +723,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 		break;
 		case DamageOutType::GUARD_BREAKED:
 		{
+			hp = Max(0.0f, hp - out.In.Damage);
+
 			m_damagedDirection = out.In.FromDirection;
 			m_damagedDirection.y = 0;
 			m_damagedDirection.Normalize();
@@ -743,8 +759,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				Color::white(), Color(1.0f, 1.0f, 1.0f, 0.0f), 1.0f
 			);
 
-			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
-			m_tpsCamera->Shake(V3::up(), 0.2f, 1.1f, 0.1f, 2.0f / 0.1f);
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 91 - 45));
+			m_tpsCamera->Shake(q.MultiplyVector(V3::up()), 0.07f, 1.1f, 0.1f, 2.0f / 0.1f);
 
 			m_audioSource->PlayOneshot(system->resource->Find(SOUND_GUARD_02), 1.0f);
 
@@ -754,6 +770,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 		break;
 		case DamageOutType::HIT:
 		{
+			hp = Max(0.0f, hp - out.In.Damage);
+
 			m_animator->DamageTProperty->SetTriggerState();
 			m_animator->DamageDirectionFProperty->valueAsFloat = out.Backattack ? 1.0f : 0.0f;
 
@@ -836,8 +854,8 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 					break;
 			}
 
-			Q q = Q::AxisAngle(transform->forward, float(rand() % 361));
-			m_tpsCamera->Shake(V3::up(), 0.2f, 1.1f, 0.1f, 2.0f / 0.1f);
+			Q q = Q::AxisAngle(transform->forward, float(rand() % 91 - 45));
+			m_tpsCamera->Shake(V3::up(), 0.07f, 1.1f, 0.1f, 2.0f / 0.1f);
 			return DamageOutType::HIT;
 		}
 		break;

@@ -19,11 +19,13 @@
 #include "PrefabPlayer.h"
 #include "PrefabBeetleDrone.h"
 #include "PrefabAncientKing.h"
+#include "PrefabAshi.h"
 
 #include "Lava.h"
 #include "BeetleSpawner.h"
 #include "GasVent.h"
 #include "FlameVent.h"
+#include "DirtGround.h"
 
 EDITOR_USE
 
@@ -150,6 +152,14 @@ void Spawner::OnImGuiRender()
 
 			inspector->Select(o);
 		}
+		if (ImGui::Selectable("Ashi"))
+		{
+			GameObject* go = CreateGameObject();
+			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
+			o = go->AddComponent<PrefabAshi>();
+
+			inspector->Select(o);
+		}
 
 		ImGui::TreePop();
 	}
@@ -184,6 +194,14 @@ void Spawner::OnImGuiRender()
 			GameObject* go = CreateGameObject();
 			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
 			o = go->AddComponent<FlameVent>();
+
+			inspector->Select(o);
+		}
+		if (ImGui::Selectable("DirtGround"))
+		{
+			GameObject* go = CreateGameObject();
+			go->transform->position = freeCamera->transform->position + freeCamera->transform->forward * 5.0f;
+			o = go->AddComponent<DirtGround>();
 
 			inspector->Select(o);
 		}

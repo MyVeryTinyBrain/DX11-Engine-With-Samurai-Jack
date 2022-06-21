@@ -13,9 +13,7 @@ void AudioSource::Awake()
 	FMOD_RESULT fr = FMOD_System_CreateChannelGroup(system->sound->fmod, NULL, &m_fmodChannelGroup);
 	assert(FMOD_OK == fr); // 채널그룹 생성이 실패했습니다.
 
-	FMOD_ChannelGroup_SetMode(m_fmodChannelGroup, FMOD_3D_LINEARROLLOFF);
-
-	SetPlayAnywhere(false + fr * 0.0f);
+	SetPlayAnywhere(false);
 	Set3DMinDistance(5.0f);
 	Set3DMaxDistance(10.0f);
 }
@@ -97,8 +95,8 @@ void AudioSource::Play(ResourceRef<AudioClip> clip, float volume, float pitch)
 
 	SoundPlayDesc desc = {};
 	desc.Loop = true;
-	desc.Pitch = clip->volume * volume;
-	desc.Volume = clip->pitch * pitch;
+	desc.Volume = clip->volume * volume;
+	desc.Pitch = clip->pitch * pitch;
 	desc.Priority = m_priority;
 	desc.Group = m_fmodChannelGroup;
 
@@ -122,10 +120,12 @@ void AudioSource::Play()
 
 void AudioSource::Stop()
 {
-	while (!m_playdatas.empty())
+	auto playdatas = m_playdatas;
+	for (auto& playdata : playdatas)
 	{
-		m_playdatas.front()->Stop();
+		playdata->Stop();
 	}
+	m_playdatas.clear();
 }
 
 bool AudioSource::IsPaused() const
@@ -176,17 +176,22 @@ bool AudioSource::IsPlayAnywhere() const
 void AudioSource::SetPlayAnywhere(bool value)
 {
 	FMOD_MODE mode;
-	FMOD_ChannelGroup_GetMode(m_fmodChannelGroup, &mode);
 
-	if (value)
+	if (!value)
 	{
-		mode &= (~FMOD_3D);
+		mode = FMOD_3D_LINEARROLLOFF | FMOD_3D;
 	}
 	else
 	{
-		mode |= FMOD_3D;
+		mode = FMOD_2D;
 	}
+
 	FMOD_ChannelGroup_SetMode(m_fmodChannelGroup, mode);
+}
+
+bool AudioSource::IsPlaying() const
+{
+	return !m_playdatas.empty();
 }
 
 float AudioSource::Get3DMinDistance() const

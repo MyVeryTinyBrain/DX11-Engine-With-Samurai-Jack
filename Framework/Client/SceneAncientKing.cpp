@@ -3,6 +3,7 @@
 
 #include "Config.h"
 #include "EditorDeserialize.h"
+#include "GameSystem.h"
 #include "EventSystem.h"
 
 Scene* SceneAncientKing::Clone()
@@ -15,8 +16,8 @@ void SceneAncientKing::OnLoad()
     INIT_PHYSICS_LAYER(system->physics->layerManager);
     LOAD_CONFIGFILES(system);
 
-	GameObject* goEventSystem = CreateGameObject();
-	goEventSystem->AddComponent<EventSystem>();
+	GameObject* goGameSystem = CreateGameObject();
+	goGameSystem->AddComponent<GameSystem>();
 
 	EventSystem::RegistListener(this);
 
@@ -64,9 +65,16 @@ void SceneAncientKing::OnUnload()
 {
 	EventSystem::UnregistListener(this);
 }
-
+#include "SceneAshi.h"
 void SceneAncientKing::OnUpdate()
 {
+	for (auto& nextSceneTrigger : m_nextSceneTriggers)
+	{
+		if (system->physics->query->OverlapTest(nextSceneTrigger, 1 << PhysicsLayer_Player))
+		{
+			GameSystem::GetInstance()->ChangeScene(new SceneAshi);
+		}
+	}
 }
 
 void SceneAncientKing::OnLateUpdate()

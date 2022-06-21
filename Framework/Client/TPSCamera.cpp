@@ -203,6 +203,11 @@ void TPSCamera::UpdateRotation()
         Q rotation = Q::SLerp(transform->rotation, targetRotation, m_xztracePower * system->time->deltaTime * m_lookRotateSpeed * 10.0f);
 
         transform->rotation = rotation;
+
+        V3 camEulerAngles = transform->localEulerAngles;
+        camEulerAngles.x = Clamp(camEulerAngles.x, -89.0f, +89.0f);
+        camEulerAngles.z = Clamp(camEulerAngles.z, -89.0f, +89.0f);
+        transform->localEulerAngles = camEulerAngles;
         
         m_lookChangeDelayCount -= system->time->deltaTime;
 

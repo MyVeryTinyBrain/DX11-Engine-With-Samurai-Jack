@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "SceneCave01.h"
+
 #include "Config.h"
-#include "EventSystem.h"
 #include "EditorDeserialize.h"
+#include "GameSystem.h"
+#include "EventSystem.h"
 
 Scene* SceneCave01::Clone()
 {
@@ -14,8 +16,9 @@ void SceneCave01::OnLoad()
 	INIT_PHYSICS_LAYER(system->physics->layerManager);
 	LOAD_CONFIGFILES(system);
 
-	GameObject* goEventSystem = CreateGameObject();
-	goEventSystem->AddComponent<EventSystem>();
+	GameObject* goGameSystem = CreateGameObject();
+	GameSystem* gameSystem = goGameSystem->AddComponent<GameSystem>();
+	gameSystem->PlayMusic(system->resource->Find(SOUND_MUSIC_03), 0.3f, 3.0f);
 
 	EventSystem::RegistListener(this);
 
@@ -70,7 +73,7 @@ void SceneCave01::OnUpdate()
 	{
 		if (system->physics->query->OverlapTest(nextSceneTrigger, 1 << PhysicsLayer_Player))
 		{
-			system->sceneManagement->ChangeScene(new SceneCave02);
+			GameSystem::GetInstance()->ChangeScene(new SceneCave02);
 		}
 	}
 }

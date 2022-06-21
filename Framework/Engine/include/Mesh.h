@@ -74,13 +74,9 @@ public:
 	// you can release VIBuffer
 
 	static ResourceRef<Mesh> CreateMeshM(ResourceManagement* management, const tstring& resourceKey, const VIBuffer* viBuffer);
-
 	static ResourceRef<Mesh> CreateMeshUM(ResourceManagement* management, const VIBuffer* viBuffer);
-
 	static ResourceRef<Mesh> CreateMeshNocopyM(ResourceManagement* management, const tstring& resourceKey, VIBuffer** ppVIBuffer);
-
 	static ResourceRef<Mesh> CreateMeshNocopyUM(ResourceManagement* management, VIBuffer** ppVIBuffer);
-
 	static ResourceRef<Mesh> LoadMeshM(ResourceManagement* management, const tstring& path);
 
 private: 

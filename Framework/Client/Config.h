@@ -106,6 +106,60 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define MESH_ENV_TRAPFLOORS05				TEXT("../Resource/Environment/Cave/TrapFloorS05.fbx")
 #define MESH_ENV_TRAPFLOORS06				TEXT("../Resource/Environment/Cave/TrapFloorS06.fbx")
 #define MESH_ENV_CRYSTAL					TEXT("../Resource/Environment/Crystal/Crystal.fbx")
+#define MESH_ENV_FOREST_BROKENTREE_01		TEXT("../Resource/Environment/Forest/BrokenTree01.fbx")
+#define MESH_ENV_FOREST_DEADROOT			TEXT("../Resource/Environment/Forest/DeadRoot.fbx")
+#define MESH_ENV_FOREST_DEADTREE01			TEXT("../Resource/Environment/Forest/DeadTree01.fbx")
+#define MESH_ENV_FOREST_DEADTREE02			TEXT("../Resource/Environment/Forest/DeadTree02.fbx")
+#define MESH_ENV_FOREST_DEADTREE03			TEXT("../Resource/Environment/Forest/DeadTree03.fbx")
+#define MESH_ENV_FOREST_DEADTREE04			TEXT("../Resource/Environment/Forest/DeadTree04.fbx")
+#define MESH_ENV_FOREST_DESERTAGAVE01		TEXT("../Resource/Environment/Forest/DesertAgave01.fbx")
+#define MESH_ENV_FOREST_DESERTAGAVE02		TEXT("../Resource/Environment/Forest/DesertAgave02.fbx")
+#define MESH_ENV_FOREST_FALLENTREE			TEXT("../Resource/Environment/Forest/FallenTree.fbx")
+#define MESH_ENV_FOREST_FORESTWINTERTREE01	TEXT("../Resource/Environment/Forest/ForestWinterTree01.fbx")
+#define MESH_ENV_FOREST_FORESTWINTERTREE02	TEXT("../Resource/Environment/Forest/ForestWinterTree02.fbx")
+#define MESH_ENV_FOREST_LOG					TEXT("../Resource/Environment/Forest/Log.fbx")
+#define MESH_ENV_FOREST_SAP01				TEXT("../Resource/Environment/Forest/Sap01.fbx")
+#define MESH_ENV_FOREST_SAP02				TEXT("../Resource/Environment/Forest/Sap02.fbx")
+#define MESH_ENV_FOREST_SAP03				TEXT("../Resource/Environment/Forest/Sap03.fbx")
+#define MESH_ENV_FOREST_SKINNYGRASS			TEXT("../Resource/Environment/Forest/SkinnyGrass.fbx")
+#define MESH_ENV_FOREST_STONE01				TEXT("../Resource/Environment/Forest/Stone01.fbx")
+#define MESH_ENV_FOREST_STONE02				TEXT("../Resource/Environment/Forest/Stone02.fbx")
+#define MESH_ENV_FOREST_STONE03				TEXT("../Resource/Environment/Forest/Stone03.fbx")
+#define MESH_ENV_FOREST_STONE04				TEXT("../Resource/Environment/Forest/Stone04.fbx")
+#define MESH_ENV_SCRAP_ARCHWAY				TEXT("../Resource/Environment/Scrap/Archway.fbx")
+#define MESH_ENV_SCRAP_BULKHEAD01			TEXT("../Resource/Environment/Scrap/Bulkhead01.fbx")
+#define MESH_ENV_SCRAP_BULKHEAD02			TEXT("../Resource/Environment/Scrap/Bulkhead02.fbx")
+#define MESH_ENV_SCRAP_CLUSTER01			TEXT("../Resource/Environment/Scrap/Cluster01.fbx")
+#define MESH_ENV_SCRAP_CLUSTER02			TEXT("../Resource/Environment/Scrap/Cluster02.fbx")
+#define MESH_ENV_SCRAP_CLUSTER03			TEXT("../Resource/Environment/Scrap/Cluster03.fbx")
+#define MESH_ENV_SCRAP_CLUSTER04			TEXT("../Resource/Environment/Scrap/Cluster04.fbx")
+#define MESH_ENV_SCRAP_CLUSTER05			TEXT("../Resource/Environment/Scrap/Cluster05.fbx")
+#define MESH_ENV_SCRAP_EXHAUST01			TEXT("../Resource/Environment/Scrap/Exhaust01.fbx")
+#define MESH_ENV_SCRAP_FINGER01				TEXT("../Resource/Environment/Scrap/Finger01A.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART01		TEXT("../Resource/Environment/Scrap/MachinePart01.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART02		TEXT("../Resource/Environment/Scrap/MachinePart02.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART03		TEXT("../Resource/Environment/Scrap/MachinePart03.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART04		TEXT("../Resource/Environment/Scrap/MachinePart04.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART05		TEXT("../Resource/Environment/Scrap/MachinePart05.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART06		TEXT("../Resource/Environment/Scrap/MachinePart06.fbx")
+#define MESH_ENV_SCRAP_MACHINEPART07		TEXT("../Resource/Environment/Scrap/MachinePart07.fbx")
+#define MESH_ENV_SCRAP_PIPE02				TEXT("../Resource/Environment/Scrap/Pipe02.fbx")
+#define MESH_ENV_SCRAP_PIPEEND				TEXT("../Resource/Environment/Scrap/PipeEnd.fbx")
+#define MESH_ENV_SCRAP_PYLONE01				TEXT("../Resource/Environment/Scrap/Pylon01.fbx")
+#define MESH_ENV_SCRAP_PYLONE02				TEXT("../Resource/Environment/Scrap/Pylon02.fbx")
+#define MESH_ENV_SCRAP_ROBOTPICE15			TEXT("../Resource/Environment/Scrap/RobotPiece15.fbx")
+#define MESH_ENV_SCRAP_VISTA01				TEXT("../Resource/Environment/Scrap/Vista01.fbx")
+#define MESH_ENV_SCRAP_VISTA03				TEXT("../Resource/Environment/Scrap/Vista03.fbx")
+#define MESH_ENV_SCRAP_VISTA04				TEXT("../Resource/Environment/Scrap/Vista04.fbx")
+#define MESH_ENV_SCRAP_VISTA06				TEXT("../Resource/Environment/Scrap/Vista06.fbx")
+#define MESH_ENV_SCRAP_VISTA07				TEXT("../Resource/Environment/Scrap/Vista07.fbx")
+#define MESH_ENV_SCRAP_VISTA13				TEXT("../Resource/Environment/Scrap/Vista13.fbx")
+#define MESH_ENV_SCRAP_VISTA14				TEXT("../Resource/Environment/Scrap/Vista14.fbx")
+#define MESH_ENV_SCRAP_VISTA15				TEXT("../Resource/Environment/Scrap/Vista15.fbx")
+#define MESH_ENV_SCRAP_VISTA16				TEXT("../Resource/Environment/Scrap/Vista16.fbx")
+#define MESH_ENV_SCRAP_VISTA17				TEXT("../Resource/Environment/Scrap/Vista17.fbx")
+#define MESH_ENV_SCRAP_VISTA18				TEXT("../Resource/Environment/Scrap/Vista18.fbx")
+#define MESH_ENV_SCRAP_VISTA19				TEXT("../Resource/Environment/Scrap/Vista19.fbx")
 
 // Textures
 
@@ -132,6 +186,11 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define TEX_FIRE_02							TEXT("../Resource/Fire/Fire02.dds")
 #define TEX_FIRE_03							TEXT("../Resource/Fire/Fire03.dds")
 #define TEX_FLAME_01						TEXT("../Resource/Fire/Flame01.dds")
+#define TEX_LANDSCAPE_MINE_GROUND_BC		TEXT("../Resource/Landscape/Mine/Ground_BC.dds")
+#define TEX_LANDSCAPE_MINE_GROUND_MR		TEXT("../Resource/Landscape/Mine/Ground_MR.dds")
+#define TEX_LANDSCAPE_MINE_GROUND_N			TEXT("../Resource/Landscape/Mine/Ground_N.dds")
+#define TEX_UI_HPBAR_BODY					TEXT("../Resource/UI/T_UI_HpGauge_Boss_Body.tga")
+#define TEX_UI_HPBAR_RED					TEXT("../Resource/UI/T_UI_HpGauge_Boss_Red.tga")
 
 // Sounds
 
@@ -145,6 +204,12 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define SOUND_KATANA_SWING_HEAVY03			TEXT("../Resource/Sound/KatanaSwing/Heavy03.wav")
 #define SOUND_KATANA_SWING_HEAVY04			TEXT("../Resource/Sound/KatanaSwing/Heavy04.wav")
 #define SOUND_MELEE_SWING_01				TEXT("../Resource/Sound/MeleeSwing/MeleeSwing01.wav")
+#define SOUND_MELEE_SWING_02				TEXT("../Resource/Sound/MeleeSwing/MeleeSwing02.wav")
+#define SOUND_SWORD_SWING_01				TEXT("../Resource/Sound/SwordSwing/SwordSwing01.wav")
+#define SOUND_SWORD_SWING_02				TEXT("../Resource/Sound/SwordSwing/SwordSwing02.wav")
+#define SOUND_SWORD_SWING_03				TEXT("../Resource/Sound/SwordSwing/SwordSwing03.wav")
+#define SOUND_SWORD_SWING_04				TEXT("../Resource/Sound/SwordSwing/SwordSwing04.wav")
+#define SOUND_SWORD_SWING_05				TEXT("../Resource/Sound/SwordSwing/SwordSwing05.wav")
 #define SOUND_BEHAVIOR_FOOTSTEP_01			TEXT("../Resource/Sound/Behavior/Footstep01.wav")
 #define SOUND_BEHAVIOR_FOOTSTEP_02			TEXT("../Resource/Sound/Behavior/Footstep02.wav")
 #define SOUND_BEHAVIOR_FOOTSTEP_03			TEXT("../Resource/Sound/Behavior/Footstep03.wav")
@@ -154,6 +219,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define SOUND_CRASH_01						TEXT("../Resource/Sound/Crash/Crash01.wav")
 #define SOUND_CRASH_02						TEXT("../Resource/Sound/Crash/Crash02.wav")
 #define SOUND_BIG_SWING_01					TEXT("../Resource/Sound/BigSwing/BigSwing01.wav")
+#define SOUND_BIG_SWING_02					TEXT("../Resource/Sound/BigSwing/BigSwing02.wav")
 #define SOUND_DAMAGE_01						TEXT("../Resource/Sound/Damage/Damage01.wav")
 #define SOUND_DAMAGE_02						TEXT("../Resource/Sound/Damage/Damage02.wav")
 #define SOUND_DAMAGE_03						TEXT("../Resource/Sound/Damage/Damage03.wav")
@@ -162,6 +228,42 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define SOUND_FLAME_01						TEXT("../Resource/Sound/Flame/Flame01.wav")
 #define SOUND_SWING_01						TEXT("../Resource/Sound/Swing/Swing01.wav")
 #define SOUND_SWING_02						TEXT("../Resource/Sound/Swing/Swing02.wav")
+#define SOUND_IMPACT_01						TEXT("../Resource/Sound/Impact/Impact01.wav")
+#define SOUND_FOOTSTEP_LIGHT_01				TEXT("../Resource/Sound/Footstep/Light01.wav")
+#define SOUND_FOOTSTEP_LIGHT_02				TEXT("../Resource/Sound/Footstep/Light02.wav")
+#define SOUND_FOOTSTEP_LIGHT_03				TEXT("../Resource/Sound/Footstep/Light03.wav")
+#define SOUND_FOOTSTEP_LIGHT_04				TEXT("../Resource/Sound/Footstep/Light04.wav")
+#define SOUND_FOOTSTEP_HEAVY_01				TEXT("../Resource/Sound/Footstep/HEAVY01.wav")
+#define SOUND_FOOTSTEP_HEAVY_02				TEXT("../Resource/Sound/Footstep/HEAVY02.wav")
+#define SOUND_ANCIENT_KING_RAGE01			TEXT("../Resource/Sound/AncientKing/Rage01.wav")
+#define SOUND_ANCIENT_KING_RAGE02			TEXT("../Resource/Sound/AncientKing/Rage02.wav")
+#define SOUND_ANCIENT_KING_BEGIN01			TEXT("../Resource/Sound/AncientKing/Begin01.wav")
+#define SOUND_ANCIENT_KING_BEGIN02			TEXT("../Resource/Sound/AncientKing/Begin02.wav")
+#define SOUND_ANCIENT_KING_ATTACK01			TEXT("../Resource/Sound/AncientKing/Attack01.wav")
+#define SOUND_ANCIENT_KING_ATTACK02			TEXT("../Resource/Sound/AncientKing/Attack02.wav")
+#define SOUND_ANCIENT_KING_ATTACK03			TEXT("../Resource/Sound/AncientKing/Attack03.wav")
+#define SOUND_ANCIENT_KING_ATTACK04			TEXT("../Resource/Sound/AncientKing/Attack04.wav")
+#define SOUND_ANCIENT_KING_ATTACK05			TEXT("../Resource/Sound/AncientKing/Attack05.wav")
+#define SOUND_ANCIENT_KING_ATTACK06			TEXT("../Resource/Sound/AncientKing/Attack06.wav")
+#define SOUND_ANCIENT_KING_ATTACK07			TEXT("../Resource/Sound/AncientKing/Attack07.wav")
+#define SOUND_ANCIENT_KING_ATTACK08			TEXT("../Resource/Sound/AncientKing/Attack08.wav")
+#define SOUND_ANCIENT_KING_ATTACK09			TEXT("../Resource/Sound/AncientKing/Attack09.wav")
+#define SOUND_ANCIENT_KING_GROGY			TEXT("../Resource/Sound/AncientKing/Grogy.wav")
+#define SOUND_ANCIENT_KING_DIE				TEXT("../Resource/Sound/AncientKing/Die.wav")
+#define SOUND_ASHI_ATTACK01					TEXT("../Resource/Sound/Ashi/Attack01.wav")
+#define SOUND_ASHI_ATTACK02					TEXT("../Resource/Sound/Ashi/Attack02.wav")
+#define SOUND_ASHI_ATTACK03					TEXT("../Resource/Sound/Ashi/Attack03.wav")
+#define SOUND_ASHI_ATTACK04					TEXT("../Resource/Sound/Ashi/Attack04.wav")
+#define SOUND_ASHI_ATTACK05					TEXT("../Resource/Sound/Ashi/Attack05.wav")
+#define SOUND_ASHI_ATTACK06					TEXT("../Resource/Sound/Ashi/Attack06.wav")
+#define SOUND_ASHI_LAUGH01					TEXT("../Resource/Sound/Ashi/Laugh01.wav")
+#define SOUND_ASHI_LAUGH02					TEXT("../Resource/Sound/Ashi/Laugh02.wav")
+#define SOUND_ASHI_SCREAM01					TEXT("../Resource/Sound/Ashi/Scream01.wav")
+#define SOUND_ASHI_SCREAM02					TEXT("../Resource/Sound/Ashi/Scream02.wav")
+#define SOUND_ASHI_DIE						TEXT("../Resource/Sound/Ashi/Die.wav")
+#define SOUND_MUSIC_01						TEXT("../Resource/Sound/Music/01.mp3")
+#define SOUND_MUSIC_02						TEXT("../Resource/Sound/Music/02.mp3")
+#define SOUND_MUSIC_03						TEXT("../Resource/Sound/Music/03.mp3")
 
 // Shaders
 
@@ -176,6 +278,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 #define SHADER_LAVA							TEXT("Lava.cso")
 #define SHADER_FIRE							TEXT("Fire.cso")
 #define SHADER_SWORDTRAIL					TEXT("SwordTrail.cso")
+#define SHADER_STANDARD_DISTORTION			TEXT("StandardDistortion.cso")
 
 // Event
 
@@ -271,6 +374,60 @@ inline void LOAD_MESHES(System* system)
 	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS05);
 	system->resource->factory->LoadMeshM(MESH_ENV_TRAPFLOORS06);
 	system->resource->factory->LoadMeshM(MESH_ENV_CRYSTAL);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_BROKENTREE_01);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DEADROOT);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DEADTREE01);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DEADTREE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DEADTREE03);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DEADTREE04);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DESERTAGAVE01);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_DESERTAGAVE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_FALLENTREE);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_FORESTWINTERTREE01);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_FORESTWINTERTREE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_LOG);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_SAP01);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_SAP02);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_SAP03);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_SKINNYGRASS);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_STONE01);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_STONE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_STONE03);
+	system->resource->factory->LoadMeshM(MESH_ENV_FOREST_STONE04);		
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_ARCHWAY);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_BULKHEAD01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_BULKHEAD02);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_CLUSTER01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_CLUSTER02);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_CLUSTER03);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_CLUSTER04);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_CLUSTER05);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_EXHAUST01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_FINGER01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART02);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART03);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART04);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART05);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART06);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_MACHINEPART07);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_PIPE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_PIPEEND);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_PYLONE01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_PYLONE02);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_ROBOTPICE15);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA01);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA03);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA04);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA06);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA07);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA13);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA14);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA15);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA16);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA17);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA18);
+	system->resource->factory->LoadMeshM(MESH_ENV_SCRAP_VISTA19);
 }
 
 inline void LOAD_SOUNDS(System* system)
@@ -285,6 +442,12 @@ inline void LOAD_SOUNDS(System* system)
 	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_HEAVY03);
 	system->resource->factory->LoadAudioClipM(SOUND_KATANA_SWING_HEAVY04);
 	system->resource->factory->LoadAudioClipM(SOUND_MELEE_SWING_01);
+	system->resource->factory->LoadAudioClipM(SOUND_MELEE_SWING_02);
+	system->resource->factory->LoadAudioClipM(SOUND_SWORD_SWING_01);
+	system->resource->factory->LoadAudioClipM(SOUND_SWORD_SWING_02);
+	system->resource->factory->LoadAudioClipM(SOUND_SWORD_SWING_03);
+	system->resource->factory->LoadAudioClipM(SOUND_SWORD_SWING_04);
+	system->resource->factory->LoadAudioClipM(SOUND_SWORD_SWING_05);
 	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_01);
 	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_02);
 	system->resource->factory->LoadAudioClipM(SOUND_BEHAVIOR_FOOTSTEP_03);
@@ -294,6 +457,7 @@ inline void LOAD_SOUNDS(System* system)
 	system->resource->factory->LoadAudioClipM(SOUND_CRASH_01);
 	system->resource->factory->LoadAudioClipM(SOUND_CRASH_02);
 	system->resource->factory->LoadAudioClipM(SOUND_BIG_SWING_01);
+	system->resource->factory->LoadAudioClipM(SOUND_BIG_SWING_02);
 	system->resource->factory->LoadAudioClipM(SOUND_DAMAGE_01);
 	system->resource->factory->LoadAudioClipM(SOUND_DAMAGE_02);
 	system->resource->factory->LoadAudioClipM(SOUND_DAMAGE_03);
@@ -302,6 +466,42 @@ inline void LOAD_SOUNDS(System* system)
 	system->resource->factory->LoadAudioClipM(SOUND_FLAME_01);
 	system->resource->factory->LoadAudioClipM(SOUND_SWING_01);
 	system->resource->factory->LoadAudioClipM(SOUND_SWING_02);
+	system->resource->factory->LoadAudioClipM(SOUND_IMPACT_01);
+	system->resource->factory->LoadAudioClipM(SOUND_FOOTSTEP_LIGHT_01);
+	system->resource->factory->LoadAudioClipM(SOUND_FOOTSTEP_LIGHT_02);
+	system->resource->factory->LoadAudioClipM(SOUND_FOOTSTEP_LIGHT_03);
+	system->resource->factory->LoadAudioClipM(SOUND_FOOTSTEP_LIGHT_04);
+	system->resource->factory->LoadAudioClipM(SOUND_FOOTSTEP_HEAVY_01);
+	system->resource->factory->LoadAudioClipM(SOUND_FOOTSTEP_HEAVY_02);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_RAGE01);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_RAGE02);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_BEGIN01);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_BEGIN02);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK01);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK02);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK03);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK04);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK05);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK06);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK07);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK08);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_ATTACK09);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_GROGY);
+	system->resource->factory->LoadAudioClipM(SOUND_ANCIENT_KING_DIE);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_ATTACK01);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_ATTACK02);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_ATTACK03);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_ATTACK04);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_ATTACK05);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_ATTACK06);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_LAUGH01);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_LAUGH02);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_SCREAM01);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_SCREAM02);
+	system->resource->factory->LoadAudioClipM(SOUND_ASHI_DIE);
+	system->resource->factory->LoadAudioClipM(SOUND_MUSIC_01);
+	system->resource->factory->LoadAudioClipM(SOUND_MUSIC_02);
+	system->resource->factory->LoadAudioClipM(SOUND_MUSIC_03);
 }
 
 inline void LOAD_TEXTURES(System* system)
@@ -332,6 +532,11 @@ inline void LOAD_TEXTURES(System* system)
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_02);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FIRE_03);
 	system->resource->factory->LoadTexture2DM(loadDesc, TEX_FLAME_01);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_LANDSCAPE_MINE_GROUND_BC);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_LANDSCAPE_MINE_GROUND_MR);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_LANDSCAPE_MINE_GROUND_N);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_UI_HPBAR_BODY);
+	system->resource->factory->LoadTexture2DM(loadDesc, TEX_UI_HPBAR_RED);
 }
 
 inline void LOAD_SHADERS(System* system)
@@ -347,6 +552,7 @@ inline void LOAD_SHADERS(System* system)
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_LAVA);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_FIRE);
 	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_SWORDTRAIL);
+	system->resource->factory->LoadShaderFromBinaryFolderM(SHADER_STANDARD_DISTORTION);
 }
 
 inline void LOAD_CONFIGFILES(System* system)

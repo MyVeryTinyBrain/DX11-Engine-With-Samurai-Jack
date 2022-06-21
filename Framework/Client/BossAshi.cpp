@@ -7,6 +7,10 @@
 #include "EffectRing01.h"
 #include "EffectGroundImapct.h"
 #include "ParticleSpark.h"
+#include "TPSCamera.h"
+#include "ParticleDust01.h"
+#include "GameSystem.h"
+#include <MaterialUtil.h>
 
 void BossAshi::Awake()
 {
@@ -35,14 +39,15 @@ void BossAshi::Start()
     Boss::Start();
 
     SetState(State::WALK_ANYWHERE);
+
+    m_toPlayerDirection = transform->forward;
+
+    GameSystem::GetInstance()->PlayMusic(system->resource->Find(SOUND_MUSIC_02), 0.3f, 3.0f);
 }
 
 void BossAshi::Update()
 {
     Boss::Update();
-
-    if (system->input->GetKeyDown(Key::One))
-        SetState(State::ATK_RUSH);
 
     WalkDirectionLerp();
     StateUpdate();
@@ -61,8 +66,14 @@ void BossAshi::LateUpdate()
     UpdateCCT();
     UpdateAttachmentObjects();
 
-    if (system->input->GetKeyDown(Key::One))
-        tcout << TEXT("------------------------------") << endl;
+    for (uint i = 0; i < m_characterRenderer->materialCount; ++i)
+    {
+        m_characterRenderer->materials[i]->SetFloat("_DistortionPercent", m_distortionPercent);
+    }
+    for (uint i = 0; i < m_swordRenderer->materialCount; ++i)
+    {
+        m_swordRenderer->materials[i]->SetFloat("_DistortionPercent", m_distortionPercent);
+    }
 }
 
 void BossAshi::FixedUpdate()
@@ -90,11 +101,25 @@ void BossAshi::SetupCharacterRenderer()
 
     m_characterRenderer = m_goCharacterRender->AddComponent<SkinnedMeshRenderer>();
     m_characterRenderer->mesh = system->resource->Find(MESH_ASHI);
-    m_characterRenderer->SetupStandardMaterials();
+    MaterialUtil::SetupPBRMaterials(m_characterRenderer, system->resource->FindBinrayShader(SHADER_STANDARD_DISTORTION), 0);
+    for (uint i = 0; i < m_characterRenderer->materialCount; ++i)
+    {
+        m_characterRenderer->materials[i]->SetTexture("_DistortionNoiseTexture", system->resource->Find(TEX_NOISE_02));
+    }
 
     m_R_Hand_Weapon_cnt_tr = m_characterRenderer->GetNodeTransformByName(TEXT("R_Hand_Weapon_cnt_tr"));
     m_RightFoot = m_characterRenderer->GetNodeTransformByName(TEXT("RightFoot"));
     m_Head = m_characterRenderer->GetNodeTransformByName(TEXT("Head"));
+    
+    m_Neck = m_characterRenderer->GetNodeTransformByName(TEXT("Neck"));
+    m_Spine1 = m_characterRenderer->GetNodeTransformByName(TEXT("Spine1"));
+    m_Spine = m_characterRenderer->GetNodeTransformByName(TEXT("Spine"));
+    m_Hips = m_characterRenderer->GetNodeTransformByName(TEXT("Hips"));
+    m_RightArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("RightArmRoll"));
+    m_LeftArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("LeftArmRoll"));
+    m_RightForeArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("RightForeArmRoll"));
+    m_LeftForeArmRoll = m_characterRenderer->GetNodeTransformByName(TEXT("LeftForeArmRoll"));
+    m_L_Hand_Weapon_cnt_tr = m_characterRenderer->GetNodeTransformByName(TEXT("L_Hand_Weapon_cnt_tr"));
 }
 
 void BossAshi::SetupAnimator()
@@ -111,7 +136,11 @@ void BossAshi::SetupSword()
     m_goSword->transform->localScale = V3::one() * 1.5f;
     m_swordRenderer = m_goSword->AddComponent<MeshRenderer>();
     m_swordRenderer->mesh = system->resource->Find(MESH_ASHI_SWORD);
-    m_swordRenderer->SetupStandardMaterials();
+    MaterialUtil::SetupPBRMaterials(m_swordRenderer, system->resource->FindBinrayShader(SHADER_STANDARD_DISTORTION), 0);
+    for (uint i = 0; i < m_swordRenderer->materialCount; ++i)
+    {
+        m_swordRenderer->materials[i]->SetTexture("_DistortionNoiseTexture", system->resource->Find(TEX_NOISE_02));
+    }
 
     m_goSwordTip = CreateGameObjectToChild(m_goSword->transform);
     m_goSwordTip->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
@@ -145,12 +174,14 @@ void BossAshi::SetupSword()
 
 void BossAshi::SetupAttackTrigger()
 {
-    m_attackTrigger[SWORD_TRIGGER] = m_goSwordTip->AddComponent<CapsuleCollider>();
+    GameObject* goSwordTrigger = CreateGameObjectToChild(m_goSwordTip->transform);
+    goSwordTrigger->transform->localPosition = V3(0.0f, 0.6f, 0.0f);
+    m_attackTrigger[SWORD_TRIGGER] = goSwordTrigger->AddComponent<CapsuleCollider>();
     m_attackTrigger[SWORD_TRIGGER]->isTrigger = true;
     m_attackTrigger[SWORD_TRIGGER]->enable = false;
     CapsuleCollider* swordTrigger = (CapsuleCollider*)m_attackTrigger[SWORD_TRIGGER];
-    swordTrigger->radius = 0.7f;
-    swordTrigger->halfHeight = 0.5f;
+    swordTrigger->radius = 0.5f;
+    swordTrigger->halfHeight = 0.25f;
 
     GameObject* goRightFootTrigger = CreateGameObjectToChild(m_characterRenderer->transform);
     m_attackTrigger[RIGHT_FOOT_TRIGGER] = goRightFootTrigger->AddComponent<SphereCollider>();
@@ -164,7 +195,7 @@ void BossAshi::SetupAudioSource()
 {
     m_audioSource = gameObject->AddComponent<AudioSource>();
     m_audioSource->minDistance = 8.0f;
-    m_audioSource->maxDistance = m_audioSource->minDistance + 30.0f;
+    m_audioSource->maxDistance = m_audioSource->minDistance + 50.0f;
 }
 
 void BossAshi::UpdateCCT()
@@ -180,6 +211,20 @@ void BossAshi::UpdateCCT()
 
 void BossAshi::UpdateAttachmentObjects()
 {
+    // Look at player
+    float angle = V3::Angle(transform->forward, ToPlayerDirection());
+    if (angle < 80.0f)
+    {
+        V3 toPlayerDirection = ToPlayerDirection();
+        m_toPlayerDirection = V3::Lerp(m_toPlayerDirection, toPlayerDirection, system->time->deltaTime * 5.0f).normalized;
+    }
+    else
+    {
+        m_toPlayerDirection = V3::Lerp(m_toPlayerDirection, transform->forward, system->time->deltaTime * 5.0f).normalized;
+    }
+    Q lookRotation = Q::FromToRotation(transform->forward, m_toPlayerDirection);
+    m_Head->SetRotationWithCurrentRotation(lookRotation);
+
     m_goSword->transform->position = m_R_Hand_Weapon_cnt_tr->position;
     m_goSword->transform->rotation = m_R_Hand_Weapon_cnt_tr->rotation;
 
@@ -252,11 +297,6 @@ void BossAshi::ClearHitBuffer()
 
 void BossAshi::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
 {
-    if (layer.GetPointer() == m_animator->Layer)
-    {
-        tcout << TEXT("begin: ") << changing->name << endl;
-    }
-
     if (changing->name.find(TEXT("ATK")) != tstring::npos)
     {
         m_gadableAttack = false;
@@ -265,13 +305,6 @@ void BossAshi::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> chang
 
 void BossAshi::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
 {
-    if (layer.GetPointer() == m_animator->Layer)
-    {
-        tstring from = TEXT("empty");
-        if (prev) from = prev->name;
-        tcout << TEXT("changed: ") << from << TEXT("->") << endChanged->name << endl;
-    }
-
     if (prev && prev->name.find(TEXT("ATK")) != tstring::npos &&
         endChanged && endChanged.GetPointer() == m_animator->BH_IDLE)
     {
@@ -331,15 +364,22 @@ void BossAshi::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDe
         {
             --m_numComboAttack;
 
-            State currentAtk = m_state;
-            State atk = currentAtk;
-            while (currentAtk == atk)
+            if (XZDistanceBetweenPlayer() > 7.5f)
             {
-                int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
-                int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
-                atk = (State)indexATK;
+                SetState(State::ATK_BACKJUMP);
             }
-            SetState(atk);
+            else
+            {
+                State currentAtk = m_state;
+                State atk = currentAtk;
+                while (currentAtk == atk)
+                {
+                    int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
+                    int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
+                    atk = (State)indexATK;
+                }
+                SetState(atk);
+            }
         }
     }
     if (desc.ContextUInt & BossAshiAnimator::UIntContext::ATK_FAR)
@@ -366,10 +406,10 @@ void BossAshi::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDe
         EffectRing01::Create(
             gameObject->regionScene,
             m_Head->position,
-            0.5f,
+            0.3f,
             0.5f,
             500.0f,
-            0.25f, 1.0f,
+            1.0f, 2.0f,
             Color(1.0f, 0.9764f, 0.466f, 1.0f)
         );
     }
@@ -404,6 +444,94 @@ void BossAshi::OnAnimationEvent(Ref<AnimatorLayer> layer, const AnimationEventDe
             Color(1.0f, 0.0f, 0.0f, 1.0f)
         );
     }
+    if (desc.ContextUInt & BossAshiAnimator::UIntContext::SWORD_DUST)
+    {
+        PhysicsHit hit;
+        PhysicsRay ray;
+        ray.Point = m_goSwordTip->transform->position;
+        ray.Point.y = CCT->footPosition.y + 0.1f;
+        ray.Direction = V3::down();
+        ray.Length = 100.0f;
+        V3 position = m_goSwordTip->transform->position;
+        if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+        {
+            position = hit.Point;
+        }
+
+        ParticleDust01::CreateAroundAxis(
+            gameObject->regionScene,
+            position + V3::up() * 1.0f,
+            V3::up(), 1.0f,
+            1.0f, 6.0f,
+            2.5f, 5.0f,
+            2.0f, 6.0f, 0.5f,
+            Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+            uint(desc.ContextFloat));
+    }
+    if (desc.ContextUInt & BossAshiAnimator::UIntContext::RIGHT_FOOT_DUST)
+    {
+        PhysicsHit hit;
+        PhysicsRay ray;
+        ray.Point = m_attackTrigger[RIGHT_FOOT_TRIGGER]->transform->position;
+        ray.Point.y = CCT->footPosition.y + 0.1f;
+        ray.Direction = V3::down();
+        ray.Length = 100.0f;
+        V3 position = m_attackTrigger[RIGHT_FOOT_TRIGGER]->transform->position;
+        if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+        {
+            position = hit.Point;
+        }
+
+        ParticleDust01::CreateAroundAxis(
+            gameObject->regionScene,
+            position + V3::up() * 1.0f,
+            V3::up(), 1.0f,
+            1.0f, 6.0f,
+            2.5f, 5.0f,
+            2.0f, 6.0f, 0.5f,
+            Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+            uint(desc.ContextFloat));
+    }
+    if (desc.ContextUInt & BossAshiAnimator::UIntContext::BODY_DUST)
+    {
+        PhysicsHit hit;
+        PhysicsRay ray;
+        ray.Point = m_Spine->position;
+        ray.Point.y = CCT->footPosition.y + 0.1f;
+        ray.Direction = V3::down();
+        ray.Length = 100.0f;
+        V3 position = m_Spine->position;
+        if (system->physics->query->Raycast(hit, ray, 1 << PhysicsLayer_Default, PhysicsQueryType::Collider))
+        {
+            position = hit.Point;
+        }
+
+        ParticleDust01::CreateAroundAxis(
+            gameObject->regionScene,
+            position + V3::up() * 1.0f,
+            V3::up(), 1.0f,
+            1.0f, 6.0f,
+            2.5f, 5.0f,
+            2.0f, 6.0f, 0.5f,
+            Color(0.5f, 0.5f, 0.5f, 1.0f), Color(0.5f, 0.5f, 0.5f, 0.0f), 1.0f,
+            uint(desc.ContextFloat));
+    }
+
+    if (desc.ContextByte & BossAshiAnimator::ByteContext::CAM_SHAKE)
+    {
+        float shakeValue = desc.ContextFloat;
+        Player* player = Player::GetInstance();
+        if (player)
+        {
+            TPSCamera* camera = Player::GetInstance()->GetTPSCamera();
+            camera->Shake(V3::up(), shakeValue * 0.1f, 1.1f, 0.15f, 4.0f / 0.15f);
+        }
+    }
+    if (desc.ContextByte & BossAshiAnimator::ByteContext::PLAY_SOUND)
+    {
+        ResourceRef<AudioClip> audioClip = system->resource->Find(desc.ContextTStr);
+        m_audioSource->PlayOneshot(audioClip, desc.ContextFloat);
+    }
 }
 
 void BossAshi::SetAttackType(uint contextUInt)
@@ -420,6 +548,11 @@ void BossAshi::SetAttackType(uint contextUInt)
         m_attackType = BossAshiAnimator::UIntContext::ATK_BLOWUP;
     if (contextUInt & BossAshiAnimator::UIntContext::ATK_BLOWDOWN)
         m_attackType = BossAshiAnimator::UIntContext::ATK_BLOWDOWN;
+}
+
+float BossAshi::GetMaxHP() const
+{
+    return 300.0f;
 }
 
 float BossAshi::GetHP() const
@@ -642,16 +775,32 @@ void BossAshi::StateUpdate()
             }
         }
         break;
+        case State::DIE:
+        {
+            if (m_animator->Layer->IsPlaying(m_animator->DMG_DIE_ED) && m_animator->DMG_DIE_ED->normalizedTime >= 1.0f)
+            {
+                m_distortionPercent += system->time->deltaTime / 5.0f;
+                if (m_distortionPercent >= 1.0f)
+                {
+                    gameObject->Destroy();
+                }
+            }
+        }
+        break;
     }
 
     switch (m_state)
     {
-        case State::TURN:
         case State::WALK_ANYWHERE:
         case State::WALK_TRACE:
+        {
+            RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 50.0f, system->time->deltaTime);
+        }
+        break;
+        case State::TURN:
         case State::RUN_TRACE:
         {
-            RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 180.0f, system->time->deltaTime);
+            RotateOnYAxisToDirection(ToPlayerDirectionXZ(), 100.0f, system->time->deltaTime);
         }
         break;
     }
@@ -663,7 +812,7 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
     {
         case State::IDLE:
         {
-            m_idleLeftCounter = 0.3f;
+            m_idleLeftCounter = 0.1f;
             m_animator->MoveFProperty->valueAsFloat = 0.0f;
             m_animator->TurnBProperty->valueAsBool = false;
             m_animator->Layer->OffAllTriggers();
@@ -677,7 +826,9 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
         case State::WALK_ANYWHERE:
         {
             m_animator->MoveFProperty->valueAsFloat = 1.0f;
-            m_animator->WalkDirectionFProperty->valueAsFloat = 0.75f;
+            uint random = (rand() % 3);
+            float dir = random * 0.25f + 0.25f;
+            m_animator->WalkDirectionFProperty->valueAsFloat = dir;
             m_walkDirectionChangeLeftTime = RandomWalkDirectionChangeTime();
             m_walkLeftTime = 2.5f + float(rand() % 5);
         }
@@ -696,6 +847,9 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
         break;
         case State::DIE:
         {
+            GameSystem::GetInstance()->StopMusic(3.0f);
+            Enemy::UnregistEnemy(this);
+            m_animator->Layer->OffAllTriggers();
             m_animator->DieTProperty->SetTriggerState();
         }
         break;
@@ -711,7 +865,24 @@ void BossAshi::StateChanged(BossAshi::State before, BossAshi::State next)
             int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
             int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
             State atk = (State)indexATK;
+
+            if (atk == State::ATK_BACKJUMP)
+                atk = State::ATK_DOUBLEHAND_SLASH;
+
             m_numComboAttack = 1 + (rand() % 5);
+
+            uint addCombo = 0;
+            float hpPercent = hp / maxHP;
+            if (hpPercent > 0.9f) addCombo = 0;
+            else if (hpPercent > 0.8f) addCombo = 2;
+            else if (hpPercent > 0.7f) addCombo = 4;
+            else if (hpPercent > 0.6f) addCombo = 5;
+            else if (hpPercent > 0.5f) addCombo = 7;
+            else if (hpPercent > 0.4f) addCombo = 9;
+            else if (hpPercent > 0.3f) addCombo = 10;
+            else if (hpPercent > 0.2f) addCombo = 12;
+            else if (hpPercent > 0.1f) addCombo = 15;
+            m_numComboAttack += addCombo;
             SetState(atk);
         }
         break;
@@ -847,4 +1018,36 @@ float BossAshi::RandomWalkDirectionChangeTime() const
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> rdTime(1.0f, 5.0f);
     return rdTime(gen);
+}
+
+void BossAshi::MakeDarkDust()
+{
+    Ref<NodeTransform> nodes[11] =
+    {
+        m_Head,
+        m_Neck,
+        m_Spine1,
+        m_Spine,
+        m_Hips,
+        m_RightArmRoll,
+        m_LeftArmRoll,
+        m_RightForeArmRoll,
+        m_LeftForeArmRoll,
+        m_R_Hand_Weapon_cnt_tr,
+        m_L_Hand_Weapon_cnt_tr,
+    };
+    uint index = rand() % 11;
+    Ref<NodeTransform> node = nodes[index];
+
+    float scaleFactor = float(rand() % 101) / 100.0f;
+    scaleFactor = Max(0.1f, scaleFactor);
+
+    ParticleDust01::CreateOnce(
+        gameObject->regionScene,
+        node->position,
+        V3::up() * 2.0f, 1.0f,
+        1.0f, 
+        1.0f * scaleFactor, 3.0f * scaleFactor, 0.5f,
+        Color(0.0f, 0.0f, 0.0f, 1.0f), Color(0.0f, 0.0f, 0.0f, 0.0f), 1.0f
+        );
 }

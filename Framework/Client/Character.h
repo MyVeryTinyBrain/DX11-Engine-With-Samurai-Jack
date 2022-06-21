@@ -10,6 +10,7 @@ protected:
 
 public:
 
+	virtual float GetMaxHP() const = 0;
 	virtual float GetHP() const = 0;
 	virtual void SetHP(float value) = 0;
 	
@@ -21,6 +22,7 @@ public:
 	virtual bool IsSuperarmor() const = 0;
 	virtual bool IsDead() const { return GetHP() <= 0.0f; }
 
+	_declspec(property(get = GetMaxHP)) float maxHP;
 	_declspec(property(get = GetHP, put = SetHP)) float hp;
 	_declspec(property(get = GetDirection, put = SetDirection)) V3 direction;
 	_declspec(property(get = IsGuarding)) bool isGuarding;

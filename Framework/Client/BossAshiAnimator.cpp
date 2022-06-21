@@ -82,10 +82,36 @@ void BossAshiAnimator::SetupNodes()
         blendNodeElements.push_back(AnimatorBlendNodeElement::Create(BH_WALK_L_LP, 0.75f));
         blendNodeElements.push_back(AnimatorBlendNodeElement::Create(BH_WALK_F_LP_RP, 1.0f));
         BH_WALK_LP = AnimatorBlendNode::Create(TEXT("BH_WALK_LP"), blendNodeElements, WalkDirectionFProperty, LOOP);
+        {
+            AnimationEventDesc s0, s1;
+            s0.NormalizedTime = 26 / 50.0f;
+            s1.NormalizedTime = 49 / 50.0f;
+            s0.ContextByte = ByteContext::PLAY_SOUND;
+            s1.ContextByte = ByteContext::PLAY_SOUND;
+            s0.ContextTStr = SOUND_FOOTSTEP_LIGHT_01;
+            s1.ContextTStr = SOUND_FOOTSTEP_LIGHT_02;
+            s0.ContextFloat = 0.45f;
+            s1.ContextFloat = 0.3f;
+            BH_WALK_LP->AddEvent(s0);
+            BH_WALK_LP->AddEvent(s1);
+        }
         Layer->AddNode(BH_WALK_LP);
     }
 
     BH_RUN_LP = AnimatorSingleNode::Create(GetClip(TEXT("BH_RUN_LP")), LOOP);
+    {
+        AnimationEventDesc s0, s1;
+        s0.NormalizedTime = 2 / 14.0f;
+        s1.NormalizedTime = 9 / 14.0f;
+        s0.ContextByte = ByteContext::PLAY_SOUND;
+        s1.ContextByte = ByteContext::PLAY_SOUND;
+        s0.ContextTStr = SOUND_FOOTSTEP_HEAVY_01;
+        s1.ContextTStr = SOUND_FOOTSTEP_HEAVY_02;
+        s0.ContextFloat = 0.5f;
+        s1.ContextFloat = 0.5f;
+        BH_RUN_LP->AddEvent(s0);
+        BH_RUN_LP->AddEvent(s1);
+    }
     Layer->AddNode(BH_RUN_LP);
 
     BH_TURN = AnimatorSingleNode::Create(GetClip(TEXT("BH_TURN")), LOOP);
@@ -105,6 +131,15 @@ void BossAshiAnimator::SetupNodes()
         f.NormalizedTime = 20 / 30.0f;
         f.ContextUInt = UIntContext::ATK_FAR;
         BH_BACKJUMP->AddEvent(f);
+
+        {
+            AnimationEventDesc swingSound;
+            swingSound.NormalizedTime = 2 / 30.0f;
+            swingSound.ContextByte = ByteContext::PLAY_SOUND;
+            swingSound.ContextTStr = SOUND_BIG_SWING_02;
+            swingSound.ContextFloat = 0.5f;
+            BH_BACKJUMP->AddEvent(swingSound);
+        }
     }
     Layer->AddNode(BH_BACKJUMP);
 
@@ -139,6 +174,28 @@ void BossAshiAnimator::SetupNodes()
         st1.ContextInt = IntContext::SWORDTRAIL_END;
         ATK_DOUBLEHAND_SLASH->AddEvent(st0);
         ATK_DOUBLEHAND_SLASH->AddEvent(st1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 19 / 80.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_SWORD_SWING_01;
+        s.ContextFloat = 1.0f;
+        ATK_DOUBLEHAND_SLASH->AddEvent(s);
+
+        AnimationEventDesc dust;
+        dust.NormalizedTime = 26 / 80.0f;
+        dust.ContextUInt = UIntContext::SWORD_DUST;
+        dust.ContextFloat = 30.0f;
+        ATK_DOUBLEHAND_SLASH->AddEvent(dust);
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 5 / 80.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK05;
+            voice.ContextFloat = 1.0f;
+            ATK_DOUBLEHAND_SLASH->AddEvent(voice);
+        }
     }
     ATK_DOUBLEHAND_SLASH->speed = 1.1f;
     Layer->AddNode(ATK_DOUBLEHAND_SLASH);
@@ -174,8 +231,24 @@ void BossAshiAnimator::SetupNodes()
         st1.ContextInt = IntContext::SWORDTRAIL_END;
         ATK_H_SLASH->AddEvent(st0);
         ATK_H_SLASH->AddEvent(st1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 48 / 115.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_SWORD_SWING_02;
+        s.ContextFloat = 1.0f;
+        ATK_H_SLASH->AddEvent(s);
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 40 / 115.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK02;
+            voice.ContextFloat = 1.0f;
+            ATK_H_SLASH->AddEvent(voice);
+        }
     }
-    ATK_H_SLASH->speed = 1.5f;
+    ATK_H_SLASH->speed = 1.15f;
     Layer->AddNode(ATK_H_SLASH);
 
     ATK_SHOLDER_SLASH = AnimatorSingleNode::Create(GetClip(TEXT("ATK_SHOLDER_SLASH")), NOLOOP);
@@ -209,6 +282,22 @@ void BossAshiAnimator::SetupNodes()
         st1.ContextInt = IntContext::SWORDTRAIL_END;
         ATK_SHOLDER_SLASH->AddEvent(st0);
         ATK_SHOLDER_SLASH->AddEvent(st1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 24 / 62.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_SWORD_SWING_03;
+        s.ContextFloat = 1.0f;
+        ATK_SHOLDER_SLASH->AddEvent(s);
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 15 / 62.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK03;
+            voice.ContextFloat = 1.0f;
+            ATK_SHOLDER_SLASH->AddEvent(voice);
+        }
     }
     ATK_SHOLDER_SLASH->speed = 1.5f;
     Layer->AddNode(ATK_SHOLDER_SLASH);
@@ -244,6 +333,30 @@ void BossAshiAnimator::SetupNodes()
         st1.ContextInt = IntContext::SWORDTRAIL_END;
         ATK_SLASHUP->AddEvent(st0);
         ATK_SLASHUP->AddEvent(st1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 23 / 72.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_SWORD_SWING_04;
+        s.ContextFloat = 1.0f;
+        ATK_SLASHUP->AddEvent(s);
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 1 / 72.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK01;
+            voice.ContextFloat = 1.0f;
+            ATK_SLASHUP->AddEvent(voice);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 25 / 72.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK06;
+            voice.ContextFloat = 1.0f;
+            ATK_SLASHUP->AddEvent(voice);
+        }
     }
     Layer->AddNode(ATK_SLASHUP);
 
@@ -270,6 +383,36 @@ void BossAshiAnimator::SetupNodes()
         c.NormalizedTime = 55 / 100.0f;
         c.ContextUInt = UIntContext::ATK_COMBO;
         ATK_DROPKICK->AddEvent(c);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 41 / 100.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_MELEE_SWING_02;
+        s.ContextFloat = 1.0f;
+        ATK_DROPKICK->AddEvent(s);
+
+        AnimationEventDesc dust;
+        dust.NormalizedTime = 45 / 100.0f;
+        dust.ContextUInt = UIntContext::RIGHT_FOOT_DUST;
+        dust.ContextFloat = 30.0f;
+        ATK_DROPKICK->AddEvent(dust);
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 20 / 100.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK01;
+            voice.ContextFloat = 1.0f;
+            ATK_DROPKICK->AddEvent(voice);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 43 / 100.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK04;
+            voice.ContextFloat = 1.0f;
+            ATK_DROPKICK->AddEvent(voice);
+        }
     }
     Layer->AddNode(ATK_DROPKICK);
 
@@ -335,6 +478,39 @@ void BossAshiAnimator::SetupNodes()
         c.NormalizedTime = 50 / 100.0f;
         c.ContextUInt = UIntContext::ATK_COMBO;
         ATK_SPINKICK->AddEvent(c);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 27 / 100.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_MELEE_SWING_02;
+        s.ContextFloat = 1.0f;
+        ATK_SPINKICK->AddEvent(s);
+
+        //for (uint i = 0; i < 10; ++i)
+        //{
+        //    AnimationEventDesc dust;
+        //    dust.NormalizedTime = (26 + i) / 100.0f;
+        //    dust.ContextUInt = UIntContext::RIGHT_FOOT_DUST;
+        //    dust.ContextFloat = 5.0f;
+        //    ATK_SPINKICK->AddEvent(dust);
+        //}
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 5 / 100.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK01;
+            voice.ContextFloat = 1.0f;
+            ATK_SPINKICK->AddEvent(voice);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 26 / 100.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK04;
+            voice.ContextFloat = 1.0f;
+            ATK_SPINKICK->AddEvent(voice);
+        }
     }
     Layer->AddNode(ATK_SPINKICK);
 
@@ -345,12 +521,36 @@ void BossAshiAnimator::SetupNodes()
         m0.ContextUInt = UIntContext::START_MANUAL_LOOK;
         ATK_LASER_ST->AddEvent(m0);
 
+        AnimationEventDesc s;
+        s.NormalizedTime = 30 / 50.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_ELECTRIC_01;
+        s.ContextFloat = 1.0f;
+        ATK_LASER_ST->AddEvent(s);
+
         for (uint i = 0; i < 20; ++i)
         {
             AnimationEventDesc beam;
             beam.NormalizedTime = (30 + i) / 50.0f;
             beam.ContextUInt = UIntContext::ATK_SHOOT_BEAM;
             ATK_LASER_ST->AddEvent(beam);
+        }
+
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 1 / 50.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK02;
+            voice.ContextFloat = 1.0f;
+            ATK_LASER_ST->AddEvent(voice);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 30 / 50.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_SCREAM01;
+            voice.ContextFloat = 1.0f;
+            ATK_LASER_ST->AddEvent(voice);
         }
     }
     Layer->AddNode(ATK_LASER_ST);
@@ -377,6 +577,57 @@ void BossAshiAnimator::SetupNodes()
         ATK_RAGE->AddEvent(i0);
         ATK_RAGE->AddEvent(i1);
         ATK_RAGE->AddEvent(i2);
+
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 21 / 129.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_IMPACT_01;
+            s.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(s);
+
+            AnimationEventDesc e;
+            e.NormalizedTime = 21 / 129.0f;
+            e.ContextByte = ByteContext::CAM_SHAKE;
+            e.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(e);
+        }
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 38 / 129.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_IMPACT_01;
+            s.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(s);
+
+            AnimationEventDesc e;
+            e.NormalizedTime = 38 / 129.0f;
+            e.ContextByte = ByteContext::CAM_SHAKE;
+            e.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(e);
+        }
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 55 / 129.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_IMPACT_01;
+            s.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(s);
+
+            AnimationEventDesc e;
+            e.NormalizedTime = 55 / 129.0f;
+            e.ContextByte = ByteContext::CAM_SHAKE;
+            e.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(e);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 18 / 129.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_LAUGH01;
+            voice.ContextFloat = 1.0f;
+            ATK_RAGE->AddEvent(voice);
+        }
     }
     ATK_RAGE->speed = 1.25f;
     Layer->AddNode(ATK_RAGE);
@@ -391,6 +642,31 @@ void BossAshiAnimator::SetupNodes()
         m.NormalizedTime = 0.0f;
         m.ContextUInt = UIntContext::START_MANUAL_LOOK;
         ATK_RUSH_ST_2->AddEvent(m);
+
+        {
+            AnimationEventDesc s;
+            s.NormalizedTime = 40 / 41.0f;
+            s.ContextByte = ByteContext::PLAY_SOUND;
+            s.ContextTStr = SOUND_FOOTSTEP_HEAVY_01;
+            s.ContextFloat = 0.7f;
+            ATK_RUSH_ST_2->AddEvent(s);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 5 / 41.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_ATTACK01;
+            voice.ContextFloat = 1.0f;
+            ATK_RUSH_ST_2->AddEvent(voice);
+        }
+        {
+            AnimationEventDesc voice;
+            voice.NormalizedTime = 38 / 41.0f;
+            voice.ContextByte = ByteContext::PLAY_SOUND;
+            voice.ContextTStr = SOUND_ASHI_LAUGH02;
+            voice.ContextFloat = 1.0f;
+            ATK_RUSH_ST_2->AddEvent(voice);
+        }
     }
     Layer->AddNode(ATK_RUSH_ST_2);
 
@@ -400,6 +676,20 @@ void BossAshiAnimator::SetupNodes()
         m.NormalizedTime = 0.0f;
         m.ContextUInt = UIntContext::START_MANUAL_LOOK;
         ATK_RUSH_LP->AddEvent(m);
+
+        {
+            AnimationEventDesc s0, s1;
+            s0.NormalizedTime = 4 / 10.0f;
+            s1.NormalizedTime = 9 / 10.0f;
+            s0.ContextByte = ByteContext::PLAY_SOUND;
+            s1.ContextByte = ByteContext::PLAY_SOUND;
+            s0.ContextTStr = SOUND_FOOTSTEP_HEAVY_01;
+            s1.ContextTStr = SOUND_FOOTSTEP_HEAVY_02;
+            s0.ContextFloat = 0.7f;
+            s1.ContextFloat = 0.7f;
+            ATK_RUSH_LP->AddEvent(s0);
+            ATK_RUSH_LP->AddEvent(s1);
+        }
     }
     Layer->AddNode(ATK_RUSH_LP);
 
@@ -429,14 +719,55 @@ void BossAshiAnimator::SetupNodes()
         st1.ContextInt = IntContext::SWORDTRAIL_END;
         ATK_RUSH_ED->AddEvent(st0);
         ATK_RUSH_ED->AddEvent(st1);
+
+        AnimationEventDesc s;
+        s.NormalizedTime = 22 / 92.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_SWORD_SWING_05;
+        s.ContextFloat = 1.0f;
+        ATK_RUSH_ED->AddEvent(s);
+
+        {
+            AnimationEventDesc s0, s1, s2;
+            s0.NormalizedTime = 4 / 92.0f;
+            s1.NormalizedTime = 10 / 92.0f;
+            s2.NormalizedTime = 15 / 92.0f;
+            s0.ContextByte = ByteContext::PLAY_SOUND;
+            s1.ContextByte = ByteContext::PLAY_SOUND;
+            s2.ContextByte = ByteContext::PLAY_SOUND;
+            s0.ContextTStr = SOUND_FOOTSTEP_HEAVY_01;
+            s1.ContextTStr = SOUND_FOOTSTEP_HEAVY_02;
+            s2.ContextTStr = SOUND_FOOTSTEP_HEAVY_01;
+            s0.ContextFloat = 0.7f;
+            s1.ContextFloat = 0.7f;
+            s2.ContextFloat = 0.7f;
+            ATK_RUSH_ED->AddEvent(s0);
+            ATK_RUSH_ED->AddEvent(s1);
+            ATK_RUSH_ED->AddEvent(s2);
+        }
     }
     ATK_RUSH_ED->speed = 1.5f;
     Layer->AddNode(ATK_RUSH_ED);
 
     DMG_DIE_ST = AnimatorSingleNode::Create(GetClip(TEXT("DMG_DIE_ST")), NOLOOP);
+    {
+        AnimationEventDesc s;
+        s.NormalizedTime = 0.0f;
+        s.ContextByte = ByteContext::PLAY_SOUND;
+        s.ContextTStr = SOUND_ASHI_DIE;
+        s.ContextFloat = 1.0f;
+        DMG_DIE_ST->AddEvent(s);
+    }
     Layer->AddNode(DMG_DIE_ST);
 
     DMG_DIE_ED = AnimatorSingleNode::Create(GetClip(TEXT("DMG_DIE_ED")), NOLOOP);
+    {
+        AnimationEventDesc dust;
+        dust.NormalizedTime = 2 / 24.0f;
+        dust.ContextUInt = UIntContext::BODY_DUST;
+        dust.ContextFloat = 40.0f;
+        DMG_DIE_ED->AddEvent(dust);
+    }
     Layer->AddNode(DMG_DIE_ED);
 
     ATK_ANGRY = AnimatorSingleNode::Create(GetClip(TEXT("ATK_ANGRY")), NOLOOP);
@@ -571,7 +902,7 @@ void BossAshiAnimator::SetupTransitions()
     // ATK_SHOLDER_SLASH -> EXIT
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_SHOLDER_SLASH, EXIT, values, 0.8f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
+        Layer->AddTransition(ATK_SHOLDER_SLASH, EXIT, values, 0.8f, 0.2f, 0.08f, AnimatorTransition::Interrupt::None);
     }
 
     // ANY -> ATK_SLASHUP
@@ -591,7 +922,7 @@ void BossAshiAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(ATK_DROPKICK_TProperty));
-        Layer->AddTransition(ANY, ATK_DROPKICK, values, 0.0f, 0.2f, 0.0f);
+        Layer->AddTransition(ANY, ATK_DROPKICK, values, 0.0f, 0.2f, 0.095f);
     }
 
     // ATK_DROPKICK -> EXIT
@@ -617,7 +948,7 @@ void BossAshiAnimator::SetupTransitions()
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(ATK_SPINKICK_TProperty));
-        Layer->AddTransition(ANY, ATK_SPINKICK, values, 0.0f, 0.2f, 0.0f);
+        Layer->AddTransition(ANY, ATK_SPINKICK, values, 0.0f, 0.2f, 0.06f);
     }
 
     // ATK_SPINKICK -> EXIT
@@ -658,23 +989,17 @@ void BossAshiAnimator::SetupTransitions()
         Layer->AddTransition(ATK_RAGE, EXIT, values, 0.8f, 0.2f, 0.0f, AnimatorTransition::Interrupt::None);
     }
 
-    // ANY -> ATK_RUSH_ST_1
+    // ANY -> ATK_RUSH_ST_2
     {
         vector<AnimatorTransition::PropertyValue> values;
         values.push_back(AnimatorTransition::PropertyValue::PropertyValue::Trigger(ATK_RUSH_Start_TProperty));
-        Layer->AddTransition(ANY, ATK_RUSH_ST_1, values, 0.0f, 0.2f, 0.0f);
-    }
-
-    // ATK_RUSH_ST_1 -> ATK_RUSH_ST_2
-    {
-        vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_RUSH_ST_1, ATK_RUSH_ST_2, values, 0.9f, 0.1f, 0.0f);
+        Layer->AddTransition(ANY, ATK_RUSH_ST_2, values, 0.0f, 0.2f, 0.0f);
     }
 
     // ATK_RUSH_ST_2 -> ATK_RUSH_LP
     {
         vector<AnimatorTransition::PropertyValue> values;
-        Layer->AddTransition(ATK_RUSH_ST_2, ATK_RUSH_LP, values, 0.9f, 0.1f, 0.0f);
+        Layer->AddTransition(ATK_RUSH_ST_2, ATK_RUSH_LP, values, 0.95f, 0.1f, 0.0f);
     }
 
     // ATK_RUSH_LP -> ATK_RUSH_ED

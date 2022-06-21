@@ -279,6 +279,9 @@ inline Object* Ref<T>::GetObject() const
 	if (!m_refData)
 		return nullptr;
 
+	if (IsNull())
+		return nullptr;
+
 	return m_refData->GetObject();
 }
 
@@ -286,6 +289,9 @@ template<class T>
 inline T* Ref<T>::GetPointer() const
 {
 	if (!m_refData)
+		return nullptr;
+
+	if (IsNull())
 		return nullptr;
 
 	return static_cast<T*>(m_refData->GetObject());

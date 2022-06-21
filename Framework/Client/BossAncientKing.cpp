@@ -12,6 +12,7 @@
 #include "EffectGroundImapct.h"
 #include "ParticleDust01.h"
 #include "EventSystem.h"
+#include "GameSystem.h"
 
 #define ATK_NEAR_MAX_DIST 6.0f
 #define ATK_NEAR_MAX_ANGLE 20.0f
@@ -175,12 +176,12 @@ void BossAncientKing::SetupHammer()
 void BossAncientKing::SetupAttackTrigger()
 {
 	m_goAttackTrigger[HAMMER_TRIGGER] = CreateGameObjectToChild(m_goHammer->transform);
-	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.4f);
+	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localPosition = V3(0.0f, 0.0f, -0.45f);
 	m_goAttackTrigger[HAMMER_TRIGGER]->transform->localEulerAngles = V3(90.0f, 0.0f, 0.0f);
 	m_attackTrigger[HAMMER_TRIGGER] = m_goAttackTrigger[HAMMER_TRIGGER]->AddComponent<CapsuleCollider>();
 	CapsuleCollider* hammer_trigger = (CapsuleCollider*)m_attackTrigger[HAMMER_TRIGGER];
 	hammer_trigger->radius = 0.5f;
-	hammer_trigger->halfHeight = 0.4f;
+	hammer_trigger->halfHeight = 0.35f;
 	hammer_trigger->isTrigger = true;
 	hammer_trigger->enable = false;
 
@@ -215,7 +216,7 @@ void BossAncientKing::SetupAudioSource()
 {
 	m_audioSource = gameObject->AddComponent<AudioSource>();
 	m_audioSource->minDistance = 8.0f;
-	m_audioSource->maxDistance = m_audioSource->minDistance + 30.0f;
+	m_audioSource->maxDistance = m_audioSource->minDistance + 50.0f;
 }
 
 void BossAncientKing::UpdateCCT()
@@ -370,11 +371,13 @@ void BossAncientKing::OnAnimationEvent(Ref<AnimatorLayer> layer, const Animation
 {
 	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::BACKJUMP_END)
 	{
-		uint randomFarAttack = rand() % 2;
-		if (randomFarAttack == 0)
-			SetState(BossAncientKing::State::ATK_BEAM);
+		++m_backJumpFarATKIndex;
+		if (m_backJumpFarATKIndex >= 2) m_backJumpFarATKIndex = 0;
+
+		if (m_backJumpFarATKIndex == 0)
+			SetState(State::ATK_BEAM);
 		else
-			SetState(BossAncientKing::State::ATK_ELECTRIC);
+			SetState(State::ATK_ELECTRIC);
 	}
 	if (desc.ContextByte & BossAncientKingAnimator::ByteContext::CAM_SHAKE)
 	{
@@ -766,6 +769,11 @@ void BossAncientKing::SetAttackType(uint contextUInt)
 		m_attackType = BossAncientKingAnimator::UIntContext::ATK_BLOWDOWN;
 }
 
+float BossAncientKing::GetMaxHP() const
+{
+	return 300.0f;
+}
+
 float BossAncientKing::GetHP() const
 {
 	return m_hp;
@@ -1058,29 +1066,39 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		break;
 		case State::ATK_FAR_RAND:
 		{
-			int numATK = (int)State::__ATK_FAR_END - (int)State::__ATK_FAR_BEGIN;
-			int indexATK = (int)State::__ATK_FAR_BEGIN + (rand() % (numATK - 1)) + 1;
-			State atk = (State)indexATK;
+            int numATK = (int)State::__ATK_FAR_END - (int)State::__ATK_FAR_BEGIN - 1;
 
-			if (atk != State::ATK_BACKJUMP)
-			{
-				--m_backJumpLeftCount;
+            ++m_farATKIndex;
+            if (m_farATKIndex >= numATK) m_farATKIndex = 0;
 
-				if (m_backJumpLeftCount <= 0)
-				{
-					atk = State::ATK_BACKJUMP;
-					m_backJumpLeftCount = 5;
-				}
-			}
-
-			SetState(atk);
+            int indexATK = (int)State::__ATK_FAR_BEGIN + m_farATKIndex + 1;
+            State atk = (State)indexATK;
+            SetState(atk);
 		}
 		break;
 		case State::ATK_NEAR_RAND:
 		{
-			int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN;
-			int indexATK = (int)State::__ATK_NEAR_BEGIN + (rand() % (numATK - 1)) + 1;
-			State atk = (State)indexATK;
+			const int numAddBackjump = 0;
+			const int numATK = (int)State::__ATK_NEAR_END - (int)State::__ATK_NEAR_BEGIN - 1;
+			if (m_nearAttackStack.empty())
+			{
+				int nearAttacks[numATK + numAddBackjump] = {};
+				for (int i = 0; i < numATK; ++i) nearAttacks[i] = (int)State::__ATK_NEAR_BEGIN + 1 + i;
+				for (int i = 0; i < numAddBackjump; ++i) nearAttacks[numATK + i] = (int)State::ATK_BACKJUMP;
+				for (int i = 0; i < numATK + numAddBackjump; ++i)
+				{
+					int indexA = rand() % (numATK + numAddBackjump);
+					int indexB = rand() % (numATK + numAddBackjump);
+					swap(nearAttacks[indexA], nearAttacks[indexB]);
+				}
+				for (int i = 0; i < numATK + numAddBackjump; ++i)
+				{
+					m_nearAttackStack.push(nearAttacks[i]);
+				}
+			}
+			uint atkIndex = m_nearAttackStack.top();
+			m_nearAttackStack.pop();
+			State atk = (State)atkIndex;
 			SetState(atk);
 		}
 		break;
@@ -1136,7 +1154,7 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		}
 		break;
 		case State::ATK_BEAM:
-		case State::ATK_NEAR_BEAM:
+		//case State::ATK_NEAR_BEAM:
 		{
 			m_state = State::ATK_BEAM;
 			m_animator->ATK_BEAM_TProperty->SetTriggerState();
@@ -1155,14 +1173,17 @@ void BossAncientKing::StateChanged(BossAncientKing::State before, BossAncientKin
 		case State::RAGE:
 		{
 			m_animator->RAGE_TProperty->SetTriggerState();
+			GameSystem::GetInstance()->PlayMusic(system->resource->Find(SOUND_MUSIC_01), 0.3f, 3.0f);
 		}
 		break;
 		case State::DIE:
 		{
+			GameSystem::GetInstance()->StopMusic(3.0f);
 			EventSystem::Notify(EVENT_ENEMY_DIE, this);
 			EventSystem::Notify(EVENT_FIGHT_END, this);
 			Enemy::UnregistEnemy(this);
 			m_animator->Layer->OffAllTriggers();
+			m_animator->KeepAttackBProperty->valueAsBool = false;
 			m_animator->DIE_TProperty->SetTriggerState();
 		}
 		break;

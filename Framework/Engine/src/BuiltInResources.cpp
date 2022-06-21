@@ -98,6 +98,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateCylinder(), &m_cylinder)))
 		return hr;
 
+	if (FAILED(hr = CreateMeshNocopyVI(VIUtility::CreateNormalizedQuad(), &m_screen)))
+		return hr;
+
 	if (FAILED(hr = CreateShader(TEXT("Standard.cso"), &m_standardShader)))
 		return hr;
 
@@ -111,6 +114,9 @@ HRESULT BuiltInResources::CreateBuiltInResources()
 		return hr;
 
 	if (FAILED(hr = CreateShader(TEXT("Unlit.cso"), &m_unlitShader)))
+		return hr;
+
+	if (FAILED(hr = CreateShader(TEXT("Screen.cso"), &m_screenShader)))
 		return hr;
 
 	if (nullptr == (m_standardMaterial = m_factory->CreateMaterialByShaderUM(m_standardShader)))
@@ -234,6 +240,11 @@ const ResourceRef<Mesh>& BuiltInResources::GetCylinderMesh() const
 	return m_cylinder;
 }
 
+const ResourceRef<Mesh>& BuiltInResources::GetScreenMesh() const
+{
+	return m_screen;
+}
+
 const ResourceRef<Shader>& BuiltInResources::GetStandardShader() const
 {
 	return m_standardShader;
@@ -257,6 +268,11 @@ const ResourceRef<Shader>& BuiltInResources::GetWireframeShader() const
 const ResourceRef<Shader>& BuiltInResources::GetUnlitShader() const
 {
 	return m_unlitShader;
+}
+
+const ResourceRef<Shader>& BuiltInResources::GetScreenShader() const
+{
+	return m_screenShader;
 }
 
 const ResourceRef<Material>& BuiltInResources::GetStandardMaterial() const

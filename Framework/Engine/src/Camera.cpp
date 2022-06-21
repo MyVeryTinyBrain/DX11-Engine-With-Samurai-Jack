@@ -45,8 +45,8 @@ void Camera::Awake()
 
 	m_dofDesc.Enable = true;
 	m_dofDesc.BlurNumSamples = 8;
-	m_dofDesc.MinZ = 15.0f;
-	m_dofDesc.RangeZ = 10.0f;
+	m_dofDesc.MinZ = 12.0f;
+	m_dofDesc.RangeZ = 20.0f;
 	m_dofDesc.Power = 1.0f;
 	m_dofDesc.BlurPixelDistance = 10.0f;
 
@@ -57,10 +57,10 @@ void Camera::Awake()
 	m_fogDesc.Color = Color::white();
 
 	m_bloomDesc.Enable = true;
-	m_bloomDesc.BlurNumSamples = 8;
+	m_bloomDesc.BlurNumSamples = 16;
 	m_bloomDesc.Intensity = 1.75f;
-	m_bloomDesc.Threshold = 0.155f;
-	m_bloomDesc.BlurPixelDistance = 30.0f;
+	m_bloomDesc.Threshold = 0.12f;
+	m_bloomDesc.BlurPixelDistance = 25.0f;
 
 	m_chromaticAberrationDesc.Enable = true;
 	m_chromaticAberrationDesc.Blend = V4::one();

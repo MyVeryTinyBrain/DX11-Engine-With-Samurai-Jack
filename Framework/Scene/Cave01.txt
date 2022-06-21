@@ -41,7 +41,7 @@
          "type" : "Prop"
       },
       {
-         "localPosition" : "[\n\t7.7741847038269043,\n\t0.95466309785842896,\n\t10.738521575927734,\n\t0.0\n]",
+         "localPosition" : "[\n\t7.7740635871887207,\n\t0.89984411001205444,\n\t10.738264083862305,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "Player0",
@@ -50,11 +50,11 @@
       },
       {
          "collider" : false,
-         "localPosition" : "[\n\t-16.176528930664062,\n\t-0.091472148895263672,\n\t34.975608825683594,\n\t0.0\n]",
+         "localPosition" : "[\n\t-16.176517486572266,\n\t-0.0090265274047851562,\n\t34.975574493408203,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
-         "localScale" : "[\n\t5.8000001907348633,\n\t0.10000000149011612,\n\t5.8000001907348633,\n\t0.0\n]",
+         "localScale" : "[\n\t3.0,\n\t0.10000000149011612,\n\t3.0,\n\t0.0\n]",
          "makeShadow" : false,
-         "mesh" : "../resource/environment/cave/cavefloorl.fbx",
+         "mesh" : "../resource/environment/cave/floorslop01.fbx",
          "name" : "Prop2",
          "tag" : "",
          "type" : "Prop"
@@ -1418,7 +1418,7 @@
          "extents" : "[\n\t2.4000000953674316,\n\t4.3000001907348633,\n\t3.9000000953674316,\n\t0.0\n]",
          "isTrigger" : true,
          "layerIndex" : 0,
-         "localPosition" : "[\n\t-80.528663635253906,\n\t3.0228662490844727,\n\t97.995994567871094,\n\t0.0\n]",
+         "localPosition" : "[\n\t-79.470413208007812,\n\t3.0228633880615234,\n\t97.996818542480469,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BoxCollider5",

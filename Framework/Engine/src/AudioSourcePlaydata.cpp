@@ -29,7 +29,10 @@ AudioSourcePlaydata::~AudioSourcePlaydata()
 
 void AudioSourcePlaydata::Stop()
 {
-	m_src->system->sound->Stop(m_channel);
+	if (!m_src.IsNull())
+	{
+		m_src->system->sound->Stop(m_channel);
+	}
 }
 
 void AudioSourcePlaydata::Update()
@@ -38,5 +41,8 @@ void AudioSourcePlaydata::Update()
 
 void AudioSourcePlaydata::OnPlayEnd(SoundChannel* soundChannel)
 {
-	m_src->OnPlaydataEndCallback(this);
+	if (!m_src.IsNull())
+	{
+		m_src->OnPlaydataEndCallback(this);
+	}
 }

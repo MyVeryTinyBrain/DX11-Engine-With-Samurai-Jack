@@ -81,6 +81,9 @@ public:
 	const ResourceRef<Mesh>& GetCylinderMesh() const;
 	_declspec(property(get = GetCylinderMesh)) const ResourceRef<Mesh>& cylinderMesh;
 
+	const ResourceRef<Mesh>& GetScreenMesh() const;
+	_declspec(property(get = GetScreenMesh)) const ResourceRef<Mesh>& screenMesh;
+
 	const ResourceRef<Shader>& GetStandardShader() const;
 	_declspec(property(get = GetStandardShader)) const ResourceRef<Shader>& standardShader;
 
@@ -95,6 +98,9 @@ public:
 
 	const ResourceRef<Shader>& GetUnlitShader() const;
 	_declspec(property(get = GetUnlitShader)) const ResourceRef<Shader>& unlitShader;
+
+	const ResourceRef<Shader>& GetScreenShader() const;
+	_declspec(property(get = GetScreenShader)) const ResourceRef<Shader>& screenShader;
 
 	const ResourceRef<Material>& GetStandardMaterial() const;
 	_declspec(property(get = GetStandardMaterial)) const ResourceRef<Material>& standardMaterial;
@@ -158,6 +164,7 @@ private: // Built-In resources
 	ResourceRef<Mesh> m_sphere;
 	ResourceRef<Mesh> m_capsule;
 	ResourceRef<Mesh> m_cylinder;
+	ResourceRef<Mesh> m_screen;
 
 	// Shader =============================================
 
@@ -166,6 +173,7 @@ private: // Built-In resources
 	ResourceRef<Shader> m_colorShader;
 	ResourceRef<Shader> m_wireframeShader;
 	ResourceRef<Shader> m_unlitShader;
+	ResourceRef<Shader> m_screenShader;
 
 	// Material ===========================================
 

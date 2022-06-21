@@ -42,6 +42,11 @@ void EnemyBeetleDrone::Update()
 
 	bool airAction = m_animator->IsPlayingAirAction();
 	CCT->useGravity = !airAction;
+	if (m_antiGravityCounter > 0.0f)
+	{
+		m_antiGravityCounter -= system->time->deltaTime;
+		CCT->useGravity = false;
+	}
 
 	StateUpdate();
 
@@ -189,7 +194,11 @@ void EnemyBeetleDrone::ClearHitBuffer()
 void EnemyBeetleDrone::OnBeginChanging(Ref<AnimatorLayer> layer, Ref<AnimatorNode> changing)
 {
 	if (changing.GetPointer() == m_animator->DMG_STD_AIR)
-		CCT->velocity = V3::up() * 3.15f * CCT->gravityScale;
+	{
+		//CCT->velocity = V3::up() * 3.15f * CCT->gravityScale;
+		CCT->velocity = V3::zero();
+		m_antiGravityCounter = 0.7f;
+	}
 }
 
 void EnemyBeetleDrone::OnEndChanged(Ref<AnimatorLayer> layer, Ref<AnimatorNode> endChanged, Ref<AnimatorNode> prev)
@@ -469,6 +478,11 @@ void EnemyBeetleDrone::StateEnded(EnemyBeetleDrone::State before, EnemyBeetleDro
 		}
 		break;
 	}
+}
+
+float EnemyBeetleDrone::GetMaxHP() const
+{
+	return 11.0f;
 }
 
 float EnemyBeetleDrone::GetHP() const

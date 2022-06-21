@@ -67,6 +67,7 @@ private:
 
 public:
 
+	virtual float GetMaxHP() const override;
 	virtual float GetHP() const override;
 	virtual void SetHP(float value) override;
 
@@ -151,6 +152,10 @@ private:
 	// Audio
 
 	AudioSource* m_audioSource;
+
+	// HP
+
+	float m_hp = GetMaxHP();
 
 	// Static
 

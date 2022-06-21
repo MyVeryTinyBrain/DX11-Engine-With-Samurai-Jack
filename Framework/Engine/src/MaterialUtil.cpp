@@ -35,6 +35,7 @@ void MaterialUtil::SetupPBRMaterials(Renderer* renderer, ResourceRef<Shader> sha
         ResourceRef<Texture> albedoTexture;
         ResourceRef<Texture> normalMapTexture;
         ResourceRef<Texture> emissiveTexture;
+        ResourceRef<Texture> shinessTexture;
 
         if (i < (uint)materialIndices.size())
         {
@@ -44,6 +45,10 @@ void MaterialUtil::SetupPBRMaterials(Renderer* renderer, ResourceRef<Shader> sha
             if (materialDesc.HasDiffuse())
             {
                 albedoTexture = system->resource->Find(materialDesc.diffuse);
+            }
+            if (materialDesc.HasShininess())
+            {
+                shinessTexture = system->resource->Find(materialDesc.shininess);
             }
             if (materialDesc.HasNormals())
             {
@@ -58,6 +63,14 @@ void MaterialUtil::SetupPBRMaterials(Renderer* renderer, ResourceRef<Shader> sha
         if (albedoTexture)
         {
             material->SetTexture("_AlbedoTexture", albedoTexture);
+        }
+        if (shinessTexture)
+        {
+            material->SetTexture("_RoughnessTexture", shinessTexture);
+        }
+        if (shinessTexture)
+        {
+            material->SetTexture("_MetallicTexture", shinessTexture);
         }
         if (normalMapTexture)
         {
@@ -99,6 +112,7 @@ void MaterialUtil::SetupInstancePBRMaterials(Renderer* renderer, ResourceRef<Sha
         ResourceRef<Texture> albedoTexture;
         ResourceRef<Texture> normalMapTexture;
         ResourceRef<Texture> emissiveTexture;
+        ResourceRef<Texture> shinessTexture;
 
         if (i < (uint)materialIndices.size())
         {
@@ -108,6 +122,10 @@ void MaterialUtil::SetupInstancePBRMaterials(Renderer* renderer, ResourceRef<Sha
             if (materialDesc.HasDiffuse())
             {
                 albedoTexture = system->resource->Find(materialDesc.diffuse);
+            }
+            if (materialDesc.HasShininess())
+            {
+                shinessTexture = system->resource->Find(materialDesc.shininess);
             }
             if (materialDesc.HasNormals())
             {
@@ -122,6 +140,14 @@ void MaterialUtil::SetupInstancePBRMaterials(Renderer* renderer, ResourceRef<Sha
         if (albedoTexture)
         {
             material->SetTexture("_AlbedoTexture", albedoTexture);
+        }
+        if (shinessTexture)
+        {
+            material->SetTexture("_RoughnessTexture", shinessTexture);
+        }
+        if (shinessTexture)
+        {
+            material->SetTexture("_MetallicTexture", shinessTexture);
         }
         if (normalMapTexture)
         {

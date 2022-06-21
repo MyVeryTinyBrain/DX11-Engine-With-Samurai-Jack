@@ -60,6 +60,7 @@ private:
 
 public:
 
+	virtual float GetMaxHP() const override;
 	virtual float GetHP() const override;
 	virtual void SetHP(float value) override;
 
@@ -106,10 +107,14 @@ private:
 
 	AudioSource* m_audioSource;
 
+	// Gravity
+
+	float m_antiGravityCounter = 0.0f;
+
 	// Stat
 
 	bool m_appeared = false;
-	float m_hp = 12.0f;
+	float m_hp = GetMaxHP();
 	float m_idleLeftCount = 0.0f;
 	float m_moveAroundAngle = 0.0f;
 	float m_moveLeftCount = 0.0f;

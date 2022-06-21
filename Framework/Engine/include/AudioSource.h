@@ -52,6 +52,8 @@ public:
 	bool IsPlayAnywhere() const;
 	void SetPlayAnywhere(bool value);
 
+	bool IsPlaying() const;
+
 	float Get3DMinDistance() const;
 	void Set3DMinDistance(float value);
 	float Get3DMaxDistance() const;
@@ -60,6 +62,8 @@ public:
 	void Set3DDopplerLevel(float value);
 	float GetNormalized3DLevel() const;
 	void SetNormalized3DLevel(float value);
+
+	_declspec(property(get = IsPlaying)) bool isPlaying;
 
 	_declspec(property(get = GetPriority, put = SetPriority)) int priority;
 

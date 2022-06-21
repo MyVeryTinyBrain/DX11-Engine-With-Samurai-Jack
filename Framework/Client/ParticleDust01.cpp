@@ -94,7 +94,7 @@ void ParticleDust01::CreateAroundAxis(
 
 	for (uint i = 0; i < count; ++i)
 	{
-		float percent = Clamp01(float(i) / float(count - 1));
+		float percent = Clamp01(float(i) / float(Max(1u, count - 1)));
 		float angle = percent * 360.0f;
 
 		Q q = Q::AxisAngle(axis, angle);
@@ -175,7 +175,7 @@ void ParticleDust01::CreateWithNormal(
 
 	for (uint i = 0; i < count; ++i)
 	{
-		float percent = Clamp01(float(i) / float(count - 1));
+		float percent = Clamp01(float(i) / float(Max(1u, count - 1)));
 		float angle = percent * 360.0f;
 
 		float angleX = rdAngleGen(gen);

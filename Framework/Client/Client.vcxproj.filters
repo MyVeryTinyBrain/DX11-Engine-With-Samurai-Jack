@@ -87,10 +87,10 @@
       <Filter>Effect\Damagable\Electric</Filter>
     </ClInclude>
     <ClInclude Include="EventListener.h">
-      <Filter>EventSystem</Filter>
+      <Filter>GameSystem\EventSystem</Filter>
     </ClInclude>
     <ClInclude Include="EventSystem.h">
-      <Filter>EventSystem</Filter>
+      <Filter>GameSystem\EventSystem</Filter>
     </ClInclude>
     <ClInclude Include="TestScene.h">
       <Filter>Scene</Filter>
@@ -208,6 +208,30 @@
     <ClInclude Include="BossAshi.h">
       <Filter>Object\Ashi</Filter>
     </ClInclude>
+    <ClInclude Include="DirtGround.h">
+      <Filter>Object\Editable\BoxGround</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneAshi.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="PrefabAshi.h">
+      <Filter>Editor\Prefab</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenRender.h">
+      <Filter>GameSystem\ScreenRender</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSystem.h">
+      <Filter>GameSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneChanger.h">
+      <Filter>GameSystem\SceneChanger</Filter>
+    </ClInclude>
+    <ClInclude Include="MusicManager.h">
+      <Filter>GameSystem\MusicManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -262,9 +286,6 @@
     </Filter>
     <Filter Include="Effect\Spark">
       <UniqueIdentifier>{1ae88ce2-a762-46f7-a7a1-a969a56268c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="EventSystem">
-      <UniqueIdentifier>{e32fea32-499c-4aff-9682-417bd05d18d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Effect\Glow">
       <UniqueIdentifier>{d5db3dd0-197a-4a54-82e3-60314adaadab}</UniqueIdentifier>
@@ -343,6 +364,24 @@
     </Filter>
     <Filter Include="Object\Ashi">
       <UniqueIdentifier>{4379fead-163c-4cd5-a5be-37b8cd890d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Editable\BoxGround">
+      <UniqueIdentifier>{a079963b-5e32-45f3-8086-7c65645c438d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem">
+      <UniqueIdentifier>{415d7cbe-27fc-4394-a9a3-4938d4825720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\EventSystem">
+      <UniqueIdentifier>{e32fea32-499c-4aff-9682-417bd05d18d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\ScreenRender">
+      <UniqueIdentifier>{f36bebc7-b6dc-4717-abc2-494ee5e6ac0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\SceneChanger">
+      <UniqueIdentifier>{492791c7-dae9-4b17-b987-9de4978bc6aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\MusicManager">
+      <UniqueIdentifier>{65512576-180f-4d98-8320-c33878451bbd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -427,10 +466,10 @@
       <Filter>Effect\Damagable\Electric</Filter>
     </ClCompile>
     <ClCompile Include="EventListener.cpp">
-      <Filter>EventSystem</Filter>
+      <Filter>GameSystem\EventSystem</Filter>
     </ClCompile>
     <ClCompile Include="EventSystem.cpp">
-      <Filter>EventSystem</Filter>
+      <Filter>GameSystem\EventSystem</Filter>
     </ClCompile>
     <ClCompile Include="TestScene.cpp">
       <Filter>Scene</Filter>
@@ -545,6 +584,30 @@
     <ClCompile Include="BossAshiAnimator.cpp">
       <Filter>Object\Ashi</Filter>
     </ClCompile>
+    <ClCompile Include="DirtGround.cpp">
+      <Filter>Object\Editable\BoxGround</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneAshi.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="PrefabAshi.cpp">
+      <Filter>Editor\Prefab</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenRender.cpp">
+      <Filter>GameSystem\ScreenRender</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSystem.cpp">
+      <Filter>GameSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneChanger.cpp">
+      <Filter>GameSystem\SceneChanger</Filter>
+    </ClCompile>
+    <ClCompile Include="MusicManager.cpp">
+      <Filter>GameSystem\MusicManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shader\Trail.fx">
@@ -578,6 +641,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\Shader\SwordTrail.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shader\StandardDistortion.fx">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

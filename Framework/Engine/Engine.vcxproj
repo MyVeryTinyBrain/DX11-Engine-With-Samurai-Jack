@@ -173,6 +173,7 @@
     <ClInclude Include="include\Ref.h" />
     <ClInclude Include="include\Ref.hpp" />
     <ClInclude Include="include\RefData.h" />
+    <ClInclude Include="include\ScreenRenderer.h" />
     <ClInclude Include="include\ShaderType.h" />
     <ClInclude Include="include\RenderQueue.h" />
     <ClInclude Include="include\RenderRequestInput.h" />
@@ -378,6 +379,7 @@
     <ClCompile Include="src\PassDesc.cpp" />
     <ClCompile Include="src\PhysicsSystem.cpp" />
     <ClCompile Include="src\RefData.cpp" />
+    <ClCompile Include="src\ScreenRenderer.cpp" />
     <ClCompile Include="src\ShaderType.cpp" />
     <ClCompile Include="src\RenderQueue.cpp" />
     <ClCompile Include="src\RenderRequestInput.cpp" />
@@ -456,6 +458,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Shader\PostProcessing.fx" />
+    <FxCompile Include="..\Shader\Screen.fx" />
     <FxCompile Include="..\Shader\Standard.fx" />
     <FxCompile Include="..\Shader\StandardInstancing.fx" />
     <FxCompile Include="..\Shader\Unlit.fx" />

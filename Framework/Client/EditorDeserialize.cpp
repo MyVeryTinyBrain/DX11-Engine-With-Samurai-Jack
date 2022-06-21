@@ -16,11 +16,13 @@
 #include "PrefabPlayer.h"
 #include "PrefabBeetleDrone.h"
 #include "PrefabAncientKing.h"
+#include "PrefabAshi.h"
 
 #include "Lava.h"
 #include "BeetleSpawner.h"
 #include "GasVent.h"
 #include "FlameVent.h"
+#include "DirtGround.h"
 
 EDITOR_USE
 
@@ -51,6 +53,8 @@ IEditorObject* EditorDeserialize::NewEditorObjectByType(Scene* scene, const Json
         return go->AddComponent<PrefabBeetleDrone>();
     if (json["type"] == EDITOR_OBJECT_TYPE_PREFAB_ANCIENTKING)
         return go->AddComponent<PrefabAncientKing>();
+    if (json["type"] == EDITOR_OBJECT_TYPE_PREFAB_ASHI)
+        return go->AddComponent<PrefabAshi>();
 
     if (json["type"] == EDITOR_OBJECT_TYPE_EDITABLE_LAVA)
         return go->AddComponent<Lava>();
@@ -60,6 +64,8 @@ IEditorObject* EditorDeserialize::NewEditorObjectByType(Scene* scene, const Json
         return go->AddComponent<GasVent>();
     if (json["type"] == EDITOR_OBJECT_TYPE_FLAME_VENT)
         return go->AddComponent<FlameVent>();
+    if (json["type"] == EDITOR_OBJECT_TYPE_DIRTGROUND)
+        return go->AddComponent<DirtGround>();
 
     return nullptr;
 }

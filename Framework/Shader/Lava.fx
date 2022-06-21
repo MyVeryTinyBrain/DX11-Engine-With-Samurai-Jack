@@ -31,7 +31,7 @@ float4			_MinColor < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 float4			_MaxColor < float4 Default = float4(1.0f, 1.0f, 1.0f, 1.0f); > ;
 float4			_UVScale < float4 Default = float4(1.0f, 1.0f, 0.0f, 0.0f); > ;
 texture2D		_DistortionTexture < string Default = "White"; > ;
-float			_DistortionSpeed < float Default = 0.01f; > ;
+float			_DistortionSpeed < float Default = 0.1f; > ;
 texture2D		_BaseNoiseTexture < string Default = "White"; > ;
 float			_Time : TIME;
 //texture2D		_DepthTexture : DEPTH_TEXTURE;
@@ -63,28 +63,10 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	//half2 screenUV = In.ProjPosition.xy / In.ProjPosition.w;
-	//screenUV.x = screenUV.x * 0.5f + 0.5f;
-	//screenUV.y = screenUV.y * -0.5f + 0.5f;
-	//half sampleDepth = _DepthTexture.Sample(linearSampler, screenUV).r;
-	//half3 sampleVPosition = ToViewSpace(screenUV, sampleDepth, Inverse(_ProjectionMatrix));
-
-	//half vDepth = In.ViewPosition.z;
-	//half deltaVDepth = saturate(sampleVPosition.z - vDepth);
-
-	//half deltaLength = 0.5f;
-	//if (deltaVDepth > deltaLength)
-	//	deltaVDepth = 0.0f;
-	//else
-	//	deltaVDepth = (1.0f - deltaVDepth / deltaLength);
-
-	half2 distortionUV = (In.UV + _Time * _DistortionSpeed) * _UVScale.xy;
-	half4 distortion = _DistortionTexture.Sample(mirrorSampler, distortionUV);
-	half adjustUV = distortion.r;
-
-	half4 color = _BaseNoiseTexture.Sample(mirrorSampler, In.UV + adjustUV);
+	float move = sin(_Time * _DistortionSpeed);
+	move = pow(move, 2.0f) * 0.1f + 0.1f;
+	float4 color = _BaseNoiseTexture.Sample(mirrorSampler, _UVScale.xy * (In.UV + _DistortionTexture.Sample(mirrorSampler, In.UV * _UVScale.xy).r * move));
 	color *= lerp(_MinColor, _MaxColor, color.r);
-	//color.rgb = lerp(color.rgb, half3(1.0f, 0.5f, 0.25f), deltaVDepth);
 
 	color.a = 1.0f;
 	output.Albedo = color;
