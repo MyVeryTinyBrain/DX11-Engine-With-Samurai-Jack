@@ -58,9 +58,9 @@ void Camera::Awake()
 
 	m_bloomDesc.Enable = true;
 	m_bloomDesc.BlurNumSamples = 16;
-	m_bloomDesc.Intensity = 1.75f;
-	m_bloomDesc.Threshold = 0.12f;
-	m_bloomDesc.BlurPixelDistance = 25.0f;
+	m_bloomDesc.Intensity = 1.834f;
+	m_bloomDesc.Threshold = 0.324f;
+	m_bloomDesc.BlurPixelDistance = 13.312f;
 
 	m_chromaticAberrationDesc.Enable = true;
 	m_chromaticAberrationDesc.Blend = V4::one();

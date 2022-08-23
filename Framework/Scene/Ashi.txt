@@ -13,9 +13,9 @@
          "shadowWhiteness" : 0.20000000298023224,
          "tag" : "",
          "type" : "DirectionalLight",
-         "volumetricLightIntensity" : 1.5,
+         "volumetricLightIntensity" : 1.7020000219345093,
          "volumetricLightNumSamples" : 50,
-         "volumetricLightPower" : 1.5,
+         "volumetricLightPower" : 1.687000036239624,
          "volumetricLightState" : false
       },
       {

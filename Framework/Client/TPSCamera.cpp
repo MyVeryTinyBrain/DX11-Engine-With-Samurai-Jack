@@ -22,6 +22,19 @@ void TPSCamera::Start()
 
 void TPSCamera::Update()
 {
+    if (ImGui::Begin("Post Process"))
+    {
+        BloomDesc bloomDesc = m_camera->GetBloomDesc();
+
+        ImGui::SliderFloat("Intensity", &bloomDesc.Intensity, 0.0f, 5.0f);
+        ImGui::SliderFloat("Threshold", &bloomDesc.Threshold, 0.0f, 0.5f);
+        ImGui::SliderFloat("BlurPixelDistance", &bloomDesc.BlurPixelDistance, 0.0f, 50.0f);
+
+        m_camera->SetBloomDesc(bloomDesc);
+
+        ImGui::End();
+    }
+
     if (system->input->GetKeyDown(Key::Return))
     {
         m_rotate = !m_rotate;
