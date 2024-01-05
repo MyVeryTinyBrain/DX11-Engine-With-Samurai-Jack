@@ -9,9 +9,69 @@ void TPSCamera::Awake()
 	m_goCamera = CreateGameObjectToChild(transform);
     m_camera = m_goCamera->AddComponent<Camera>();
     m_goCamera->AddComponent<AudioListener>();
-    //m_camera->drawGBuffer = true;
 
     EventSystem::RegistListener(this);
+
+    m_camera->postProcessingState = true;
+
+    SSAODesc ssao = m_camera->ssaoDesc;
+    ssao.Enable = true;
+    ssao.NumSamples = 4;
+    ssao.BlurNumSamples = 8;
+    ssao.Transparency = 0.225f;
+    ssao.MinZ = 0.1f;
+    ssao.Radius = 0.335f;
+    ssao.Power = 1.25f;
+    ssao.BlurPixelDistance = 2000.0f;
+
+    SSRDesc ssr = m_camera->ssrDesc;
+    ssr.Enable = false;
+    ssr.BlurEnable = true;
+    ssr.BlurType = BlurType::InvDepth;
+    ssr.NumSamples = 120;
+    ssr.BlurNumSamples = 4;
+    ssr.Step = 0.4f;
+    ssr.Thickness = 0.7f;
+    ssr.Bias = 0.04f;
+    ssr.BlurPixelDistance = 3000.0f;
+    ssr.ResolutionScale = 0.5f;
+
+    DOFDesc dof = m_camera->dofDesc;
+    dof.Enable = true;
+    dof.BlurNumSamples = 8;
+    dof.MinZ = 20.0f;
+    dof.RangeZ = 30.0f;
+    dof.Power = 1.0f;
+    dof.BlurPixelDistance = 10.0f;
+
+    FogDesc fog = m_camera->fogDesc;
+    fog.Enable = false;
+    fog.Type = FogType::Distance;
+    fog.MinZ = 30.0f;
+    fog.RangeZ = 40.0f;
+    fog.Color = Color::white();
+
+    BloomDesc bloom = m_camera->bloomDesc;
+    bloom.Enable = true;
+    bloom.BlurNumSamples = 16;
+    bloom.Intensity = 1.834f;
+    bloom.Threshold = 0.324f;
+    bloom.BlurPixelDistance = 13.312f;
+
+    ChromaticAberrationDesc ca = m_camera->chromaticAberrationDesc;
+    ca.Enable = true;
+    ca.StartSeperate = 0.0f;
+    ca.MaxSeperate = 1.0f;
+    ca.Blend = V4::one();
+    ca.Offset = V4::one() * 2.5f;
+    ca.Angle = V4(0, 120, 240, 0);
+
+    m_camera->ssaoDesc = ssao;
+    m_camera->ssrDesc = ssr;
+    m_camera->dofDesc = dof;
+    m_camera->fogDesc = fog;
+    m_camera->bloomDesc = bloom;
+    m_camera->chromaticAberrationDesc = ca;
 }
 
 void TPSCamera::Start()
@@ -22,22 +82,267 @@ void TPSCamera::Start()
 
 void TPSCamera::Update()
 {
-    //if (ImGui::Begin("Post Process"))
-    //{
-    //    BloomDesc bloomDesc = m_camera->GetBloomDesc();
+    if (m_imgui) {
+        {
+            ImGui::Begin("Info", 0, ImGuiWindowFlags_AlwaysAutoResize);
 
-    //    ImGui::SliderFloat("Intensity", &bloomDesc.Intensity, 0.0f, 5.0f);
-    //    ImGui::SliderFloat("Threshold", &bloomDesc.Threshold, 0.0f, 0.5f);
-    //    ImGui::SliderFloat("BlurPixelDistance", &bloomDesc.BlurPixelDistance, 0.0f, 50.0f);
+            tstring resolutionTxt = tstring_format(TEXT("resolution: %d x %d"), int(system->graphic->GetWidth()), int(system->graphic->GetHeight()));
+            ImGui::Text(tstring_to_str_utf8(resolutionTxt).c_str());
 
-    //    m_camera->SetBloomDesc(bloomDesc);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-    //    ImGui::End();
-    //}
+#ifdef _DEBUG
+            ImGui::Text("Debug Mode");
+#else
+            ImGui::Text("Release Mode");
+#endif
+
+            ImGui::End();
+        }
+
+        Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
+        ImGui::Begin("Camera");
+        if (ImGui::CollapsingHeader("Camera")) {
+            ImGui::PushID("Camera");
+
+            bool drawGBuffer = camera->drawGBuffer;
+            ImGui::Checkbox("Draw G Buffer", &drawGBuffer);
+            camera->drawGBuffer = drawGBuffer;
+
+            float Near = camera->Near;
+            ImGui::SliderFloat("Near", &Near, 0.0f, camera->Far);
+            camera->Near = Near;
+
+            float Far = camera->Far;
+            ImGui::SliderFloat("Far", &Far, 0.0f, 1000.0f);
+            camera->Far = Far;
+
+            float FOV = camera->fov;
+            ImGui::SliderFloat("FOV", &FOV, 0.0f, 180.0f);
+            camera->fov = FOV;
+
+            bool postProcessing = camera->postProcessingState;
+            ImGui::Checkbox("Enable", &postProcessing);
+            camera->postProcessingState = postProcessing;
+
+            ImGui::PopID();
+        }
+        if (ImGui::CollapsingHeader("SSAO")) {
+            ImGui::PushID("SSAO");
+
+            SSAODesc ssaoDesc = camera->ssaoDesc;
+
+            bool enable = ssaoDesc.Enable;
+            ImGui::Checkbox("Enable", &enable);
+            ssaoDesc.Enable = enable;
+
+            int numSamples = (int)ssaoDesc.NumSamples;
+            ImGui::SliderInt("NumSamples", &numSamples, 0, 16);
+            ssaoDesc.NumSamples = (uint)numSamples;
+
+            float transparency = ssaoDesc.Transparency;
+            ImGui::SliderFloat("Transparency", &transparency, 0.0f, 1.0f);
+            ssaoDesc.Transparency = transparency;
+
+            float minZ = ssaoDesc.MinZ;
+            ImGui::SliderFloat("MinZ", &minZ, 0.0f, 0.1f);
+            ssaoDesc.MinZ = minZ;
+
+            float radius = ssaoDesc.Radius;
+            ImGui::SliderFloat("Radius", &radius, 0.0f, 1.0f);
+            ssaoDesc.Radius = radius;
+
+            float power = ssaoDesc.Power;
+            ImGui::SliderFloat("Power", &power, 0.0f, 10.0f);
+            ssaoDesc.Power = power;
+
+            int blurNumSamples = (int)ssaoDesc.BlurNumSamples;
+            ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+            ssaoDesc.BlurNumSamples = (uint)blurNumSamples;
+
+            float blurPixelDistance = ssaoDesc.BlurPixelDistance;
+            ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 2000.0f);
+            ssaoDesc.BlurPixelDistance = blurPixelDistance;
+
+            camera->ssaoDesc = ssaoDesc;
+
+            ImGui::PopID();
+        }
+        if (ImGui::CollapsingHeader("SSR")) {
+            ImGui::PushID("SSR");
+
+            SSRDesc ssrDesc = camera->ssrDesc;
+
+            bool enable = ssrDesc.Enable;
+            ImGui::Checkbox("Enable", &enable);
+            ssrDesc.Enable = enable;
+
+            bool blurEnable = ssrDesc.BlurEnable;
+            ImGui::Checkbox("BlurEnable", &blurEnable);
+            ssrDesc.BlurEnable = blurEnable;
+
+            const char* items[] = { "Default", "InvDepth", "Depth" };
+            int blurType = (int)ssrDesc.BlurType;
+            ImGui::Combo("BlurType", &blurType, items, 3);
+            ssrDesc.BlurType = (BlurType)blurType;
+
+            int numSamples = (int)ssrDesc.NumSamples;
+            ImGui::SliderInt("NumSamples", &numSamples, 0, 256);
+            ssrDesc.NumSamples = (uint)numSamples;
+
+            int blurNumSamples = (int)ssrDesc.BlurNumSamples;
+            ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+            ssrDesc.BlurNumSamples = (uint)blurNumSamples;
+
+            float step = ssrDesc.Step;
+            ImGui::SliderFloat("Step", &step, 0.0f, 0.4f);
+            ssrDesc.Step = step;
+
+            float thickness = ssrDesc.Thickness;
+            ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
+            ssrDesc.Thickness = thickness;
+
+            float bias = ssrDesc.Bias;
+            ImGui::SliderFloat("Bias", &bias, 0.0f, 1.0f);
+            ssrDesc.Bias = bias;
+
+            float blurPixelDistance = ssrDesc.BlurPixelDistance;
+            if (ssrDesc.BlurType == BlurType::InvDepth)
+                ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 3000.0f);
+            else
+                ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 100.0f);
+            ssrDesc.BlurPixelDistance = blurPixelDistance;
+
+            float resolutionScale = ssrDesc.ResolutionScale;
+            ImGui::SliderFloat("ResolutionScale", &resolutionScale, 0.0f, 1.0f);
+            ssrDesc.ResolutionScale = resolutionScale;
+
+            camera->ssrDesc = ssrDesc;
+
+            ImGui::PopID();
+        }
+        if (ImGui::CollapsingHeader("DOF")) {
+            ImGui::PushID("DOF");
+
+            DOFDesc dofDesc = camera->dofDesc;
+
+            bool enable = dofDesc.Enable;
+            ImGui::Checkbox("Enable", &enable);
+            dofDesc.Enable = enable;
+
+            int blurNumSamples = (int)dofDesc.BlurNumSamples;
+            ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+            dofDesc.BlurNumSamples = (uint)blurNumSamples;
+
+            float minZ = dofDesc.MinZ;
+            ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+            dofDesc.MinZ = minZ;
+
+            float rangeZ = dofDesc.RangeZ;
+            ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+            dofDesc.RangeZ = rangeZ;
+
+            float power = dofDesc.Power;
+            ImGui::SliderFloat("Power", &power, 0.0f, 100.0f);
+            dofDesc.Power = power;
+
+            float blurPixelDistance = dofDesc.BlurPixelDistance;
+            ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+            dofDesc.BlurPixelDistance = blurPixelDistance;
+
+            camera->dofDesc = dofDesc;
+
+            ImGui::PopID();
+        }
+        if (ImGui::CollapsingHeader("Fog")) {
+            ImGui::PushID("Fog");
+
+            FogDesc fogDesc = camera->fogDesc;
+
+            bool enable = fogDesc.Enable;
+            ImGui::Checkbox("Enable", &enable);
+            fogDesc.Enable = enable;
+
+            const char* items[] = { "Distance", "Z" };
+            int type = (int)fogDesc.Type;
+            ImGui::Combo("Type", &type, items, 2);
+            fogDesc.Type = (FogType)type;
+
+            float minZ = fogDesc.MinZ;
+            ImGui::SliderFloat("MinZ", &minZ, 0.0f, 100.0f);
+            fogDesc.MinZ = minZ;
+
+            float rangeZ = fogDesc.RangeZ;
+            ImGui::SliderFloat("RangeZ", &rangeZ, 0.0f, 100.0f);
+            fogDesc.RangeZ = rangeZ;
+
+            Color color = fogDesc.Color;
+            ImGui::ColorPicker4("Color", (float*)&color);
+            fogDesc.Color = color;
+
+            camera->fogDesc = fogDesc;
+
+            ImGui::PopID();
+        }
+        if (ImGui::CollapsingHeader("Bloom")) {
+            ImGui::PushID("Bloom");
+
+            BloomDesc bloomDesc = camera->bloomDesc;
+
+            bool enable = bloomDesc.Enable;
+            ImGui::Checkbox("Enable", &enable);
+            bloomDesc.Enable = enable;
+
+            int blurNumSamples = (int)bloomDesc.BlurNumSamples;
+            ImGui::SliderInt("BlurNumSamples", &blurNumSamples, 0, 16);
+            bloomDesc.BlurNumSamples = (uint)blurNumSamples;
+
+            float intensity = bloomDesc.Intensity;
+            ImGui::SliderFloat("Intensity", &intensity, 0.0f, 100.0f);
+            bloomDesc.Intensity = intensity;
+
+            float threshold = bloomDesc.Threshold;
+            ImGui::SliderFloat("Threshold", &threshold, 0.0f, 1.0f);
+            bloomDesc.Threshold = threshold;
+
+            float blurPixelDistance = bloomDesc.BlurPixelDistance;
+            ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 100.0f);
+            bloomDesc.BlurPixelDistance = blurPixelDistance;
+
+            camera->bloomDesc = bloomDesc;
+
+            ImGui::PopID();
+        }
+        if (ImGui::CollapsingHeader("ChromaticAberration")) {
+            ImGui::PushID("ChromaticAberration");
+
+            ChromaticAberrationDesc chromaticAberrationDesc = camera->chromaticAberrationDesc;
+
+            bool enable = chromaticAberrationDesc.Enable;
+            ImGui::Checkbox("Enable", &enable);
+            chromaticAberrationDesc.Enable = enable;
+
+            ImGui::SliderFloat("StartSeperatestance", &chromaticAberrationDesc.StartSeperate, 0.0f, 1.0f);
+
+            ImGui::SliderFloat("MaxSeperate", &chromaticAberrationDesc.MaxSeperate, 0.0f, 1.0f);
+
+            ImGui::SliderFloat3("Blend", (float*)&chromaticAberrationDesc.Blend, 0.0f, 1.0f);
+
+            ImGui::SliderFloat3("Offset", (float*)&chromaticAberrationDesc.Offset, 0.0f, 50.0f);
+
+            ImGui::SliderFloat3("Angle", (float*)&chromaticAberrationDesc.Angle, 0.0f, 360.0f);
+
+            camera->chromaticAberrationDesc = chromaticAberrationDesc;
+
+            ImGui::PopID();
+        }
+        ImGui::End();
+    }
 
     if (system->input->GetKeyDown(Key::Return))
     {
         m_rotate = !m_rotate;
+        m_imgui = !m_imgui;
         if (m_rotate)
         {
             SetCursorToCenter();

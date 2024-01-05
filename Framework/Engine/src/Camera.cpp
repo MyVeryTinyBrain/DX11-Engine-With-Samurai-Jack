@@ -10,8 +10,6 @@
 
 void Camera::Awake()
 {
-	m_drawGBuffer = false;
-
 	Reset();
 
 	ICameraManager* iCameraManager = system->graphic->cameraManager;
@@ -36,11 +34,11 @@ void Camera::Awake()
 	m_ssrDesc.BlurEnable = true;
 	m_ssrDesc.BlurType = BlurType::InvDepth;
 	m_ssrDesc.NumSamples = 120;
-	m_ssrDesc.BlurNumSamples = 4;
+	m_ssrDesc.BlurNumSamples = 4; 
 	m_ssrDesc.Step = 0.4f;
 	m_ssrDesc.Thickness = 0.7f;
 	m_ssrDesc.Bias = 0.04f;
-	m_ssrDesc.BlurPixelDistance = 1000.0f;
+	m_ssrDesc.BlurPixelDistance = 3000.0f;
 	m_ssrDesc.ResolutionScale = 0.5f;
 
 	m_dofDesc.Enable = true;
@@ -63,9 +61,11 @@ void Camera::Awake()
 	m_bloomDesc.BlurPixelDistance = 13.312f;
 
 	m_chromaticAberrationDesc.Enable = true;
+	m_chromaticAberrationDesc.StartSeperate = 0.0f;
+	m_chromaticAberrationDesc.MaxSeperate = 1.0f;
 	m_chromaticAberrationDesc.Blend = V4::one();
 	m_chromaticAberrationDesc.Offset = V4::one() * 2.0f;
-	m_chromaticAberrationDesc.Angle = V4(0, 120, 240, 0);
+	m_chromaticAberrationDesc.Angle = V4(0, 120, 240, 0); 
 }
 
 void Camera::Render()

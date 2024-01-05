@@ -145,10 +145,8 @@ inline ShadowDesc ComputeShadowCommonPCF3X3(LightDesc light, texture2D lightDept
 	projectTexCoord.x = (lightViewPosition.x / lightViewPosition.w) / 2.0f + 0.5f;
 	projectTexCoord.y = -(lightViewPosition.y / lightViewPosition.w) / 2.0f + 0.5f;
 
-	half depthValueByCamera = lightViewPosition.z / lightViewPosition.w;
-	depthValueByCamera = depthValueByCamera - light.ShadowBias;
-
 	half depth = lightViewPosition.z / lightViewPosition.w;
+	half depthValueByCamera = depth - light.ShadowBias;
 
 	static const int NUM_SAMPLES = 3;
 	const half delta = 1.0f / light.DepthSize;
@@ -191,7 +189,7 @@ inline ShadowDesc ComputeShadowCommonPCF3X3(LightDesc light, texture2D lightDept
 inline half ComputeShadow_Directional(LightDesc light, texture2D lightDepthMap[6], half shadowWhiteness, float3 worldPosition)
 {
 	// 가까운 쉐도우맵부터 순회합니다.
-	// 픽셀의 월드 위치가 i번째 쉐도우맵에 포함되어 있다면 i번째 쉐도우맵에 대하여 연산합니다.
+	// 픽셀의 월드 위치가 i번째 쉐도우맵에 속해 있다면 i번째 쉐도우맵에 대하여 연산합니다.
 	[unroll]
 	for (uint i = 0; i < 3; ++i)
 	{
@@ -202,7 +200,7 @@ inline half ComputeShadow_Directional(LightDesc light, texture2D lightDepthMap[6
 			return shadowDesc.Value;
 	}
 
-	// 이 픽셀이 그림자 맵의 영역 외부에 있다면 조명 연산된 밝기를 사용합니다.
+	// 이 픽셀이 쉐도우맵의 영역 외부에 있다면 조명 연산된 밝기를 사용합니다.
 	return 1.0f;
 }
 
@@ -243,32 +241,8 @@ inline half ComputeShadow_Point(LightDesc light, texture2D lightDepthMap[6], hal
 	// PointLight.h에 정의된 뷰 행렬의 순서입니다.
 	// const V3	m_arrDirection[6] = { V3::up(),V3::left(),V3::forward(),V3::right(),V3::back(),V3::down(), };
 
-	// 선택된 쉐도우맵 인덱스입니다.
+	// 픽셀의 월드 위치가 속한 쉐도우맵 인덱스를 선택합니다.
 	uint shadowmapIndex = DirectionToCubemapIndex(normalize(lightToPixel));
-
-	//// 쉐도우맵의 방향과 조명이 픽셀까지의 방향을 내적한 값들중 최대값입니다.
-	//// 이것은 쉐도우맵의 방향과 가장 적은 각도차이를 나타냅니다.
-	//// 또한 가장 적은 각도차이를 나타내는 인덱스를 사용하게 됩니다.
-	//half maxDot = -2.0f;
-	//half dotResult[6];
-	//dotResult[0] = dot(lightToPixel, half3(1, 0, 0));
-	//dotResult[1] = dot(lightToPixel, -half3(1, 0, 0));
-	//dotResult[2] = dot(lightToPixel, half3(0, 0, 1));
-	//dotResult[3] = dot(lightToPixel, -half3(0, 0, 1));
-	//dotResult[4] = dot(lightToPixel, half3(0, 1, 0));
-	//dotResult[5] = dot(lightToPixel, -half3(0, 1, 0));
-
-	//// 가장 적은 각도차이를 가지는 인덱스를 구합니다.
-	//[unroll]
-	//for (uint i = 0; i < 6; ++i)
-	//{
-	//	[flatten]
-	//	if (dotResult[i] > maxDot)
-	//	{
-	//		maxDot = dotResult[i];
-	//		shadowmapIndex = i;
-	//	}
-	//}
 
 	ShadowDesc shadowDesc = ComputeShadowCommonPCF3X3(light, lightDepthMap, shadowmapIndex, shadowWhiteness, worldPosition);
 	return shadowDesc.Value;
@@ -464,7 +438,12 @@ inline float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness
 	return F0 + (max(1.0f - roughness, F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
-inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo, half3 normal, float3 world2Light, float3 world2Camera, half roughness, half metallic, out half intensity, out half3 ambient)
+inline half3 ComputePBRLightIntensity(
+	LightDesc light, 
+	half atten, half3 albedo, half3 normal, 
+	float3 world2Light, float3 world2Camera, 
+	half roughness, half metallic, 
+	out half intensity, out half3 ambient)
 {
 	roughness = min(roughness, 0.995f);
 
@@ -472,7 +451,6 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 	float3 V = normalize(world2Camera);
 	float3 R = reflect(-V, N);
 
-	//float3 F0 = lerp(0.04f, pow(albedo, 2.2f), metallic);
 	float3 F0 = lerp(0.04f, albedo, metallic);
 
 	float3 L = normalize(world2Light);
@@ -496,18 +474,10 @@ inline half3 ComputePBRLightIntensity(LightDesc light, half atten, half3 albedo,
 	kD *= 1.0f - metallic;
 
 	float NdotL = max(dot(N, L), 0.0f);
-
 	intensity = light.Intensity * atten * NdotL;
 
 	float3 Lo = (kD * albedo / PI + specular) * NdotL * radiance;
-	//Lo = max(Lo, 0.0f); // Disable warning
-
 	ambient = (kD * albedo * atten * light.Ambient.rgb) / PI;
-
-	//// HDR tonemapping
-	//Lo = Lo / (Lo + 1.0f);
-	//// Gamma correction
-	//Lo = pow(Lo, 1.0f / 2.2f);
 
 	return Lo * atten;
 }

@@ -17,19 +17,19 @@ private:
 
 	virtual void Awake() override;
 	virtual void Render() override;
-	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pinput) override;
+	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pInout) override;
 
 public:
 
 	void SetLockFlags(BillboardRenderer::LockFlags lockFlags);
 	void SetLock(BillboardRenderer::LockFlag lockFlag, bool value);
 	BillboardRenderer::LockFlags GetLockFlags() const;
-	bool IsLock(BillboardRenderer::LockFlag lockFlag) const;
+	bool IsLocked(BillboardRenderer::LockFlag lockFlag) const;
 
 	void SetSelfLockFlags(BillboardRenderer::LockFlags lockFlags);
 	void SetSelfLock(BillboardRenderer::LockFlag lockFlag, bool value);
 	BillboardRenderer::LockFlags GetSelfLockFlags() const;
-	bool IsSelfLock(BillboardRenderer::LockFlag lockFlag) const;
+	bool IsSelfLocked(BillboardRenderer::LockFlag lockFlag) const;
 
 public:
 

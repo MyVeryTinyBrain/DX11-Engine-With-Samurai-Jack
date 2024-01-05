@@ -615,7 +615,7 @@
       <Filter>Object\Resource\Material</Filter>
     </ClInclude>
     <ClInclude Include="include\ScreenRenderer.h">
-      <Filter>Object\SceneObject\Component\Renderer\ScreemRenderer</Filter>
+      <Filter>Object\SceneObject\Component\Renderer\ScreenRenderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1187,7 +1187,7 @@
       <Filter>Object\Resource\Material</Filter>
     </ClCompile>
     <ClCompile Include="src\ScreenRenderer.cpp">
-      <Filter>Object\SceneObject\Component\Renderer\ScreemRenderer</Filter>
+      <Filter>Object\SceneObject\Component\Renderer\ScreenRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1497,7 +1497,7 @@
     <Filter Include="Object\SceneObject\Component\Renderer\BillobardRenderer">
       <UniqueIdentifier>{36a93583-5043-4072-b374-7d736647d97d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\SceneObject\Component\Renderer\ScreemRenderer">
+    <Filter Include="Object\SceneObject\Component\Renderer\ScreenRenderer">
       <UniqueIdentifier>{aa754143-d97f-4006-a520-2456d3f322b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

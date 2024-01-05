@@ -771,7 +771,7 @@ void BossAncientKing::SetAttackType(uint contextUInt)
 
 float BossAncientKing::GetMaxHP() const
 {
-	return 300.0f;
+	return 200.0f;
 }
 
 float BossAncientKing::GetHP() const

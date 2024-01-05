@@ -45,7 +45,67 @@ void TestScene::OnLoad()
 			goCamera->transform->forward = (V3(0, 2, -9) - V3(0, 2, -10)).normalized;
 			FreeCamera* camera = goCamera->AddComponent<FreeCamera>();
 			camera->camera->fov = 45;
-			camera->camera->postProcessingState = false;
+
+			camera->camera->postProcessingState = true;
+
+			SSAODesc ssao = camera->camera->ssaoDesc;
+			ssao.Enable = true;
+			ssao.NumSamples = 4;
+			ssao.BlurNumSamples = 8;
+			ssao.Transparency = 0.225f;
+			ssao.MinZ = 0.003f;
+			ssao.Radius = 0.28f;
+			ssao.Power = 2.5f;
+			ssao.BlurPixelDistance = 1100.0f;
+
+			SSRDesc ssr = camera->camera->ssrDesc;
+			ssr.Enable = false;
+			ssr.BlurEnable = true;
+			ssr.BlurType = BlurType::InvDepth;
+			ssr.NumSamples = 120;
+			ssr.BlurNumSamples = 4;
+			ssr.Step = 0.4f;
+			ssr.Thickness = 0.7f;
+			ssr.Bias = 0.04f;
+			ssr.BlurPixelDistance = 3000.0f;
+			ssr.ResolutionScale = 0.5f;
+
+			DOFDesc dof = camera->camera->dofDesc;
+			dof.Enable = true;
+			dof.BlurNumSamples = 8;
+			dof.MinZ = 25.0f;
+			dof.RangeZ = 35.0f;
+			dof.Power = 1.0f;
+			dof.BlurPixelDistance = 10.0f;
+
+			FogDesc fog = camera->camera->fogDesc;
+			fog.Enable = false;
+			fog.Type = FogType::Distance;
+			fog.MinZ = 30.0f;
+			fog.RangeZ = 40.0f;
+			fog.Color = Color::white();
+
+			BloomDesc bloom = camera->camera->bloomDesc;
+			bloom.Enable = true;
+			bloom.BlurNumSamples = 16;
+			bloom.Intensity = 1.834f;
+			bloom.Threshold = 0.324f;
+			bloom.BlurPixelDistance = 13.312f;
+
+			ChromaticAberrationDesc ca = camera->camera->chromaticAberrationDesc;
+			ca.Enable = true;
+			ca.StartSeperate = 0.0f;
+			ca.MaxSeperate = 1.0f;
+			ca.Blend = V4::one();
+			ca.Offset = V4::one() * 2.5f;
+			ca.Angle = V4(0, 120, 240, 0);
+
+			camera->camera->ssaoDesc = ssao;
+			camera->camera->ssrDesc = ssr;
+			camera->camera->dofDesc = dof;
+			camera->camera->fogDesc = fog;
+			camera->camera->bloomDesc = bloom;
+			camera->camera->chromaticAberrationDesc = ca;
 		}
 
 		{
@@ -255,6 +315,10 @@ void TestScene::OnUpdate()
 	{
 		ImGui::PushID("Camera");
 
+		bool drawGBuffer = camera->drawGBuffer;
+		ImGui::Checkbox("Draw G Buffer", &drawGBuffer);
+		camera->drawGBuffer = drawGBuffer;
+
 		float Near = camera->Near;
 		ImGui::SliderFloat("Near", &Near, 0.0f, camera->Far);
 		camera->Near = Near;
@@ -355,7 +419,10 @@ void TestScene::OnUpdate()
 		ssrDesc.Bias = bias;
 
 		float blurPixelDistance = ssrDesc.BlurPixelDistance;
-		ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 1000.0f);
+		if (ssrDesc.BlurType == BlurType::InvDepth)
+			ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 3000.0f);
+		else
+			ImGui::SliderFloat("BlurPixelDistance", &blurPixelDistance, 0.0f, 100.0f);
 		ssrDesc.BlurPixelDistance = blurPixelDistance;
 
 		float resolutionScale = ssrDesc.ResolutionScale;
@@ -470,6 +537,10 @@ void TestScene::OnUpdate()
 		bool enable = chromaticAberrationDesc.Enable;
 		ImGui::Checkbox("Enable", &enable);
 		chromaticAberrationDesc.Enable = enable;
+
+		ImGui::SliderFloat("StartSeperatestance", &chromaticAberrationDesc.StartSeperate, 0.0f, 1.0f);
+
+		ImGui::SliderFloat("MaxSeperate", &chromaticAberrationDesc.MaxSeperate, 0.0f, 1.0f);
 
 		ImGui::SliderFloat3("Blend", (float*)&chromaticAberrationDesc.Blend, 0.0f, 1.0f);
 

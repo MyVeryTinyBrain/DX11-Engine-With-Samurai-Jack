@@ -52,6 +52,7 @@ void SceneAshi::OnLoad()
 	}
 
 	Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
+
 	FogDesc fogDesc = camera->GetFogDesc();
 	fogDesc.Enable = true;
 	fogDesc.Type = FogType::Z;

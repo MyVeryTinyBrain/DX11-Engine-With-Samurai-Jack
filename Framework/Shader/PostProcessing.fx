@@ -79,6 +79,8 @@ struct BloomDesc
 struct ChromaticAberrationDesc
 {
 	bool	Enable;
+	float	StartSeperate;
+	float	MaxSeperate;
 	float4	Blend;	
 	float4	Offset;
 	float4	Angle;	
@@ -170,9 +172,6 @@ half SSAORayMarch(float2 uv)
 	half depth = _Depth.Sample(pointSampler, uv, 0).r;
 	half occlusionMask = _Occlusion_Reflection_ReflectionBlur_ReflectMask.Sample(pointSampler, uv, 0).r;
 
-	//[flatten] // Fast exit
-	//if (depth == 1.0f) return 1.0f;
-
 	half3 vPosition = ToViewSpace(uv, depth, invProjMatrix);
 	float3 worldPosition = mul(float4(vPosition, 1.0f), invProjMatrix).xyz;
 
@@ -189,6 +188,7 @@ half SSAORayMarch(float2 uv)
 	half3 rvec = RandomVector(randomSeed.xy);
 	half3 tangent = normalize(rvec - normal * dot(rvec, normal));
 	half3 bitangent = cross(normal, tangent);
+	tangent = cross(normal, bitangent);
 	half3x3 tbn = half3x3(tangent, bitangent, normal);
 
 	half occlusion = 0.0f;
@@ -265,9 +265,7 @@ half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
 
 		half sampleDepth = _Depth.SampleLevel(pointSampler, sSamplePos.xy, 0).r;
-
 		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
-
 		half depthDiff = vRayPos.z - vSamplePos.z;
 
 		if (depthDiff >= _SSRDesc.Bias && depthDiff <= _SSRDesc.Thickness)
@@ -286,17 +284,12 @@ half2 SSRBinarySearch(half3 vRayPos, half3 vDir)
 	return outputUV;
 }
 
-// return hit = {0, 1}
 half SSRRayMarch(inout half2 uv, out half distance)
 {
 	distance = 0.0f;
 
 	float4x4 invProjMatrix = Inverse(_ProjectionMatrix);
-
 	half depth = _Depth.Sample(linearSampler, uv).r;
-
-	//[flatten] // Fast exit
-	//if (depth >= 1.0f) return 0.0f;
 
 	half3 vPos = ToViewSpace(uv, depth, invProjMatrix);
 	half3 vPixelDir = normalize(vPos);
@@ -320,9 +313,7 @@ half SSRRayMarch(inout half2 uv, out half distance)
 		sSamplePos.xy = sSamplePos.xy * half2(1.0f, -1.0f) * 0.5f + 0.5f;
 
 		half sampleDepth = _Depth.SampleLevel(linearSampler, sSamplePos.xy, 0).r;
-
 		half3 vSamplePos = ToViewSpace(sSamplePos.xy, sampleDepth, invProjMatrix);
-
 		half depthDiff = vRayPos.z - vSamplePos.z;
 
 		if (depthDiff >= _SSRDesc.Bias && depthDiff <= _SSRDesc.Thickness)
@@ -394,7 +385,6 @@ half4 PS_MAIN_SSR_Apply(PS_IN In) : SV_TARGET
 half4 PS_MAIN_DOF_WritePass0(PS_IN In) : SV_TARGET
 {
 	//// Horizontal Blur 
-
 	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
 	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
 	int size = _DOFDesc.BlurNumSamples;
@@ -412,16 +402,13 @@ half4 PS_MAIN_DOF_WritePass0(PS_IN In) : SV_TARGET
 
 	half4 horizontalBlur = accumulation / numSamples;
 	horizontalBlur.a = 1.0f;
-
 	//// 
-
 	return horizontalBlur;
 }
 
 half4 PS_MAIN_DOF_WritePass1(PS_IN In) : SV_TARGET
 {
 	//// Verticla Blur 
-
 	half2 deltaPixel = half2(1.0f, 1.0f) / _TextureSize.xy;
 	half4 accumulation = half4(0.0f, 0.0f, 0.0f, 1.0f);
 	int size = _DOFDesc.BlurNumSamples;
@@ -441,17 +428,13 @@ half4 PS_MAIN_DOF_WritePass1(PS_IN In) : SV_TARGET
 	blur.a = 1.0f;
 
 	//// Blend 
-
 	half4 color = _Result.Sample(pointSampler, In.UV);
-
 	half depth = _Depth.Sample(pointSampler, In.UV).r;
 	half3 vPosition = ToViewSpace(In.UV, depth, Inverse(_ProjectionMatrix));
 
 	half percent = smoothstep(_DOFDesc.MinZ, _DOFDesc.MinZ + _DOFDesc.RangeZ, vPosition.z);
-
 	half4 lerped = lerp(color, blur, percent);
 	return lerped;
-
 	//// 
 }
 
@@ -496,22 +479,8 @@ half4 PS_MAIN_Fog_Apply_Z(PS_IN In) : SV_TARGET
 
 half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 {
-	//const static half4 BLACK = half4(0, 0, 0, 1);
-
-	//half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
-	//half brightness = Max(sampleColor.rgb);
-	////half brightness = saturate(length(sampleColor.rgb));
-
-	////half percent = _BloomDesc.Threshold * brightness;
-	////half percent = smoothstep(1.0f - _BloomDesc.Threshold, 1.0f, brightness);
-	//half percent = step(1.0f - _BloomDesc.Threshold, brightness);
-	//half4 brightedColor = normalize(sampleColor);
-
-	//return lerp(BLACK, brightedColor, percent);
-
 	half4 sampleColor = _Sample.Sample(pointSampler, In.UV);
 	half4 ex = saturate((sampleColor - _BloomDesc.Threshold) / (1.0f - _BloomDesc.Threshold));
-	//ex.a = 1.0f;
 	return ex;
 }
 
@@ -520,9 +489,8 @@ half4 PS_MAIN_Bloom_Extract(PS_IN In) : SV_TARGET
 // Vertical Blur
 // ==============================
 
-float4 AdjustSaturation(half4 color, half saturation)
+float4 AdjustSaturation(half4 color, half saturation) 
 {
-	//half3 grayscale = half3(0.2125f, 0.7154f, 0.0721f);
 	half3 grayscale = (color.r + color.g + color.b) / 3.0f;
 	half gray = dot(color.rgb, grayscale);
 	return lerp(gray, color, saturation);
@@ -541,7 +509,10 @@ half4 PS_MAIN_ChromaticAberration_Write(PS_IN In) : SV_TARGET
 {
 	half4 radAngle = _ChromaticAberrationDesc.Angle * Deg2Rad;
 
-	half2 pixelDist = 1.0f / _TextureSize.xy;
+	half distanceFromCenter = length(In.UV * 2.0f - 1.0f);
+	half seperateIntensity = smoothstep(_ChromaticAberrationDesc.StartSeperate, _ChromaticAberrationDesc.MaxSeperate, distanceFromCenter);
+
+	half2 pixelDist = 1.0f / _TextureSize.xy * seperateIntensity;
 	half2 r_dir = half2(cos(radAngle.r), sin(radAngle.r)) * pixelDist * _ChromaticAberrationDesc.Offset.r;
 	half2 g_dir = half2(cos(radAngle.g), sin(radAngle.g)) * pixelDist * _ChromaticAberrationDesc.Offset.g;
 	half2 b_dir = half2(cos(radAngle.b), sin(radAngle.b)) * pixelDist * _ChromaticAberrationDesc.Offset.b;

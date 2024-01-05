@@ -89,6 +89,7 @@ private:
 	float			m_lookChangeDelayCount = 0.0f;
 	float			m_minLookChangeDelta = 20.0f;
 	bool			m_rotate = true;
+	bool			m_imgui = false;
 
 	V3				m_shakeTranslation;
 	vector<Shake_t>	m_shakes;

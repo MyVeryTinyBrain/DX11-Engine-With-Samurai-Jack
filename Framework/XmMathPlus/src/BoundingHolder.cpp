@@ -273,7 +273,6 @@ bool XmMathPlus::BoundingHolder::IntersectsBoundingHolder(const BoundingHolder& 
 			}
 			break;
 	}
-
 	return false;
 }
 

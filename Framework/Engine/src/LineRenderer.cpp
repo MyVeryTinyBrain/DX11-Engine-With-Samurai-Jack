@@ -98,7 +98,7 @@ void LineRenderer::Render()
 	}
 }
 
-void LineRenderer::OnCamera(ICamera* camera, RenderRequest* inout_pinput)
+void LineRenderer::OnCamera(ICamera* camera, RenderRequest* inout_pInout)
 {
 	if (IsValid())
 		ApplyVertices(camera);

@@ -10,7 +10,6 @@ inline T * GameObject::AddComponent(void* arg)
 	{
 		RETURN_NULL_ERROR_MESSAGE("GameObject::AddComponent<T>::You're adding onto destroyed game object");
 	}
-
 	T* component = new T();
 	IComponent* iCom = component;
 	iCom->Initialize(this, arg);
@@ -28,10 +27,8 @@ inline bool GameObject::RemoveComponent()
 		if (cast)
 		{
 			component->Destroy();
-
 			// 이 게임오브젝트에 부착된 해당 컴포넌트를 리스트에서 제거합니다.
 			m_components.erase(it);
-
 			return true;
 		}
 	}
@@ -53,14 +50,14 @@ inline T * GameObject::GetComponent() const
 template<class T>
 inline vector<T*> GameObject::GetComponents() const
 {
-	std::vector<T*> lightBlend;
+	std::vector<T*> coms;
 	for (auto& component : m_components)
 	{
 		T* cast = dynamic_cast<T*>(component);
 		if (cast)
-			lightBlend.push_back(cast);
+			coms.push_back(cast);
 	}
-	return lightBlend;
+	return coms;
 }
 
 template<class T>

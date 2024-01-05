@@ -1,7 +1,10 @@
 #include "EnginePCH.h"
 #include "ShaderVariableInfo.h"
 
-ShaderVariableInfo::ShaderVariableInfo(D3DX11_EFFECT_VARIABLE_DESC variableDesc, D3DX11_EFFECT_TYPE_DESC typeDesc, ID3DX11EffectVariable* handle)
+ShaderVariableInfo::ShaderVariableInfo(
+	D3DX11_EFFECT_VARIABLE_DESC variableDesc, 
+	D3DX11_EFFECT_TYPE_DESC typeDesc, 
+	ID3DX11EffectVariable* handle)
 {
 	m_name = variableDesc.Name;
 	m_semantic = variableDesc.Semantic != nullptr ? variableDesc.Semantic : "";
@@ -17,13 +20,10 @@ ShaderVariableInfo* ShaderVariableInfo::Create(ID3DX11EffectVariable* handle)
 {
 	if (!handle)
 		return nullptr;
-
 	ID3DX11EffectType* type = handle->GetType();
 	D3DX11_EFFECT_VARIABLE_DESC variableDesc;
-	D3DX11_EFFECT_TYPE_DESC typeDesc;
-	
+	D3DX11_EFFECT_TYPE_DESC typeDesc;	
 	HRESULT hr = S_OK;
-
 	if (!type)
 	{
 		return nullptr;
@@ -38,11 +38,8 @@ ShaderVariableInfo* ShaderVariableInfo::Create(ID3DX11EffectVariable* handle)
 		SafeRelease(type);
 		return nullptr;
 	}
-
 	ShaderVariableInfo* info = new ShaderVariableInfo(variableDesc, typeDesc, handle);
-
 	SafeRelease(type);
-
 	return info;
 }
 

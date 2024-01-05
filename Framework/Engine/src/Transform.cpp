@@ -78,11 +78,9 @@ void Transform::SetLocalScale(const V3& localScale)
 
 void Transform::SetLocalTransformation(const V3& position, const Q& rotation, const V3& scale)
 {
-	if (m_localData.position == localPosition)
-		return;
-	if (m_localData.rotation == localRotation)
-		return;
-	if (m_localData.scale == localScale)
+	if (m_localData.position == position && 
+		m_localData.rotation == rotation && 
+		m_localData.scale == scale)
 		return;
 
 	m_localData.position = position;
@@ -96,11 +94,9 @@ void Transform::SetLocalTransformation(const V3& position, const Q& rotation, co
 
 void Transform::SetLocalTransformation(const V3& position, const V3& eulerAngles, const V3& scale)
 {
-	if (m_localData.position == localPosition)
-		return;
-	if (m_localData.eulerAngles == localEulerAngles)
-		return;
-	if (m_localData.scale == localScale)
+	if (m_localData.position == position &&
+		m_localData.eulerAngles == eulerAngles &&
+		m_localData.scale == scale)
 		return;
 
 	m_localData.position = position;
@@ -155,36 +151,30 @@ const V3& Transform::GetLocalScale() const
 void Transform::SetRightDirection(const V3& right)
 {
 	V3 x = right.normalized;
-
 	if (x.sqrMagnitude == 0)
 	{
 		x = V3::right();
 	}
-
 	SetRotation(Q::FromToRotation(V3::right(), x));
 }
 
 void Transform::SetUpDirection(const V3& up)
 {
 	V3 y = up.normalized;
-
 	if (y.sqrMagnitude == 0)
 	{
 		y = V3::up();
 	}
-
 	SetRotation(Q::FromToRotation(V3::up(), y));
 }
 
 void Transform::SetForwardDirection(const V3& forward)
 {
 	V3 z = forward.normalized;
-
 	if (z.sqrMagnitude == 0)
 	{
 		z = V3::forward();
 	}
-	
 	V3 up = V3::up();
 	SetRotation(Q::LookRotation(z, up));
 }
@@ -196,12 +186,12 @@ V3 Transform::GetRightDirection() const
 
 V3 Transform::GetUpDirection() const
 {
-	return m_worldData.rotation.MultiplyVector(V3::up());;
+	return m_worldData.rotation.MultiplyVector(V3::up());
 }
 
 V3 Transform::GetForwardDirection() const
 {
-	return m_worldData.rotation.MultiplyVector(V3::forward());;
+	return m_worldData.rotation.MultiplyVector(V3::forward());
 }
 
 bool Transform::IsImmediateMode() const
@@ -282,27 +272,17 @@ void Transform::DetachFromParent()
 void Transform::AddChild(Transform* child)
 {
 	// 이 트랜스폼을 자식으로 두려는 경우 종료합니다.
-	if (child == this)
-		return;
-
-	if (!child)
-		return;
-
-	// ===============================================================
-	// 특정한 경우에 부모로부터 탈퇴합니다.
-	// 이 코드가 없으면 무한 순환이 생길 수 있습니다.
-	// A-->B-->C (화살표는 자식을 나타냅니다.) 와 같은 관계가 있을 때
-	// A 가 C 의 자식이 되는 경우에는 A-->B-->C-->A-->... 와 같이
-	// 무한 순환이 생깁니다.
-	// 이를 방지하기 위해서
-	// 트리의 부모들에서 인자로 받은 child 트랜스폼이 부모로 존재한다면
-	// 인자로 받은 child 트랜스폼은 인자로 받은 child 트랜스폼의 
-	// 자식 중 하나인 이전 노드 it_prevParent를 자식에서 제거합니다.
-	// 따라서 C-->A-->B 관계가 되고, 무한 순환이 깨집니다.
+	if (child == this) return;
+	if (!child) return;
+	// =====================================================================
+	// 무한 순환이 발생할 수 있는 경우 부모에서 탈퇴합니다.
+	// A-->B-->C (화살표가 가리키는 대상은 자식을 나타냅니다.) 와 같은 관계가 있을 때
+	// A 가 C 의 자식이 되면 A-->B-->C-->A-->... 처럼 무한 순환이 발생합니다.
+	// 해당 코드는 다음과 같이 동작합니다.
 	// 1. A-->B-->C
-	// 2. A-->B   C
-	// 3.         C-->A-->B
-	// ===============================================================
+	// 2. A   B-->C
+	// 3.     B-->C-->A
+	// =====================================================================
 	Transform* it_prevParent = this;
 	Transform* it_parent = m_parent;
 	while (it_parent)
@@ -315,51 +295,33 @@ void Transform::AddChild(Transform* child)
 		it_prevParent = it_parent;
 		it_parent = it_parent->m_parent;
 	}
-
 	// child 트랜스폼을을 부모로부터 탈퇴시킵니다. 
 	child->DetachFromParent();
-
 	// 추가되려는 child 트랜스폼의 부모를 이 트랜스폼으로 설정합니다.
 	child->m_parent = this;
-
 	// 이 트랜스폼의 자식에 추가되려는 child 트랜스폼을 추가합니다.
 	m_childs.push_back(child);
-
 	// 자식으로 추가된 child 트랜스폼을 업데이트합니다.
-
 	child->UpdateLocalTransform();
 
-	//[!]
 	child->UpdateChildWorldTransforms();
-
 	child->UpdateActiveInTree();
 }
 
 void Transform::RemoveChild(Transform* child)
 {
-	if (!child)
-		return;
-
+	if (!child) return;
 	// child 트랜스폼이 자식으로 존재하지 않는다면 종료합니다.
-
 	auto find_it = find(m_childs.begin(), m_childs.end(), child);
-
-	if (find_it == m_childs.end())
-		return;
-
+	if (find_it == m_childs.end()) return;
 	// child 트랜스폼을 자식 벡터에서 제거합니다.
 	m_childs.erase(find_it);
-
 	// child 트랜스폼의 부모를 없음으로 설정합니다.
 	child->m_parent = nullptr;
-
 	// 부모에서 탈퇴된 child 트랜스폼을 업데이트합니다.
-
 	child->UpdateLocalTransform();
 
-	//[!]
 	child->UpdateChildWorldTransforms();
-
 	child->UpdateActiveInTree();
 }
 
@@ -451,14 +413,11 @@ void Transform::OnDestroyed()
 	// 자식 트랜스폼도 부모에서 탈퇴하는 작업을 진행하게 됩니다.
 	// 이 작업이 겹치기 때문에 컨테이너를 순회하며 동시에 컨테이너에서 제거하는 것은 문제가 발생할 수 있습니다.
 	// ===================================================================================================
-
 	DetachFromParent();
-
 	// 부모에게서 탈퇴한 후
 	// 벡터의 맨 뒤쪽 자식부터 하나씩 제거합니다.
 	// 이때 Destroy 함수 호출시 Transform 컴포넌트는 부모 벡터에서 제거되므로
 	// child->Destroy() 함수를 호출하는 것 만으로도 벡터에서 제거됩니다.
-
 	while (!m_childs.empty())
 	{
 		auto child = m_childs.back();
@@ -531,18 +490,14 @@ void Transform::UpdateLocalTransform()
 	if (m_parent)
 	{
 		M4 worldTransformation = M4::SRT(m_worldData.scale, m_worldData.rotation, m_worldData.position);
-		M4 localTransformation = worldTransformation * m_parent->worldToLocalMatrix;
-		
+		M4 localTransformation = worldTransformation * m_parent->worldToLocalMatrix;	
 		m_localData.position = localTransformation.GetTranslation();
 		m_localData.rotation = m_worldData.rotation * m_parent->transform->m_worldData.rotation.inversed;
 		m_localData.eulerAngles = m_localData.rotation.eulerAngles;
-		//m_localData.scale = localTransformation.GetLocalScale();
-
 		float sx = ((V3)localTransformation.GetRow(0)).magnitude * Sign(m_worldData.scale.x * m_parent->m_worldData.scale.x);
 		float sy = ((V3)localTransformation.GetRow(1)).magnitude * Sign(m_worldData.scale.y * m_parent->m_worldData.scale.y);
 		float sz = ((V3)localTransformation.GetRow(2)).magnitude * Sign(m_worldData.scale.z * m_parent->m_worldData.scale.z);
 		V3 newScale = V3(sx, sy, sz);
-
 		if (V3::Distance(m_localData.scale, newScale) > SCALE_EPSILON)
 			m_localData.scale = newScale;
 	}
@@ -575,13 +530,10 @@ void Transform::UpdateWorldTransform()
 		m_worldData.position = m_localToWorld.GetTranslation();
 		m_worldData.rotation = m_localData.rotation * m_parent->m_worldData.rotation;
 		m_worldData.eulerAngles = m_worldData.rotation.eulerAngles;
-		//m_worldData.scale = m_localToWorld.GetLocalScale();
-
 		float sx = ((V3)m_localToWorld.GetRow(0)).magnitude * Sign(m_localData.scale.x * m_parent->m_worldData.scale.x);
 		float sy = ((V3)m_localToWorld.GetRow(1)).magnitude * Sign(m_localData.scale.y * m_parent->m_worldData.scale.y);
 		float sz = ((V3)m_localToWorld.GetRow(2)).magnitude * Sign(m_localData.scale.z * m_parent->m_worldData.scale.z);
 		V3 newScale = V3(sx, sy, sz);
-
 		if (V3::Distance(m_worldData.scale, newScale) > SCALE_EPSILON)
 			m_worldData.scale = newScale;
 	}

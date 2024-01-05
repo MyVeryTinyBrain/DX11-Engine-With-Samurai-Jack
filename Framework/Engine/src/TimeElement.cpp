@@ -117,28 +117,20 @@ unsigned int FixedUptateTimeElement::Accumulate()
     // 1 이상의 정수를 반환할 때 누적 시간은 간격 시간보다 작은 값으로 재설정됩니다.
     // 델타 타임은 언제나 간격 시간으로 고정됩니다.
     // ==================================================================================
-
     LONGLONG currentTick = GetTick();
-
     LONGLONG elapsedTick = currentTick - m_beforeTick;
 
     m_beforeTick = currentTick;
-
     float elapsed = float(elapsedTick) / float(GetTickPerSeconds());
-
     m_accumulated += elapsed;
 
     if (m_accumulated >= m_interval)
     {
         DWORD over = DWORD(m_accumulated / m_interval);
-
         m_accumulated -= over * m_interval;
-
         m_deltaTime = m_interval;
-
         return over;
     }
-
     return 0;
 }
 

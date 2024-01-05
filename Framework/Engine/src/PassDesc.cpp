@@ -197,7 +197,7 @@ bool PassDesc::CreateInputElements(ID3DX11EffectPass* pass, D3D11_INPUT_ELEMENT_
 
 	D3D11_INPUT_ELEMENT_DESC* elements = new D3D11_INPUT_ELEMENT_DESC[vecElements.size()]{};
 	copy(vecElements.begin(), vecElements.end(), elements);
-
+	
 	*out_arrElements = elements;
 	*out_count = uint(vecElements.size());
 
@@ -252,27 +252,20 @@ bool PassDesc::ExtractRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_rend
 {
 	if (!pass || !out_renderGroup)
 		return false;
-
 	*out_renderGroup = RenderGroup::Standard;
-
+	ID3DX11EffectStringVariable* hRenderGroup = nullptr;
 	D3DX11_PASS_DESC passDesc = {};
 	if (FAILED(pass->GetDesc(&passDesc)))
 		return false;
-
-	ID3DX11EffectStringVariable* hRenderGroup = nullptr;
-
 	// find annotation <string rendergroup>
 	for (uint32_t i = 0; i < passDesc.Annotations; ++i)
 	{
 		ID3DX11EffectVariable* annotation = pass->GetAnnotationByIndex(i);
-
 		if (!annotation->IsValid())
 			continue;
-
 		D3DX11_EFFECT_VARIABLE_DESC annotationDesc = {};
 		if (FAILED(annotation->GetDesc(&annotationDesc)))
 			continue;
-
 		string name = annotationDesc.Name;
 		std::transform(name.begin(), name.end(), name.begin(), std::tolower);
 		if (name == "rendergroup" && annotation->AsString()->IsValid())
@@ -280,17 +273,13 @@ bool PassDesc::ExtractRenderGroup(ID3DX11EffectPass* pass, RenderGroup* out_rend
 			hRenderGroup = annotation->AsString();
 			break;
 		}
-
 		SafeRelease(annotation);
 	}
-
 	if (!hRenderGroup)
 		return true;
-
 	LPCSTR lpcstrRenderGroup;
 	if (FAILED(hRenderGroup->GetString(&lpcstrRenderGroup)))
 		return false;
-
 	string strRenderGroup = lpcstrRenderGroup;
 	std::transform(strRenderGroup.begin(), strRenderGroup.end(), strRenderGroup.begin(), std::tolower);
 	if (strRenderGroup == "priority")

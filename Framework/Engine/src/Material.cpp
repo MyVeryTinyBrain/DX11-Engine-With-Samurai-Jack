@@ -634,20 +634,16 @@ string Material::ToJson() const
 {
 	Json::Value root;
 	root["shader"] = tstring_to_string(m_shader->path);
-
 	Json::Value variables;
-
 	for (uint i = 0; i < (uint)m_shaderVariables.size(); ++i)
 	{
 		auto& shaderVariable = m_shaderVariables[i];
-
 		Json::Value variable;
 		variable["name"] = shaderVariable->info->Name;
 		variable["semantic"] = shaderVariable->info->Semantic;
 		variable["arrayCount"] = shaderVariable->info->ArrayCount;
 		variable["array"] = shaderVariable->info->IsArray();
-		variable["type"] = (uint)shaderVariable->info->Type;
-		
+		variable["type"] = (uint)shaderVariable->info->Type;	
 		Json::Value data;
 		for (uint j = 0; j < shaderVariable->info->ArrayCount; ++j)
 		{
@@ -676,14 +672,10 @@ string Material::ToJson() const
 					break;
 			}
 		}
-
 		variable["data"] = data;
-
 		variables[i] = variable;
-	}
-	
+	}	
 	root["variables"] = variables;
-
 	Json::StreamWriterBuilder builder;
 	return Json::writeString(builder, root);
 }
@@ -695,7 +687,6 @@ ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* m
 
 	if (nullable_resourceKey && management->Exist(*nullable_resourceKey))
 		return nullptr;
-
 	string error;
 	std::ifstream ifs;
 	ifs.open(jsonPath, ios_base::in);
@@ -712,21 +703,17 @@ ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* m
 	unique_ptr<Json::CharReader> reader(builder.newCharReader());
 	if (!reader->parse(json.c_str(), json.c_str() + json.length(), &root, &error))
 		return nullptr;
-
 	const string& shaderPath = root["shader"].asString();
 	ResourceRef<Shader> shader = management->Find(string_to_tstring(shaderPath));
 	if (!shader)
 		return nullptr;
-
 	bool isManagement = nullable_resourceKey != nullptr;
 	tstring resourceKey = nullable_resourceKey ? *nullable_resourceKey : jsonPath;
 	Material* material = new Material(management, isManagement, resourceKey, shader);
 	const Json::Value& variables = root["variables"];
-
 	for (uint i = 0; i < variables.size(); ++i)
 	{
 		const Json::Value& variable = variables[i];
-
 		for (auto& shaderVariable : material->m_shaderVariables)
 		{
 			if (shaderVariable->info->Name == variable["name"].asString() &&
@@ -738,7 +725,6 @@ ResourceRef<Material> Material::LoadMaterialFromJsonCommon(ResourceManagement* m
 				V4 vector;
 				M4 matrix;
 				ResourceRef<Texture> texture;
-
 				for (uint j = 0; j < variable["data"].size(); ++j)
 				{
 					switch (shaderVariable->info->Type)
@@ -816,13 +802,13 @@ HRESULT Material::ApplyPass(Com<ID3D11DeviceContext> deviceContext, uint techniq
 
 void Material::ApplyVariables()
 {
-	for (auto& var : m_shaderVariables)
+	for (ShaderVariable* var : m_shaderVariables)
 		var->Apply();
 }
 
 void Material::ApplySpecificVariables(Com<ID3D11DeviceContext> deviceContext, ICamera* camera)
 {
-	for (auto& var : m_specificShaderVariables)
+	for (ISpecificShaderVariable* var : m_specificShaderVariables)
 		var->Apply(deviceContext, camera);
 }
 
@@ -842,26 +828,7 @@ void Material::SetupShaderVariables()
 		if (variableInfo->Semantic == "")
 		{
 			ShaderVariable* variable = new ShaderVariable(this, variableInfo);
-
-			//// Default: White Texture
-			//if (variable->isTexture)
-			//{
-			//	if (!variable->isArray)
-			//	{
-			//		variable->SetTexture(system->resourceManagement->builtIn->whiteTexture);
-			//	}
-			//	else
-			//	{
-			//		ResourceRef<Texture>* arr = new ResourceRef<Texture>[variable->elementCount]{};
-			//		for (uint i = 0; i < 32 && i < variable->elementCount; ++i)
-			//			arr[i] = system->resourceManagement->builtIn->whiteTexture;
-			//		variable->SetTextures(arr, variable->elementCount);
-			//		SafeDeleteArray(arr);
-			//	}
-			//}
-
 			ApplyAnnotation(variable);
-
 			m_shaderVariables.emplace_back(variable);
 		}
 		else if (variableInfo->Semantic == "TIME")
@@ -905,26 +872,19 @@ void Material::ApplyAnnotation(ShaderVariable* variable)
 					isVector = true;
 					break;
 			}
-
 			switch (annotation.type)
 			{
 				case ShaderVariableInfo::Annotation::Type::Scalar:
 					if (isScalar)
-					{
 						variable->SetRawValue(&annotation.scalar, variable->info->Size);
-					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Text:
 					if (isTexture2D)
-					{
 						variable->SetTexture(ParseTexture(system->resource->builtIn, annotation.text));
-					}
 					break;
 				case ShaderVariableInfo::Annotation::Type::Vector:
 					if (isVector)
-					{
 						variable->SetRawValue(&annotation.vector, sizeof(V4));
-					}
 					break;
 			}
 		}

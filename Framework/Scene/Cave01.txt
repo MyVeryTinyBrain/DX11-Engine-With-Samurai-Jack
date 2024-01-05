@@ -415,7 +415,7 @@
          "extents" : "[\n\t100.0,\n\t1.0,\n\t100.0,\n\t0.0\n]",
          "isTrigger" : false,
          "layerIndex" : 0,
-         "localPosition" : "[\n\t7.9533014297485352,\n\t-1.0037980079650879,\n\t19.384544372558594,\n\t0.0\n]",
+         "localPosition" : "[\n\t7.953239917755127,\n\t-1.0276186466217041,\n\t19.384553909301758,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BoxCollider0",
@@ -500,23 +500,7 @@
          "type" : "BoxCollider"
       },
       {
-         "localPosition" : "[\n\t7.5704813003540039,\n\t0.94475942850112915,\n\t42.099567413330078,\n\t0.0\n]",
-         "localRotation" : "[\n\t3.1610784390068147e-06,\n\t1.0,\n\t-5.4600604926235974e-06,\n\t-4.3694129203686316e-08\n]",
-         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
-         "name" : "BeetleDrone0",
-         "tag" : "",
-         "type" : "BeetleDrone"
-      },
-      {
-         "localPosition" : "[\n\t5.6702661514282227,\n\t0.83649963140487671,\n\t45.488430023193359,\n\t0.0\n]",
-         "localRotation" : "[\n\t-1.348865197314808e-07,\n\t1.0,\n\t-5.4911379265831783e-07,\n\t-4.3711462893725184e-08\n]",
-         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
-         "name" : "BeetleDrone1",
-         "tag" : "",
-         "type" : "BeetleDrone"
-      },
-      {
-         "localPosition" : "[\n\t8.554931640625,\n\t0.58994680643081665,\n\t47.859481811523438,\n\t0.0\n]",
+         "localPosition" : "[\n\t7.3594164848327637,\n\t0.58993184566497803,\n\t44.597640991210938,\n\t0.0\n]",
          "localRotation" : "[\n\t4.3459376541932215e-08,\n\t1.0,\n\t1.4161237515963876e-07,\n\t-4.3711395392165286e-08\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleDrone2",
@@ -692,7 +676,7 @@
          "extents" : "[\n\t19.799999237060547,\n\t0.5,\n\t19.899999618530273,\n\t0.0\n]",
          "isTrigger" : false,
          "layerIndex" : 0,
-         "localPosition" : "[\n\t-48.320926666259766,\n\t-0.21892786026000977,\n\t97.709014892578125,\n\t0.0\n]",
+         "localPosition" : "[\n\t-48.320949554443359,\n\t-0.33385467529296875,\n\t97.71026611328125,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BoxCollider25",
@@ -755,15 +739,7 @@
          "type" : "BoxCollider"
       },
       {
-         "localPosition" : "[\n\t7.2401432991027832,\n\t0.67624664306640625,\n\t60.623355865478516,\n\t0.0\n]",
-         "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
-         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
-         "name" : "BeetleDrone3",
-         "tag" : "",
-         "type" : "BeetleDrone"
-      },
-      {
-         "localPosition" : "[\n\t9.0363264083862305,\n\t0.72948390245437622,\n\t58.799991607666016,\n\t0.0\n]",
+         "localPosition" : "[\n\t9.695836067199707,\n\t0.72950398921966553,\n\t59.236606597900391,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleDrone4",
@@ -771,7 +747,7 @@
          "type" : "BeetleDrone"
       },
       {
-         "localPosition" : "[\n\t5.4891376495361328,\n\t0.78381294012069702,\n\t59.062114715576172,\n\t0.0\n]",
+         "localPosition" : "[\n\t6.256319522857666,\n\t0.78381282091140747,\n\t59.061592102050781,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleDrone5",
@@ -779,15 +755,7 @@
          "type" : "BeetleDrone"
       },
       {
-         "localPosition" : "[\n\t5.8251152038574219,\n\t0.56736016273498535,\n\t72.929519653320312,\n\t0.0\n]",
-         "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
-         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
-         "name" : "BeetleDrone7",
-         "tag" : "",
-         "type" : "BeetleDrone"
-      },
-      {
-         "localPosition" : "[\n\t4.291532039642334,\n\t0.53779292106628418,\n\t71.835494995117188,\n\t0.0\n]",
+         "localPosition" : "[\n\t4.8090305328369141,\n\t0.53779184818267822,\n\t72.677238464355469,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleDrone8",
@@ -795,7 +763,7 @@
          "type" : "BeetleDrone"
       },
       {
-         "localPosition" : "[\n\t11.120156288146973,\n\t0.66357707977294922,\n\t71.841468811035156,\n\t0.0\n]",
+         "localPosition" : "[\n\t10.300849914550781,\n\t0.663532555103302,\n\t72.278060913085938,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleDrone9",
@@ -807,14 +775,6 @@
          "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleDrone10",
-         "tag" : "",
-         "type" : "BeetleDrone"
-      },
-      {
-         "localPosition" : "[\n\t9.4390897750854492,\n\t0.6256401538848877,\n\t72.881744384765625,\n\t0.0\n]",
-         "localRotation" : "[\n\t0.0,\n\t1.0,\n\t-0.0,\n\t-4.3711388286737929e-08\n]",
-         "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
-         "name" : "BeetleDrone11",
          "tag" : "",
          "type" : "BeetleDrone"
       },
@@ -971,8 +931,8 @@
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BeetleSapwner0",
-         "numSpawn" : 10,
-         "spawnDuration" : 7.0,
+         "numSpawn" : 6,
+         "spawnDuration" : 6.0,
          "tag" : "",
          "type" : "BeetleSapwner"
       },
@@ -1052,7 +1012,7 @@
          "diffuse" : "[\n\t0.79333335161209106,\n\t0.058177769184112549,\n\t0.058177769184112549,\n\t1.0\n]",
          "drawShadow" : false,
          "intensity" : 1.0,
-         "localPosition" : "[\n\t19.309822082519531,\n\t1.1771128177642822,\n\t77.416084289550781,\n\t0.0\n]",
+         "localPosition" : "[\n\t19.520092010498047,\n\t0.36537706851959229,\n\t77.899345397949219,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "PointLight0",
@@ -1104,7 +1064,7 @@
          "diffuse" : "[\n\t0.81333333253860474,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "drawShadow" : false,
          "intensity" : 1.0,
-         "localPosition" : "[\n\t-11.338294982910156,\n\t2.8852076530456543,\n\t61.590736389160156,\n\t0.0\n]",
+         "localPosition" : "[\n\t-12.493719100952148,\n\t0.86822807788848877,\n\t61.743484497070312,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "PointLight1",
@@ -1179,7 +1139,7 @@
          "diffuse" : "[\n\t0.79333335161209106,\n\t0.063466653227806091,\n\t0.063466653227806091,\n\t1.0\n]",
          "drawShadow" : false,
          "intensity" : 1.0,
-         "localPosition" : "[\n\t-48.418617248535156,\n\t1.5698968172073364,\n\t116.18778228759766,\n\t0.0\n]",
+         "localPosition" : "[\n\t-48.841415405273438,\n\t0.4851723313331604,\n\t116.80182647705078,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "PointLight2",
@@ -1220,7 +1180,7 @@
          "diffuse" : "[\n\t0.80000001192092896,\n\t0.1119999885559082,\n\t0.1119999885559082,\n\t1.0\n]",
          "drawShadow" : false,
          "intensity" : 1.0,
-         "localPosition" : "[\n\t-52.226657867431641,\n\t1.2929836511611938,\n\t79.961395263671875,\n\t0.0\n]",
+         "localPosition" : "[\n\t-51.950687408447266,\n\t0.76516026258468628,\n\t79.633926391601562,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "PointLight3",
@@ -1261,18 +1221,18 @@
          "diffuse" : "[\n\t0.75999999046325684,\n\t0.040533337742090225,\n\t0.040533337742090225,\n\t1.0\n]",
          "drawShadow" : false,
          "intensity" : 1.0,
-         "localPosition" : "[\n\t-65.808212280273438,\n\t5.5088009834289551,\n\t91.093917846679688,\n\t0.0\n]",
+         "localPosition" : "[\n\t-65.873832702636719,\n\t6.3202304840087891,\n\t91.088432312011719,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "PointLight4",
-         "range" : 10.741000175476074,
+         "range" : 21.642000198364258,
          "shadowBias" : 9.9999997473787516e-05,
          "shadowWhiteness" : 0.20000000298023224,
          "tag" : "",
          "type" : "PointLight",
-         "volumetricLightIntensity" : 1.5,
+         "volumetricLightIntensity" : 0.13199999928474426,
          "volumetricLightNumSamples" : 50,
-         "volumetricLightPower" : 1.5,
+         "volumetricLightPower" : 0.23499999940395355,
          "volumetricLightState" : false
       },
       {
@@ -1407,7 +1367,7 @@
          "extents" : "[\n\t0.5,\n\t5.6999998092651367,\n\t3.5999999046325684,\n\t0.0\n]",
          "isTrigger" : false,
          "layerIndex" : 0,
-         "localPosition" : "[\n\t-81.055740356445312,\n\t2.6691770553588867,\n\t97.53985595703125,\n\t0.0\n]",
+         "localPosition" : "[\n\t-82.208572387695312,\n\t2.6690688133239746,\n\t97.536819458007812,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BoxCollider4",
@@ -1418,7 +1378,7 @@
          "extents" : "[\n\t2.4000000953674316,\n\t4.3000001907348633,\n\t3.9000000953674316,\n\t0.0\n]",
          "isTrigger" : true,
          "layerIndex" : 0,
-         "localPosition" : "[\n\t-79.470413208007812,\n\t3.0228633880615234,\n\t97.996818542480469,\n\t0.0\n]",
+         "localPosition" : "[\n\t-79.471305847167969,\n\t3.0229859352111816,\n\t98.000701904296875,\n\t0.0\n]",
          "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
          "localScale" : "[\n\t1.0,\n\t1.0,\n\t1.0,\n\t0.0\n]",
          "name" : "BoxCollider5",

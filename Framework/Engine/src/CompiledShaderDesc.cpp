@@ -447,15 +447,12 @@ CompiledShaderDesc* CompiledShaderDesc::CreateCompiledShader(Com<ID3D11Device> d
 	for (uint32_t i = 0; i < effectDesc.GlobalVariables; ++i)
 	{
 		ID3DX11EffectVariable* handle = effect->GetVariableByIndex(i);
-
 		ShaderVariableInfo* info = ShaderVariableInfo::Create(handle);
-
 		if (!info)
 		{
 			ReleaseVars();
 			return nullptr;
 		}
-
 		infos.push_back(info);
 	}
 

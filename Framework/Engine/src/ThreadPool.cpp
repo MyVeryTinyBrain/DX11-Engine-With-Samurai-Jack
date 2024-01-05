@@ -67,7 +67,7 @@ void ThreadPool::TerminateAllThreads()
 {
 	unique_lock<mutex> lock(m_mutexThread);
 	{
-		stack<function<void()>> temp;
+		queue<function<void()>> temp;
 		m_q.swap(temp);
 		m_terminate = true;
 	}
@@ -105,7 +105,7 @@ void ThreadPool::Thread()
 			return;
 		}
 
-		function<void()> func = std::move(m_q.top());
+		function<void()> func = std::move(m_q.front());
 		m_q.pop();
 		lock.unlock();
 

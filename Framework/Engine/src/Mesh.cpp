@@ -180,7 +180,6 @@ ResourceRef<Mesh> Mesh::LoadMeshM(ResourceManagement* management, const tstring&
 	AssimpData* data = nullptr;
 	VI* viLoaded = nullptr;
 	VIBuffer* viBufferLoaded = nullptr;
-
 	auto ReleaseVars = [&]()
 	{
 		SafeDelete(data);

@@ -36,7 +36,7 @@ private:
 	mutex					m_mutexThread;
 	condition_variable		m_cvThread;
 	bool					m_terminate = false;
-	stack<function<void()>>	m_q;
+	queue<function<void()>>	m_q;
 	atomic<unsigned int>	m_numJob = 0;
 };
 

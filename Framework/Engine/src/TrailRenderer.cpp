@@ -125,7 +125,7 @@ void TrailRenderer::Render()
 	}
 }
 
-void TrailRenderer::OnCamera(ICamera* camera, RenderRequest* inout_pinput)
+void TrailRenderer::OnCamera(ICamera* camera, RenderRequest* inout_pInout)
 {
 	if (IsValid())
 		ApplyVertices(camera);
@@ -397,32 +397,24 @@ void TrailRenderer::ApplyVertices(ICamera* camera)
 TrailRenderer::VertexPairOutput TrailRenderer::CalcVertexPair(const TrailRenderer::VertexPairInput& desc, V3& inout_min, V3& inout_max) const
 {
 	TrailRenderer::VertexPairOutput output;
-
 	V3 a2b = desc.end - desc.start;
 	if (desc.inverse) a2b *= -1.0f;
 	V3 dir = a2b.normalized;
-
 	V3 right, up;
 	switch (desc.alignment)
 	{
 		case (TrailRenderer::Alignment::View):
-		{
 			right = V3::Cross(desc.camera->GetDirection(), dir).normalized;
 			up = V3::Cross(right, dir).normalized;
-		}
-		break;
+			break;
 		case (TrailRenderer::Alignment::Local):
-		{
 			dir = desc.rotation.MultiplyVector(V3::forward());
 			right = desc.rotation.MultiplyVector(V3::right());
 			up = desc.rotation.MultiplyVector(V3::up());
-		}
-		break;
+			break;
 	}
-
 	float halfWidth = desc.width * 0.5f;
 	float scale = 1.0f;
-
 	if (m_applyWidthByLength)
 	{
 		const Data& first = m_datas.front();
@@ -431,7 +423,6 @@ TrailRenderer::VertexPairOutput TrailRenderer::CalcVertexPair(const TrailRendere
 		float firstDistance = first.distanceAcc;
 		scale = Clamp01((desc.distanceAcc - first.distanceAcc) / (end.distanceAcc - first.distanceAcc));
 	}
-
 	if (!desc.inverse)
 	{
 		output.position[0] = desc.start + right * halfWidth * scale;
@@ -442,11 +433,9 @@ TrailRenderer::VertexPairOutput TrailRenderer::CalcVertexPair(const TrailRendere
 		output.position[0] = desc.end + right * halfWidth * scale;
 		output.position[1] = desc.end - right * halfWidth * scale;
 	}
-
 	output.normal = up;
 	output.binormal = right;
 	output.tangent = dir;
-
 	if (!m_fitUToWidth)
 	{
 		output.uvw[0].x = 0.0f;
@@ -457,7 +446,6 @@ TrailRenderer::VertexPairOutput TrailRenderer::CalcVertexPair(const TrailRendere
 		output.uvw[0].x = 1.0f - (scale * 0.5f + 0.5f);
 		output.uvw[1].x = scale * 0.5f + 0.5f;
 	}
-
 	if (m_fitVToLength)
 	{
 		output.uvw[0].y = desc.percent;
@@ -469,14 +457,11 @@ TrailRenderer::VertexPairOutput TrailRenderer::CalcVertexPair(const TrailRendere
 		output.uvw[0].y = v;
 		output.uvw[1].y = v;
 	}
-
 	output.uvw[0].z = desc.percent;
 	output.uvw[1].z = desc.percent;
-
 	V3 min = V3::Min(output.position[0], output.position[1]);
 	V3 max = V3::Max(output.position[0], output.position[1]);
 	inout_min = V3::Min(min, inout_min);
 	inout_max = V3::Max(max, inout_max);
-
 	return output;
 }

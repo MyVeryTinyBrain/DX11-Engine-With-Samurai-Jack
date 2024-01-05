@@ -147,11 +147,19 @@ void GraphicSystem::Render()
 
 		if (!hasRenderTexture2D)
 		{
-			m_postProcessing->DrawToTextrue(drt->result->srv, m_rtv, uint2(m_width, m_height), PostProcessing::CopyType::Default);
+			m_postProcessing->DrawToTextrue(
+				drt->result->srv, 
+				m_rtv, 
+				uint2(m_width, m_height), 
+				PostProcessing::CopyType::Default);
 		}
 		else
 		{
-			m_postProcessing->DrawToTextrue(drt->result->srv, camera->GetRenderTarget()->rtv.Get(), uint2(camera->GetRenderTarget()->width, camera->GetRenderTarget()->height), PostProcessing::CopyType::Default);
+			m_postProcessing->DrawToTextrue(
+				drt->result->srv, 
+				camera->GetRenderTarget()->rtv.Get(), 
+				uint2(camera->GetRenderTarget()->width, camera->GetRenderTarget()->height), 
+				PostProcessing::CopyType::Default);
 		}
 	}
 

@@ -191,7 +191,11 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 
 	m_light->Render(camera);
 
-	m_graphicSystem->postProcessing->DrawToTextrue(drt->lightBlend->srv, drt->result->rtv, uint2(drt->result->width, drt->result->height), PostProcessing::CopyType::Alphatest);
+	m_graphicSystem->postProcessing->DrawToTextrue(
+		drt->lightBlend->srv, 
+		drt->result->rtv, 
+		uint2(drt->result->width, drt->result->height), 
+		PostProcessing::CopyType::Alphatest);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::AfterDeferred);
 
@@ -209,8 +213,6 @@ void RenderQueue::Render_Forward(ICamera* camera)
 
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
-
-	//Render_Emissive(camera);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::AfterTransparent);
 

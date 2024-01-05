@@ -152,7 +152,8 @@ void ShaderVariable::SetTextures(ResourceRef<Texture>* textures, uint count)
 
 void ShaderVariable::SetRawValue(const void* src, size_t size)
 {
-	assert(size <= m_valueBytesSize); // 정의된 타입고 다른 타입을 쉐이더에 전달하려고 시도했거나, 전달하려는 크기가 지정된 타입의 크기보다 더 큽니다.
+	// 정의된 타입고 다른 타입을 쉐이더에 전달하려고 시도했거나, 전달하려는 크기가 지정된 타입의 크기보다 더 큽니다.
+	assert(size <= m_valueBytesSize);
 	memcpy(m_valueBytes, src, size);
 }
 

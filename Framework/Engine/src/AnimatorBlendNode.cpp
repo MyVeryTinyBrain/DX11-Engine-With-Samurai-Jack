@@ -107,7 +107,9 @@ bool AnimatorBlendNode::CalculateClosetIndices(float position, uint& out_aIndex,
 	return true;
 }
 
-void AnimatorBlendNode::CalculateBlendWeights(float position, uint aIndex, uint bIndex, float& out_aWeight, float& out_bWeight) const
+void AnimatorBlendNode::CalculateBlendWeights(
+	float position, uint aIndex, uint bIndex, 
+	float& out_aWeight, float& out_bWeight) const
 {
 	float aDistance = Abs(position - m_elements[aIndex]->position);
 	float bDistance = Abs(m_elements[bIndex]->position - position);
@@ -129,7 +131,10 @@ void AnimatorBlendNode::CalculateBlendWeights(float position, uint aIndex, uint 
 	out_bWeight = weightB;
 }
 
-void AnimatorBlendNode::CalculateTimeScales(uint aIndex, uint bIndex, float aWeight, float bWeight, float& out_aScale, float& out_bScale) const
+void AnimatorBlendNode::CalculateTimeScales(
+	uint aIndex, uint bIndex, 
+	float aWeight, float bWeight, 
+	float& out_aScale, float& out_bScale) const
 {
 	float aDuration = m_elements[aIndex]->node->duration * aWeight; 
 	float bDuration = m_elements[bIndex]->node->duration * bWeight;
@@ -165,19 +170,16 @@ bool AnimatorBlendNode::AnimateNodeImpl(
 {
 	if (m_elements.size() == 0)
 		return false;
-
 	if (m_lastPosition != m_positionProperty->valueAsFloat)
 	{
 		CalculateValues();
 		m_lastPosition = m_positionProperty->valueAsFloat;
 	}
-
 	if (m_weightA * m_weightB == 0)
 	{
 		uint index = m_weightA > m_weightB ? m_indexA : m_indexB;
 		float timeScale = m_weightA > m_weightB ? m_timescaleA : m_timescaleB;
 		float indexSpeed = m_elements[index]->node->speed;
-
 		m_elements[index]->node->m_normalizedTime = m_normalizedTime * timeScale * indexSpeed;
 		m_elements[index]->node->m_dt = m_dt * indexSpeed;
 		return m_elements[index]->node->AnimateNodeImpl(
@@ -189,12 +191,10 @@ bool AnimatorBlendNode::AnimateNodeImpl(
 	{
 		float ASpeed = m_elements[m_indexA]->node->speed;
 		float BSpeed = m_elements[m_indexB]->node->speed;
-
 		m_elements[m_indexA]->node->m_normalizedTime = m_normalizedTime * m_timescaleA * ASpeed;
 		m_elements[m_indexA]->node->m_dt = m_dt * ASpeed;
 		m_elements[m_indexB]->node->m_normalizedTime = m_normalizedTime * m_timescaleB * BSpeed;
 		m_elements[m_indexB]->node->m_dt = m_dt * BSpeed;
-
 		uint nodeIndex;
 		V3   position[2];
 		Q    rotation[2];
@@ -211,10 +211,7 @@ bool AnimatorBlendNode::AnimateNodeImpl(
 			position[1], rotation[1], scale[1],
 			deltaPosition[1], deltaRotation[1]))
 			return false;
-
-		//float deltaWeightB = m_weightB;
 		float deltaWeightB = m_weightB * m_weightB;
-
 		out_nodeIndex = nodeIndex;
 		out_position = V3::Lerp(position[0], position[1], m_weightB);
 		out_rotation = Q::SLerp(rotation[0], rotation[1], m_weightB);
@@ -222,7 +219,6 @@ bool AnimatorBlendNode::AnimateNodeImpl(
 		out_deltaPosition = V3::Lerp(deltaPosition[0], deltaPosition[1], deltaWeightB);
 		out_deltaRotation = Q::SLerp(deltaRotation[0], deltaRotation[1], deltaWeightB);
 	}
-
 	return true;
 }
 

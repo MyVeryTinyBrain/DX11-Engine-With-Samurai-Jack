@@ -482,7 +482,7 @@ void EnemyBeetleDrone::StateEnded(EnemyBeetleDrone::State before, EnemyBeetleDro
 
 float EnemyBeetleDrone::GetMaxHP() const
 {
-	return 11.0f;
+	return 9.0f;
 }
 
 float EnemyBeetleDrone::GetHP() const

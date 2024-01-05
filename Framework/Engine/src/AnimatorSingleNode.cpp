@@ -45,7 +45,6 @@ bool AnimatorSingleNode::AnimateNodeImpl(
 	else
 		newNormalizedTime = Clamp01(newNormalizedTime);
 	float time = newNormalizedTime * duration;
-
 	float keyframeTime = time * m_animationClip->tickPerSecond;
 
 	channel->GetKeyframeTransform(keyframeTime, out_position, out_rotation, out_scale);

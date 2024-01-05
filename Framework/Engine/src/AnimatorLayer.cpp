@@ -358,7 +358,10 @@ void AnimatorLayer::AnimateSingleNode(AnimatorNode* node, const Ref<SkinnedMeshR
 		V3 scale;
 		V3 deltaPosition;
 		Q  deltaRotation;
-		if (!node->Animate(channelIndex, nodeIndex, position, rotation, scale, deltaPosition, deltaRotation))
+		if (!node->Animate(
+			channelIndex, nodeIndex, 
+			position, rotation, scale, 
+			deltaPosition, deltaRotation))
 			continue;
 
 		const Ref<NodeTransform>& nodeTransform = skinnedMeshRenderer->GetNodeTransformByIndex(nodeIndex);
@@ -387,19 +390,16 @@ void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 {
 	m_deltaPosition = V3::zero();
 	m_deltaRotation = Q::identity();
-
 	if (!m_currentNode)
 		return;
 	if (!m_blendNode)
 		return;
-
 	if (m_currentNode->IsEmpty() && m_blendNode->IsEmpty())
 		return;
 	else if (m_currentNode->IsEmpty())
 		AnimateSingleNode(m_blendNode, skinnedMeshRenderer);
 	else if(m_blendNode->IsEmpty())
 		AnimateSingleNode(m_currentNode, skinnedMeshRenderer);
-
 	for (uint channelIndex = 0; channelIndex < skinnedMeshRenderer->nodeTransformCount; ++channelIndex)
 	{
 		uint nodeIndex;
@@ -408,32 +408,31 @@ void AnimatorLayer::AnimateDoubleNode(const Ref<SkinnedMeshRenderer>& skinnedMes
 		V3 scale[2];
 		V3 deltaPosition[2];
 		Q  deltaRotation[2];
-
-		if (!m_currentNode->Animate(channelIndex, nodeIndex, position[0], rotation[0], scale[0], deltaPosition[0], deltaRotation[0]))
+		if (!m_currentNode->Animate(
+			channelIndex, nodeIndex, 
+			position[0], rotation[0], scale[0], 
+			deltaPosition[0], deltaRotation[0]))
 			continue;
-		if (!m_blendNode->Animate(channelIndex, nodeIndex, position[1], rotation[1], scale[1], deltaPosition[1], deltaRotation[1]))
+		if (!m_blendNode->Animate(
+			channelIndex, nodeIndex, 
+			position[1], rotation[1], scale[1], 
+			deltaPosition[1], deltaRotation[1]))
 			continue;
-
 		const Ref<NodeTransform>& nodeTransform = skinnedMeshRenderer->GetNodeTransformByIndex(nodeIndex);
 		if (!nodeTransform)
 			continue;
-
 		V3 lerpPosition = V3::Lerp(position[0], position[1], m_blendPercent);
 		Q  lerpRotation = Q::SLerp(rotation[0], rotation[1], m_blendPercent);
 		V3 lerpScale = V3::Lerp(scale[0], scale[1], m_blendPercent);
-
 		if (m_rootNode && nodeTransform->node->index == m_rootNode->node->index)
 		{
 			V3 lerpDeltaPosition = V3::Lerp(deltaPosition[0], deltaPosition[1], m_blendPercent);
 			Q  lerpDeltaRotation = Q::SLerp(deltaRotation[0], deltaRotation[1], m_blendPercent);
-
 			m_deltaPosition = lerpDeltaPosition;
 			m_deltaRotation = lerpDeltaRotation;
-
 			lerpPosition = m_rootNode->defaultLocalPosition;
 			lerpRotation = m_rootNode->defaultLocalRotation;
 		}
-
 		AnimateNodeTransform(nodeTransform, lerpPosition, lerpRotation, lerpScale);
 	}
 }

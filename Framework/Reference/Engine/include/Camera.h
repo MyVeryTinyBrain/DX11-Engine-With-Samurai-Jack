@@ -159,10 +159,10 @@ private:
 	float								m_fov = 60.0f * Deg2Rad;
 	float								m_orthographicSize = 1.0f;
 
-	Projection							m_projection = Projection::Perspective;
+	Projection							m_projection = Projection::Perspective; 
 	M4									m_projectionMatrix = M4::identity();
 	BoundingHolder						m_boundingHolder;
-
+	
 	uint32_t							m_allowedLayers = 0xFFFFFFFF;
 	int									m_order = 0;
 
@@ -170,7 +170,7 @@ private:
 
 	class DeferredRenderTarget*			m_deferredRenderTarget = nullptr;
 
-	bool								m_drawGBuffer = true;
+	bool								m_drawGBuffer = false;
 	bool								m_postProcessing = true;
 	SSAODesc							m_ssaoDesc = {};
 	SSRDesc								m_ssrDesc = {};

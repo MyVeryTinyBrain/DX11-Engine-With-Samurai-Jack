@@ -52,7 +52,7 @@ void BillboardRenderer::Render()
 			if (FAILED(currentMaterial->GetShadowPassFlagOfAppliedTechnique(j, shadowPassFlag))) continue;
 
 			RenderRequest input = {};
-
+			// 로컬 매트릭스에 로컬 포지션만 포함한다.
 			M4 localMatrix = M4::SRT(V3::one(), V3::zero(), transform->localPosition);
 			M4 parentMatrix = transform->parent ? transform->parent->localToWorldMatrix : M4::identity();
 			input.essential.worldMatrix = localMatrix * parentMatrix;
@@ -83,30 +83,32 @@ void BillboardRenderer::Render()
 	}
 }
 
-void BillboardRenderer::OnCamera(ICamera* camera, RenderRequest* inout_prequest)
+void BillboardRenderer::OnCamera(ICamera* camera, RenderRequest* inout_pInout)
 {
 	Q camRotation = camera->GetRotation();
 
+	// 록 플래그가 켜져 있으면 해당 축은 카메라를 바라보지 않는다.
 	V3 camEulerAngles = camRotation.eulerAngles;
-	if (IsLock(BillboardRenderer::LockFlag::X))
+	if (IsLocked(BillboardRenderer::LockFlag::X))
 		camEulerAngles.x = 0;
-	if (IsLock(BillboardRenderer::LockFlag::Y))
+	if (IsLocked(BillboardRenderer::LockFlag::Y))
 		camEulerAngles.y = 0;
-	if (IsLock(BillboardRenderer::LockFlag::Z))
+	if (IsLocked(BillboardRenderer::LockFlag::Z))
 		camEulerAngles.z = 0;
 
+	// 셀프 록 플래그가 켜져 있으면 해당 축은 로컬 회전을 적용하지 않는다.
 	V3 localEulerAngles = transform->localEulerAngles;
-	if (IsSelfLock(BillboardRenderer::LockFlag::X))
+	if (IsSelfLocked(BillboardRenderer::LockFlag::X))
 		localEulerAngles.x = 0;
-	if (IsSelfLock(BillboardRenderer::LockFlag::Y))
+	if (IsSelfLocked(BillboardRenderer::LockFlag::Y))
 		localEulerAngles.y = 0;
-	if (IsSelfLock(BillboardRenderer::LockFlag::Z))
+	if (IsSelfLocked(BillboardRenderer::LockFlag::Z))
 		localEulerAngles.z = 0;
 
 	M4 scaleMatrix = M4::Scale(transform->localScale);
 	M4 rotateMatrix = M4::Rotate(camEulerAngles + localEulerAngles);
-	M4 billboardWorldMatrix = scaleMatrix * rotateMatrix * inout_prequest->essential.worldMatrix;
-	inout_prequest->essential.worldMatrix = billboardWorldMatrix;
+	M4 billboardWorldMatrix = scaleMatrix * rotateMatrix * inout_pInout->essential.worldMatrix;
+	inout_pInout->essential.worldMatrix = billboardWorldMatrix;
 }
 
 void BillboardRenderer::SetLockFlags(BillboardRenderer::LockFlags lockFlags)
@@ -131,7 +133,7 @@ BillboardRenderer::LockFlags BillboardRenderer::GetLockFlags() const
 	return m_lockFlags;
 }
 
-bool BillboardRenderer::IsLock(BillboardRenderer::LockFlag lockFlag) const
+bool BillboardRenderer::IsLocked(BillboardRenderer::LockFlag lockFlag) const
 {
 	return (m_lockFlags & lockFlag);
 }
@@ -158,7 +160,7 @@ BillboardRenderer::LockFlags BillboardRenderer::GetSelfLockFlags() const
 	return m_selfRotateLockFlags;
 }
 
-bool BillboardRenderer::IsSelfLock(BillboardRenderer::LockFlag lockFlag) const
+bool BillboardRenderer::IsSelfLocked(BillboardRenderer::LockFlag lockFlag) const
 {
 	return (m_selfRotateLockFlags & lockFlag);
 }

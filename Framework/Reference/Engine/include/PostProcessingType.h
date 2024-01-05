@@ -72,6 +72,8 @@ struct DOFDesc
 struct ChromaticAberrationDesc
 {
 	BOOL	Enable;
+	float	StartSeperate;			// [0~1]
+	float	MaxSeperate;			// [0~1]
 	V4		Blend;					// [0~1] Blend.w: padding
 	V4		Offset;					// [-inf~inf] Offset.w: padding
 	V4		Angle;					// [-inf~inf] Angles.w: padding

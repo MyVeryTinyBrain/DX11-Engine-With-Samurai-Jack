@@ -43,7 +43,7 @@ private:
 	virtual void Awake() override;
 	virtual void LateUpdate() override;
 	virtual void Render() override;
-	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pinput) override;
+	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pInout) override;
 
 public:
 

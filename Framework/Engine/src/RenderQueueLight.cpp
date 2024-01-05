@@ -182,7 +182,10 @@ void RenderQueueLight::Clear()
         m_shadowPassInstanceRequests.clear();
 }
 
-bool RenderQueueLight::IsValidShadowRequest(ICamera* camera, const LightDesc& light, const RenderRequest& request, const BoundingHolder& boundingHolder) const
+bool RenderQueueLight::IsValidShadowRequest(
+    ICamera* camera, const LightDesc& light, 
+    const RenderRequest& request, 
+    const BoundingHolder& boundingHolder) const
 {
     if (!request.shadow.draw)
         return false;
@@ -644,13 +647,6 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
 
     // Outputs
     drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem->deviceContext);
-
-    //FRect screenQuadRect = light->GetDeferredScreenQuad(camera);
-    //screenQuadRect.Vector4 += V4::one();
-    //screenQuadRect.Vector4 *= 0.5f;
-    //VI* vi = m_screenQuad->GetVI();
-    //VIUtility::SetQuadInScreen(V2(1.0f, 1.0f), screenQuadRect, vi);
-    //m_screenQuad->UpdateVertexBuffer();
 
     FRect screenQuadRect = light->GetDeferredScreenQuad(camera);
     V2 corners[4] = {};

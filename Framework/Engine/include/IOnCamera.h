@@ -11,7 +11,7 @@ public:
 
 	virtual ~IOnCamera() = default;
 
-	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pinput) = 0;
+	virtual void OnCamera(ICamera* camera, RenderRequest* inout_pInout) = 0;
 };
 
 ENGINE_END

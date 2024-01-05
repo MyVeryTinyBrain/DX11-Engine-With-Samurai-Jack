@@ -552,7 +552,7 @@ void BossAshi::SetAttackType(uint contextUInt)
 
 float BossAshi::GetMaxHP() const
 {
-    return 300.0f;
+    return 200.0f;
 }
 
 float BossAshi::GetHP() const
