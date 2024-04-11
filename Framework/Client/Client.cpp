@@ -26,7 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     WindowDesc makeWindowDesc;
     makeWindowDesc.hInstance = hInstance;
-    _tcscpy_s(makeWindowDesc.Title, TEXT("Test"));
+    _tcscpy_s(makeWindowDesc.Title, TEXT("MyGame"));
     makeWindowDesc.WinCX = 1280;
     makeWindowDesc.WinCY = 720;
     makeWindowDesc.WndProc = WndProc;
