@@ -781,6 +781,17 @@
          "name" : "BoxCollider19",
          "tag" : "",
          "type" : "BoxCollider"
+      },
+      {
+         "extents" : "[\n\t0.5,\n\t0.5,\n\t0.5,\n\t0.0\n]",
+         "isTrigger" : true,
+         "layerIndex" : 0,
+         "localPosition" : "[\n\t0.0,\n\t-4.133544921875,\n\t0.0,\n\t0.0\n]",
+         "localRotation" : "[\n\t0.0,\n\t0.0,\n\t0.0,\n\t1.0\n]",
+         "localScale" : "[\n\t98.400001525878906,\n\t1.0,\n\t78.800003051757812,\n\t0.0\n]",
+         "name" : "BoxCollider20",
+         "tag" : "FallingTrigger",
+         "type" : "BoxCollider"
       }
    ]
 }

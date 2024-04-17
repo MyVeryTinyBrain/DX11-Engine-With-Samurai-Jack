@@ -44,11 +44,17 @@ void SceneAncientKing::OnLoad()
 	}
 
 	vector<GameObject*> goNextSceneTriggers = FindGameObjectsWithTag(TAG_NEXTSCENE_TRIGGER);
-	for (auto& go : goNextSceneTriggers)
-	{
+	for (auto& go : goNextSceneTriggers) {
 		Collider* collider = go->GetComponent<Collider>();
 		if (collider)
 			m_nextSceneTriggers.push_back(collider);
+	}
+
+	vector<GameObject*> goFallingTriggers = FindGameObjectsWithTag(TAG_FALLING_TRIGGER);
+	for (auto& go : goFallingTriggers) {
+		Collider* collider = go->GetComponent<Collider>();
+		if (collider)
+			m_fallingTriggers.push_back(collider);
 	}
 
 	Camera* camera = (Camera*)system->graphic->cameraManager->mainCamera;
@@ -68,11 +74,14 @@ void SceneAncientKing::OnUnload()
 #include "SceneAshi.h"
 void SceneAncientKing::OnUpdate()
 {
-	for (auto& nextSceneTrigger : m_nextSceneTriggers)
-	{
-		if (system->physics->query->OverlapTest(nextSceneTrigger, 1 << PhysicsLayer_Player))
-		{
+	for (auto& nextSceneTrigger : m_nextSceneTriggers) {
+		if (system->physics->query->OverlapTest(nextSceneTrigger, 1 << PhysicsLayer_Player)) {
 			GameSystem::GetInstance()->ChangeScene(new SceneAshi);
+		}
+	}
+	for (auto& fallingTrigger : m_fallingTriggers) {
+		if (system->physics->query->OverlapTest(fallingTrigger, 1 << PhysicsLayer_Player)) {
+			GameSystem::GetInstance()->ChangeScene(new SceneAncientKing, 0.2f);
 		}
 	}
 }

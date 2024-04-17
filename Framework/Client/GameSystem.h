@@ -18,7 +18,8 @@ private:
 public:
 
 	void StopFade();
-	void ChangeScene(Scene* scene);
+	void ChangeScene(Scene* scene, float fadeDuration = 1.0f);
+	void ReloadScene(float fadeDuration = 1.0f);
 	void ShowPlayerHP(Ref<Player> player);
 	void ShowEnemyHP(Ref<Enemy> enemy);
 	void PlayMusic(ResourceRef<AudioClip> music, float volume, float maxVolumeDuration);

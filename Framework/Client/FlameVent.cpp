@@ -4,6 +4,7 @@
 #include "ParticleFlame.h"
 #include "EditorConfig.h"
 #include "Editor.h"
+#include "Player.h"
 
 void FlameVent::Awake()
 {
@@ -97,6 +98,10 @@ void FlameVent::Update()
 				0.0f, 0.1f, 5.0f, 0.0f, 0.9f,
 				Color::white(), Color(1.0f, 1.0f, 1.0f, 1.0f), 0.1f
 			);
+
+			if (system->physics->query->OverlapTest(m_area, 1 << PhysicsLayer_Player)) {
+				Player::GetInstance()->hp -= 100.0f * system->time->deltaTime;
+			}
 		}
 		else
 		{

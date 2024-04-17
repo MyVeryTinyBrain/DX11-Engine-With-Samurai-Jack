@@ -11,17 +11,30 @@ void SceneChanger::Init(ScreenRender* screenRender, MusicManager* musicManager)
 	m_musicManager = musicManager;
 }
 
-void SceneChanger::ChangeScene(Scene* scene)
+void SceneChanger::ChangeScene(Scene* scene, float fadeDuration)
 {
 	if (m_screenRender->GetFadeState() == ScreenRender::FadeState::None)
 	{
 		m_nextScene = scene;
-		m_screenRender->FadeIn(Color::black(), 1.0f);
-		m_musicManager->Stop(1.0f);
+		m_screenRender->FadeIn(Color::black(), fadeDuration);
+		m_musicManager->Stop(fadeDuration);
+	}
+}
+
+void SceneChanger::ReloadScene(float fadeDuration) {
+	if (m_screenRender->GetFadeState() == ScreenRender::FadeState::None) {
+		m_nextScene = nullptr;
+		m_screenRender->FadeIn(Color::black(), fadeDuration);
+		m_musicManager->Stop(fadeDuration);
 	}
 }
 
 void SceneChanger::OnEndFadeIn()
 {
-	system->sceneManagement->ChangeScene(m_nextScene);
+	if (m_nextScene) {
+		system->sceneManagement->ChangeScene(m_nextScene);
+	}
+	else {
+		system->sceneManagement->ReloadScene();
+	}
 }

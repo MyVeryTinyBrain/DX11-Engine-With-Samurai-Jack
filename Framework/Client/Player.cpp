@@ -50,6 +50,11 @@ void Player::Update()
 	m_audioSource->minDistance = 5.0f;
 	m_audioSource->maxDistance = 10.0f;
 
+	// 이전에 켜진 트리거를 꺼, 애니메이션을 늦게 재생하지 않는다.
+	m_animator->RollTProperty->OffTriggerState();
+	m_animator->JumpTProperty->OffTriggerState();
+	// 
+
 	SecondGroundCheck();
 
 	UpdateKeyTimes();
@@ -428,8 +433,9 @@ void Player::JumpInput()
 		{
 			m_animator->JumpTProperty->SetTriggerState();
 		}
-		else
+		else if(m_allowDoubleJump)
 		{
+			m_allowDoubleJump = false;
 			m_animator->AirJumpTProperty->SetTriggerState();
 		}
 	}
@@ -439,7 +445,9 @@ void Player::RollInput()
 {
 	if (system->input->GetKeyUp(Key::LShift) && IsShortKeyPressed(m_lShiftPressedTime))
 	{
-		m_animator->RollTProperty->SetTriggerState();
+		if (!m_animator->Layer->IsPlaying(m_animator->BH_ROLL)) {
+			m_animator->RollTProperty->SetTriggerState();
+		}
 	}
 }
 
@@ -635,6 +643,9 @@ float Player::GetHP() const
 void Player::SetHP(float value)
 {
 	m_hp = value;
+	if (m_hp <= 0) {
+		GameSystem::GetInstance()->ReloadScene(0.2f);
+	}
 }
 
 V3 Player::GetDirection() const
@@ -664,7 +675,7 @@ bool Player::IsGuardBreakableByBackattack() const
 
 bool Player::IsInvisible() const
 {
-	return false;
+	return (m_hp <= 0) || m_animator->Layer->IsPlaying(m_animator->BH_ROLL);
 }
 
 bool Player::IsSuperarmor() const
@@ -821,7 +832,7 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 				break;
 			}
 
-			if (!CCT->isGrounded)
+			if (!m_groundCheck)
 			{
 				m_animator->DamageTypeIProperty->valueAsInt = 2;
 			}
@@ -870,28 +881,30 @@ DamageOutType Player::OnDamage(const DamageOut& out)
 void Player::SecondGroundCheck()
 {
 	// 너무 정확한 CCT->isGrounded는 작은 떨림도 공중에 뜲으로 인식합니다.
-	// 약간 부정확한 2차 검사를 통해 작은 떨림을 무시합니다.
+	// 또한 바닥이 아니라 천장 등에 닿은 것도 지면에 닿은 것으로 인식합니다.
+	// 때문에 약간 부정확한 2차 검사를 통해 작은 떨림을 무시합니다.
+	
+	bool prevGroundCheck = m_groundCheck;
 
-	if (!CCT->isGrounded)
-	{
-		const static float adjustHeight = 0.2f;
+	const static float adjustHeight = 0.2f;
+	PhysicsRay ray;
+	bool hit = system->physics->query->SweepCapsuleTest(
+		CCT->capsuleCollider->transform->position,
+		Q::identity(),
+		CCT->capsuleCollider->radius, CCT->capsuleCollider->halfHeight,
+		V3::down(),
+		adjustHeight,
+		1 << PhysicsLayer_Default,
+		PhysicsQueryType::Collider,
+		CCT->rigidbody
+	);
+	m_groundCheck = hit;
 
-		PhysicsRay ray;
-		bool hit = system->physics->query->SweepCapsuleTest(
-			CCT->capsuleCollider->transform->position,
-			Q::identity(),
-			CCT->capsuleCollider->radius, CCT->capsuleCollider->halfHeight,
-			V3::down(),
-			adjustHeight,
-			1 << PhysicsLayer_Default,
-			PhysicsQueryType::Collider,
-			CCT->rigidbody
-		);
-		m_groundCheck = hit;
+	if (prevGroundCheck && !m_groundCheck) {
+		m_allowDoubleJump = true;
 	}
-	else
-	{
-		m_groundCheck = true;
+	else if (!prevGroundCheck && m_groundCheck) {
+		m_allowDoubleJump = false;
 	}
 }
 

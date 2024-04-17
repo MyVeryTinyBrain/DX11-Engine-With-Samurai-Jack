@@ -39,9 +39,13 @@ void GameSystem::StopFade()
 	m_screenRender->StopFade();
 }
 
-void GameSystem::ChangeScene(Scene* scene)
+void GameSystem::ChangeScene(Scene* scene, float fadeDuration)
 {
-	m_sceneChanger->ChangeScene(scene);
+	m_sceneChanger->ChangeScene(scene, fadeDuration);
+}
+
+void GameSystem::ReloadScene(float fadeDuration) {
+	m_sceneChanger->ReloadScene(fadeDuration);
 }
 
 void GameSystem::ShowPlayerHP(Ref<Player> player)

@@ -148,6 +148,7 @@ private:
 	// Second Ground check
 
 	bool	m_groundCheck = true;
+	bool	m_allowDoubleJump = false;
 
 	// Audio
 

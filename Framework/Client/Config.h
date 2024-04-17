@@ -300,6 +300,7 @@ inline void INIT_PHYSICS_LAYER(PhysicsLayerManager* layerManager)
 
 #define TAG_FIGHT_COLLIDER					TEXT("FightCollider")
 #define TAG_NEXTSCENE_TRIGGER				TEXT("NextSceneTrigger")
+#define TAG_FALLING_TRIGGER					TEXT("FallingTrigger")
 
 inline void LOAD_MESHES(System* system)
 {
