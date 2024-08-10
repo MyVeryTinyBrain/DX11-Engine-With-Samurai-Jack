@@ -132,6 +132,7 @@ void PhysicsSystem::Simulate(unsigned int subStep, const map<uint, vector<Compon
 	if (!m_scene)
 		return;
 
+	// 서브스테핑 횟수를 최대 횟수 내로 Clamp 합니다.
 	subStep = subStep < m_subStepLimit ? subStep : m_subStepLimit;
 
 	if (subStep > 0)

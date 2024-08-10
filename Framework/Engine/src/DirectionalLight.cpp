@@ -11,50 +11,60 @@ void DirectionalLight::Awake()
 
 V3 DirectionalLight::CalculateViewPosition(ICamera* camera, float camNear, float camFar) const
 {
+	// 카메라 프러스텀의 중점을 구합니다.
 	float deltaDist = camFar - camNear;
 	V3 start = camera->GetPosition() + camera->GetDirection() * camNear;
 	V3 end = start + camera->GetDirection() * deltaDist;
 	V3 center = (start + end) * 0.5f;
 
+	// 카메라 프러스텀을 내려다보는 위치를 반환합니다.
 	return center - transform->forward * (m_far - m_near) * 0.5f;
 }
 
 void DirectionalLight::GetBoundingHolders(ICamera* camera, BoundingHolder* out_arrBoundingHolder) const
 {
+	// 분할된 카메라 프러스텀을 내려다보는 조명의 위치
 	V3 viewPositions[3] = {};
+	// 분할된 카메라 프러스텀(월드 공간)
+	Frustum camFrustums[3] = {}; 
+	// 분할된 카메라 프러스텀의 코너(월드 공간)
+	V3 camFrustumCorners[3][8] = {};
+
+#pragma region Calculate variables
+	// 각 캐스케이드 쉐도우 맵을 내려다보는 위치를 구합니다.
 	viewPositions[0] = CalculateViewPosition(camera, m_camNear[0], m_camFar[0]);
 	viewPositions[1] = CalculateViewPosition(camera, m_camNear[1], m_camFar[1]);
 	viewPositions[2] = CalculateViewPosition(camera, m_camNear[2], m_camFar[2]);
 
-	Frustum camFrustums[3] = {}; 
+	// 분할된 카메라의 월드 공간에서의 프러스텀을 구합니다.
 	camFrustums[0] = camera->GetFrustum(m_camNear[0], m_camFar[0]);
 	camFrustums[1] = camera->GetFrustum(m_camNear[1], m_camFar[1]);
 	camFrustums[2] = camera->GetFrustum(m_camNear[2], m_camFar[2]);
 
-	V3 camFrustumCorners[3][8] = {};
+	// 분할된 카메라 프러스텀의 월드 공간에서의 코너를 구합니다.
 	camFrustums[0].GetCorners(camFrustumCorners[0]);
 	camFrustums[1].GetCorners(camFrustumCorners[1]);
 	camFrustums[2].GetCorners(camFrustumCorners[2]);
+#pragma endregion
 
+	// 분할된 카메라 프러스텀의 크기를 구합니다.
 	float camFrustumWidthes[3] = {};
 	float camFrustumHeightes[3] = {};
-
 	for (uint i = 0; i < 3; ++i)
 	{
 		V3 min = V3(FLT_MAX, FLT_MAX, FLT_MAX);
 		V3 max = V3(FLT_MIN, FLT_MIN, FLT_MIN);
-
 		for (uint j = 0; j < 8; ++j)
 		{
 			V3 localCorner = camera->GetViewMatrix().MultiplyPoint(camFrustumCorners[i][j]);
 			min = V3::Min(min, localCorner);
 			max = V3::Max(max, localCorner);
 		}
-
 		camFrustumWidthes[i] = max.x - min.x;
 		camFrustumHeightes[i] = max.y - min.y;
 	}
 
+	// 각 쉐도우맵이 담당하는 영역을 생성합니다.
 	for (uint i = 0; i < 3; ++i)
 	{
 		V3 startPos = viewPositions[i];
@@ -134,6 +144,7 @@ LightDesc DirectionalLight::GetLightDesc(ICamera* camera) const
 
 bool DirectionalLight::ContainsInCamera(ICamera* camera) const
 {
+	// 방향성 조명은 언제나 카메라에 영향을 줍니다.
 	return true;
 }
 

@@ -182,6 +182,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
 	drt->SetDeferredRenderTargets(m_graphicSystem->deviceContext);
 
+	// 렌더링 그룹 순서대로 G 버퍼에 그립니다.
 	m_priority->Render(camera);
 	m_priorityInstance->Render(camera);
 	m_standard->Render(camera);
@@ -189,6 +190,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 	m_alphaTest->Render(camera);
 	m_alphaTestInstance->Render(camera);
 
+	// 조명 연산을 수행합니다.
 	m_light->Render(camera);
 
 	m_graphicSystem->postProcessing->DrawToTextrue(
@@ -198,9 +200,7 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 		PostProcessing::CopyType::Alphatest);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::AfterDeferred);
-
 	m_light->PostProcessing(camera);
-
 	Render_Emissive(camera);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::AfterEmissive);
@@ -209,15 +209,16 @@ void RenderQueue::Render_Deferred(ICamera* camera)
 void RenderQueue::Render_Forward(ICamera* camera)
 {
 	DeferredRenderTarget* drt = camera->GetDeferredRenderTarget();
-	drt->SetForwardRenderTargets(m_graphicSystem->deviceContext);
 
+	// 반투명 오브젝트 그룹을 그립니다.
+	drt->SetForwardRenderTargets(m_graphicSystem->deviceContext);
 	m_transparent->Render(camera);
 	m_transparentInstance->Render(camera);
 
 	m_graphicSystem->postProcessing->PostProcess(camera, PostProcessing::Step::AfterTransparent);
 
+	// 오버레이 그룹을 그립니다.
 	drt->SetForwardRenderTargets(m_graphicSystem->deviceContext);
-
 	m_overlay->Render(camera);
 	m_overlayInstance->Render(camera);
 }

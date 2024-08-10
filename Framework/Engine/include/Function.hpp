@@ -86,6 +86,8 @@ inline Ret func<Ret(Args...)>::operator()(Args ...args)
 template<class Ret, class ...Args>
 inline Ret func<Ret(Args...)>::Invoke(Args ...args)
 {
+	// Caller 클래스는 아무런 함수도 가지고 있지 않지만, 
+	// 마치 본인의 함수인 것 처럼 다른 클래스의 멤버 함수를 호출합니다.
 	if (m_caller) return (m_caller->*m_func)(args...);
 	else return FunctionUtility::ConvertFunction<GloFunc>(m_func)(args...);
 }

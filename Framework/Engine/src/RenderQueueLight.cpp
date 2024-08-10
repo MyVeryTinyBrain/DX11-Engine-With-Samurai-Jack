@@ -183,29 +183,32 @@ void RenderQueueLight::Clear()
 }
 
 bool RenderQueueLight::IsValidShadowRequest(
-    ICamera* camera, const LightDesc& light, 
-    const RenderRequest& request, 
+    ICamera* camera, const LightDesc& light, const RenderRequest& request, 
     const BoundingHolder& boundingHolder) const
 {
+    // 오브젝트는 그림자를 그려야 합니다.
     if (!request.shadow.draw)
         return false;
-
+    // 오브젝트의 레이어는 카메라가 그릴 레이어 인덱스에 속해 있어야 합니다.
     if ((camera->GetAllowedLayers() & (1 << request.essential.layerIndex)) == 0)
         return false;
-
+    // 조명이 영향을 끼치는 영역이 카메라 프러스텀 내부에 존재해야 합니다.
     if (request.essential.cull && !CullOp(request, boundingHolder))
         return false;
 
     if (request.op.boundsOp)
     {
         V3 p = camera->GetPosition();
+        // 조명이 영향을 끼치는 영역입니다.
         Bounds bounds = request.op.boundsOp->GetBounds();
+        // 조명의 영역과 카메라와의 최단 거리를 구합니다.
         float distance = bounds.GetDistanceBetweenPoint(p);
-        float maxExtents = V3::MaxElement(bounds.extents); // 보정입니다.
+        // 조명의 가장 긴 영역을 보정용 값으로 사용합니다.
+        float maxExtents = V3::MaxElement(bounds.extents);
+        // 최단 거리가 조명이 그림자를 표현하는 최대 거리를 초과하면 그림자를 그리지 않습니다.
         if (distance > light.ShadowFadeDistance + maxExtents)
             return false;
     }
-
     return true;
 }
 
@@ -269,8 +272,18 @@ void RenderQueueLight::ApplyMesh(Com<ID3D11DeviceContext> deviceContext, IMesh* 
 
 void RenderQueueLight::ApplyCameraBuffer(Com<ID3D11DeviceContext> deviceContext, const LightDesc& lightDesc, uint projectionIndex)
 {
+    // 조명의 쉐도우 맵은 각각 조명의 위치에서 서로 다른 방향으로 깊이를 렌더링 해야 합니다.
+    // 쉐도우 맵 인덱스에 해당하는 행렬을 카메라 버퍼에 전달해 이를 수행합니다.
     uint& i = projectionIndex;
-    m_CBufferManager->ApplyCameraBuffer(deviceContext, lightDesc.Position, lightDesc.Direction, lightDesc.ViewMatrix[i], lightDesc.ProjectionMatrix[i], uint2(lightDesc.DepthSize, lightDesc.DepthSize), lightDesc.Near, lightDesc.Far);
+    m_CBufferManager->ApplyCameraBuffer(
+        deviceContext, 
+        lightDesc.Position, 
+        lightDesc.Direction, 
+        lightDesc.ViewMatrix[i], 
+        lightDesc.ProjectionMatrix[i], 
+        uint2(lightDesc.DepthSize, lightDesc.DepthSize), 
+        lightDesc.Near, 
+        lightDesc.Far);
 }
 
 void RenderQueueLight::ApplyBoneMatrices(Com<ID3D11DeviceContext> deviceContext, IRendererBoneOp* boneOp, uint subMeshIndex)
@@ -316,12 +329,12 @@ void RenderQueueLight::IApplyBoneMatricesUsage(Com<ID3D11DeviceContext> deviceCo
 
 bool RenderQueueLight::IsValidLight(ICamera* camera, ILight* light) const
 {
+    // 조명의 세기와 범위가 0을 초과하며, 활성화된 컴포넌트여야 합니다.
     if (!light->IsWorking())
         return false;
-
+    // 조명이 영향을 끼치는 영역이 카메라 프러스텀 내부에 존재해야 합니다.
     if (!light->ContainsInCamera(camera))
         return false;
-
     return true;
 }
 
@@ -400,6 +413,7 @@ void RenderQueueLight::Render_DepthOfLight_Static(ICamera* camera, const LightDe
                     if (!IsValidShadowRequest(camera, lightDesc, request, boundings[projectionIndex]))
                         continue;
 
+                    // 스태틱 메쉬 렌더러의 오브젝트는 GPU 인스턴싱을 사용해 렌더링합니다.
                     InstanceData data;
                     data.right = request.essential.worldMatrix.row[0];
                     data.up = request.essential.worldMatrix.row[1];
@@ -648,9 +662,11 @@ void RenderQueueLight::Render_LightAccumulate(ICamera* camera, ILight* light, Li
     // Outputs
     drt->SetDeferredLightAccumulateRenderTargets(m_graphicSystem->deviceContext);
 
+    // 조명이 영향을 주는 영역을 스크린 공간에 투영시킨 사각형입니다.
     FRect screenQuadRect = light->GetDeferredScreenQuad(camera);
     V2 corners[4] = {};
     screenQuadRect.GetCorners(corners);
+    // 디퍼드 렌더링을 수행할 사각형 메쉬의 스크린 위치를 사각형에 맞게 변형합니다.
     VI* vi = m_screenQuad->GetVI();
     Vertex* vertices = vi->GetVertices();
     for (uint i = 0; i < 4; ++i)

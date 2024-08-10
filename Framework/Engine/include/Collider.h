@@ -153,8 +153,12 @@ protected:
 
 public:
 
+	// 다른 콜라이더와 충돌이 시작되면 호출됩니다.
 	delegate<void(const Collision&)> OnCollisionEnter;
-	delegate<void(const Collision&)> OnCollisionStay;	// Rigidbody가 Sleep 상태이면 동작하지 않습니다.
+	// 다른 콜라이더와 충돌 중일 때 매번 호출됩니다.
+	// Rigidbody가 Sleep 상태이면 동작하지 않습니다.
+	delegate<void(const Collision&)> OnCollisionStay;	
+	// 다른 콜라이더와 충돌이 끝나면 호출됩니다.
 	delegate<void(const Collision&)> OnCollisionExit;
 };
 

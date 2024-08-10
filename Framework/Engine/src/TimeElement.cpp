@@ -129,6 +129,7 @@ unsigned int FixedUptateTimeElement::Accumulate()
         DWORD over = DWORD(m_accumulated / m_interval);
         m_accumulated -= over * m_interval;
         m_deltaTime = m_interval;
+        // 고정 업데이트 횟수(서브스테핑 횟수)를 반환합니다.
         return over;
     }
     return 0;

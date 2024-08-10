@@ -140,7 +140,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 	// 유효한 트랜지션이 있다면 전환을 시작합니다.
 	if (m_currentTransition)
 	{
-		// 블렌딩 퍼센트를 설정합니다.
+		// 블렌딩 비율을 설정합니다. 이 값을 사용해 전환이 시작된 애니메이션과, 전환될 애니메이션간 블렌딩을 수행합니다.
 		if (m_currentTransition->duration <= 0)
 			m_blendPercent = 1.0f;
 		else
@@ -148,7 +148,7 @@ void AnimatorLayer::Accumulate(float deltaTime, float speed)
 
 		if (m_blendPercent >= 1.0f)
 		{
-			// For event notification
+			// 이벤트 콜백을 위해 변경된 노드와 이전의 노드를 설정합니다.
 			m_endChangedNode = m_blendNode;
 			m_prevNode = m_currentNode;
 

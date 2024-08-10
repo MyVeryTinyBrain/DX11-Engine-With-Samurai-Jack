@@ -83,8 +83,9 @@ Bounds MeshRenderer::GetBounds() const
 {
 	if (!m_mesh)
 		return Bounds(transform->position, V3::zero());
-
+	// 메쉬의 로컬 바운딩 박스를 반환받습니다.
 	Bounds bounds = m_mesh->GetBounds();
+	// 월드 바운딩 박스로 변환해 반환합니다.
 	bounds.Transform(transform->localToWorldMatrix);
 	return bounds;
 }

@@ -81,6 +81,7 @@ LightDesc PointLight::GetLightDesc(ICamera* camera) const
 
 bool PointLight::ContainsInCamera(ICamera* camera) const
 {
+    // 점 광원은 구 형태의 범위를 가집니다.
     Sphere sphere(transform->position, m_range);
     return camera->Intersects(sphere);
 }
@@ -90,13 +91,16 @@ FRect PointLight::GetDeferredScreenQuad(ICamera* camera) const
     const M4& V = camera->GetViewMatrix();
     const M4& P = camera->GetProjectionMatrix();
 
-    OrientedBounds obb(transform->position, m_range * V3::one(), camera->GetRotation());
+    // 구 형태의 영역을 박스 형태의 영역으로 치환합니다.
+    // 월드 공간의 OBB를 생성해, 이 박스의 월드 코너를 구합니다.
+    OrientedBounds obb(transform->position, m_range * V3::one(), Q::identity());
     V3 corners[8];
     obb.GetCorners(corners);
 
-    V2 min = V2(FLT_MAX, FLT_MAX);
-    V2 max = V2(FLT_MIN, FLT_MIN);
+    V2 min = V2(+1.f, +1.f);
+    V2 max = V2(-1.f, -1.f);
 
+    // 박스의 8개 모서리 벡터의 절대값이 가장 큰 성분을 구합니다.
     for (uint i = 0; i < 8; ++i)
     {
         V4 wCorner = V4(corners[i].x, corners[i].y, corners[i].z, 1.0f);
@@ -108,6 +112,7 @@ FRect PointLight::GetDeferredScreenQuad(ICamera* camera) const
         max = V2::Max(max, sCorner);
     }
 
+    // 박스가 스크린 상에서 차지하는 영역을 구합니다.
     min.x = Clamp(min.x, -1.0f, 1.0f);
     min.y = Clamp(min.y, -1.0f, 1.0f);
     max.x = Clamp(max.x, -1.0f, 1.0f);

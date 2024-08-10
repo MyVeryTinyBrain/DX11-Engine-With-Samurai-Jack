@@ -83,7 +83,8 @@ public:
 		AnimatorNode* startNode, AnimatorNode* nextNode,
 		const vector<PropertyValue>& propertyValues,
 		float exitTime = 0.0f, float duration = 0.0f, float offset = 0.0f,
-		AnimatorTransition::Interrupt interrupt = AnimatorTransition::Interrupt::Current, bool noRecursive = false);
+		AnimatorTransition::Interrupt interrupt = AnimatorTransition::Interrupt::Current, 
+		bool noRecursive = false);
 
 	virtual ~AnimatorTransition();
 

@@ -406,9 +406,9 @@ HRESULT VI::RecalculateBounds()
 {
 	if (!m_vertices)
 		return E_FAIL;
-
 	V3 extents = V3::zero();
 
+	// 모든 정점을 순회하며 원점에서 가장 먼 x, y, z 성분을 탐색합니다.
 	for (uint32_t i = 0; i < m_vertexCount; ++i)
 	{
 		const Vertex& vertex = m_vertices[i];
@@ -416,8 +416,8 @@ HRESULT VI::RecalculateBounds()
 		extents = V3::Max(extents.xmv, V3::Abs(position));
 	}
 
+	// 로컬 공간의 바운딩 박스로 생성합니다.
 	m_bounds = Bounds(V3::zero(), extents);
-
 	return S_OK;
 }
 

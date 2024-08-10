@@ -115,9 +115,11 @@ void ComponentManagement::ReadyComponents()
 
 	for (auto& createdComponent : copiedCreatedComponents)
 	{
+		// 컴포넌트가 생성된 후 Update가 호출되기 전에 Start 이벤트 함수를 호출합니다.
 		IComponent* iComponent = createdComponent;
 		iComponent->Start();
 
+		// 컴포넌트 실행 순서에 따라 분류해 저장합니다.
 		m_components[createdComponent->executionOrder].push_back(createdComponent);
 	}
 }

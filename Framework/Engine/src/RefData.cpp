@@ -30,11 +30,13 @@ RefData::RefData(const RefData& other)
 
 RefData::~RefData()
 {
+    // 이 스마트 포인터가 제거될 때, 참조 포인터는 감소합니다.
 	Reset();
 }
 
 RefData& RefData::operator=(const RefData& other)
 {
+    // 이전에 참조하던 카운터는 감소합니다.
     Reset();
 
     if (!other.m_obj) return *this;
@@ -43,6 +45,7 @@ RefData& RefData::operator=(const RefData& other)
     m_pRefCount = other.m_pRefCount;
     m_pIsDestroyed = other.m_pIsDestroyed;
 
+    // 새로 참조하는 포인터에 대해 참조 카운터는 증가합니다.
     ++(*m_pRefCount);
 
     return *this;

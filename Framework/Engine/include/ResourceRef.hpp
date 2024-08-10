@@ -304,11 +304,11 @@ inline uint ResourceRef<T>::GetRefCount() const
 template<class T>
 inline void ResourceRef<T>::Reset()
 {
-	// 삭제할 오브젝트입니다.
+	// 삭제할 대상입니다. 초기에는 null 입니다.
 	ResourceObject* destroyTargetResource = nullptr;
 
-	// 마지막 레퍼런스인 경우
-	// 오브젝트가 파괴되지 않았을 경우
+	// 이번에 참조 카운터가 0이 되는 경우 그리고 오브젝트가 파괴되지 않았을 경우,
+	// 삭제할 오브젝트 선택합니다.
 	if (m_refData && !m_refData->isNull && m_refData->referenceCount == 1)
 	{
 		destroyTargetResource = m_refData->GetResourceObject();
@@ -316,11 +316,7 @@ inline void ResourceRef<T>::Reset()
 
 	// 레퍼런스 데이터를 삭제합니다.
 	SafeDelete(m_refData);
-
-	// 관리되지 않는 오브젝트가 마지막 참조를 잃은 경우 nullptr이 아니게 됩니다.
-	// destroyTargetResource이 nullptr이 아니라면 삭제합니다.
-	// nullptr이 아니라면 위의 삭제에서 레퍼런스 카운트가 0이 되었으므로 
-	// 레퍼런스 데이터의 모든 동적할당된 변수들 또한 삭제됩니다.
+	// 오브젝트를 삭제합니다.
 	SafeDelete(destroyTargetResource);
 }
 

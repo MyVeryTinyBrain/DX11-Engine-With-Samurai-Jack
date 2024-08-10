@@ -288,12 +288,12 @@ inline Object* Ref<T>::GetObject() const
 template<class T>
 inline T* Ref<T>::GetPointer() const
 {
-	if (!m_refData)
+	// 아무 오브젝트도 참조하고 있지 않거나,
+	// 참조하고 있는 오브젝트가 이미 파괴되었다면,
+	// null을 반환합니다.
+	if (!m_refData || IsNull())
 		return nullptr;
-
-	if (IsNull())
-		return nullptr;
-
+	// 그렇지 않다면, 참조중인 오브젝트를 반환합니다.
 	return static_cast<T*>(m_refData->GetObject());
 }
 

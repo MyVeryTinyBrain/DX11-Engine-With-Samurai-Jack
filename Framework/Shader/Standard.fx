@@ -64,7 +64,7 @@ PS_IN VS_MAIN(VS_IN In)
 
 	if (_BoneMatricesUsage.x > 0)
 	{
-		matrix		boneMatrix =
+		matrix boneMatrix =
 			_BoneMatrices[In.BlendIndices.x] * In.BlendWeight.x +
 			_BoneMatrices[In.BlendIndices.y] * In.BlendWeight.y +
 			_BoneMatrices[In.BlendIndices.z] * In.BlendWeight.z +

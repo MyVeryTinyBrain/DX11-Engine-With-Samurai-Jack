@@ -158,6 +158,7 @@ bool EngineWorldBase::Step()
 			{
 				for (auto& com : coms.second)
 				{
+					// 트랜스폼 트리에서 활성화 상태이며, 컴포넌트 역시 활성화 상태일 때 실행 가능합니다.
 					if (!com->active)
 						continue;
 

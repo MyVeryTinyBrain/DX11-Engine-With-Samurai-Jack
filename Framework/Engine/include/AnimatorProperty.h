@@ -7,7 +7,6 @@ ENGINE_BEGIN
 class ENGINE_API AnimatorProperty : public Object
 {
 public:
-
 	struct Value
 	{
 		AnimatorProperty::Value() : valueFloat(0) {}
@@ -21,8 +20,11 @@ public:
 			float	valueFloat;
 		};
 	};
-
 	enum class Type { TRIGGER, BOOL, INT, FLOAT };
+
+private:
+	AnimatorProperty::Value		m_value;
+	AnimatorProperty::Type		m_type;
 
 public:
 
@@ -57,12 +59,6 @@ public:
 	_declspec(property(get = GetValueAsFloat, put = SetValueAsFloat)) float valueAsFloat;
 	_declspec(property(get = GetValue)) AnimatorProperty::Value value;
 	_declspec(property(get = GetType)) AnimatorProperty::Type type;
-
-private:
-
-	AnimatorProperty::Value		m_value;
-
-	AnimatorProperty::Type		m_type;
 };
 
 ENGINE_END

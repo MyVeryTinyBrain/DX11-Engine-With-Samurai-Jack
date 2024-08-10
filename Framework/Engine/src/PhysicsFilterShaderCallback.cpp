@@ -22,18 +22,15 @@ PxFilterFlags PhysicsFilterShaderCallback::pairFound(
 
 	Collider* c0 = (Collider*)s0->userData;
 	Collider* c1 = (Collider*)s1->userData;
-
 	assert(c0 != nullptr); // 콜라이더가 없습니다.
 	assert(c1 != nullptr); // 콜라이더가 없습니다.
 	
 	// 각 콜라이더의 레이어 비트입니다.
 	PxU32 layer0 = filterData0.word0;
 	PxU32 layer1 = filterData1.word0;
-
 	// 각 콜라이더의 충돌 가능한 비트들입니다.
 	PxU32 collisionable0 = filterData0.word1 & m_physicsLayerManager->GetCollisionBits(c0->GetLayerIndex());
 	PxU32 collisionable1 = filterData1.word1 & m_physicsLayerManager->GetCollisionBits(c1->GetLayerIndex());
-
 	// 두 콜라이더의 충돌 가능성입니다.
 	PxU32 collision = (layer0 & collisionable1) && (layer1 & collisionable0);
 
@@ -41,7 +38,6 @@ PxFilterFlags PhysicsFilterShaderCallback::pairFound(
 	{
 		return PxFilterFlag::eSUPPRESS;
 	}
-
 	pairFlags = eContactFlags;
 	return PxFilterFlag::eDEFAULT;
 }

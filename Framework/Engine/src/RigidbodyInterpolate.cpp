@@ -65,13 +65,14 @@ void RigidbodyInterpolate::CheckPoseChange()
 	}
 }
 
+// accumulated: 고정 업데이트 이후 지난 시간입니다. 고정 업데이트 이후에 0으로 초기화됩니다.
+// percent: 다음 고정 업데이트 이후 지난 정규화된 시간입니다.
+
 V3 RigidbodyInterpolate::CalcInterpolatePosition() const
 {
 	float accumulated = m_time->GetFixedAccumulated() * m_time->GetFixedTimeScale();
 	float percent = accumulated / m_time->GetFixedInterval();
-
 	percent = Clamp01(percent);
-
 	return V3::Lerp(m_beforePosition, m_backupPosition, percent);
 }
 
@@ -79,8 +80,6 @@ Q RigidbodyInterpolate::CalcInterpolateRotation() const
 {
 	float accumulated = m_time->GetFixedAccumulated() * m_time->GetFixedTimeScale();
 	float percent = accumulated / m_time->GetFixedInterval();
-
 	percent = Clamp01(percent);
-
 	return Q::SLerp(m_beforeRotation, m_backupRotation, percent);
 }

@@ -489,6 +489,7 @@ void Transform::UpdateLocalTransform()
 {
 	if (m_parent)
 	{
+		// 부모가 있으면 부모의 월드 행렬과 이 트랜스폼의 로컬 행렬을 곱합니다. 결과 행렬에서 위치, 회전, 스케일을 추출합니다.
 		M4 worldTransformation = M4::SRT(m_worldData.scale, m_worldData.rotation, m_worldData.position);
 		M4 localTransformation = worldTransformation * m_parent->worldToLocalMatrix;	
 		m_localData.position = localTransformation.GetTranslation();
@@ -505,28 +506,26 @@ void Transform::UpdateLocalTransform()
 	{
 		m_localData = m_worldData;
 	}
-
-	{
-		M4 localTransformation = M4::SRT(m_localData.scale, m_localData.rotation, m_localData.position);
-		if (m_parent)
-			m_localToWorld = localTransformation * m_parent->m_localToWorld;
-		else
-			m_localToWorld = localTransformation;
-	}
+	// 로컬에서 월드로 변환하는 행렬을 업데이트합니다.
+	M4 localTransformation = M4::SRT(m_localData.scale, m_localData.rotation, m_localData.position);
+	if (m_parent)
+		m_localToWorld = localTransformation * m_parent->m_localToWorld;
+	else
+		m_localToWorld = localTransformation;
 }
 
 void Transform::UpdateWorldTransform()
 {
-	{
-		M4 localTransformation = M4::SRT(m_localData.scale, m_localData.rotation, m_localData.position);
-		if (m_parent)
-			m_localToWorld = localTransformation * m_parent->m_localToWorld;
-		else
-			m_localToWorld = localTransformation;
-	}
+	// 로컬에서 월드로 변환하는 행렬을 업데이트합니다.
+	M4 localTransformation = M4::SRT(m_localData.scale, m_localData.rotation, m_localData.position);
+	if (m_parent)
+		m_localToWorld = localTransformation * m_parent->m_localToWorld;
+	else
+		m_localToWorld = localTransformation;
 
 	if (m_parent)
 	{
+		// 부모가 있으면, 로컬에서 월드로 변환하는 행렬에서 위치, 회전, 스케일을 추출합니다.
 		m_worldData.position = m_localToWorld.GetTranslation();
 		m_worldData.rotation = m_localData.rotation * m_parent->m_worldData.rotation;
 		m_worldData.eulerAngles = m_worldData.rotation.eulerAngles;

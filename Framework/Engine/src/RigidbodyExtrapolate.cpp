@@ -57,24 +57,22 @@ void RigidbodyExtrapolate::CheckPoseChange()
 	}
 }
 
+// accumulated: 고정 업데이트 이후 지난 시간입니다. 고정 업데이트 이후에 0으로 초기화됩니다.
+
 V3 RigidbodyExtrapolate::CalcInterpolatePosition() const
 {
 	float accumulated = m_time->GetFixedAccumulated() * m_time->GetFixedTimeScale();
-
 	return m_backupPosition + m_body->velocity * accumulated;
 }
 
 Q RigidbodyExtrapolate::CalcInterpolateRotation() const
 {
 	float accumulated = m_time->GetFixedAccumulated() * m_time->GetFixedTimeScale();
-
 	Q q = Q::Euler(
 		m_body->angularVelocity.x * accumulated,
 		m_body->angularVelocity.y * accumulated,
 		m_body->angularVelocity.z * accumulated
 	);
-
 	Q res = m_backupRotation * q;
-
 	return res;
 }
